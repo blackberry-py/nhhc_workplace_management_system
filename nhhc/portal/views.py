@@ -23,7 +23,6 @@ from django.urls import reverse
 from django.views.generic.detail import DetailView
 from employee.forms import EmployeeForm
 from employee.models import Employee
-from icecream import ic
 from web.forms import ClientInterestForm
 from web.models import ClientInterestSubmissions
 from web.models import EmploymentApplicationModel

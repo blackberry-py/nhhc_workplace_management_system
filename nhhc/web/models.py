@@ -5,7 +5,6 @@ from django.contrib.auth.hashers import make_password
 from django.core.validators import MaxValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from icecream import ic
 from localflavor.us.models import USStateField
 from localflavor.us.models import USZipCodeField
 from pendulum import now
@@ -111,7 +110,6 @@ class EmploymentApplicationModel(models.Model):
             username = (
                 f"{self.first_name.lower()}.{self.last_name.lower().replace(' ', '.')}"
             )
-            ic(username)
             new_employee = Employee(
                 is_superuser=False,
                 username=username,

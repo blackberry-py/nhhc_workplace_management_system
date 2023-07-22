@@ -26,11 +26,10 @@ from django.urls import reverse
 from django.views.generic.detail import DetailView
 from employee.forms import EmployeeForm
 from employee.models import Employee
-from icecream import ic
 from web.forms import ClientInterestForm
 from web.models import ClientInterestSubmissions
 from web.models import EmploymentApplicationModel
-
+from loguru import logger
 
 # Create your views here.
 def send_new_user_credentials(new_user):
@@ -44,7 +43,7 @@ def send_new_user_credentials(new_user):
         content = f"Welcome to Nett Hands, Please Login Your New Employee Account at https://www.netthandshome.care/login/ and Complete Onboarding Information in the Personal Information Section:\n Username = {new_user.first_name} \n Password = \n {new_user.first_name} \n "
         send_mail(subject, content, email_from, recipient_email)
     except Exception as e:
-        return f"Something went wrong...{e}"
+        logger.error(f"Unable to Send New User Credentials...{e}")
 
 
 def hire(request):
@@ -58,7 +57,7 @@ def hire(request):
         submission.save()
         return HttpResponse(status=201)
     except Exception as e:
-        ic(e)
+        logger.error(f"JS AJAX Request Failed - Applicant Not Hired = {e}")
         return HttpResponse(status=418)
 
 
@@ -72,6 +71,7 @@ def reject(request):
         submission.save()
         return HttpResponse(status=204)
     except Exception as e:
+        logger.error(f"JS AJAX Request Failed - Applicant Not Rejected = {e}")
         return HttpResponse(status=418)
 
 
