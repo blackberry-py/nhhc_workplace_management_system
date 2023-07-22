@@ -5,50 +5,118 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Contract',
+            name="Contract",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('code', models.CharField(max_length=10, unique=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("code", models.CharField(max_length=10, unique=True)),
             ],
             options={
-                'verbose_name': 'State Contract',
-                'verbose_name_plural': 'State Contracts',
-                'db_table': 'contracts',
-                'ordering': ['code'],
+                "verbose_name": "State Contract",
+                "verbose_name_plural": "State Contracts",
+                "db_table": "contracts",
+                "ordering": ["code"],
             },
         ),
         migrations.CreateModel(
-            name='Compliance',
+            name="Compliance",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('aps_check_passed', models.BooleanField(blank=True, null=True)),
-                ('aps_check_verification', models.FileField(blank=True, null=True, upload_to='verifications')),
-                ('hhs_oig_exclusionary_check_verification', models.FileField(blank=True, null=True, upload_to='verifications')),
-                ('hhs_oig_exclusionary_check_completed', models.BooleanField(blank=True, default=False, null=True)),
-                ('idph_background_check_completed', models.BooleanField(blank=True, default=False, null=True)),
-                ('idph_background_check_verification', models.FileField(blank=True, null=True, upload_to='verifications')),
-                ('initial_idph_background_check_completion_date', models.DateField(blank=True, null=True)),
-                ('current_idph_background_check_completion_date', models.DateField(blank=True, null=True)),
-                ('training_exempt', models.BooleanField(blank=True, default=False, null=True)),
-                ('pre_training_verification', models.FileField(blank=True, null=True, upload_to='verifications')),
-                ('pre_service_completion_date', models.DateField(blank=True, null=True)),
-                ('added_to_TTP_portal', models.BooleanField(blank=True, null=True)),
-                ('job_title', models.CharField(blank=True, choices=[('AIDE', 'Homecare Aide'), ('CARE_COORDINATOR', 'Care Coordinator'), ('CARE_COORDINATOR_SUPERVISOR', 'Care Coordinator Supervisor'), ('HOMECARE_SUPERVISOR', 'Homecare Supervisor')], default='AIDE', max_length=255, null=True)),
-                ('contract_code', models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, to='compliance.contract')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("aps_check_passed", models.BooleanField(blank=True, null=True)),
+                (
+                    "aps_check_verification",
+                    models.FileField(blank=True, null=True, upload_to="verifications"),
+                ),
+                (
+                    "hhs_oig_exclusionary_check_verification",
+                    models.FileField(blank=True, null=True, upload_to="verifications"),
+                ),
+                (
+                    "hhs_oig_exclusionary_check_completed",
+                    models.BooleanField(blank=True, default=False, null=True),
+                ),
+                (
+                    "idph_background_check_completed",
+                    models.BooleanField(blank=True, default=False, null=True),
+                ),
+                (
+                    "idph_background_check_verification",
+                    models.FileField(blank=True, null=True, upload_to="verifications"),
+                ),
+                (
+                    "initial_idph_background_check_completion_date",
+                    models.DateField(blank=True, null=True),
+                ),
+                (
+                    "current_idph_background_check_completion_date",
+                    models.DateField(blank=True, null=True),
+                ),
+                (
+                    "training_exempt",
+                    models.BooleanField(blank=True, default=False, null=True),
+                ),
+                (
+                    "pre_training_verification",
+                    models.FileField(blank=True, null=True, upload_to="verifications"),
+                ),
+                (
+                    "pre_service_completion_date",
+                    models.DateField(blank=True, null=True),
+                ),
+                ("added_to_TTP_portal", models.BooleanField(blank=True, null=True)),
+                (
+                    "job_title",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("AIDE", "Homecare Aide"),
+                            ("CARE_COORDINATOR", "Care Coordinator"),
+                            (
+                                "CARE_COORDINATOR_SUPERVISOR",
+                                "Care Coordinator Supervisor",
+                            ),
+                            ("HOMECARE_SUPERVISOR", "Homecare Supervisor"),
+                        ],
+                        default="AIDE",
+                        max_length=255,
+                        null=True,
+                    ),
+                ),
+                (
+                    "contract_code",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="compliance.contract",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Compliance-Auditing Data',
-                'verbose_name_plural': 'Compliance-Auditing Data',
-                'db_table': 'audit_compliance',
-                'ordering': ['employee'],
+                "verbose_name": "Compliance-Auditing Data",
+                "verbose_name_plural": "Compliance-Auditing Data",
+                "db_table": "audit_compliance",
+                "ordering": ["employee"],
             },
         ),
     ]

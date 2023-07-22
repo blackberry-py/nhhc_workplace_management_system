@@ -4,28 +4,53 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Announcements',
+            name="Announcements",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('message', models.TextField()),
-                ('announcement_title', models.CharField(default='', max_length=255)),
-                ('date_posted', models.DateTimeField(auto_now=True)),
-                ('message_type', models.CharField(choices=[('C', 'Safety'), ('T', 'Training'), ('X', 'Compliance'), ('G', 'General')], default='G', max_length=255)),
-                ('status', models.CharField(choices=[('A', 'Active'), ('D', 'Draft'), ('X', 'Deleted')], default='D', max_length=255)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("message", models.TextField()),
+                ("announcement_title", models.CharField(default="", max_length=255)),
+                ("date_posted", models.DateTimeField(auto_now=True)),
+                (
+                    "message_type",
+                    models.CharField(
+                        choices=[
+                            ("C", "Safety"),
+                            ("T", "Training"),
+                            ("X", "Compliance"),
+                            ("G", "General"),
+                        ],
+                        default="G",
+                        max_length=255,
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[("A", "Active"), ("D", "Draft"), ("X", "Deleted")],
+                        default="D",
+                        max_length=255,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Internal Announcement',
-                'verbose_name_plural': 'Internal Announcements',
-                'db_table': 'announcements',
-                'ordering': ['-date_posted', 'status', 'message_type'],
+                "verbose_name": "Internal Announcement",
+                "verbose_name_plural": "Internal Announcements",
+                "db_table": "announcements",
+                "ordering": ["-date_posted", "status", "message_type"],
             },
         ),
     ]

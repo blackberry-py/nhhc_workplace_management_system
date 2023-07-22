@@ -26,7 +26,6 @@ from django.urls import include
 from django.urls import path
 
 
-
 urlpatterns = [
     path("control-center/", admin.site.urls),
     path("", include(web.urls)),

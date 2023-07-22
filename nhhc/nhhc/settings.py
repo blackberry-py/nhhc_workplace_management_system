@@ -27,10 +27,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
+SESSION_COOKIE_SECURE = True
 
-
-ALLOWED_HOSTS = ["127.0.0.1","localhost", "nett-hands-site-and-portal.onrender.com", "www.netthandshome.care","0.0.0.0"]
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "nett-hands-site-and-portal.onrender.com",
+    "www.netthandshome.care",
+    "0.0.0.0",
+]
 
 
 # Application definition
@@ -50,7 +56,7 @@ INSTALLED_APPS = [
     "localflavor",
     "captcha",
     "corsheaders",
-    "admin_ip_restrictor",
+    "adminrestrict",
     ## Installed Internal Apps
     "web",
     "portal",
@@ -61,7 +67,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
-    "admin_ip_restrictor.middleware.AdminIPRestrictorMiddleware",
+    "adminrestrict.middleware.AdminPagesRestrictMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -155,11 +161,7 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = os.getenv("EMAIL_TSL_PORT")
 EMAIL_HOST_USER = os.getenv("NOTIFICATION_SENDER_EMAIL")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_ACCT_PASSWORD")
-RESTRICT_ADMIN = os.getenv("RESTRICT_ADMIN")
-ALLOWED_ADMIN_IPS = os.getenv("ALLOWED_ADMIN_IPS")
-ALLOWED_ADMIN_IP_RANGES = os.getenv("ALLOWED_ADMIN_IP_RANGES")
-RESTRICTED_APP_NAMES = os.getenv("RESTRICTED_APP_NAMES")
-TRUST_PRIVATE_IP = os.getenv("TRUST_PRIVATE_IP")
+
 
 LOGGING = {
     "version": 1,
