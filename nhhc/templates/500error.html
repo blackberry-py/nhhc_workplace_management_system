@@ -1,0 +1,23 @@
+{% extends 'includes/base.html' %}
+{% load static%}
+{% block main %}
+
+    <!-- Breadcrumb Begin -->
+    <div class="breadcrumb-option spad set-bg" data-setbg="{% static '/img/breadcrumb-bg.jpg' %}">
+        <div  class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb__text">
+                        <h2>Yikes!</h2>
+                        <div class="breadcrumb__links">
+                            <p>The Server Encountered and Error While Processing Your Request! Please Re-Attempt Your Request.</p>
+                        </div>
+									<a href="/">Go To Homepage</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+		</div>
+	</div>
+{% endblock main %}

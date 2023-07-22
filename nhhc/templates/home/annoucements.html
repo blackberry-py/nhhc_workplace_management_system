@@ -1,0 +1,117 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} Announcements {% endblock title %}
+{% block content %}
+
+  <div class="header bg-purple pb-6">
+    <div class="container-fluid">
+      <div class="header-body">
+        <div class="row align-items-center py-4">
+          <div class="col-lg-6 col-7">
+            <h6 class="h2 text-white d-inline-block mb-0">Submitted Employment Applications</h6>
+            <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+            </nav>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page content -->
+  <div class="container-fluid mt--6">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <!-- Card header -->
+          <div class="card-header border-0">
+            <h3 class="mb-0">Announcements</h3>
+
+          </div>
+          <!-- Light table -->
+          {% if request.user.is_staff %}
+                     <div class="col-lg-3 text-right">
+              <button data-bs-toggle="modal" data-bs-target="#modal-create-new-announcement" class="btn btn-sm btn-neutral">New Announcement</button>
+            </div>
+          </div>
+                <ul class="nav nav-tabs">
+                <li class="tab nav-item">
+                  <a class="nav-link tab active" id="all" aria-current="page" href="#">{{ all_submuission }} Total Announcements</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link tab" id="deleted" href="#">{{ deleted }} Deleted Applications </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link tab" id="draft" href="#">{{ draft }} Draft Announcements</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link tab" id="active" href="#">{{ active }} Active Announcements</a>
+                </li>
+        </ul>
+
+        {% endif %}
+          <div class="table-responsive">
+            <table class="table align-items-center table-flush">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col" class="sort" data-sort="name">Status</th>
+                  <th scope="col" class="sort" data-sort="name">Created By</th>
+                  <th scope="col" class="sort" data-sort="budget">Catagory</th>
+                  <th scope="col" class="sort" data-sort="budget">Message</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody class="list">
+                {% for anouncement in announcements %}
+                  {% if anouncement.status == 'D' %}
+                    <tr class="client-submission draft">
+                  {% elif anouncement.status == 'A' %}
+                     <tr class="client-submission active">
+                          {% elif anouncement.status == 'X' %}
+                     <tr class="client-submission deleted">
+                   {% endif %}
+                   <td>
+  {{ anouncement.get_status_display }}
+</td>
+                  <td class="budget">
+                    {{ anouncement.posted_by.first_name }} {{anouncement.posted_by.last_name}}
+                  </td>
+                  <td>
+      {{ anouncement.get_message_type_display }}
+ </td>
+
+                                     <td class="text-break">
+      {{ anouncement.message }}
+ </td>
+
+                  <td>
+                    <a class="btn btn-secondary" href="#">Edit</a>
+                  </td>
+                </tr>
+              </tr>
+            </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <!-- Card footer -->
+          <div class="card-footer py-4">
+            <nav aria-label="...">
+              <ul class="pagination__list pagination justify-content-end mb-0">
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% include "/includes/footer.html" %}
+
+  </div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}
+
+{% endblock javascripts %}

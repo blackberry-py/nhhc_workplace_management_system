@@ -1,0 +1,175 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} {{ type }} Employee - {{ submission.last_name }}, {{ submission.first_name }} {% endblock title %}
+{% load crispy_forms_tags %}
+{% load anonymize %}
+
+  <link rel="stylesheet" href="{% static '/css/custom-portal-styles.css' %}" type="text/css"/>
+
+
+{% block content %}
+    <div class="col-xl-8 order-xl-1">
+      <div class="card">
+        <div class="card-header">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h3 class="mb-0">Employee Details </h3>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12 mb-0">
+              <h1>Personal Information</h1>
+                          </div>
+          </div>
+
+              <div class="row">
+                <div class="col-4">
+              <h3><strong>First Name:<br/> </strong></h3>
+              <p>{{ employee.first_name }}</p>
+              </div>
+          <div class="col-4">
+              <h3><strong>Middle Name:<br/> </strong></h3>
+              <p>{{ employee.middle_name }}</p>
+            </div>
+            <div class="col-4">
+              <h3><strong>Last Name:</strong></h3><br/>
+              <p>{{ employee.last_name }}</p>
+            </div>
+              </div>
+
+          <div class="row">
+            <div class="col-4">
+              <h3><strong>Gender Identity:</strong></h3>
+              <p>{{ employee.get_gender_display }}</p>
+            </div>
+              <div class="col-4">
+              <h3><strong>Preferred Language:</strong></h3>
+              <p>{{ employee.get_language_display }}</p>
+            </div>
+            <div class="col-4">
+              <h3><strong>Social Security<sub>(Masked)</sub>:</strong></h3>
+              <p>{{ employee.social_security | anonymize }}</p>
+            </div>
+          </div>
+             <div class="row">
+            <div class="col-4">
+              <h3><strong>Racial Identity:</strong></h3>
+              <p>{{ employee.get_race_display }}</p>
+            </div>
+              <div class="col-4">
+              <h3><strong>Marital Status:</strong></h3>
+              <p>{{ employee.get_marital_status_display }}</p>
+            </div>
+                        <div class="col-4">
+              <h3><strong>Education/Qualifications:</strong></h3>
+              <p>{{ employee.get_qualifications_display }}</p>
+            </div>
+          </div>
+            <hr class="my-4" />
+          <div class="row">
+            <div class="col-12">
+  <h1>Contact Information</h1>
+</div>
+          </div>
+           <div class="row">
+            <div class="col-12">
+              <h3><strong>Home Address:</strong></h3>
+              <p>{{ employee.home_address }}</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-5">
+              <h3><strong>City:</strong></h3>
+              <p>{{ employee.city }}</p>
+            </div>
+              <div class="col-3">
+              <h3><strong>State:</strong></h3>
+              <p>{{ employee.state }}</p>
+            </div>
+                        <div class="col-4">
+              <h3><strong>Zipcode:</strong></h3>
+              <p>{{ employee.zipcode }}</p>
+            </div>
+          </div>
+                      <hr class="my-4" />
+
+          <div class="row">
+          <h2>Emergency Contact Information</h2>
+          </div>
+            <div class="row">
+            <div class="col-6">
+              <h3><strong>First Name:</strong></h3>
+              <p>{{ employee.emergency_contact_first_name }}</p>
+            </div>
+              <div class="col-6">
+              <h3><strong>Last Name:</strong></h3>
+              <p>{{ employee.emergency_contact_last_name }}</p>
+            </div>
+            </div>
+            <div class="row">
+              <div class="col-6">
+              <h3><strong>Relationship:</strong></h3>
+              <p>{{ employee.emergency_contact_relationship }}</p>
+            </div>
+              <div class="col-6">
+              <h3><strong>Phone:</strong></h3>
+              <p>{{ employee.emergency_contact_phone }}</p>
+            </div>
+            </div>
+            <hr class="my-4" />
+                      <div class="row">
+          <h2>Position Details</h2>
+          </div>
+            <div class="row">
+  
+              <div class="col-12">
+              <h3><strong>Hire Date:</strong></h3>
+              <p>{{ employee.hire_date }}</p>
+            </div>
+            </div>
+            <div class="row">
+              <div class="col-4">
+              <h3><strong>Related to Client:</strong></h3>
+              <p>{{ employee.family_hca }}</p>
+            </div>
+              <div class="col-4">
+              <h3><strong>GED/High School Diploma:</strong></h3>
+              {% if employee.qualifications_verification %}
+                 <p>{{ employee.qualifications_verification.file }}</p>
+              {% else %}
+         <p>No File Available</p>
+              {% endif %}
+            </div>
+                      <div class="col-4">
+              <h3><strong>CPR Verification:</strong></h3>
+              {% if employee.cpr_verification %}
+                      <p>{{ employee.cpr_verification.file }}</p>
+              {% else %}
+                  <p>No File Available</p>
+              {% endif %}
+            </div>
+            </div>
+                                  <hr class="my-4" />
+
+                 <div class="row">
+                  {% crispy form %}
+          </div>
+
+        </div>
+                        <div class="w-full text-center">
+        <a  class="btn btn-secondary" href="{% url 'roster' %}">Back to Employee Roster</a>
+            </div>
+      </div>
+    </div>
+
+
+  {% include "/includes/footer.html" %}
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}
+    <script src="{% static '/js/alerts.js' %}"></script>
+{% endblock javascripts %}

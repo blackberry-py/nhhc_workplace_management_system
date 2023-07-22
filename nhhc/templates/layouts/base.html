@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+  <meta name="description" content="internal employee management CMS portal for Nett Hands Home Care Employees"/>
+  <meta name="keywords" content="employee management, CMS, portal Nett Hands Home Care, Employees"/>
+
+  <title>
+    Nett Hands Employee Portal - {% block title %} {% endblock title %}
+  </title>
+
+  <!-- Favicon - loaded as static -->
+  <link rel="icon" href="{% static 'img/favicon.png' %}" type="image/png"/>
+  <!-- Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"/>
+  <!-- Icons -->
+  <link rel="stylesheet" href="{% static '/vendor/nucleo/css/nucleo.css' %}" type="text/css"/>
+  <link rel="stylesheet" href="{% static '/vendor/@fortawesome/fontawesome-free/css/all.min.css' %}" type="text/css"/>
+  <!-- Page plugins -->
+  <!-- Argon CSS -->
+  <link rel="stylesheet" href="{% static '/css/argon.css' %}" type="text/css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+      <link rel="stylesheet" href="{% static '/css/custom-portal-styles.css' %}" type="text/css"/>
+
+  <!-- Specific CSS goes HERE -->
+  {% block stylesheets %}{% endblock stylesheets %}
+
+</head>
+
+<body >
+
+  {% include "/includes/sidenav.html" %}
+
+  <div class="main-content" id="panel">
+
+    {% include "/includes/navigation.html" %}
+
+    {% block content %}{% endblock content %}
+
+  </div>
+
+  {% include "/includes/scripts.html" %}
+
+  <!-- Specific JS goes HERE -->
+  {% block javascripts %}{% endblock javascripts %}
+
+  <script src="{% static '/js/argon.js' %}"></script>
+  <script src="{% static '/js/pagination.js' %}"></script>
+  <script src="{% static '/js/custom-scripts.js' %}"></script>
+
+</body>
+
+</html>

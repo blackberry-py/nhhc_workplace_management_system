@@ -1,0 +1,119 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} Client Service Requests {% endblock title %}
+{% block content %}
+
+  <div class="header bg-primary pb-6">
+    <div class="container-fluid">
+      <div class="header-body">
+        <div class="row align-items-center py-4">
+          <div class="col-lg-6 col-7">
+            <h6 class="h2 text-white d-inline-block mb-0">Client Service Requests</h6>
+            <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+
+            </nav>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page content -->
+  <div class="container-fluid mt--6">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <!-- Card header -->
+          <div class="card-header border-0">
+            <h3 class="mb-0">Submissions</h3>
+       
+          </div>
+          <!-- Light table -->
+                        <ul class="nav nav-tabs">
+                <li class="tab nav-item">
+                  <a class="nav-link tab active" id="all" aria-current="page" href="#">{{ all_submuission }} Total Submissions</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link tab" id="pending" href="#">{{ reviewed }} Submissions Reviewed</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link tab" id="reviewed" href="#">{{ unresponsed }} Submissions Pending Review</a>
+                </li>
+
+        </ul> 
+          <div class="table-responsive">
+            <table class="table align-items-center table-flush">
+              <thead class="thead-light"> 
+                <tr>
+                  <th scope="col" class="sort" data-sort="name">Submission Date</th>
+                                    <th scope="col" class="sort" data-sort="reviewed">Reviewed?</th>
+
+                  <th scope="col" class="sort" data-sort="budget">First Name</th>
+                  <th scope="col" class="sort" data-sort="status">Last Name</th>
+                  <th scope="col">Desired Service</th>
+                  <th scope="col" class="sort" data-sort="completion">Phone</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody class="list">
+                {% for submission in submissions %}
+                  {% if submission.reviewed is False %}
+                    <tr class="client-submission reviewed">
+                  {% elif submission.reviewed is True %}
+                     <tr class="client-submission pending">
+                   {% endif  %}
+                  <th scope="row">
+                    <div class="media align-items-center">
+
+                      <div class="media-body">
+                        <span class="name mb-0 text-sm">{{ submission.date_submitted }}</span>
+                      </div>
+                    </div>
+                  </th>
+                  <td>
+                    {% if submission.reviewed is True %}
+                    <img src="{% static 'img/read-submission-dot.png' %}" alt="Read Icon" width="30px" height="30px"/>
+                  {% else %}
+                    <img src="{% static 'img/new-submission-dot.png' %}" alt="Read Icon" width="30px" height="30px"/>
+                  {% endif %}
+                  </td>
+                  <td class="budget">
+                    {{ submission.first_name }}
+                  </td>
+                  <td>
+      {{ submission.last_name }}
+ </td>
+                  <td>
+                    {{ submission.get_desired_service_display }}
+                  </td>
+                  <td>
+                    {{ submission.contact_number }}
+                  </td>
+                  <td>
+                    <a class="btn btn-secondary" href="{% url 'client_interest_details' pk=submission.pk %}">Details</a>
+                  </td>  
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <!-- Card footer -->
+          <div class="card-footer py-4">
+            <nav aria-label="...">
+              <ul class="pagination__list pagination justify-content-end mb-0">
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% include "includes/footer.html" %}
+
+  </div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}{% endblock javascripts %}

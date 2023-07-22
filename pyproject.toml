@@ -1,0 +1,46 @@
+[tool.poetry]
+name = "netthandshomecare"
+version = "0.1.0"
+description = "Front-End website and web application for Nett Hands Home care"
+authors = ["Terry Brooks, Jr. <Terry.Arthur@BrooksJr.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+Django = ">=3.2.19"
+python-dotenv = "^1.0.0"
+psycopg2-binary = "^2.9.6"
+django-crispy-forms = "^2.0"
+crispy-bootstrap4 = "^2022.1"
+pendulum = "^2.1.2"
+django-phonenumber-field = {extras = ["phonenumberslite"], version = "^7.1.0"}
+django-localflavor = "^4.0"
+whitenoise = "^6.5.0"
+gunicorn = "^20.1.0"
+djlint = "^1.31.1"
+six = "^1.16.0"
+django-2-collectionfield = "^0.0.4"
+supervisor = "^4.2.5"
+django-minio-storage = "^0.5.6"
+boto3 = "^1.28.2"
+django-storages = "^1.13.2"
+google-api-python-client = "^2.93.0"
+google-cloud-storage = "^2.10.0"
+django-recaptcha = "^3.0.0"
+django-cors-headers = "^4.2.0"
+django-admin-env-notice = "^1.0"
+django-admin-ip-restrictor = "^2.2.0"
+loguru = "^0.7.0"
+
+[tool.poetry.group.dev.dependencies]
+icecream = "^2.1.3"
+pre-commit = "^3.3.3"
+black = "^23.3.0"
+djlint = "^1.31.0"
+django-debug-toolbar = "^4.1.0"
+httpie = "^3.2.2"
+tox = "^4.6.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
