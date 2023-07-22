@@ -1,5 +1,5 @@
 #!/bin/bash
-if poetry install; then
+if poetry install --only-root; then
     if python manage.py collectstatic --no-input; then
         if python manage.py migrate; then
             echo "SUCCESSFULLY CONFIGURED SERVER! 🎊"
