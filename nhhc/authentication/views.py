@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.contrib.auth import logout
 from django.shortcuts import redirect
-from django.shortcuts import render
+from django.shortcuts import render, reverse
 
 from .forms import LoginForm
 from .forms import SignUpForm
@@ -24,7 +24,7 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect("/dashboard")
+                return redirect(reverse("dashboard"))
             else:
                 msg = "Invalid credentials"
         else:

@@ -5,29 +5,55 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Exception',
+            name="Exception",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date', models.DateField()),
-                ('start_time', models.TimeField()),
-                ('end_time', models.TimeField()),
-                ('num_hours', models.PositiveIntegerField()),
-                ('reason', models.TextField(validators=[django.core.validators.MinLengthValidator(50, 'the field must contain at least 50 characters')])),
-                ('status', models.CharField(choices=[('P', 'Pending - Awaiting Supervisor Review'), ('A', 'Approved - Time Amended'), ('R', 'Rejected')], default='P', max_length=1)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("date", models.DateField()),
+                ("start_time", models.TimeField()),
+                ("end_time", models.TimeField()),
+                ("num_hours", models.PositiveIntegerField()),
+                (
+                    "reason",
+                    models.TextField(
+                        validators=[
+                            django.core.validators.MinLengthValidator(
+                                50, "the field must contain at least 50 characters"
+                            )
+                        ]
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("P", "Pending - Awaiting Supervisor Review"),
+                            ("A", "Approved - Time Amended"),
+                            ("R", "Rejected"),
+                        ],
+                        default="P",
+                        max_length=1,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Payroll Exception',
-                'verbose_name_plural': 'Payroll Exceptions',
-                'db_table': 'payroll_exceptions',
-                'ordering': ['-date'],
+                "verbose_name": "Payroll Exception",
+                "verbose_name_plural": "Payroll Exceptions",
+                "db_table": "payroll_exceptions",
+                "ordering": ["-date"],
             },
         ),
     ]

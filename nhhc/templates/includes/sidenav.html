@@ -13,7 +13,7 @@
         <!-- Nav items -->
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link {% if 'profile' in segment %} active {% endif %}" href="{% url 'home' %}">
+            <a class="nav-link {% if 'profile' in segment %} active {% endif %}" href="{% url 'dashboard' %}">
               <i class="ni ni-shop text-blue"></i>
               <span class="nav-link-text">Home</span>
             </a>
@@ -67,10 +67,9 @@
           </li>
           {% else %}
           {% endif %}
-          <hr class="my-3"/>
-                                    <li class="nav-item">
+            <li class="nav-item">
             <a class="nav-link" href="{% url 'logout' %}">
-              <i class="ni ni-bullet-list-67 text-blue"></i>
+              <i class="ni ni-curved-next text-yellow"></i>
               <span class="nav-link-text">Log Off</span>
             </a>
           </li>

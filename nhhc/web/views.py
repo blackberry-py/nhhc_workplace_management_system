@@ -79,12 +79,16 @@ def send_external_application_submission_confirmation(form):
                 html_message.as_string(),
             )
             applicant = form.cleaned_data["last_name"], form.cleaned_data["first_name"]
-            log_message = f"Application Submitted - {applicant} - {recipient_email} - Successful"
+            log_message = (
+                f"Application Submitted - {applicant} - {recipient_email} - Successful"
+            )
             logger.info(log_message)
             return transmission
     except Exception as e:
         applicant = form.cleaned_data["last_name"], form.cleaned_data["first_name"]
-        log_message = f"Application Submitted - {applicant} - {recipient_email} - FAILED: {e}"
+        log_message = (
+            f"Application Submitted - {applicant} - {recipient_email} - FAILED: {e}"
+        )
         logger.error(log_message)
 
 
@@ -186,12 +190,16 @@ def send_external_client_submission_confirmation(form):
                 html_message.as_string(),
             )
             applicant = form.cleaned_data["last_name"], form.cleaned_data["first_name"]
-            log_message = f"Interest Submitted - {applicant} - {recipient_email} - Successful"
+            log_message = (
+                f"Interest Submitted - {applicant} - {recipient_email} - Successful"
+            )
             logger.info(log_message)
             return transmission
     except Exception as e:
-            log_message = f"Interest Submitted - {applicant} - {recipient_email} - FAILED: {e}"
-            logger.error(log_message)
+        log_message = (
+            f"Interest Submitted - {applicant} - {recipient_email} - FAILED: {e}"
+        )
+        logger.error(log_message)
 
 
 def send_internal_client_submission_confirmation(form):
@@ -316,12 +324,14 @@ def submitted(request):
 
 #!SECTION
 
-def handler404(request, exception, template_name="404.html"):
+
+def handler404(request, exception=HttpResponseNotFound, template_name="404.html"):
     context = dict()
     context["title"] = "404 - Page not found"
-    return render(request, '404.html', context, status=404)
+    return render(request, "404.html", context, status=404)
 
-def handler500(request, exception, template_name="500.html"):
+
+def handler500(request, exception=HttpResponseServerError, template_name="500.html"):
     context = dict()
     context["title"] = "500 - Internal Error"
-    return render(request, '500error.html', status=500)
+    return render(request, "500error.html", status=500)

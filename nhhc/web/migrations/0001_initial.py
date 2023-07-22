@@ -8,7 +8,6 @@ import phonenumber_field.modelfields
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -17,59 +16,138 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='EmploymentApplicationModel',
+            name="EmploymentApplicationModel",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('first_name', models.CharField(max_length=255)),
-                ('last_name', models.CharField(max_length=255)),
-                ('contact_number', phonenumber_field.modelfields.PhoneNumberField(max_length=128, region='US')),
-                ('email', models.EmailField(max_length=254)),
-                ('home_address', models.CharField(max_length=255)),
-                ('city', models.CharField(max_length=255)),
-                ('state', localflavor.us.models.USStateField(max_length=2)),
-                ('zipcode', localflavor.us.models.USZipCodeField(max_length=10)),
-                ('mobility', models.CharField(choices=[('C', 'I Have Consistent Access To A Car'), ('P', 'I Use Public Transportation'), ('RS', 'I Use Rideshare (Uber/Lyft) or a Reliable Pickup/Dropoff Provider'), ('NA', 'Other')], max_length=255)),
-                ('prior_experience', models.CharField(choices=[('S', '12+ Months'), ('J', '3+ Months'), ('N', 'No Prior Experience')], max_length=255)),
-                ('ipdh_registered', models.BooleanField(default=False)),
-                ('availability_monday', models.BooleanField(blank=True, null=True)),
-                ('availability_tuesday', models.BooleanField(blank=True, null=True)),
-                ('availability_wednesday', models.BooleanField(blank=True, null=True)),
-                ('availability_thursday', models.BooleanField(blank=True, null=True)),
-                ('availability_friday', models.BooleanField(blank=True, null=True)),
-                ('availability_saturday', models.BooleanField(blank=True, null=True)),
-                ('availability_sunday', models.BooleanField(blank=True, null=True)),
-                ('reviewed', models.BooleanField(blank=True, default=False, null=True)),
-                ('hired', models.BooleanField(blank=True, null=True)),
-                ('date_submitted', models.DateTimeField(auto_now_add=True)),
-                ('reviewed_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("first_name", models.CharField(max_length=255)),
+                ("last_name", models.CharField(max_length=255)),
+                (
+                    "contact_number",
+                    phonenumber_field.modelfields.PhoneNumberField(
+                        max_length=128, region="US"
+                    ),
+                ),
+                ("email", models.EmailField(max_length=254)),
+                ("home_address", models.CharField(max_length=255)),
+                ("city", models.CharField(max_length=255)),
+                ("state", localflavor.us.models.USStateField(max_length=2)),
+                ("zipcode", localflavor.us.models.USZipCodeField(max_length=10)),
+                (
+                    "mobility",
+                    models.CharField(
+                        choices=[
+                            ("C", "I Have Consistent Access To A Car"),
+                            ("P", "I Use Public Transportation"),
+                            (
+                                "RS",
+                                "I Use Rideshare (Uber/Lyft) or a Reliable Pickup/Dropoff Provider",
+                            ),
+                            ("NA", "Other"),
+                        ],
+                        max_length=255,
+                    ),
+                ),
+                (
+                    "prior_experience",
+                    models.CharField(
+                        choices=[
+                            ("S", "12+ Months"),
+                            ("J", "3+ Months"),
+                            ("N", "No Prior Experience"),
+                        ],
+                        max_length=255,
+                    ),
+                ),
+                ("ipdh_registered", models.BooleanField(default=False)),
+                ("availability_monday", models.BooleanField(blank=True, null=True)),
+                ("availability_tuesday", models.BooleanField(blank=True, null=True)),
+                ("availability_wednesday", models.BooleanField(blank=True, null=True)),
+                ("availability_thursday", models.BooleanField(blank=True, null=True)),
+                ("availability_friday", models.BooleanField(blank=True, null=True)),
+                ("availability_saturday", models.BooleanField(blank=True, null=True)),
+                ("availability_sunday", models.BooleanField(blank=True, null=True)),
+                ("reviewed", models.BooleanField(blank=True, default=False, null=True)),
+                ("hired", models.BooleanField(blank=True, null=True)),
+                ("date_submitted", models.DateTimeField(auto_now_add=True)),
+                (
+                    "reviewed_by",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Prospective Employee',
-                'verbose_name_plural': 'Prospective Employees',
-                'db_table': 'employment_interests',
-                'ordering': ['last_name', 'first_name', 'date_submitted'],
+                "verbose_name": "Prospective Employee",
+                "verbose_name_plural": "Prospective Employees",
+                "db_table": "employment_interests",
+                "ordering": ["last_name", "first_name", "date_submitted"],
             },
         ),
         migrations.CreateModel(
-            name='ClientInterestSubmissions',
+            name="ClientInterestSubmissions",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('first_name', models.CharField(max_length=255)),
-                ('last_name', models.CharField(max_length=255)),
-                ('email', models.EmailField(max_length=254, null=True)),
-                ('contact_number', phonenumber_field.modelfields.PhoneNumberField(max_length=128, region='US')),
-                ('zipcode', localflavor.us.models.USZipCodeField(max_length=10)),
-                ('insurance_carrier', models.CharField(max_length=255)),
-                ('desired_service', models.CharField(choices=[('I', 'Intermittent Home Care'), ('NM', 'Non-Medical Home Care'), ('MSW', 'Medical Social Work'), ('OT', 'Occupational Therapy'), ('PT', 'Physical Therapy'), ('NA', 'Other')], max_length=255)),
-                ('date_submitted', models.DateTimeField(auto_now_add=True)),
-                ('reviewed', models.BooleanField(default=False)),
-                ('reviewed_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("first_name", models.CharField(max_length=255)),
+                ("last_name", models.CharField(max_length=255)),
+                ("email", models.EmailField(max_length=254, null=True)),
+                (
+                    "contact_number",
+                    phonenumber_field.modelfields.PhoneNumberField(
+                        max_length=128, region="US"
+                    ),
+                ),
+                ("zipcode", localflavor.us.models.USZipCodeField(max_length=10)),
+                ("insurance_carrier", models.CharField(max_length=255)),
+                (
+                    "desired_service",
+                    models.CharField(
+                        choices=[
+                            ("I", "Intermittent Home Care"),
+                            ("NM", "Non-Medical Home Care"),
+                            ("MSW", "Medical Social Work"),
+                            ("OT", "Occupational Therapy"),
+                            ("PT", "Physical Therapy"),
+                            ("NA", "Other"),
+                        ],
+                        max_length=255,
+                    ),
+                ),
+                ("date_submitted", models.DateTimeField(auto_now_add=True)),
+                ("reviewed", models.BooleanField(default=False)),
+                (
+                    "reviewed_by",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Interested Client',
-                'verbose_name_plural': 'Interested Clients',
-                'db_table': 'interest_clients',
-                'ordering': ['last_name', 'first_name', 'date_submitted'],
+                "verbose_name": "Interested Client",
+                "verbose_name_plural": "Interested Clients",
+                "db_table": "interest_clients",
+                "ordering": ["last_name", "first_name", "date_submitted"],
             },
         ),
     ]
