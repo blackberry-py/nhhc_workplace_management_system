@@ -12,6 +12,7 @@ from pendulum import now
 from phonenumber_field.modelfields import PhoneNumberField
 from compliance.models import Compliance
 from employee.models import Employee
+from loguru import logger
 
 now = now(tz="America/Chicago")
 
@@ -105,28 +106,32 @@ class EmploymentApplicationModel(models.Model):
         random_password = "".join(random.choice(letters) for i in range(8))
         return random_password
 
-    def hire(self, hired_by):
-        username = (
-            f"{self.first_name.lower()}.{self.last_name.lower().replace(' ', '.')}"
-        )
-        ic(username)
-        new_employee = Employee(
-            is_superuser=False,
-            username=username,
-            is_active=True,
-            first_name=self.first_name,
-            last_name=self.last_name,
-            email=self.email,
-            phone=self.contact_number,
-        )
-        password = self.generate_random_password()
-        new_employee.password = make_password(password)
-        new_employee.save()
-        compliance = Compliance(employee=new_employee)
-        compliance.save()
-        self.hired = True
-        self.reviewed = True
-        self.reviewed_by = hired_by
+    def hire_applicant(self, hired_by):
+        try:
+            username = (
+                f"{self.first_name.lower()}.{self.last_name.lower().replace(' ', '.')}"
+            )
+            ic(username)
+            new_employee = Employee(
+                is_superuser=False,
+                username=username,
+                is_active=True,
+                first_name=self.first_name,
+                last_name=self.last_name,
+                email=self.email,
+                phone=self.contact_number,
+            )
+            password = self.generate_random_password()
+            new_employee.password = make_password(password)
+            new_employee.save()
+            compliance = Compliance(employee=new_employee)
+            compliance.save()
+            self.hired = True
+            self.reviewed = True
+            self.reviewed_by = hired_by
+        except Exception as e:
+            log_message = f"Unable to Hire {self.last_name},{self.first_name} "
+            logger.error()
 
     def reject(self, rejected_by):
         self.hired = False

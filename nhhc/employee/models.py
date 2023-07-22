@@ -198,7 +198,7 @@ class Employee(AbstractUser):
     onboarded = models.DateField(null=True, blank=True)
 
     def __str__(self):
-        return f"(Employee Id:{self.id}), Name: {self.last_name}, {self.first_name} | Username: {self.username}| Title: {self.job_title})"
+        return f"(Employee Id:{self.id}), Name: {self.last_name}, {self.first_name} | Username: {self.username}"
 
     def onboarding_complete(self):
         valid_fields = 0

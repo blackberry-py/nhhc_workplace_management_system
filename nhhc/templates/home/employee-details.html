@@ -4,7 +4,7 @@
 {% load crispy_forms_tags %}
 {% load anonymize %}
 
-  <link rel="stylesheet" href="{% static '/css/custom-portal-styles.css' %}" type="text/css"/>
+  <link rel="stylesheet" href="{% static 'css/custom-portal-styles.css' %}" type="text/css"/>
 
 
 {% block content %}
@@ -165,11 +165,10 @@
     </div>
 
 
-  {% include "/includes/footer.html" %}
 
 {% endblock content %}
 
 <!-- Specific JS goes HERE -->
 {% block javascripts %}
-    <script src="{% static '/js/alerts.js' %}"></script>
+    <script src="{% static 'js/alerts.js' %}"></script>
 {% endblock javascripts %}

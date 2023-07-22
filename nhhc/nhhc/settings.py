@@ -27,9 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 SESSION_COOKIE_SECURE = True
-
+ADMINRESTRICT_ALLOW_PRIVATE_IP = False
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     "localflavor",
     "captcha",
     "corsheaders",
-    "adminrestrict",
+    # "IpWhitelister",
     ## Installed Internal Apps
     "web",
     "portal",
@@ -67,7 +67,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
-    "adminrestrict.middleware.AdminPagesRestrictMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -76,6 +75,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "ip_restriction.IpWhitelister",
 ]
 AUTH_USER_MODEL = "employee.Employee"
 ROOT_URLCONF = "nhhc.urls"
@@ -112,7 +112,8 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
-
+ADMINRESTRICT_ENABLE_CACHE = True
+ADMINRESTRICT_DENIED_MSG = "Unable To Access Admin From This IP Address"
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -209,3 +210,7 @@ LOGGING = {
 mimetypes.add_type("text/css", ".css", True)
 mimetypes.add_type("text/html", ".html", True)
 mimetypes.add_type("text/javascript", ".js", True)
+
+# Admin Restriction Via IP Address
+RESTRICT_ADMIN_BY_IPS = os.getenv("BLOCK_ADMIN_ACCESS")
+ALLOWED_ADMIN_IPS = os.getenv("ALLOWED_IPS")

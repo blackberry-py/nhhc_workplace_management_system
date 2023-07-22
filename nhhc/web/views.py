@@ -15,6 +15,8 @@ from web.utils import application_body, client_body
 from loguru import logger
 from django.template import RequestContext
 from django.http import HttpResponseServerError, HttpResponseNotFound
+from ipware import get_client_ip
+from loguru import logger
 
 load_dotenv()
 # SECTION - Page Rendering Views
@@ -29,6 +31,16 @@ def index(request):
     Returns:
         Renders Homepage
     """
+    client_ip, is_routable = get_client_ip(request)
+    if client_ip is None:
+        logger.warning("Unable to get the client's IP address")
+    else:
+        logger.debug(client_ip)
+        if is_routable:
+            logger.info("The client's IP address is publicly routable on the Internet")
+        else:
+            logger.warning("The client's IP address is private")
+
     return render(request, "index.html", {"title": "Home"})
 
 

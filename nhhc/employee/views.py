@@ -53,7 +53,7 @@ def hire(request):
         body = json.loads(body_unicode)
         pk = body["pk"]
         submission = EmploymentApplicationModel.objects.get(pk=pk)
-        submission.hire(request.user)
+        submission.hire_applicant(request.user)
         send_new_user_credentials(submission)
         submission.save()
         return HttpResponse(status=201)
