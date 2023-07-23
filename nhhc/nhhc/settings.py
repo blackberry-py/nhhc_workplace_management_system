@@ -33,7 +33,8 @@ ADMINRESTRICT_ALLOW_PRIVATE_IP = False
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "nett-hands-site-and-portal.onrender.com",
+    "216.24.57.1",
+    "nett-hands.onrender.com"
     "www.netthandshome.care",
     "0.0.0.0",
 ]
