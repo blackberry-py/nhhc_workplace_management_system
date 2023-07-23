@@ -456,10 +456,10 @@ ol {
   display: inline-block;
 }
 .hero__slider.owl-carousel .owl-dots button.active {
-  color: #ffffff;
+  color: #33136e;
 }
 .hero__slider.owl-carousel .owl-dots button.active:after {
-  background: #ffffff;
+  background: #33136e;
   height: 2px;
 }
 .hero__slider.owl-carousel .owl-dots button:after {
@@ -2334,5 +2334,24 @@ h3.out-of-compliance {
 
   .notfound .notfound-404 h1 {
     font-size: 112px;
+  }
+}
+@media only screen and (max-device-width: 480px) {
+  .show-mobile {
+    display: block;
+  }
+
+  .hide-mobile {
+    display: none;
+  }
+}
+
+@media only screen and (min-device-width: 481px) {
+  .show-mobile {
+    display: none;
+  }
+
+  .hide-mobile {
+    display: block;
   }
 }

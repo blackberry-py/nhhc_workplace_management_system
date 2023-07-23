@@ -3,7 +3,7 @@
 
 {% block main %}
 
-    <section class="hero">
+    <section class="hero hide-mobile">
         <div class="hero__slider owl-carousel">
             <div class="hero__item set-bg" data-setbg="{% static '//img/hero/hero-1.jpg' %}">
                 <div class="container">
@@ -16,7 +16,7 @@
                             </div>
                         </div>
                     </div>
-                </div>2
+                </div>
             </div>
             <div class="hero__item set-bg" data-setbg="{% static '/img/hero/hero-2.jpg' %}">
                 <div class="container">
@@ -48,6 +48,50 @@
     </section>
     <!-- Hero Section End -->
 
+    <section class="hero show-mobile">
+        <div class="hero__slider owl-carousel">
+            <div class="hero__item set-bg" data-setbg="{% static '/img/mobile-hero-img.webp' %}">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6  col-sm-1">
+                            <div class="hero__text">
+                                <span>For dedicated home healthcare professionals</span>
+                                <h2>Join Our Team!</h2>
+                                <a href="{% url 'application' %}" class="primary-btn">Complete interest application</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero__item set-bg" data-setbg="{% static '/img/mobile-hero-img.webp' %}">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6  col-sm-1">
+                            <div class="hero__text">
+                                <span>For loving family loving members</span>
+                                <h2>Enroll Your Loved One!</h2>
+                                <a href="{% url 'client-interest'%}" class="primary-btn">Complete client interest</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero__item set-bg" data-setbg="{% static '/img/mobile-hero-img.webp' %}">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-1">
+                            <div class="hero__text">
+                                <span>For individuals who desire INDEPENDENCE and support </span>
+                                <h2>Get Home Care</h2>
+                                <a href="#services" class="primary-btn">See more about our services</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Hero Section End -->
     <!-- Services Section Begin -->
     <section id="services" class="services spad">
         <div class="container">
