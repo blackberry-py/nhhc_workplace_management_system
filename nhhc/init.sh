@@ -12,4 +12,3 @@ if poetry lock && poetry install; then
 else
     echo "ERROR: Unable to Install App Requirements"
 fi
-nhhc/init.shchm od
