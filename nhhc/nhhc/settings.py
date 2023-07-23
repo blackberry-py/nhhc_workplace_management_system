@@ -214,5 +214,5 @@ mimetypes.add_type("text/html", ".html", True)
 mimetypes.add_type("text/javascript", ".js", True)
 
 # Admin Restriction Via IP Address
-RESTRICT_ADMIN_BY_IPS = os.getenv("BLOCK_ADMIN_ACCESS")
+RESTRICT_ADMIN_BY_IPS = True
 ALLOWED_ADMIN_IPS = os.getenv("ALLOWED_IPS")
