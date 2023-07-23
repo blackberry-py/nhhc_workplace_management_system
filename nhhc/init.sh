@@ -1,7 +1,7 @@
 #!/bin/bash
 if poetry lock && poetry install; then
     if python manage.py collectstatic --no-input; then
-        if python manage.py migrate; then
+        if python manage.py migrate && python manage.py createsuperuser --noinput; then
             echo "SUCCESSFULLY CONFIGURED SERVER! 🎊"
         else
             echo "ERROR: Unable to Intialized Database"
