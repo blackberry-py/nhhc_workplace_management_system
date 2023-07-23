@@ -27,14 +27,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 SESSION_COOKIE_SECURE = True
 ADMINRESTRICT_ALLOW_PRIVATE_IP = False
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "216.24.57.1",
-    "nett-hands.onrender.com"
+    "nett-hands.onrender.com",
     "www.netthandshome.care",
     "0.0.0.0",
 ]
