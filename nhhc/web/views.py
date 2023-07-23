@@ -180,6 +180,7 @@ def send_external_client_submission_confirmation(form):
     Args:
         form: Form Instance
     """
+    applicant = form.cleaned_data["last_name"], form.cleaned_data["first_name"]
     try:
         sender_email = os.getenv("NOTIFICATION_SENDER_EMAIL")
         sender_password = os.getenv("EMAIL_ACCT_PASSWORD")
@@ -201,14 +202,12 @@ def send_external_client_submission_confirmation(form):
                 recipient_email,
                 html_message.as_string(),
             )
-            applicant = form.cleaned_data["last_name"], form.cleaned_data["first_name"]
             log_message = (
                 f"Interest Submitted - {applicant} - {recipient_email} - Successful"
             )
             logger.info(log_message)
             return transmission
     except Exception as e:
-        applicant = form.cleaned_data["last_name"], form.cleaned_data["first_name"]
         log_message = (
             f"Interest Submitted - {applicant} - {recipient_email} - FAILED: {e}"
         )
@@ -216,6 +215,7 @@ def send_external_client_submission_confirmation(form):
 
 
 def send_internal_client_submission_confirmation(form):
+    applicant = form.cleaned_data["last_name"], form.cleaned_data["first_name"]
     """Internal Non-Rendering View Function to send email notification of the submissions of client interest and employment application forms
     Args:
         form: Form Instance
@@ -261,10 +261,8 @@ def send_internal_client_submission_confirmation(form):
         message.set_content(content)
         transmission = server_ssl.send_message(message)
         server_ssl.quit()
-        applicant = form.cleaned_data["last_name"], form.cleaned_data["first_name"]
         logger.info(f"Internal Interest Notice Sent -  {applicant} - Success")
     except Exception as e:
-        applicant = form.cleaned_data["last_name"], form.cleaned_data["first_name"]
         logger.error(f"Internal Interest Notice Sent -  {applicant} -   FAILED: {e}")
 
 
