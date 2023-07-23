@@ -208,6 +208,7 @@ def send_external_client_submission_confirmation(form):
             logger.info(log_message)
             return transmission
     except Exception as e:
+        applicant = form.cleaned_data["last_name"], form.cleaned_data["first_name"]
         log_message = (
             f"Interest Submitted - {applicant} - {recipient_email} - FAILED: {e}"
         )
