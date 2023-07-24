@@ -8,15 +8,15 @@ from string import Template
 
 from django.conf import settings
 from django.core.mail import send_mail
+from django.http import HttpResponseNotFound, HttpResponseServerError, HttpResponse
 from django.shortcuts import redirect, render
-from dotenv import load_dotenv
-from web.forms import ClientInterestForm, EmploymentApplicationForm
-from web.utils import application_body, client_body
-from loguru import logger
 from django.template import RequestContext
-from django.http import HttpResponseServerError, HttpResponseNotFound
+from django.views.decorators.http import require_GET
+from dotenv import load_dotenv
 from ipware import get_client_ip
 from loguru import logger
+from web.forms import ClientInterestForm, EmploymentApplicationForm
+from web.utils import application_body, client_body
 
 load_dotenv()
 # SECTION - Page Rendering Views
@@ -346,3 +346,11 @@ def handler500(request, exception=HttpResponseServerError, template_name="500.ht
     context = dict()
     context["title"] = "500 - Internal Error"
     return render(request, "500error.html", status=500)
+
+@require_GET
+def robots_txt(request):
+    lines = [
+        "User-Agent: *",
+        "Allow: /",
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain")
