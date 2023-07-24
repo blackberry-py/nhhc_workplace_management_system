@@ -31,6 +31,7 @@ from web.models import ClientInterestSubmissions
 from web.models import EmploymentApplicationModel
 from loguru import logger
 
+
 # Create your views here.
 def send_new_user_credentials(new_user):
     """Internal Non-Rendering View Function to send email notification of user namne and password"""
