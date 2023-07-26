@@ -40,7 +40,7 @@ ALLOWED_HOSTS = [
     "0.0.0.0",
 ]
 
-
+APPEND_SLASH = True
 # Application definition
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 INSTALLED_APPS = [
