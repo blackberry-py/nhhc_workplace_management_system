@@ -25,8 +25,8 @@
     <link rel="stylesheet" href="{% static '/css/magnific-popup.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static '/css/slicknav.min.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static '/css/style.css' %}" type="text/css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="{% static '/js/pagination.js' %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" async></script>
+  <script src="{% static '/js/pagination.js' %}" defer></script>
 {% block customstyles %}
 {% endblock customstyles %}
 </head>
@@ -194,17 +194,17 @@
     <!-- Footer Section End -->
 
     <!-- Js Plugins -->
-    <script src="https://kit.fontawesome.com/58e27c88da.js" crossorigin="anonymous"></script>
-    <script src="{% static '/js/jquery-3.3.1.min.js' %}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-    <script src="{% static '/js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
-    <script src="{% static '/js/mixitup.min.js' %}"></script>
-    <script src="{% static '/js/masonry.pkgd.min.js' %}"></script>
-    <script src="{% static '/js/jquery.slicknav.js' %}"></script>
-    <script src="{% static '/js/owl.carousel.min.js' %}"></script>
-    <script src="{% static '/js/main.js' %}"></script>
-    <script src="{% static '/js/custom-scripts.js' %}"></script>
+    <script src="https://kit.fontawesome.com/58e27c88da.js" crossorigin="anonymous" async></script>
+    <script src="{% static '/js/jquery-3.3.1.min.js' %}" async></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js" async></script>
+    <script src="{% static '/js/bootstrap.min.js' %}" defer></script>
+    <script src="{% static 'js/jquery.magnific-popup.min.js' %}" defer></script>
+    <script src="{% static '/js/mixitup.min.js' %}" defer></script>
+    <script src="{% static '/js/masonry.pkgd.min.js' %}" defer></script>
+    <script src="{% static '/js/jquery.slicknav.js' %}" defer></script>
+    {% comment %} <script src="{% static '/js/owl.carousel.min.js' %}"></script> {% endcomment %}
+    <script src="{% static '/js/main.js' %}" defer></script>
+    <script src="{% static '/js/custom-scripts.js' %}" defer></script>
 {% block customscripts %}
 {% endblock customscripts %}
 </body>
