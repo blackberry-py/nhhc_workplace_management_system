@@ -11,7 +11,6 @@ from django.core.mail import send_mail
 from django.http import HttpResponseNotFound, HttpResponseServerError, HttpResponse
 from django.shortcuts import redirect, render
 from django.template import RequestContext
-from django.views.decorators.http import require_GET
 from dotenv import load_dotenv
 from ipware import get_client_ip
 from loguru import logger
@@ -347,10 +346,3 @@ def handler500(request, exception=HttpResponseServerError, template_name="500.ht
     context["title"] = "500 - Internal Error"
     return render(request, "500error.html", status=500)
 
-@require_GET
-def robots_txt(request):
-    lines = [
-        "User-Agent: *",
-        "Allow: /",
-    ]
-    return HttpResponse("\n".join(lines), content_type="text/plain")
