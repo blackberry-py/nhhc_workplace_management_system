@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sitemaps",
     ## Installed 3rd Apps
     "crispy_forms",
     "crispy_bootstrap4",
@@ -216,3 +217,4 @@ mimetypes.add_type("text/javascript", ".js", True)
 # Admin Restriction Via IP Address
 RESTRICT_ADMIN_BY_IPS = True
 ALLOWED_ADMIN_IPS = os.getenv("ALLOWED_IPS")
+SITE_ID = 1

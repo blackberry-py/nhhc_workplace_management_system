@@ -23,8 +23,16 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include
-from django.urls import path
+from django.urls import path, re_path
+from django.contrib.sitemaps.views import sitemap
+from web.sitemaps import StaticViewSitemap
+from django.views.generic.base import TemplateView
 
+from loguru import logger
+sitemaps = {
+    'static': StaticViewSitemap
+}
+from django.http import HttpResponse
 
 urlpatterns = [
     path("control-center/", admin.site.urls),
@@ -34,6 +42,9 @@ urlpatterns = [
     path("", include(employee.urls)),
     path("", include(compliance.urls)),
     path("", include(announcements.urls)),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}),
+    path('robots.txt/', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
+
     # path("404/", web.views.handler404),
     # path("500/", web.views.handler500)
 ]

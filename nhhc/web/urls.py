@@ -1,4 +1,4 @@
-from django.urls import path, re_path
+from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 
 
@@ -10,5 +10,4 @@ urlpatterns = [
     path("client-interest/", views.client_interest, name="client-interest"),
     path("employment-application/", views.employee_interest, name="application"),
     path("submission-confirmation/", views.submitted, name="submitted"),
-    re_path(r"^robots.txt/$", csrf_exempt(views.robots_txt)), 
 ]
