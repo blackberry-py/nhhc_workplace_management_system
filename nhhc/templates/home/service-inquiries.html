@@ -27,27 +27,27 @@
           <!-- Card header -->
           <div class="card-header border-0">
             <h3 class="mb-0">Submissions</h3>
-       
+
           </div>
           <!-- Light table -->
-                        <ul class="nav nav-tabs">
-                <li class="tab nav-item">
-                  <a class="nav-link tab active" id="all" aria-current="page" href="#">{{ all_submuission }} Total Submissions</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link tab" id="pending" href="#">{{ reviewed }} Submissions Reviewed</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link tab" id="reviewed" href="#">{{ unresponsed }} Submissions Pending Review</a>
-                </li>
+          <ul class="nav nav-tabs">
+            <li class="tab nav-item">
+              <a class="nav-link tab active" id="all" aria-current="page" href="#">{{ all_submuission }} Total Submissions</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link tab" id="pending" href="#">{{ reviewed }} Submissions Reviewed</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link tab" id="reviewed" href="#">{{ unresponsed }} Submissions Pending Review</a>
+            </li>
 
-        </ul> 
+          </ul>
           <div class="table-responsive">
             <table class="table align-items-center table-flush">
-              <thead class="thead-light"> 
+              <thead class="thead-light">
                 <tr>
                   <th scope="col" class="sort" data-sort="name">Submission Date</th>
-                                    <th scope="col" class="sort" data-sort="reviewed">Reviewed?</th>
+                  <th scope="col" class="sort" data-sort="reviewed">Reviewed?</th>
 
                   <th scope="col" class="sort" data-sort="budget">First Name</th>
                   <th scope="col" class="sort" data-sort="status">Last Name</th>
@@ -61,8 +61,8 @@
                   {% if submission.reviewed is False %}
                     <tr class="client-submission reviewed">
                   {% elif submission.reviewed is True %}
-                     <tr class="client-submission pending">
-                   {% endif  %}
+                    <tr class="client-submission pending">
+                  {% endif  %}
                   <th scope="row">
                     <div class="media align-items-center">
 
@@ -73,17 +73,17 @@
                   </th>
                   <td>
                     {% if submission.reviewed is True %}
-                    <img src="{% static 'img/read-submission-dot.png' %}" alt="Read Icon" width="30px" height="30px"/>
-                  {% else %}
-                    <img src="{% static 'img/new-submission-dot.png' %}" alt="Read Icon" width="30px" height="30px"/>
-                  {% endif %}
+                      <img src="{% static 'img/read-submission-dot.png' %}" alt="Read Icon" width="30px" height="30px"/>
+                    {% else %}
+                      <img src="{% static 'img/new-submission-dot.png' %}" alt="Read Icon" width="30px" height="30px"/>
+                    {% endif %}
                   </td>
                   <td class="budget">
                     {{ submission.first_name }}
                   </td>
                   <td>
-      {{ submission.last_name }}
- </td>
+                    {{ submission.last_name }}
+                  </td>
                   <td>
                     {{ submission.get_desired_service_display }}
                   </td>
@@ -92,8 +92,8 @@
                   </td>
                   <td>
                     <a class="btn btn-secondary" href="{% url 'client_interest_details' pk=submission.pk %}">Details</a>
-                  </td>  
-                </tr>
+                  </td>
+                  </tr>
                 {% endfor %}
               </tbody>
             </table>

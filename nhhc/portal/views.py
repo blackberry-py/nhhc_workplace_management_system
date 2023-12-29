@@ -2,7 +2,7 @@ import csv
 import json
 import os
 
-import pendulum
+import arrow
 from announcements.forms import AnnouncementForm
 from announcements.models import Announcements
 from compliance.models import Compliance
@@ -13,29 +13,29 @@ from django.core.exceptions import PermissionDenied
 from django.core.files.storage import FileSystemStorage
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
-from django.http import HttpResponse
-from django.http import HttpResponseRedirect
-from django.shortcuts import redirect
-from django.shortcuts import render
-from django.shortcuts import reverse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import redirect, render, reverse
 from django.template import loader
 from django.urls import reverse
 from django.views.generic.detail import DetailView
 from employee.forms import EmployeeForm
 from employee.models import Employee
 from web.forms import ClientInterestForm
-from web.models import ClientInterestSubmissions
-from web.models import EmploymentApplicationModel
+from web.models import ClientInterestSubmissions, EmploymentApplicationModel
 
-now = pendulum.now(tz="America/Chicago")
+now = arrow.now(tz="America/Chicago")
 
 
 @login_required(login_url="/login/")
 def index(request):
     context = dict()
     context["segment"] = "index"
+    new_applications = EmploymentApplicationModel.objects.filter(
+        reviewed=False
+    ).order_by("-date_submitted")
     announcements = Announcements.objects.all().order_by("-date_posted")[:10]
     context["announcements"] = announcements
+    context["new_applications"] = new_applications
     html_template = loader.get_template("home/index.html")
     return HttpResponse(html_template.render(context, request))
 

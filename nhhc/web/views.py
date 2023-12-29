@@ -1,3 +1,7 @@
+"""
+Module: web_views.py
+Description: This module contains views for rendering web pages, processing form data, and sending email notifications.
+"""
 import json
 import os
 import pprint
@@ -8,19 +12,34 @@ from string import Template
 
 from django.conf import settings
 from django.core.mail import send_mail
-from django.http import HttpResponseNotFound, HttpResponseServerError, HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseServerError
 from django.shortcuts import redirect, render
 from django.template import RequestContext
 from dotenv import load_dotenv
 from ipware import get_client_ip
 from loguru import logger
+from django.views.decorators.cache import cache_page
+
+from logtail import LogtailHandler
 from web.forms import ClientInterestForm, EmploymentApplicationForm
 from web.utils import application_body, client_body
+from django.core.cache.backends.base import DEFAULT_TIMEOUT
 
 load_dotenv()
+CACHE_TTL = getattr(settings, "CACHE_TTL", DEFAULT_TIMEOUT)
+
+PRIMARY_LOG_FILE = os.path.join(settings.BASE_DIR, "logs", "primary_ops.log")
+CRITICAL_LOG_FILE = os.path.join(settings.BASE_DIR, "logs", "fatal.log")
+DEBUG_LOG_FILE = os.path.join(settings.BASE_DIR, "logs", "utility.log")
+LOGTAIL_HANDLER = LogtailHandler(source_token=os.getenv("LOGTAIL_API_KEY"))
+
+logger.add(DEBUG_LOG_FILE, diagnose=True, catch=True, backtrace=True, level="DEBUG")
+logger.add(PRIMARY_LOG_FILE, diagnose=False, catch=True, backtrace=False, level="INFO")
+logger.add(LOGTAIL_HANDLER, diagnose=False, catch=True, backtrace=False, level="INFO")
 # SECTION - Page Rendering Views
 
 
+# @cache_page(CACHE_TTL)
 def index(request):
     """Primary Render Function that Renders the Homepage template located in index.html.
 
@@ -43,6 +62,7 @@ def index(request):
     return render(request, "index.html", {"title": "Home"})
 
 
+# @cache_page(CACHE_TTL)
 def about(request):
     """Primary Render Function that Renders the about sub-page template located in contact.html.
 
@@ -60,11 +80,20 @@ def about(request):
 # SECTION - Internal Functional View
 
 
-def send_external_application_submission_confirmation(form):
-    """Class method to send email notification of the submissions of client interest and employment application forms
+def send_external_application_submission_confirmation(
+    form: ClientInterestForm | EmploymentApplicationForm,
+) -> None:
+    """
+    Class method to send email notification of the submissions of client interest and employment application forms
 
     Args:
-        form: Form Instance
+        form (ClientInterestForm | EmploymentApplicationForm): The form containing the submitted information.
+
+    Returns:
+        None
+
+    Raises:
+        Exception: If the email transmission fails.
     """
     try:
         sender_email = os.getenv("NOTIFICATION_SENDER_EMAIL")
@@ -103,8 +132,21 @@ def send_external_application_submission_confirmation(form):
         logger.error(log_message)
 
 
-def send_internal_application_submission_confirmation(form):
-    """Internal Non-Rendering View Function to send email notification of the submissions of client interest and employment application forms"""
+def send_internal_application_submission_confirmation(
+    form: ClientInterestForm | EmploymentApplicationForm,
+) -> None:
+    """
+    Sends a confirmation email for a new employment interest or client interest submission.
+
+    Args:
+        form (ClientInterestForm | EmploymentApplicationForm): The form containing the submitted information.
+
+    Returns:
+        None
+
+    Raises:
+        Exception: If the email transmission fails.
+    """
     try:
         sender_email = os.getenv("NOTIFICATION_SENDER_EMAIL")
         recipient_email = os.getenv("NOTIFICATION_Application_SUBMISSION_EMAIL")
@@ -220,7 +262,7 @@ def send_internal_client_submission_confirmation(form):
         form: Form Instance
     """
     try:
-        sender_email = os.getenv("NOTIFICATION_SENDER_EMAIL")
+        sender_email = list(os.getenv("NOTIFICATION_SENDER_EMAIL"))
         recipient_email = os.getenv("NOTIFICATION_CLIENT_SUBMISSION_EMAIL")
         sender_password = os.getenv("EMAIL_ACCT_PASSWORD")
         subject = f"New Client Interest - {form.cleaned_data['last_name']}, {form.cleaned_data['first_name']}"
@@ -328,6 +370,7 @@ def employee_interest(request):
     )
 
 
+# @cache_page(CACHE_TTL)
 def submitted(request):
     return render(request, "submission.html", {"title": "Form Submission Confirmation"})
 
@@ -345,4 +388,3 @@ def handler500(request, exception=HttpResponseServerError, template_name="500.ht
     context = dict()
     context["title"] = "500 - Internal Error"
     return render(request, "500error.html", status=500)
-

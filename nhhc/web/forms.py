@@ -1,14 +1,26 @@
+"""
+Module: Form Module
+Description: This module contains the form definitions for the ClientInterestForm and EmploymentApplicationForm.
+
+ClientInterestForm:
+- This form is used for capturing client interest submissions.
+- It includes fields for first name, last name, contact number, email, zipcode, insurance carrier, desired service, and captcha.
+
+EmploymentApplicationForm:
+- This form is used for capturing employment applications.
+- It includes fields for basic information, relevant experience, work availability, and captcha.
+
+Both forms utilize the ReCaptchaField for added security.
+
+"""
+
+
+from captcha.fields import ReCaptchaField
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Column
-from crispy_forms.layout import HTML
-from crispy_forms.layout import Layout
-from crispy_forms.layout import Row, Field
-from crispy_forms.layout import Submit
+from crispy_forms.layout import HTML, Column, Field, Layout, Row, Submit
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from web.models import ClientInterestSubmissions
-from web.models import EmploymentApplicationModel
-from captcha.fields import ReCaptchaField
+from web.models import ClientInterestSubmissions, EmploymentApplicationModel
 
 
 class ClientInterestForm(forms.ModelForm):
@@ -37,7 +49,7 @@ class EmploymentApplicationForm(forms.ModelForm):
 
     captcha = ReCaptchaField()
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # pragma: no cover
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(

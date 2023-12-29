@@ -1,11 +1,10 @@
 {% load static %}
 
-  <script src="{% static '/vendor/jquery/dist/jquery.min.js' %}" defer></script>
-  <script src="{% static '/vendor/bootstrap/dist/js/bootstrap.bundle.min.js' %}" defer></script>
-  <script src="{% static '/vendor/js-cookie/js.cookie.js' %}" async></script>
-  <script src="{% static '/vendor/jquery.scrollbar/jquery.scrollbar.min.js' %}" async></script>
-  <script src="{% static '/vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js' %}" async ></script>
+{% comment %} <script src="{% static '/vendor/jquery/dist/jquery.min.js' %}" defer></script> {% endcomment %}
+{% comment %} <script src="{% static '/vendor/bootstrap/dist/js/bootstrap.bundle.min.js' %}" defer></script> {% endcomment %}
+<script src="{% static '/vendor/js-cookie/js.cookie.js' %}" async></script>
+<script src="{% static '/vendor/jquery.scrollbar/jquery.scrollbar.min.js' %}" async></script>
+{% comment %} <script src="{% static '/vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js' %}" async ></script> {% endcomment %}
 {% if showSearch is True %}
-    <script src="{% static '/js/search.js' %}" async></script>
+  <script src="{% static '/js/search.js' %}" async></script>
 {% endif %}
- 

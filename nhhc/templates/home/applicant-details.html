@@ -3,140 +3,155 @@
 {% block title %} {{ type }} Applicant - {{ submission.last_name }}, {{ submission.first_name }} {% endblock title %}
 {% load crispy_forms_tags %}
 
-  <link rel="stylesheet" href="{% static '/css/custom-portal-styles.css' %}" type="text/css"/>
+<link rel="stylesheet" href="{% static '/css/custom-portal-styles.css' %}" type="text/css"/>
 
 
 {% block content %}
-    <div class="col-xl-8 order-xl-1">
-      <div class="card">
-        <div class="card-header">
-          <div class="row align-items-center">
-            <div class="col-8">
-              <h3 class="mb-0">Applicant Details </h3>
-            </div>
+  <div class="col-xl-8 order-xl-1">
+    <div class="card">
+      <div class="card-header">
+        <div class="row align-items-center">
+          <div class="col-8">
+            <h3 class="mb-0">Applicant Details </h3>
           </div>
         </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-6">
-              <h3><strong>First Name:</strong></h3>
-              <p>{{ submission.first_name }}</p>
-            </div>
-            <div class="col-6">
-              <h3><strong>Last Name:</strong></h3>
-              <p>{{ submission.last_name }}</p>
-            </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-6">
+            <h3><strong>First Name:</strong></h3>
+            <p>{{ submission.first_name }}</p>
           </div>
-          <div class="row">
-            <div class="col-6">
-              <h3><strong>Email Address:</strong></h3>
-              <p>{{ submission.email }}</p>
-            </div>
-            <div class="col-6">
-              <h3><strong>Contact Number:</strong></h3>
-              <p>{{ submission.contact_number }}</p>
-            </div>
+          <div class="col-6">
+            <h3><strong>Last Name:</strong></h3>
+            <p>{{ submission.last_name }}</p>
           </div>
-          <div class="row">
-            <div class="col-12">
-              <h3><strong>Home Address:</strong></h3>
-              <p>{{ submission.home_address}}</p>
-            </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <h3><strong>Email Address:</strong></h3>
+            <p>{{ submission.email }}</p>
           </div>
-          <div class="row">
-            <div class="col-5">
-              <h3><strong>City:</strong></h3>
-              <p>{{ submission.city }}</p>
-            </div>
-              <div class="col-3">
-              <h3><strong>State:</strong></h3>
-              <p>{{ submission.state }}</p>
-            </div>
-                        <div class="col-4">
-              <h3><strong>Zipcode:</strong></h3>
-              <p>{{ submission.zipcode }}</p>
-            </div>
+          <div class="col-6">
+            <h3><strong>Contact Number:</strong></h3>
+            <p>{{ submission.contact_number }}</p>
           </div>
-          <div class="row">
-            <div class="col-4">
-              <h3><strong>Ability To Travel:</strong></h3>
-              <p>{{ submission.mobility }}</p>
-            </div>
-              <div class="col-4">
-              <h3><strong>Prior Experience:</strong></h3>
-              <p>{{ submission.prior_experience}}</p>
-            </div>
-                        <div class="col-4">
-              <h3><strong>Registered IL Healthcare Worker:</strong></h3>
-              <p>{{ submission.ipdh_registered }}</p>
-            </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <h3><strong>Home Address:</strong></h3>
+            <p>{{ submission.home_address}}</p>
           </div>
-            <div class="row">
-              <h1>Availability</h1><br>
-            </div>
-            <div class="row">
-            <div class="col-3">
-              <h3><strong>Monday:</strong></h3>
-              <p>{{ submission.availability_monday }}</p>
-            </div>
-              <div class="col-3">
-              <h3><strong>Tuesday:</strong></h3>
-              <p>{{ submission.availability_tuesday }}</p>
-            </div>
-              <div class="col-3">
-              <h3><strong>Wednesday:</strong></h3>
-              <p>{{ submission.availability_wednesday }}</p>
-            </div>
-                        <div class="col-3">
-              <h3><strong>Thursday:</strong></h3>
-              <p>{{ submission.availability_thursday }}</p>
-            </div>
+        </div>
+        <div class="row">
+          <div class="col-5">
+            <h3><strong>City:</strong></h3>
+            <p>{{ submission.city }}</p>
           </div>
-            <div class="row">
-            <div class="col-4">
-              <h3><strong>Friday:</strong></h3>
-              <p>{{ submission.availability_friday }}</p>
-            </div>
-              <div class="col-4">
-              <h3><strong>Saturday:</strong></h3>
-              <p>{{ submission.availability_saturday }}</p>
-            </div>
-              <div class="col-4">
-              <h3><strong>Sunday:</strong></h3>
-              <p>{{ submission.availability_sunday }}</p>
-            </div>
+          <div class="col-3">
+            <h3><strong>State:</strong></h3>
+            <p>{{ submission.state }}</p>
           </div>
-            <hr class="my-4" />
-                      <div class="row">
-            <div class="col-6">
-              <h3><strong>Reviewed By Staff:</strong></h3>
-              <p>{{ submission.reviewed }}</p>
-            </div>
-            {% if submission.reviewed is True %}
+          <div class="col-4">
+            <h3><strong>Zipcode:</strong></h3>
+            <p>{{ submission.zipcode }}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-4">
+            <h3><strong>Ability To Travel:</strong></h3>
+            {% if submission.mobility == "C" %}
+              <p>Personal Vehicle</p>
+            {% elif  submission.mobility == "P" %}
+              <p>Public Transportation</p>
+            {% elif  submission.mobility == "P" %}
+              <p>Rideshare(Uber/Lyft)</p>
+            {% else %}
+              <p>Other</p>
+            {% endif %}
+
+          </div>
+          <div class="col-4">
+            <h3><strong>Prior Experience:</strong></h3>
+            {% if submission.mobility == "S" %}
+              <p>12+ Months</p>
+            {% elif  submission.mobility == "J" %}
+              <p>3 - 11 Months</p>
+            {% else %}
+              <p>No Prior Experience</p>
+            {% endif %}
+          </div>
+          <div class="col-4">
+            <h3><strong>Registered IL Healthcare Worker:</strong></h3>
+            <p>{{ submission.ipdh_registered }}</p>
+          </div>
+        </div>
+        <div class="row">
+          <h1>Availability</h1><br>
+        </div>
+        <div class="row">
+          <div class="col-3">
+            <h3><strong>Monday:</strong></h3>
+            <p>{{ submission.availability_monday }}</p>
+          </div>
+          <div class="col-3">
+            <h3><strong>Tuesday:</strong></h3>
+            <p>{{ submission.availability_tuesday }}</p>
+          </div>
+          <div class="col-3">
+            <h3><strong>Wednesday:</strong></h3>
+            <p>{{ submission.availability_wednesday }}</p>
+          </div>
+          <div class="col-3">
+            <h3><strong>Thursday:</strong></h3>
+            <p>{{ submission.availability_thursday }}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-4">
+            <h3><strong>Friday:</strong></h3>
+            <p>{{ submission.availability_friday }}</p>
+          </div>
+          <div class="col-4">
+            <h3><strong>Saturday:</strong></h3>
+            <p>{{ submission.availability_saturday }}</p>
+          </div>
+          <div class="col-4">
+            <h3><strong>Sunday:</strong></h3>
+            <p>{{ submission.availability_sunday }}</p>
+          </div>
+        </div>
+        <hr class="my-4" />
+        <div class="row">
+          <div class="col-6">
+            <h3><strong>Reviewed By Staff:</strong></h3>
+            <p>{{ submission.reviewed }}</p>
+          </div>
+          {% if submission.reviewed is True %}
             <div class="col-6">
               <h3><strong> Staff Member Who Reviewed Request:</strong></h3>
               <p>{{ submission.reviewed_by.username }}</p>
             </div>
-            {% endif %}
-          </div>
-            <div class="w-full text-center">
-              {% if submission.hired is None  %}
+          {% endif %}
+        </div>
+        <div class="w-full text-center">
+          {% if submission.hired is None  %}
             <button id="mark-reviewed-btn" onclick="hireApplicant({{ submission.id }})" class="btn btn-success">Hire</button>
             <button id="mark-reviewed-btn" onclick="rejectApplicant({{ submission.id }})" class="btn btn-danger">Reject</button>
-              {% endif %}
-            </div>
-                        <div class="w-full text-center">
-        <a  class="btn btn-secondary" href="{% url 'applicants-list' %}">Back to Applicant List</a>
-            </div>
+          {% endif %}
+        </div>
+        <div class="w-full text-center">
+          <a  class="btn btn-secondary" href="{% url 'applicants-list' %}">Back to Applicant List</a>
         </div>
       </div>
     </div>
-    </div>
+  </div>
+  </div>
 
 
 {% endblock content %}
 
 <!-- Specific JS goes HERE -->
 {% block javascripts %}
-    <script src="{% static '/js/alerts.js' %}"></script>
+  <script src="{% static '/js/alerts.js' %}"></script>
 {% endblock javascripts %}

@@ -1,14 +1,7 @@
 from compliance.models import Contract
-from crispy_forms.bootstrap import FormActions
-from crispy_forms.bootstrap import Modal
-from crispy_forms.bootstrap import UneditableField
+from crispy_forms.bootstrap import FormActions, Modal, UneditableField
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Column
-from crispy_forms.layout import HTML
-from crispy_forms.layout import Layout
-from crispy_forms.layout import Reset
-from crispy_forms.layout import Row
-from crispy_forms.layout import Submit
+from crispy_forms.layout import HTML, Column, Layout, Reset, Row, Submit
 from django import forms
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _

@@ -1,8 +1,23 @@
+"""
+Module: Views
+App: Employee
+
+This module contains views and functions for managing employee information, including hiring, rejecting, and viewing employee details.
+
+Functions:
+- send_new_user_credentials(new_user): Sends email notification of user name and password to new employees.
+- hire(request): Handles the hiring of applicants and sends new user credentials.
+- reject(request): Handles the rejection of applicants.
+- employee_roster(request): Renders the employee listing page.
+- employee_details(request, pk): Renders the employee details page and allows for editing employee information.
+
+Usage:
+To use the functions in this module, import the module and call the desired function with the appropriate parameters.
+"""
 import csv
 import json
 import os
 
-import pendulum
 from announcements.forms import AnnouncementForm
 from announcements.models import Announcements
 from compliance.forms import ComplianceForm
@@ -16,20 +31,16 @@ from django.core.files.storage import FileSystemStorage
 from django.core.mail import send_mail
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
-from django.http import HttpResponse
-from django.http import HttpResponseRedirect
-from django.shortcuts import redirect
-from django.shortcuts import render
-from django.shortcuts import reverse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import redirect, render, reverse
 from django.template import loader
 from django.urls import reverse
 from django.views.generic.detail import DetailView
 from employee.forms import EmployeeForm
 from employee.models import Employee
-from web.forms import ClientInterestForm
-from web.models import ClientInterestSubmissions
-from web.models import EmploymentApplicationModel
 from loguru import logger
+from web.forms import ClientInterestForm
+from web.models import ClientInterestSubmissions, EmploymentApplicationModel
 
 
 # Create your views here.

@@ -1,19 +1,37 @@
+"""
+Module: Web.Models
+
+This module contains the models needed for the front-end for client interest submissions and employment applications.
+
+ClientInterestSubmissions:
+- Represents the model for client interest submissions.
+- Fields include first_name, last_name, email, contact_number, zipcode, insurance_carrier, desired_service, date_submitted, reviewed, reviewed_by.
+
+EmploymentApplicationModel:
+- Represents the model for employment applications.
+- Fields include first_name, last_name, contact_number, email, home_address, city, state, zipcode, mobility, prior_experience, ipdh_registered, availability_monday, availability_tuesday, availability_wednesday, availability_thursday, availability_friday, availability_saturday, availability_sunday, reviewed, hired, reviewed_by, date_submitted.
+
+Both models have methods for marking as reviewed, hiring an applicant, and rejecting an applicant.
+
+Note: The module also includes choices for services, mobility, and prior experience.
+
+"""
+
 import random
 import string
 
+import arrow
+from compliance.models import Compliance
 from django.contrib.auth.hashers import make_password
 from django.core.validators import MaxValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from localflavor.us.models import USStateField
-from localflavor.us.models import USZipCodeField
-from pendulum import now
-from phonenumber_field.modelfields import PhoneNumberField
-from compliance.models import Compliance
 from employee.models import Employee
+from localflavor.us.models import USStateField, USZipCodeField
 from loguru import logger
+from phonenumber_field.modelfields import PhoneNumberField
 
-now = now(tz="America/Chicago")
+now = arrow.now(tz="US/Central")
 
 
 class ClientInterestSubmissions(models.Model):
@@ -46,7 +64,7 @@ class ClientInterestSubmissions(models.Model):
         self.reviewed_by = user_id
 
     def __str__(self):
-        return f"{self.last_name}, {self.first_name} - Submission Date: {self.date_submitted}"
+        return f"{self.last_name}, {self.first_name} - Submission Date: {arrow.get(self.date_submitted).format('YYYY-MM-DD')}"
 
     class Meta:
         db_table = "interest_clients"
@@ -57,7 +75,7 @@ class ClientInterestSubmissions(models.Model):
 
 class EmploymentApplicationModel(models.Model):
     def __str__(self):
-        return f"{self.last_name}, {self.first_name} ({self.id}) - Submitted:{self.date_submitted}"
+        return f"{self.last_name}, {self.first_name} ({self.id}) - Submission Date: {arrow.get(self.date_submitted).format('YYYY-MM-DD')}"
 
     class MOBILITTY(models.TextChoices):
         CAR = "C", _("I Have Consistent Access To A Car")
@@ -100,12 +118,40 @@ class EmploymentApplicationModel(models.Model):
     )
     date_submitted = models.DateTimeField(auto_now_add=True)
 
-    def generate_random_password(self):
+    def generate_random_password(self) -> str:
+        """
+        Generate a random 8-character password using lowercase letters.
+
+        Returns:
+        str: A randomly generated 8-character password.
+
+        Example:
+        >>> generate_random_password()
+        'abcdefgh'
+        """
         letters = string.ascii_lowercase
         random_password = "".join(random.choice(letters) for i in range(8))
         return random_password
 
-    def hire_applicant(self, hired_by):
+    def hire_applicant(self, hired_by: Employee) -> None:
+        """
+        Hire a new employee by creating a user account, generating a random password, and saving employee and compliance information in the database.
+
+        Args:
+          hired_by (str): The user who is hiring the applicant.
+
+        Returns:
+        None
+
+        Raises:
+        Exception: If an error occurs during the hiring process.
+
+        Example:
+        # Create an instance of the Applicant class
+        applicant = Applicant(first_name='John', last_name='Doe', email='john.doe@example.com', contact_number='123-456-7890')
+        # Hire the applicant
+        applicant.hire_applicant(hired_by='HR_Manager')
+        """
         try:
             username = (
                 f"{self.first_name.lower()}.{self.last_name.lower().replace(' ', '.')}"
@@ -128,10 +174,12 @@ class EmploymentApplicationModel(models.Model):
             self.reviewed = True
             self.reviewed_by = hired_by
         except Exception as e:
-            log_message = f"Unable to Hire {self.last_name},{self.first_name} "
-            logger.error()
+            log_message = (
+                f"Unable to Hire {self.last_name},{self.first_name} - REASON:{e} "
+            )
+            logger.error(log_message)
 
-    def reject(self, rejected_by):
+    def reject_applicant(self, rejected_by):
         self.hired = False
         self.reviewed = True
         self.reviewed_by = rejected_by

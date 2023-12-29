@@ -30,18 +30,18 @@
 
           </div>
           <!-- Light table -->
-                         <ul class="nav nav-tabs">
-                <li class="tab nav-item">
-                  <a class="nav-link tab active" id="active" aria-current="page" href="#">{{ active }} Active Employees Applications</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link tab" id="former" href="#">{{ former }} Former Employees</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link tab" id="all" href="#">{{ all }} All Employees</a>
-                </li>
+          <ul class="nav nav-tabs">
+            <li class="tab nav-item">
+              <a class="nav-link tab active" id="active" aria-current="page" href="#">{{ active }} Active Employees Applications</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link tab" id="former" href="#">{{ former }} Former Employees</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link tab" id="all" href="#">{{ all }} All Employees</a>
+            </li>
 
-        </ul>
+          </ul>
           <div class="table-responsive">
             <table class="table align-items-center table-flush">
               <thead class="thead-light">
@@ -57,57 +57,57 @@
               </thead>
               <tbody class="list">
                 {% for employee in employees %}
-                {% if employee.is_active %}
+                  {% if employee.is_active %}
                     <tr class="employee active">
-                  <th scope="row">
-                    <div class="media align-items-center">
-                      <div class="media-body">
-                        {{ employee.username }}
-                      </div>
-                    </div>
-                  </th>
-<td>
-  {{ employee.first_name }}
-</td>
-                  <td class="budget">
-                    {{ employee.last_name }}
-                  </td>
-                  <td>
-      {{ employee.phone }}
- </td>
-                  <td>
-                    {{ employee.hire_date }}
-                  </td>
-                  <td>
-                    <a class="btn btn-secondary" href="{% url 'employee' pk=employee.id %}">Employee Details</a>
-                  </td>
-                </tr>
-                {% elif not employee.is_active %}
-                <tr class="employee former">
-                  <th scope="row">
-                    <div class="media align-items-center">
-                      <div class="media-body">
-                        {{ employee.username }}
-                      </div>
-                    </div>
-                  </th>
-<td>
-  {{ employee.first_name }}
-</td>
-                  <td class="budget">
-                    {{ employee.last_name }}
-                  </td>
-                  <td>
-      {{ employee.phone }}
- </td>
-                  <td>
-                    {{ employee.hire_date }}
-                  </td>
-                  <td>
-                    <a class="btn btn-secondary" href="{% url 'employee-details' pk=employee.id %}">Employee Details</a>
-                  </td>
-                </tr>
-                {% endif %}
+                      <th scope="row">
+                        <div class="media align-items-center">
+                          <div class="media-body">
+                            {{ employee.username }}
+                          </div>
+                        </div>
+                      </th>
+                      <td>
+                        {{ employee.first_name }}
+                      </td>
+                      <td class="budget">
+                        {{ employee.last_name }}
+                      </td>
+                      <td>
+                        {{ employee.phone }}
+                      </td>
+                      <td>
+                        {{ employee.hire_date }}
+                      </td>
+                      <td>
+                        <a class="btn btn-secondary" href="{% url 'employee' pk=employee.id %}">Employee Details</a>
+                      </td>
+                    </tr>
+                  {% elif not employee.is_active %}
+                    <tr class="employee former">
+                      <th scope="row">
+                        <div class="media align-items-center">
+                          <div class="media-body">
+                            {{ employee.username }}
+                          </div>
+                        </div>
+                      </th>
+                      <td>
+                        {{ employee.first_name }}
+                      </td>
+                      <td class="budget">
+                        {{ employee.last_name }}
+                      </td>
+                      <td>
+                        {{ employee.phone }}
+                      </td>
+                      <td>
+                        {{ employee.hire_date }}
+                      </td>
+                      <td>
+                        <a class="btn btn-secondary" href="{% url 'employee-details' pk=employee.id %}">Employee Details</a>
+                      </td>
+                    </tr>
+                  {% endif %}
                 {% endfor %}
 
               </tbody>

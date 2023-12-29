@@ -21,12 +21,12 @@
 
 
     <!-- Call To Action Section Begin -->
-  <section id="interest-form" class="contact spad mx-auto">
+    <section id="interest-form" class="contact spad mx-auto">
         <form method="post">
             {% csrf_token %}
-                {{ form|crispy }}
-                <button type="submit" class="btn btn-primary">Submit</button>
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </section>
 
-    {% endblock main %}
+{% endblock main %}

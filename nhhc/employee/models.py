@@ -1,13 +1,13 @@
-import pendulum
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import MaxValueValidator
-from django.core.validators import MinLengthValidator
+from django.core.validators import MaxValueValidator, MinLengthValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from localflavor.us.models import USSocialSecurityNumberField
-from localflavor.us.models import USStateField
-from localflavor.us.models import USZipCodeField
+from localflavor.us.models import (
+    USSocialSecurityNumberField,
+    USStateField,
+    USZipCodeField,
+)
 from phonenumber_field.modelfields import PhoneNumberField
 
 

@@ -5,77 +5,77 @@
 {% load replace_underscore %}
 {% load human_readable %}
 
-  <link rel="stylesheet" href="{% static 'css/custom-portal-styles.css' %}" type="text/css"/>
+<link rel="stylesheet" href="{% static 'css/custom-portal-styles.css' %}" type="text/css"/>
 
 {% block content %}
-    <div class="col-xl-8 order-xl-1">
-      <div class="card">
-        <div class="card-header">
-          <div class="row align-items-center">
-            <div class="col-8">
-              <h3 class="mb-0">{{ type }} </h3>
-            </div>
+  <div class="col-xl-8 order-xl-1">
+    <div class="card">
+      <div class="card-header">
+        <div class="row align-items-center">
+          <div class="col-8">
+            <h3 class="mb-0">{{ type }} </h3>
           </div>
         </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-6">
-              <h3><strong>First Name:</strong></h3>
-              <p>{{ submission.first_name }}</p>
-            </div>
-            <div class="col-6">
-              <h3><strong>Last Name:</strong></h3>
-              <p>{{ submission.last_name }}</p>
-            </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-6">
+            <h3><strong>First Name:</strong></h3>
+            <p>{{ submission.first_name }}</p>
           </div>
-          <div class="row">
-            <div class="col-4">
-              <h3><strong>Email Address:</strong></h3>
-              <p>{{ submission.email }}</p>
-            </div>
-            <div class="col-4">
-              <h3><strong>Contact Number:</strong></h3>
-              <p>{{ submission.contact_number }}</p>
-            </div>
-                <div class="col-4">
-              <h3><strong>Service Zipcode:</strong></h3>
-              <p>{{ submission.zipcode }}</p>
-            </div>
+          <div class="col-6">
+            <h3><strong>Last Name:</strong></h3>
+            <p>{{ submission.last_name }}</p>
           </div>
-          <div class="row">
-            <div class="col-6">
-              <h3><strong>Desired Service:</strong></h3>
-              <p>{{ submission.desired_service }}</p>
-            </div>
-            <div class="col-6">
-              <h3><strong>Payor:</strong></h3>
-              <p>{{ submission.insurance_carrier }}</p>
-            </div>
+        </div>
+        <div class="row">
+          <div class="col-4">
+            <h3><strong>Email Address:</strong></h3>
+            <p>{{ submission.email }}</p>
           </div>
-            <hr class="my-4" />
-                      <div class="row">
-            <div class="col-6">
-              <h3><strong>Reviewed By Staff:</strong></h3>
-              <p>{{ submission.reviewed }}</p>
-            </div>
-            {% if submission.reviewed is True %}
+          <div class="col-4">
+            <h3><strong>Contact Number:</strong></h3>
+            <p>{{ submission.contact_number }}</p>
+          </div>
+          <div class="col-4">
+            <h3><strong>Service Zipcode:</strong></h3>
+            <p>{{ submission.zipcode }}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <h3><strong>Desired Service:</strong></h3>
+            <p>{{ submission.desired_service }}</p>
+          </div>
+          <div class="col-6">
+            <h3><strong>Payor:</strong></h3>
+            <p>{{ submission.insurance_carrier }}</p>
+          </div>
+        </div>
+        <hr class="my-4" />
+        <div class="row">
+          <div class="col-6">
+            <h3><strong>Reviewed By Staff:</strong></h3>
+            <p>{{ submission.reviewed }}</p>
+          </div>
+          {% if submission.reviewed is True %}
             <div class="col-6">
               <h3><strong> Staff Member Who Reviewed Request:</strong></h3>
               <p>{{ submission.reviewed_by.username }}</p>
             </div>
-            {% endif %}
-          </div>
-            <div class="w-full text-center">
-              {% if submission.reviewed is False %}
-        <button id="mark-reviewed-btn" onclick="markSubmissionAsReviewed({{ submission.id }})" class="btn btn-success">Mark As Reviewed</button>
-              {% endif %}
-        <a  class="btn btn-secondary" href="{% url 'inquiries' %}">Back to Submissions List</a>
-            </div?>
+          {% endif %}
         </div>
+        <div class="w-full text-center">
+          {% if submission.reviewed is False %}
+            <button id="mark-reviewed-btn" onclick="markSubmissionAsReviewed({{ submission.id }})" class="btn btn-success">Mark As Reviewed</button>
+          {% endif %}
+          <a  class="btn btn-secondary" href="{% url 'inquiries' %}">Back to Submissions List</a>
+        </div?>
       </div>
     </div>
+  </div>
 
-</div>
+  </div>
 
   {% include "includes/footer.html" %}
 
@@ -83,5 +83,5 @@
 
 <!-- Specific JS goes HERE -->
 {% block javascripts %}
-    <script src="{% static 'js/alerts.js' %}"></script>
+  <script src="{% static 'js/alerts.js' %}"></script>
 {% endblock javascripts %}

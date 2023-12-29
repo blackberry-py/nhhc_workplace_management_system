@@ -1,0 +1,123 @@
+---
+version: "3"
+
+services:
+  app:
+    image: terrybrooks/netthands:latest
+    container_name: netthands_app
+    restart: unless-stopped
+    networks:
+      - netthandz-ecosystem
+    env_file:
+      - .env
+    working_dir: /data/cache
+    volumes:
+      - 'primary_hhd_netthandz:/data/app'
+    ports:
+      - '1357:1357'
+
+  redis:
+    image: redis:latest
+    container_name: cache_database_netthandz
+    restart: unless-stopped
+    networks:
+      - netthandz-ecosystem
+    environment:
+      - INFISICAL_TOKEN=${INFISICAL_TOKEN_FOR_REDIS}
+    working_dir: /data/cache
+    volumes:
+      - 'primary_hhd_netthandz:/data/cache'
+    ports:
+      - '7771:6379'
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      interval: 5m
+      timeout: 2m
+      retries: 5
+      start_period: 2m
+      start_interval: 2m
+
+  db:
+    image: postgres:latest
+    container_name: app_database_netthandz
+    restart: unless-stopped
+    networks:
+      - netthandz-ecosystem
+    environment:
+      - INFISICAL_TOKEN=${INFISICAL_TOKEN_FOR_PG}
+    env_file:
+      - .env
+    ports:
+      - '7772:5432'
+    working_dir: /data/db
+    volumes:
+      - 'primary_hhd_netthandz:/data/db'
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  pgAdmin:
+    image: dpage/pgadmin4:latest
+    container_name: PGA_4_netthandz
+    restart: unless-stopped
+    networks:
+      - netthandz-ecosystem
+    environment:
+      - INFISICAL_TOKEN=${INFISICAL_TOKEN_FOR_PG_ADMIN}
+    env_file:
+      - .env
+    ports:
+      - '7773:80'
+    depends_on:
+      - db
+    volumes:
+      - 'primary_hhd_netthandz:/pgAdmin'
+
+  graphite-statsd:
+      container_name: graphite_netthandz
+      networks:
+        - netthandz-ecosystem
+      volumes:
+        - 'primary_hhd_netthandz:/graphite'
+      ports:
+          - '7774:80'
+          - '2003-2004:2003-2004'
+          - '2023-2024:2023-2024'
+          - '8125:8125/udp'
+          - '8126:8126'
+      image: graphiteapp/graphite-statsd
+
+  grafana:
+    container_name: grafana_netthandz
+    ports:
+        - '7775:3000'
+    image: grafana/grafana
+    networks:
+        - netthandz-ecosystem
+    volumes:
+      - 'primary_hhd_netthandz:/grafana'
+
+  redis_insight:
+    image: redislabs/redisinsight:latest
+    container_name: netthandz_Redis_Insight
+    restart: unless-stopped
+    networks:
+        - netthandz-ecosystem
+    env_file:
+      - .env
+    ports:
+      - '7777:8001'
+    depends_on:
+      - redis
+    volumes:
+      - 'primary_hhd_netthandz:/redis_insight'
+
+volumes:
+  primary_hhd_netthandz:
+
+
+networks:
+  netthandz-ecosystem:
+    driver: bridge

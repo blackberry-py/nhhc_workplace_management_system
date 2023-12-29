@@ -1,11 +1,8 @@
-from compliance.models import Compliance
-from compliance.models import Contract
+from compliance.models import Compliance, Contract
 from django.contrib import admin
 from employee.models import Employee
 from portal.models import Exception  # Assessment, InServiceTraining,
-from django.contrib import admin
-from web.models import ClientInterestSubmissions
-from web.models import EmploymentApplicationModel
+from web.models import ClientInterestSubmissions, EmploymentApplicationModel
 
 # Register your models here.
 all_models = [

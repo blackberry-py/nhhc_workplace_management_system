@@ -30,26 +30,26 @@
           </div>
           <!-- Light table -->
           {% if request.user.is_staff %}
-                     <div class="col-lg-3 text-right">
+            <div class="col-lg-3 text-right">
               <button data-bs-toggle="modal" data-bs-target="#modal-create-new-announcement" class="btn btn-sm btn-neutral">New Announcement</button>
             </div>
-          </div>
-                <ul class="nav nav-tabs">
-                <li class="tab nav-item">
-                  <a class="nav-link tab active" id="all" aria-current="page" href="#">{{ all_submuission }} Total Announcements</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link tab" id="deleted" href="#">{{ deleted }} Deleted Applications </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link tab" id="draft" href="#">{{ draft }} Draft Announcements</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link tab" id="active" href="#">{{ active }} Active Announcements</a>
-                </li>
-        </ul>
+            </div>
+            <ul class="nav nav-tabs">
+              <li class="tab nav-item">
+                <a class="nav-link tab active" id="all" aria-current="page" href="#">{{ all_submuission }} Total Announcements</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link tab" id="deleted" href="#">{{ deleted }} Archived Announcements </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link tab" id="draft" href="#">{{ draft }} Draft Announcements</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link tab" id="active" href="#">{{ active }} Active Announcements</a>
+              </li>
+            </ul>
 
-        {% endif %}
+          {% endif %}
           <div class="table-responsive">
             <table class="table align-items-center table-flush">
               <thead class="thead-light">
@@ -66,30 +66,30 @@
                   {% if anouncement.status == 'D' %}
                     <tr class="client-submission draft">
                   {% elif anouncement.status == 'A' %}
-                     <tr class="client-submission active">
-                          {% elif anouncement.status == 'X' %}
-                     <tr class="client-submission deleted">
-                   {% endif %}
-                   <td>
-  {{ anouncement.get_status_display }}
-</td>
+                    <tr class="client-submission active">
+                  {% elif anouncement.status == 'X' %}
+                    <tr class="client-submission deleted">
+                  {% endif %}
+                  <td>
+                    {{ anouncement.get_status_display }}
+                  </td>
                   <td class="budget">
                     {{ anouncement.posted_by.first_name }} {{anouncement.posted_by.last_name}}
                   </td>
                   <td>
-      {{ anouncement.get_message_type_display }}
- </td>
+                    {{ anouncement.get_message_type_display }}
+                  </td>
 
-                                     <td class="text-break">
-      {{ anouncement.message }}
- </td>
+                  <td class="text-break">
+                    {{ anouncement.message }}
+                  </td>
 
                   <td>
                     <a class="btn btn-secondary" href="#">Edit</a>
                   </td>
-                </tr>
-              </tr>
-            </tr>
+                  </tr>
+                  </tr>
+                  </tr>
                 {% endfor %}
               </tbody>
             </table>
@@ -105,7 +105,6 @@
       </div>
     </div>
 
-    {% include "/includes/footer.html" %}
 
   </div>
 
