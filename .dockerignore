@@ -25,3 +25,8 @@ NettHandsHomeCare/static/vendor/jvectormap-next/jquery-jvectormap.min.js.map
 *.sql
 *.sqlite3
 nhhc/logs/*
+
+.env*
+.flaskenv*
+!.env.project
+!.env.vault
