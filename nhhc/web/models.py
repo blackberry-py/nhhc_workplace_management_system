@@ -17,9 +17,9 @@ Note: The module also includes choices for services, mobility, and prior experie
 
 """
 
+import datetime
 import random
 import string
-import datetime
 
 import arrow
 from compliance.models import Compliance
@@ -27,11 +27,11 @@ from django.contrib.auth.hashers import make_password
 from django.core.validators import MaxValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django_prometheus.models import ExportModelOperationsMixin
 from employee.models import Employee
 from localflavor.us.models import USStateField, USZipCodeField
 from loguru import logger
 from phonenumber_field.modelfields import PhoneNumberField
-from django_prometheus.models import ExportModelOperationsMixin
 
 now = arrow.now(tz="US/Central")
 

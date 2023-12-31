@@ -17585,3 +17585,15 @@ input.datetimepicker[data-color="yellow"] + .bootstrap-datetimepicker-widget {
   border: 2px solid #1100ff;
   background-color: #b6c0ff;
 }
+
+.timer {
+  display: flex;
+  justify-items: stretch;
+  font-size: x-large;
+  color: var(--white);
+}
+
+div#home-time {
+  display: inline-block;
+  margin-left: 50%;
+}

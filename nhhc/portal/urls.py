@@ -36,4 +36,5 @@ urlpatterns = [
     path("applicants/", views.employment_applications, name="applicants-list"),
     path("applicant/<int:pk>", views.applicant_details, name="applicant-details"),
     path("all_applicants", views.all_applicants, name="submitted-applicants-api"),
+    path("coming-soon/", views.coming_soon, name="coming-soon"),
 ]

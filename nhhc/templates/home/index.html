@@ -9,11 +9,19 @@
 
     <!-- Header -->
   <div class="header bg-primary pb-6">
+
     <div class="container-fluid">
+
       <div class="header-body">
+
         <div class="row align-items-center py-4">
           <div class="col-lg-6 col-7">
             <h1 class="display-1 text-white">Announcements</h1>
+            <hr class="uk-divider-icon"/>
+            <div class="timer">
+            <div id="home-date"></div> 
+            <div id="home-time"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -79,5 +87,18 @@
 
 <!-- Specific JS goes HERE -->
 {% block javascripts %}
+// SECTION - Date and Time For Portal Homepage
+function liveClock(){
+  var portalDateNode = document.getElementById("home-date");
+  var portalTimeNode = document.getElementById("home-time");
+  var DATE = new Date();
+  const current_date = DATE.toLocaleDateString();
+  const current_time = new Date().toLocaleTimeString();
 
+  portalDateNode.innerHTML = current_date;
+  portalTimeNode.innerHTML = current_time
+
+
+}
+setInterval(liveClock, 1000);
 {% endblock javascripts %}

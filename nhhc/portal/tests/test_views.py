@@ -1,22 +1,18 @@
 import json
+import random
+from unittest.mock import MagicMock, patch
 
-from compliance.models import Compliance
+from compliance.models import Compliance, Contract
 from django.contrib.auth import get_user_model
-from django.test import Client, TestCase
+from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 from employee.forms import EmployeeForm
 from employee.models import Employee
-from model_bakery import baker
-from web.models import ClientInterestSubmissions
-from web.tests.test_models import gen_phone, gen_zip_code
-from compliance.models import Contract
 from faker import Faker
-import random
-from unittest.mock import MagicMock, patch
+from model_bakery import baker
+from portal.views import employment_applications, marked_reviewed, submission_detail
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
-from portal.views import submission_detail, marked_reviewed
-from django.test import RequestFactory
-from portal.views import employment_applications
+from web.tests.test_models import gen_phone, gen_zip_code
 
 dummy_data = Faker()
 

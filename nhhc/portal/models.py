@@ -21,7 +21,6 @@ import arrow
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
 from django_prometheus.models import ExportModelOperationsMixin
 
 now = arrow.now(tz="America/Chicago")

@@ -1,10 +1,9 @@
-<div style="width: 18rem;">
-
+<div class="card-stat" style="width: 18rem;">\
     <div class="card card-stats mb-4 mb-lg-0">
         <div class="card-body">
             <div class="row">
                 <div class="col">
-                    <a href="{% url 'applicants-list' %}"><h5 class="card-title text-uppercase text-muted mb-0">Recent Applications</h5></a>
+                    <a href="{% url 'applicants-list' %}"><h5 class="card-title text-uppercase text-muted mb-0">New Applications</h5></a>
 
                     {% if new_applications %}
                         <span class="h2 font-weight-bold mb-0">{{ new_applications|length }}</span>
@@ -20,12 +19,12 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <a href="{% url 'applicants-list' %}"><h5 class="card-title text-uppercase text-muted mb-0">Recent Applications</h5></a>
+                    <a href="{% url 'applicants-list' %}"><h5 class="card-title text-uppercase text-muted mb-0">New Customer Inquiries</h5></a>
 
-                    {% if new_applications %}
-                        <span class="h2 font-weight-bold mb-0">{{ new_applications|length }}</span>
+                    {% if new_client_requests  %}
+                        <span class="h2 font-weight-bold mb-0">{{ new_client_requests|length }}</span>
                     {% else %}
-                        No new Applications.
+                        No new Requests.
                     {% endif %}
                 </div>
                 <div class="col-auto">

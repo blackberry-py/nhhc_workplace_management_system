@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from employee.models import Employee
 from django_prometheus.models import ExportModelOperationsMixin
+from employee.models import Employee
 
 
 # Create your models here.

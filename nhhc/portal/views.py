@@ -20,11 +20,13 @@ import os
 import arrow
 from announcements.forms import AnnouncementForm
 from announcements.models import Announcements
+from cacheops import cached_view_as
 from compliance.models import Compliance
 from django import template
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.core.files.storage import FileSystemStorage
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
@@ -35,12 +37,9 @@ from django.urls import reverse
 from django.views.generic.detail import DetailView
 from employee.forms import EmployeeForm
 from employee.models import Employee
+from loguru import logger
 from web.forms import ClientInterestForm
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
-from loguru import logger
-from django.conf import settings
-from cacheops import cached_view_as
-from django.core.exceptions import ObjectDoesNotExist
 
 now = arrow.now(tz="America/Chicago")
 logger.add(
@@ -61,9 +60,11 @@ def index(request):
     new_applications = EmploymentApplicationModel.objects.filter(
         reviewed=False
     ).order_by("-date_submitted")
+    new_client_requests = ClientInterestSubmissions.objects.filter(reviewed=False).order_by("-date_submitted")
     announcements = Announcements.objects.all().order_by("-date_posted")[:10]
     context["announcements"] = announcements
     context["new_applications"] = new_applications
+    context["new_client_requests"] = new_client_requests
     html_template = loader.get_template("home/index.html")
     return HttpResponse(html_template.render(context, request))
 
@@ -219,7 +220,6 @@ def applicant_details(request, pk):
     else:
         raise PermissionDenied()
 
-
 @login_required(login_url="/login/")
 def all_applicants(request) -> HttpResponse:
     inquiries = EmploymentApplicationModel.objects.all().values()
@@ -227,3 +227,8 @@ def all_applicants(request) -> HttpResponse:
         inquiry["contact_number"] = str(inquiry["contact_number"])
     applicant_json = json.dumps(list(inquiries), cls=DjangoJSONEncoder)
     return HttpResponse(content=applicant_json, status=200)
+
+@login_required(login_url="/login/")
+def coming_soon(request):
+    return render(request, 'coming_soon.html', {})
+    

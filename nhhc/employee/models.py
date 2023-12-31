@@ -3,13 +3,13 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinLengthValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django_prometheus.models import ExportModelOperationsMixin
 from localflavor.us.models import (
     USSocialSecurityNumberField,
     USStateField,
     USZipCodeField,
 )
 from phonenumber_field.modelfields import PhoneNumberField
-from django_prometheus.models import ExportModelOperationsMixin
 
 
 # Create your models here.

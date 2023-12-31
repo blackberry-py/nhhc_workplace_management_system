@@ -1,0 +1,7 @@
+{% extends 'includes/base.html' %}
+{% block title %}403 Forbidden{% endblock %}
+{% block content %}
+<h1>403 Forbidden</h1>
+<p>{{ reason }}</p>
+<p><a href="{% url 'login' %}">Login</a></p>
+{% endblock %}

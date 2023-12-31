@@ -385,3 +385,12 @@ def handler500(request, exception=HttpResponseServerError, template_name="500.ht
     context = dict()
     context["title"] = "500 - Internal Error"
     return render(request, "500.html", status=500)
+
+def csrf_failure(request, reason=""):
+    """Default view for CSRF failures."""
+    return render(
+        request,
+        "403_csrf.html",
+        {"reason": reason},
+        status=403,
+    )

@@ -10,9 +10,9 @@ import os
 from pathlib import Path
 
 from django.core.management.utils import get_random_secret_key
+from django_redis import client
 from dotenv import load_dotenv
 from logtail import LogtailHandler
-from django_redis import client
 
 load_dotenv()
 # SECTION - Basic Application Defintion
@@ -30,6 +30,7 @@ ALLOWED_HOSTS = [
     "netthandshome.care",
     "0.0.0.0",
 ]
+CSRF_FAILURE_VIEW = 'web.views.csrf_failure'
 RECAPTCHA_PUBLIC_KEY = os.getenv("RECAPTCHA_PUBLIC_KEY")
 RECAPTCHA_PRIVATE_KEY = os.getenv("RECAPTCHA_PRIVATE_KEY")
 RESTRICT_ADMIN_BY_IPS = True
