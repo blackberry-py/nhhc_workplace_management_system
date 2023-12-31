@@ -1,9 +1,10 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from employee.models import Employee
+from django_prometheus.models import ExportModelOperationsMixin
 
 
-class Contract(models.Model):
+class Contract(models.Model, ExportModelOperationsMixin("contracts")):
     code = models.CharField(max_length=10, unique=True)
 
     def __str__(self):
@@ -16,7 +17,7 @@ class Contract(models.Model):
         verbose_name_plural = "State Contracts"
 
 
-class Compliance(models.Model):
+class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
     class JOB_TITLE(models.TextChoices):
         AIDE = "AIDE", _("Homecare Aide")
         COORDINATOR = "CARE_COORDINATOR", _("Care Coordinator")

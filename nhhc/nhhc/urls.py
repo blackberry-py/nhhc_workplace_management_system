@@ -38,6 +38,7 @@ urlpatterns = [
         "robots.txt/",
         TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
     ),
+    path("", include("django_prometheus.urls")),
     # path("404/", web.views.handler404),
     # path("500/", web.views.handler500)
 ]

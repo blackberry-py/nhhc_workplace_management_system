@@ -9,10 +9,11 @@ from localflavor.us.models import (
     USZipCodeField,
 )
 from phonenumber_field.modelfields import PhoneNumberField
+from django_prometheus.models import ExportModelOperationsMixin
 
 
 # Create your models here.
-class Employee(AbstractUser):
+class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
     class GENDER(models.TextChoices):
         MALE = "M", _("Male")
         FEMALE = "F", _("Female")

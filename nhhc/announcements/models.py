@@ -1,10 +1,11 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from employee.models import Employee
+from django_prometheus.models import ExportModelOperationsMixin
 
 
 # Create your models here.
-class Announcements(models.Model):
+class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
     class STATUS(models.TextChoices):
         ACTIVE = "A", _("Active")
         DRAFT = "D", _("Draft")

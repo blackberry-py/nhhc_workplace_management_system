@@ -1,3 +1,18 @@
+"""
+Module:  portal.views
+This module contains views for handling client inquiries, employment applications, and user profiles.
+
+The module includes the following functions:
+- index(request): Renders the home page with new job applications and announcements.
+- profile(request): Handles user profile updates and displays user information.
+- all_client_inquiries(request): Retrieves all client inquiries and returns them as JSON.
+- client_inquiries(request): Renders the client inquiries page with the number of unreviewed submissions.
+- submission_detail(request, pk): Renders the details of a specific client inquiry submission.
+- marked_reviewed(request): Marks a client inquiry submission as reviewed.
+- employment_applications(request): Renders the employment applications page with the number of unreviewed submissions.
+- applicant_details(request, pk): Renders the details of a specific employment application submission.
+- all_applicants(request): Retrieves all employment applications and returns them as JSON.
+"""
 import csv
 import json
 import os
@@ -22,8 +37,21 @@ from employee.forms import EmployeeForm
 from employee.models import Employee
 from web.forms import ClientInterestForm
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
+from loguru import logger
+from django.conf import settings
+from cacheops import cached_view_as
+from django.core.exceptions import ObjectDoesNotExist
 
 now = arrow.now(tz="America/Chicago")
+logger.add(
+    settings.DEBUG_LOG_FILE, diagnose=True, catch=True, backtrace=True, level="DEBUG"
+)
+logger.add(
+    settings.PRIMARY_LOG_FILE, diagnose=False, catch=True, backtrace=False, level="INFO"
+)
+logger.add(
+    settings.LOGTAIL_HANDLER, diagnose=False, catch=True, backtrace=False, level="INFO"
+)
 
 
 @login_required(login_url="/login/")
@@ -38,27 +66,6 @@ def index(request):
     context["new_applications"] = new_applications
     html_template = loader.get_template("home/index.html")
     return HttpResponse(html_template.render(context, request))
-
-
-# @login_required(login_url="/login/")
-# def pages(request):
-#     context = {}
-#     ic(context)
-#     # All resource paths end in .html.
-#     # Pick out the html file name from the url. And load that template.
-#     try:
-#         load_template = request.path.split("/")[-1]
-
-#         if load_template == "admin":
-#             return HttpResponseRedirect(reverse("admin:index"))
-#         context["segment"] = load_template
-
-#         html_template = loader.get_template("home/" + load_template)
-#         return HttpResponse(html_template.render(context, request))
-
-#     except template.TemplateDoesNotExist:
-#         html_template = loader.get_template("home/page-404.html")
-#         return HttpResponse(html_template.render(context, request))
 
 
 @login_required(login_url="/login/")
@@ -122,7 +129,7 @@ def submission_detail(request, pk):
     context["type"] = "Client Interest"
     init_values = {
         "id": submission.id,
-        "first_name": submission.first_name,
+        "first_nam.we": submission.first_name,
         "last_name": submission.last_name,
         "email": submission.email,
         "contact_number": submission.contact_number,
@@ -140,16 +147,23 @@ def submission_detail(request, pk):
 
 def marked_reviewed(request):
     try:
-        body_unicode = request.data.decode("utf-8")
+        body_unicode = request.body.decode("utf-8")
         body = json.loads(body_unicode)
         pk = body["pk"]
         submission = ClientInterestSubmissions.objects.get(id=pk)
         submission.marked_reviewed(request.user)
         submission.save()
+        logger.info(f"{submission.id} marked as reviewed")
         return HttpResponse(status=204)
+    except json.decoder.JSONDecodeError:
+        logger.error("Error decoding request data")
+        return HttpResponse(status=400)
+    except ObjectDoesNotExist as no_object:
+        logger.error(f"Object with pk {pk} Does Not Exist, Unable to Mark Reviewed")
+        return HttpResponse(status=400)
     except Exception as e:
-        ic(e)
-        return HttpResponse(status=418)
+        logger.error(f"ERROR: Unable to Mark {submission.id} REVIEWED: {e}")
+        return HttpResponse(status=500)
 
 
 @login_required(login_url="/login/")
@@ -206,7 +220,10 @@ def applicant_details(request, pk):
         raise PermissionDenied()
 
 
-def all_applicants(request):
+@login_required(login_url="/login/")
+def all_applicants(request) -> HttpResponse:
     inquiries = EmploymentApplicationModel.objects.all().values()
+    for inquiry in inquiries:
+        inquiry["contact_number"] = str(inquiry["contact_number"])
     applicant_json = json.dumps(list(inquiries), cls=DjangoJSONEncoder)
     return HttpResponse(content=applicant_json, status=200)

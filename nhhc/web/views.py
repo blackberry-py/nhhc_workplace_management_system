@@ -15,18 +15,16 @@ from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseServerError
 from django.shortcuts import redirect, render
 from django.template import RequestContext
+from django.views.decorators.cache import cache_page
 from dotenv import load_dotenv
 from ipware import get_client_ip
-from loguru import logger
-from django.views.decorators.cache import cache_page
-
 from logtail import LogtailHandler
+from loguru import logger
 from web.forms import ClientInterestForm, EmploymentApplicationForm
 from web.utils import application_body, client_body
-from django.core.cache.backends.base import DEFAULT_TIMEOUT
 
 load_dotenv()
-CACHE_TTL = getattr(settings, "CACHE_TTL", DEFAULT_TIMEOUT)
+CACHE_TTL = settings.CACHE_TTL
 
 PRIMARY_LOG_FILE = os.path.join(settings.BASE_DIR, "logs", "primary_ops.log")
 CRITICAL_LOG_FILE = os.path.join(settings.BASE_DIR, "logs", "fatal.log")
@@ -39,7 +37,6 @@ logger.add(LOGTAIL_HANDLER, diagnose=False, catch=True, backtrace=False, level="
 # SECTION - Page Rendering Views
 
 
-# @cache_page(CACHE_TTL)
 def index(request):
     """Primary Render Function that Renders the Homepage template located in index.html.
 
@@ -62,7 +59,7 @@ def index(request):
     return render(request, "index.html", {"title": "Home"})
 
 
-# @cache_page(CACHE_TTL)
+@cache_page(CACHE_TTL)
 def about(request):
     """Primary Render Function that Renders the about sub-page template located in contact.html.
 
@@ -387,4 +384,4 @@ def handler404(request, exception=HttpResponseNotFound, template_name="404.html"
 def handler500(request, exception=HttpResponseServerError, template_name="500.html"):
     context = dict()
     context["title"] = "500 - Internal Error"
-    return render(request, "500error.html", status=500)
+    return render(request, "500.html", status=500)

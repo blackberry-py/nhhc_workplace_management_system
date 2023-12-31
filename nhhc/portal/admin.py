@@ -4,6 +4,7 @@ from employee.models import Employee
 from portal.models import Exception  # Assessment, InServiceTraining,
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
 
+
 # Register your models here.
 all_models = [
     Employee,

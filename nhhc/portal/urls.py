@@ -1,3 +1,14 @@
+"""
+Module: portal.urls
+This module contains the URL patterns for the portal application.
+
+The urlpatterns list contains the URL patterns for the views in the application. Each URL pattern is mapped to a specific view function and has a unique name for easy reference. Imported via includes in project root conf
+
+Attributes:
+    urlpatterns (list): A list of URL patterns mapped to view functions.
+
+"""
+
 from django.urls import path, re_path
 from django.views.decorators.csrf import csrf_exempt
 

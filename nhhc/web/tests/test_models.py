@@ -1,8 +1,8 @@
+import arrow
 from django.test import TestCase
-from web.models import ClientInterestSubmissions, EmploymentApplicationModel
 from employee.models import Employee
 from model_bakery import baker
-import arrow
+from web.models import ClientInterestSubmissions, EmploymentApplicationModel
 
 
 def gen_phone():

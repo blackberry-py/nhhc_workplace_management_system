@@ -1,6 +1,7 @@
 import unittest
+
 from django.test import RequestFactory
-from web.views import index, about
+from web.views import about, index
 
 
 class TestViews(unittest.TestCase):

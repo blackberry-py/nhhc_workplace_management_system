@@ -11,6 +11,8 @@ from pathlib import Path
 
 from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
+from logtail import LogtailHandler
+from django_redis import client
 
 load_dotenv()
 # SECTION - Basic Application Defintion
@@ -32,6 +34,7 @@ RECAPTCHA_PUBLIC_KEY = os.getenv("RECAPTCHA_PUBLIC_KEY")
 RECAPTCHA_PRIVATE_KEY = os.getenv("RECAPTCHA_PRIVATE_KEY")
 RESTRICT_ADMIN_BY_IPS = True
 ALLOWED_ADMIN_IPS = os.getenv("ALLOWED_IPS")
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 SITE_ID = 1
 ENVIRONMENT_FLOAT = True
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -58,6 +61,8 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap4",
     "phonenumber_field",
+    "django_prometheus",
+    "request",
     "debug_toolbar",
     "localflavor",
     "captcha",
@@ -77,6 +82,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "django.middleware.cache.UpdateCacheMiddleware",
+    "django_prometheus.middleware.PrometheusBeforeMiddleware",
     "kolo.middleware.KoloMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -86,8 +93,12 @@ MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "request.middleware.RequestMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_prometheus.middleware.PrometheusAfterMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.cache.FetchFromCacheMiddleware",
     # "django_admin_env_notice.context_processors.from_settings",
     # "ip_restriction.IpWhitelister",
 ]
@@ -115,11 +126,12 @@ if DEBUG:
         },
     }
 else:
+    REQUEST_BASE_URL = "https://www.netthandshome.care"
     ENVIRONMENT_NAME = "PRODUCTION SERVER"
     ENVIRONMENT_COLOR = "#FF2222"
     DATABASES = {
         "default": {
-            "ENGINE": "django.db.backends.postgresql",
+            "ENGINE": "django_prometheus.cache.backends.postgresql",
             "NAME": os.getenv("DB_NAME_PROD"),
             "USER": os.getenv("DB_USER_PROD"),
             "PASSWORD": os.getenv("DB_PASSWORD_PROD"),
@@ -127,15 +139,30 @@ else:
             "OPTIONS": {"sslmode": "require"},
         },
     }
-    CACHE_TTL = 60 * 15
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": os.getenv("REDIS_URL"),
-            "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
-            "KEY_PREFIX": "NHHC",
-        }
+
+CACHE_TTL = 60 * 15
+CACHES = {
+    "default": {
+        "BACKEND": "django_prometheus.cache.backends.redis.RedisCache",
+        "LOCATION": os.getenv("REDIS_URL"),
+        "OPTIONS": {
+            "PARSER_CLASS": "redis.connection.HiredisParser",
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+        "KEY_PREFIX": "NHHC-NATIVE",
     }
+}
+# CACHEOPS_REDIS=os.getenv("REDIS_URL")
+# CACHEOPS_CLIENT_CLASS="django_redis.client.DefaultClient"
+# CACHEOPS_DEFAULTS = {
+#     'timeout': 60*15
+# }
+# CACHEOPS = {
+#     'auth.user': {'ops': 'get', 'timeout': 60*15},
+#     'auth.*': {'ops': ('fetch', 'get')},
+#     'auth.permission': {'ops': 'all'},
+#     '*.*': {},
+# }
 # !SECTION
 
 # SECTION - Password validation
@@ -163,7 +190,7 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = "America/Chicago"
 USE_I18N = True
 USE_L10N = True
-USE_TZ = True
+USE_TZ = False
 
 DATETIME_FORMAT = "m/d/yyyy h:mm A"
 ADMINS = [("Terry Brooks", "Terry@BrooksJr.com"), ("Admin", "admin@netthandshome.care")]
@@ -199,9 +226,8 @@ TEMPLATES = [
 
 # !SECTION
 
-# SECTION - Default primary key field type
+# SECTION -Logging
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 LOGGING = {
@@ -246,3 +272,39 @@ LOGGING = {
         },
     },
 }
+
+PRIMARY_LOG_FILE = os.path.join(BASE_DIR, "logs", "primary_ops.log")
+CRITICAL_LOG_FILE = os.path.join(BASE_DIR, "logs", "fatal.log")
+DEBUG_LOG_FILE = os.path.join(BASE_DIR, "logs", "utility.log")
+LOGTAIL_HANDLER = LogtailHandler(source_token=os.getenv("LOGTAIL_API_KEY"))
+REQUEST_LOG_USER = True
+REQUEST_TRAFFIC_MODULES = [
+    "request.traffic.UniqueVisitor",
+    "request.traffic.UniqueVisit",
+    "request.traffic.Hit",
+    "request.traffic.Search",
+    "request.traffic.User" "request.traffic.Error404",
+    "request.traffic.Error",
+]
+# SECTION - Preformence Monitoring
+PROMETHEUS_LATENCY_BUCKETS = (
+    0.1,
+    0.2,
+    0.5,
+    0.6,
+    0.8,
+    1.0,
+    2.0,
+    3.0,
+    4.0,
+    5.0,
+    6.0,
+    7.5,
+    9.0,
+    12.0,
+    15.0,
+    20.0,
+    30.0,
+    float("inf"),
+)
+PROMETHEUS_METRIC_NAMESPACE = "nhhc"

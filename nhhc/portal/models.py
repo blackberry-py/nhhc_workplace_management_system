@@ -1,21 +1,33 @@
+"""
+Module: portal.models
+
+This module contains the models for handling payroll exceptions in the system. It includes the Exception model, which represents a payroll exception entry, and defines the fields and their validation rules.
+
+The Exception model includes the following fields:
+- date: Date of the exception
+- start_time: Start time of the exception
+- end_time: End time of the exception
+- num_hours: Number of hours for the exception
+- reason: Reason for the exception, with a minimum length validation of 50 characters
+- status: Status of the exception, with predefined choices of Pending, Approved, and Rejected
+
+The module also includes the Meta class for defining database table name, ordering, and verbose names.
+
+Note: The Assessment and InServiceTraining models are currently commented out and not in use.
+
+"""
+
 import arrow
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import AbstractUser
-from django.core.validators import MaxValueValidator, MinLengthValidator
+from django.core.validators import MinLengthValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from employee.models import Employee
-from localflavor.us.models import (
-    USSocialSecurityNumberField,
-    USStateField,
-    USZipCodeField,
-)
-from phonenumber_field.modelfields import PhoneNumberField
+
+from django_prometheus.models import ExportModelOperationsMixin
 
 now = arrow.now(tz="America/Chicago")
 
 
-class Exception(models.Model):
+class Exception(models.Model, ExportModelOperationsMixin("exceptions")):
     class STATUS(models.TextChoices):
         PENDING = "P", _("Pending - Awaiting Supervisor Review")
         APPROVED = "A", _("Approved - Time Amended")

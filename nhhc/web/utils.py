@@ -1,5 +1,5 @@
 """
-Module: application_style_declarations
+Module: web.utils
 
 This module contains the style declarations for the application's email templates. It includes CSS styles for various elements such as body, links, images, and text blocks. These styles are used to ensure consistent formatting and layout across different email clients and devices.
 """

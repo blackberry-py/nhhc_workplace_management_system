@@ -19,6 +19,7 @@ Note: The module also includes choices for services, mobility, and prior experie
 
 import random
 import string
+import datetime
 
 import arrow
 from compliance.models import Compliance
@@ -30,11 +31,17 @@ from employee.models import Employee
 from localflavor.us.models import USStateField, USZipCodeField
 from loguru import logger
 from phonenumber_field.modelfields import PhoneNumberField
+from django_prometheus.models import ExportModelOperationsMixin
 
 now = arrow.now(tz="US/Central")
 
 
-class ClientInterestSubmissions(models.Model):
+class ClientInterestSubmissions(
+    models.Model, ExportModelOperationsMixin("client_inquiries")
+):
+    def __str__(self):
+        return f"{self.last_name}, {self.first_name} - Submission Date: {arrow.get(self.date_submitted).format('YYYY-MM-DD')}"
+
     class SERVICES(models.TextChoices):
         INTERMITTENT = "I", _("Intermittent Home Care")
         NONMEDICAL = "NM", _("Non-Medical Home Care")
@@ -59,12 +66,17 @@ class ClientInterestSubmissions(models.Model):
         null=True,
     )
 
-    def marked_reviewed(self, user_id):
+    def marked_reviewed(self, user_id: Employee) -> None:
+        """Marks the review as reviewed by the specified user.
+
+        Args:
+            user_id (Employee): The ID of the user who reviewed the item.
+
+        Returns:
+            None
+        """
         self.reviewed = True
         self.reviewed_by = user_id
-
-    def __str__(self):
-        return f"{self.last_name}, {self.first_name} - Submission Date: {arrow.get(self.date_submitted).format('YYYY-MM-DD')}"
 
     class Meta:
         db_table = "interest_clients"
@@ -73,7 +85,9 @@ class ClientInterestSubmissions(models.Model):
         verbose_name_plural = "Interested Clients"
 
 
-class EmploymentApplicationModel(models.Model):
+class EmploymentApplicationModel(
+    models.Model, ExportModelOperationsMixin("applications")
+):
     def __str__(self):
         return f"{self.last_name}, {self.first_name} ({self.id}) - Submission Date: {arrow.get(self.date_submitted).format('YYYY-MM-DD')}"
 
@@ -179,7 +193,15 @@ class EmploymentApplicationModel(models.Model):
             )
             logger.error(log_message)
 
-    def reject_applicant(self, rejected_by):
+    def reject_applicant(self, rejected_by: Employee) -> None:
+        """Rejects an applicant.
+
+        Args:
+            rejected_by (Employee): The employee who rejected the applicant.
+
+        Returns:
+            None
+        """
         self.hired = False
         self.reviewed = True
         self.reviewed_by = rejected_by
