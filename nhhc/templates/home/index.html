@@ -19,8 +19,8 @@
             <h1 class="display-1 text-white">Announcements</h1>
             <hr class="uk-divider-icon"/>
             <div class="timer">
-            <div id="home-date"></div> 
-            <div id="home-time"></div>
+              <div id="home-date"></div>
+              <div id="home-time"></div>
             </div>
           </div>
         </div>
@@ -87,8 +87,8 @@
 
 <!-- Specific JS goes HERE -->
 {% block javascripts %}
-// SECTION - Date and Time For Portal Homepage
-function liveClock(){
+  // SECTION - Date and Time For Portal Homepage
+  function liveClock(){
   var portalDateNode = document.getElementById("home-date");
   var portalTimeNode = document.getElementById("home-time");
   var DATE = new Date();
@@ -99,6 +99,6 @@ function liveClock(){
   portalTimeNode.innerHTML = current_time
 
 
-}
-setInterval(liveClock, 1000);
+  }
+  setInterval(liveClock, 1000);
 {% endblock javascripts %}

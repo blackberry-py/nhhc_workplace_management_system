@@ -180,3 +180,5 @@
     });
 
 })(jQuery);
+
+console.log('Main JS')

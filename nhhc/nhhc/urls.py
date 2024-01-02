@@ -13,6 +13,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path, re_path
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
 from loguru import logger
 from web.sitemaps import StaticViewSitemap
@@ -38,7 +39,7 @@ urlpatterns = [
         "robots.txt/",
         TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
     ),
-    path("", include("django_prometheus.urls")),
+    re_path("", csrf_exempt(include("django_prometheus.urls"))),
     # path("404/", web.views.handler404),
     # path("500/", web.views.handler500)
 ]

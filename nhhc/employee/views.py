@@ -1,6 +1,6 @@
 """
-Module: Views
-App: Employee
+Module: employee.views
+
 
 This module contains views and functions for managing employee information, including hiring, rejecting, and viewing employee details.
 

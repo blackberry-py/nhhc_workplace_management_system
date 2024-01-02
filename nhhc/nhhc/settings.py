@@ -16,6 +16,7 @@ from logtail import LogtailHandler
 
 load_dotenv()
 # SECTION - Basic Application Defintion
+OFFLINE = True
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = get_random_secret_key()
 DEBUG = True
@@ -30,7 +31,7 @@ ALLOWED_HOSTS = [
     "netthandshome.care",
     "0.0.0.0",
 ]
-CSRF_FAILURE_VIEW = 'web.views.csrf_failure'
+CSRF_FAILURE_VIEW = "web.views.csrf_failure"
 RECAPTCHA_PUBLIC_KEY = os.getenv("RECAPTCHA_PUBLIC_KEY")
 RECAPTCHA_PRIVATE_KEY = os.getenv("RECAPTCHA_PRIVATE_KEY")
 RESTRICT_ADMIN_BY_IPS = True
@@ -113,7 +114,7 @@ mimetypes.add_type("text/html", ".html", True)
 mimetypes.add_type("text/javascript", ".js", True)
 
 # SECTION - Database and Caching
-if DEBUG:
+if DEBUG and not OFFLINE:
     ENVIRONMENT_NAME = "DEVELOPMENT SERVER"
     ENVIRONMENT_COLOR = "#00FFFF"
     DATABASES = {
@@ -122,11 +123,12 @@ if DEBUG:
             "NAME": os.getenv("DB_NAME_DEV"),
             "USER": os.getenv("DB_USER_DEV"),
             "PASSWORD": os.getenv("DB_PASSWORD_DEV"),
+            "PORT": os.getenv("DB_PORT"),
             "HOST": os.getenv("DB_HOST"),
             "OPTIONS": {"sslmode": "require"},
         },
     }
-else:
+elif not DEBUG and not OFFLINE:
     REQUEST_BASE_URL = "https://www.netthandshome.care"
     ENVIRONMENT_NAME = "PRODUCTION SERVER"
     ENVIRONMENT_COLOR = "#FF2222"
@@ -136,11 +138,24 @@ else:
             "NAME": os.getenv("DB_NAME_PROD"),
             "USER": os.getenv("DB_USER_PROD"),
             "PASSWORD": os.getenv("DB_PASSWORD_PROD"),
+            "PORT": os.getenv("DB_PORT"),
             "HOST": os.getenv("DB_HOST"),
             "OPTIONS": {"sslmode": "require"},
         },
     }
-
+elif OFFLINE:
+    ENVIRONMENT_NAME = "OFFLINE SERVER"
+    ENVIRONMENT_COLOR = "#000000"
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("POSTGRES_DB"),
+            "USER": os.getenv("POSTGRES_USER"),
+            "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+            "HOST": "localhost",
+            "PORT": 7732,
+        },
+    }
 CACHE_TTL = 60 * 15
 CACHES = {
     "default": {

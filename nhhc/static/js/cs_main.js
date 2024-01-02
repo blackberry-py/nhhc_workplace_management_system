@@ -1,4 +1,5 @@
-y6
+console.log('Coming Soon JS Loaded')
+
 (function ($) {
     "use strict";
 
@@ -22,7 +23,7 @@ y6
 
     $('.validate-form .input100').each(function(){
         $(this).focus(function(){
-           hideValidate(this);
+            hideValidate(this);
         });
     });
 
@@ -51,7 +52,7 @@ y6
         $(thisAlert).removeClass('alert-validate');
     }
 
-    
-    
+
+
 
 })(jQuery);

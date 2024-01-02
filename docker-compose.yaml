@@ -71,9 +71,8 @@ services:
       command:
       - --config.file=/etc/prometheus/prometheus.yml
       volumes:
+      - primary_hhd_netthandz:/prometheus/data/11
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      depends_on:
-      - cadvisor
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest

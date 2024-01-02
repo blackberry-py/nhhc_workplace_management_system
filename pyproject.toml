@@ -60,6 +60,7 @@ selenium = "^4.16.0"
 
 [tool.poetry.group.testing.dependencies]
 faker = "^22.0.0"
+tblib = "^3.0.0"
 
 [build-system]
 requires = ["poetry-core"]

@@ -2,6 +2,12 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
+{% block custom_js %}
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
+    <script src={% static 'js/address_autocomplete.js' %}></script>
+
+{% endblock custom_js %}
 {% block main %}
 
     <!-- Breadcrumb Begin -->
@@ -12,14 +18,27 @@
                     <div class="breadcrumb__text">
                         <h2>Employment Application</h2>
                     </div>
-                    <p>Employment Requirements</p>
-                    <ul>
-                        <li>IDPH State Fingerprinting</li>
-                        <li>24 Hour Pre-Service Training <em>(Can Be Provided by Nett Hand, if employment offer is extended)</em></li>
-                        <li>High School Diploma or GED Mandatory</li>
-                        <li>18+ Years of Age</li>
-                        <li>U.S. Citizenship or Authorization  to Work in USA</li>
-                    </ul>
+                    {% if form_errors %}
+                        <div id="form-errors">
+                            <ul class="form-errors-list">
+                                <p class="form-error-header">"Please correct the errors below and resubmit...</p>
+
+                                {% for error in form_errors %}
+                                    <li class="form-error"><i class="fa-solid fa-triangle-exclamation"></i> {{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% else %}
+                        <p>Employment Requirements</p>
+                        <ul>
+                            <li>IDPH State Fingerprinting</li>
+                            <li>24 Hour Pre-Service Training <em>(Can Be Provided by Nett Hand, if employment offer is extended)</em></li>
+                            <li>High School Diploma or GED Mandatory</li>
+                            <li>18+ Years of Age</li>
+                            <li>U.S. Citizenship or Authorization  to Work in USA</li>
+                        </ul>
+                    {% endif %}
+
                 </div>
             </div>
         </div>
@@ -29,8 +48,16 @@
 
     <!-- Call To Action Section Begin -->
     <section id="interest-form" class="contact spad mx-auto">
+
         {% csrf_token %}
         {% crispy form %}
+
     </section>
 
 {% endblock main %}
+
+{% block customscripts %}
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDwRtpvIRYnt2dt8cSMzdxjVE1tfxcO4Ww&callback=initAutocomplete&libraries=places&v=weekly" defer>
+    </script>
+{% endblock customscripts %}

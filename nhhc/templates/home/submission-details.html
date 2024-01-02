@@ -29,27 +29,64 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-4">
+          <div class="col-6">
             <h3><strong>Email Address:</strong></h3>
             <p>{{ submission.email }}</p>
           </div>
-          <div class="col-4">
+          <div class="col-6">
             <h3><strong>Contact Number:</strong></h3>
             <p>{{ submission.contact_number }}</p>
           </div>
-          <div class="col-4">
-            <h3><strong>Service Zipcode:</strong></h3>
-            <p>{{ submission.zipcode }}</p>
-          </div>
+
         </div>
+        <hr class="uk-divider-icon"/>
+
         <div class="row">
           <div class="col-6">
             <h3><strong>Desired Service:</strong></h3>
-            <p>{{ submission.desired_service }}</p>
+            {% if submission.desired_service == "I" %}
+              <p>Intermittent Home Care</p>
+            {% elif submission.desired_service == "NM"  %}
+              <p>Non-Medical Home Care</p>
+            {% elif submission.desired_service == "MSW"  %}
+              <p>Medical Social Work</p>
+            {% elif submission.desired_service == "OT"  %}
+              <p>Occupational Therapy</p>
+            {% elif submission.desired_service == "PT"  %}
+              <p>Physical Therapy</p>
+            {% else %}
+              <p>Other</p>
+            {% endif %}
           </div>
           <div class="col-6">
             <h3><strong>Payor:</strong></h3>
             <p>{{ submission.insurance_carrier }}</p>
+          </div>
+        </div>
+        <hr class="uk-divider-icon"/>
+
+        <div class="row">
+          <div class="col-8">
+            <h3><strong>Service Address:</strong></h3>
+            <p>{{ submission.home_address1}}</p>
+          </div>
+          <div class="col-4">
+            <h3><strong>Apt/Unit #:</strong></h3>
+            <p>{{ submission.home_address2}}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-5">
+            <h3><strong>Service City:</strong></h3>
+            <p>{{ submission.city }}</p>
+          </div>
+          <div class="col-3">
+            <h3><strong>Service State:</strong></h3>
+            <p>{{ submission.state }}</p>
+          </div>
+          <div class="col-4">
+            <h3><strong>Service Zipcode:</strong></h3>
+            <p>{{ submission.zipcode }}</p>
           </div>
         </div>
         <hr class="my-4" />

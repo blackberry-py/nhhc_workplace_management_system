@@ -114,7 +114,12 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
     social_security = USSocialSecurityNumberField(unique=True, null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
     middle_name = models.CharField(max_length=255, default="", null=True, blank=True)
-    street_address = models.CharField(max_length=255, default="", null=True, blank=True)
+    street_address1 = models.CharField(
+        max_length=255, default="", null=True, blank=True
+    )
+    street_address2 = models.CharField(
+        max_length=255, default="", null=True, blank=True
+    )
     marital_status = models.CharField(
         max_length=255,
         null=True,

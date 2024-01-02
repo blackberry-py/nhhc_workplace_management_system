@@ -14,6 +14,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseServerError
 from django.shortcuts import redirect, render
+from django.contrib import messages
 from django.template import RequestContext
 from django.views.decorators.cache import cache_page
 from dotenv import load_dotenv
@@ -37,6 +38,7 @@ logger.add(LOGTAIL_HANDLER, diagnose=False, catch=True, backtrace=False, level="
 # SECTION - Page Rendering Views
 
 
+@cache_page(CACHE_TTL)
 def index(request):
     """Primary Render Function that Renders the Homepage template located in index.html.
 
@@ -306,6 +308,7 @@ def send_internal_client_submission_confirmation(form):
 
 # !SECTION
 # SECTION - Form Processing Views
+@cache_page(CACHE_TTL)
 def client_interest(request):
     """Instantiates the ClientInterestForm Class and checks the request.method. If Post - Processes Form Data. If GET - Renders Form
 
@@ -315,6 +318,7 @@ def client_interest(request):
     Returns:
         Renders wor Processes ClientInterestForm
     """
+    context = dict()
     # if this is a POST request we need to process the form data
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
@@ -325,19 +329,22 @@ def client_interest(request):
             send_external_client_submission_confirmation(form)
             send_internal_client_submission_confirmation(form)
             return redirect("submitted")
+        elif not form.is_valid():
+            context["form"] = form
+            context["form_errors"] = form.errors
+            return render(request, "client-interest.html", context)
     # if a GET (or any other method) we'll create a blank form
     else:
         form = ClientInterestForm()
-
-    return render(
-        request,
-        "client-interest.html",
-        {"form": form, "title": "Client Interest Form"},
-    )
+        context["form"] = form
+        context["title"] = "Client Services Request"
+        logger.debug(context)
+        return render(request, "client-interest.html", context)
 
 
+@cache_page(CACHE_TTL)
 def employee_interest(request):
-    """Secondary Render Function that Renders the sub-page for the employee interest form template located in 'employee-interest.html' file.
+    """Instantiates the EmploymentApplicationForm Class and checks the request.method. If Post - Processes Form Data. If GET - Renders Form
 
     Args:
         request (HttpRequestObject): Request Object Passed at time of calling.
@@ -346,28 +353,31 @@ def employee_interest(request):
         Renders sub-page Employee Application Form
     """
     # if this is a POST request we need to process the form data
+    context = dict()
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
         form = EmploymentApplicationForm(request.POST)
+
         # check whether it's valid:
         if form.is_valid():
             form.save()
             send_internal_application_submission_confirmation(form)
             send_external_application_submission_confirmation(form)
-            return redirect("submitted")
+            return redirect("submitted", permanent=True)
+        elif not form.is_valid():
+            context["form"] = form
+            context["form_errors"] = form.errors
+            return render(request, "employee-interest.html", context)
 
     # if a GET (or any other method) we'll create a blank form
     else:
         form = EmploymentApplicationForm()
-
-    return render(
-        request,
-        "employee-interest.html",
-        {"form": form, "title": "Employment Application"},
-    )
+        context["form"] = form
+        context["title"] = "Employment Application"
+        return render(request, "employee-interest.html", context)
 
 
-# @cache_page(CACHE_TTL)
+@cache_page(CACHE_TTL)
 def submitted(request):
     return render(request, "submission.html", {"title": "Form Submission Confirmation"})
 
@@ -385,6 +395,7 @@ def handler500(request, exception=HttpResponseServerError, template_name="500.ht
     context = dict()
     context["title"] = "500 - Internal Error"
     return render(request, "500.html", status=500)
+
 
 def csrf_failure(request, reason=""):
     """Default view for CSRF failures."""

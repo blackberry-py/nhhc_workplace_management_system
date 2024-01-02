@@ -54,7 +54,11 @@ class ClientInterestSubmissions(
     last_name = models.CharField(max_length=255)
     email = models.EmailField(null=True)
     contact_number = PhoneNumberField(region="US")
-    zipcode = USZipCodeField()
+    home_address1 = models.CharField(max_length=800, null=True)
+    home_address2 = models.CharField(max_length=50, null=True, blank=True)
+    city = models.CharField(max_length=255, null=True, blank=True)
+    zipcode = USZipCodeField(null=True, blank=True)
+    state = USStateField(max_length=2, null=True, blank=True)
     insurance_carrier = models.CharField(max_length=255)
     desired_service = models.CharField(max_length=255, choices=SERVICES.choices)
     date_submitted = models.DateTimeField(auto_now_add=True)
@@ -108,8 +112,11 @@ class EmploymentApplicationModel(
     last_name = models.CharField(max_length=255)
     contact_number = PhoneNumberField(region="US")
     email = models.EmailField(max_length=254)
-    home_address = models.CharField(max_length=255)
-    city = models.CharField(max_length=255)
+    home_address1 = models.CharField(max_length=800)
+    home_address2 = models.CharField(max_length=50, null=True, blank=True)
+    city = models.CharField(
+        max_length=255,
+    )
     state = USStateField(max_length=2)
     zipcode = USZipCodeField()
     mobility = models.CharField(max_length=255, choices=MOBILITTY.choices)
@@ -178,6 +185,11 @@ class EmploymentApplicationModel(
                 last_name=self.last_name,
                 email=self.email,
                 phone=self.contact_number,
+                street_address1=self.home_address1,
+                street_address2=self.home_address2,
+                state=self.state,
+                city=self.city,
+                zipcode=self.zipcode,
             )
             password = self.generate_random_password()
             new_employee.password = make_password(password)

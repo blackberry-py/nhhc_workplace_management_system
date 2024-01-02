@@ -28,6 +28,45 @@ class ClientInterestForm(forms.ModelForm):
 
     captcha = ReCaptchaField()
 
+    def __init__(self, *args, **kwargs):  # pragma: no cover
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.attrs = {"autocomplete": "off"}
+        self.fields["captcha"].label = False
+
+        self.helper.layout = Layout(
+            HTML("""<h3 class="application-text">Patient Information</h3>"""),
+            Row(
+                Column("first_name", css_class="form-group col-md-6 mb-0"),
+                Column("last_name", css_class="form-group col-md-6 mb-0"),
+                css_class="form-row",
+            ),
+            Row(
+                Column("contact_number", css_class="form-group col-md-6 mb-0"),
+                Column("email", css_class="form-group col-md-6 mb-0"),
+                css_class="form-row",
+            ),
+            Row(
+                Column("home_address1", css_class="form-group col-8"),
+                Column("home_address2", css_class="form-group col-4"),
+                css_class="form-row",
+            ),
+            Row(
+                Column("city", css_class="form-group col-md-6 mb-0"),
+                Column("state", css_class="form-group col-md-4 mb-0"),
+                Column("zipcode", css_class="form-group col-md-2 mb-0"),
+                css_class="form-row ",
+            ),
+            HTML("""<h3 class="application-text">Service Information</h3>"""),
+            Row(
+                Column("insurance_carrier", css_class="form-group col-md-6 mb-0"),
+                Column("desired_service", css_class="form-group col-md-6 mb-0"),
+                css_class="form-row",
+            ),
+            Field("captcha", placeholder="Enter captcha"),
+            Submit("submit", "Submit Application"),
+        )
+
     class Meta:
         """Meta definition for ClientInterestSubmissionform."""
 
@@ -36,12 +75,21 @@ class ClientInterestForm(forms.ModelForm):
             "first_name",
             "last_name",
             "contact_number",
+            "home_address1",
+            "home_address2",
+            "city",
+            "zipcode",
+            "state",
             "email",
             "zipcode",
             "insurance_carrier",
             "desired_service",
             "captcha",
         )
+        labels = {
+            "home_address2": _("Unit/Apartment"),
+            "home_address1": _("Street Address"),
+        }
 
 
 class EmploymentApplicationForm(forms.ModelForm):
@@ -52,6 +100,9 @@ class EmploymentApplicationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):  # pragma: no cover
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.helper.attrs = {"autocomplete": "off"}
+        self.fields["captcha"].label = False
+
         self.helper.layout = Layout(
             HTML(
                 """
@@ -67,14 +118,20 @@ class EmploymentApplicationForm(forms.ModelForm):
                 Column("email", css_class="form-group col-md-6 mb-0"),
                 css_class="form-row",
             ),
-            "home_address",
+            Row(
+                Column("home_address1", css_class="form-group col-8"),
+                Column("home_address2", css_class="form-group col-4"),
+                css_class="form-row",
+            ),
             Row(
                 Column("city", css_class="form-group col-md-6 mb-0"),
                 Column("state", css_class="form-group col-md-4 mb-0"),
                 Column("zipcode", css_class="form-group col-md-2 mb-0"),
                 css_class="form-row ",
             ),
-            HTML("""<h3 class="application-text">Relevant Experience</h3>"""),
+            HTML(
+                """<h3 class="application-text">Relevant Experience</h3>""",
+            ),
             Row(
                 Column("mobility", css_class="form-group col-md-6 mb-0"),
                 Column("prior_experience", css_class="form-group col-md-6 mb-0"),
@@ -84,7 +141,9 @@ class EmploymentApplicationForm(forms.ModelForm):
                 Column("ipdh_registered", css_class="form-group col-md-12 mb-0"),
                 css_class="form-row",
             ),
-            HTML("""<h3 class="application-text">Work Availability</h3>"""),
+            HTML(
+                """<h3 class="application-text">Work Availability</h3>""",
+            ),
             Row(
                 Column("availability_monday", css_class="form-group col-md-3 mb-0"),
                 Column("availability_tuesday", css_class="form-group col-md-3 mb-0"),
@@ -111,7 +170,8 @@ class EmploymentApplicationForm(forms.ModelForm):
             "last_name",
             "contact_number",
             "email",
-            "home_address",
+            "home_address1",
+            "home_address2",
             "city",
             "state",
             "zipcode",
@@ -138,4 +198,6 @@ class EmploymentApplicationForm(forms.ModelForm):
             "availability_friday": _("Friday"),
             "availability_saturday": _("Saturday"),
             "availability_sunday": _("Sunday"),
+            "home_address2": _("Unit/Apartment"),
+            "home_address1": _("Street Address"),
         }

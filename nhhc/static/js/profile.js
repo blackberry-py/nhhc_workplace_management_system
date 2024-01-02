@@ -33,3 +33,5 @@ function makeProfileUnEditable() {
 cancelChangesButton.addEventListener('click', cancelPendingEdits)
 editProfileButton.addEventListener('click', makeProfileEditable)
 window.addEventListener('load', makeProfileUnEditable)
+
+console.log('Profile Editability JS')

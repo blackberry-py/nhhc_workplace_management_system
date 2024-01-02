@@ -60,7 +60,9 @@ def index(request):
     new_applications = EmploymentApplicationModel.objects.filter(
         reviewed=False
     ).order_by("-date_submitted")
-    new_client_requests = ClientInterestSubmissions.objects.filter(reviewed=False).order_by("-date_submitted")
+    new_client_requests = ClientInterestSubmissions.objects.filter(
+        reviewed=False
+    ).order_by("-date_submitted")
     announcements = Announcements.objects.all().order_by("-date_posted")[:10]
     context["announcements"] = announcements
     context["new_applications"] = new_applications
@@ -130,10 +132,14 @@ def submission_detail(request, pk):
     context["type"] = "Client Interest"
     init_values = {
         "id": submission.id,
-        "first_nam.we": submission.first_name,
+        "first_name": submission.first_name,
         "last_name": submission.last_name,
         "email": submission.email,
         "contact_number": submission.contact_number,
+        "home_address1": submission.home_address1,
+        "home_address2": submission.home_address2,
+        "city": submission.city,
+        "state": submission.state,
         "zipcode": submission.zipcode,
         "insurance_carrier": submission.insurance_carrier,
         "desired_service": submission.desired_service,
@@ -195,7 +201,8 @@ def applicant_details(request, pk):
             "last_name": submission.last_name,
             "contact_number": submission.contact_number,
             "email": submission.email,
-            "home_address": submission.home_address,
+            "home_address1": submission.home_address1,
+            "home_address2": submission.home_address2,
             "city": submission.city,
             "state": submission.state,
             "zipcode": submission.zipcode,
@@ -220,6 +227,7 @@ def applicant_details(request, pk):
     else:
         raise PermissionDenied()
 
+
 @login_required(login_url="/login/")
 def all_applicants(request) -> HttpResponse:
     inquiries = EmploymentApplicationModel.objects.all().values()
@@ -228,7 +236,7 @@ def all_applicants(request) -> HttpResponse:
     applicant_json = json.dumps(list(inquiries), cls=DjangoJSONEncoder)
     return HttpResponse(content=applicant_json, status=200)
 
+
 @login_required(login_url="/login/")
 def coming_soon(request):
-    return render(request, 'coming_soon.html', {})
-    
+    return render(request, "coming_soon.html", {})

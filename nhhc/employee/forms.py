@@ -21,7 +21,8 @@ class EmployeeForm(forms.ModelForm):
             "gender",
             "social_security",
             "middle_name",
-            "street_address",
+            "street_address1",
+            "street_address2",
             "last_name",
             "first_name",
             "marital_status",
@@ -137,9 +138,14 @@ class EmployeeForm(forms.ModelForm):
             ),
             Row(
                 Column(
-                    "street_address",
+                    "street_address1",
                     readonly=True,
-                    css_class="form-group col-md-12 mb-0 editable   ",
+                    css_class="form-group col-md-8 mb-0 editable   ",
+                ),
+                Column(
+                    "street_address2",
+                    readonly=True,
+                    css_class="form-group col-md-4 mb-0 editable",
                 ),
                 css_class="form-row",
             ),

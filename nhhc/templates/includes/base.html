@@ -17,18 +17,13 @@
         <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600;700&display=swap"
               rel="stylesheet">
 
-    <!-- Css Styles -->
-        <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static '/css/font-awesome.min.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static '/css/elegant-icons.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static '/css/owl.carousel.min.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static '/css/magnific-popup.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static '/css/slicknav.min.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static '/css/style.css' %}" type="text/css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" async></script>
-        <script src="{% static '/js/pagination.js' %}" defer></script>
+    <!-- Css Styles Partial Import -->
+        {% include "includes/styles.html" %}
+
         {% block customstyles %}
         {% endblock customstyles %}
+        {% block custom_js %}
+        {% endblock custom_js %}
     </head>
 
     <body>
@@ -194,17 +189,7 @@
     <!-- Footer Section End -->
 
     <!-- Js Plugins -->
-<script src="https://kit.fontawesome.com/58e27c88da.js" crossorigin="anonymous" async></script>
-<script src="{% static '/js/jquery-3.3.1.min.js' %}" async></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js" async></script>
-<script src="{% static '/js/bootstrap.min.js' %}" defer></script>
-<script src="{% static 'js/jquery.magnific-popup.min.js' %}" defer></script>
-<script src="{% static '/js/mixitup.min.js' %}" defer></script>
-<script src="{% static '/js/masonry.pkgd.min.js' %}" defer></script>
-<script src="{% static '/js/jquery.slicknav.js' %}" defer></script>
-<script src="{% static '/js/owl.carousel.min.js' %}" defer></script>
-<script src="{% static '/js/main.js' %}" defer></script>
-<script src="{% static '/js/custom-scripts.js' %}" defer></script>
+{% include 'includes/scripts.html' %}
 {% block customscripts %}
 {% endblock customscripts %}
 </body>
