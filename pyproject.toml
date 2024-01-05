@@ -35,6 +35,9 @@ django-request = "^1.6.3"
 django-prometheus = "^2.3.1"
 hiredis = "^2.3.2"
 django-redis-cache = "^3.0.1"
+django-storages = "^1.14.2"
+django-backblaze-b2 = "^5.0.2"
+b2sdk = "^1.29.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.6.0"
@@ -56,11 +59,14 @@ mock = "^5.1.0"
 model-bakery = "^1.17.0"
 factory-boy = "^3.3.0"
 selenium = "^4.16.0"
+faker = "^22.0.0"
+tblib = "^3.0.0"
+
+
 
 
 [tool.poetry.group.testing.dependencies]
-faker = "^22.0.0"
-tblib = "^3.0.0"
+pytest-django = "^4.7.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -73,5 +79,12 @@ profile = "black"
 line-length = 88
 target-version = ['py37']
 
- [tool.coverage.report]
+[tool.coverage.report]
 exclude_also = []
+
+[tool.djlint]
+ignore="H021"
+
+[tool.pytest.ini_options]
+# -- recommended but optional:
+python_files = ["test_*.py", "*_test.py", "testing/python/*.py"]

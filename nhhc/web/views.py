@@ -402,6 +402,6 @@ def csrf_failure(request, reason=""):
     return render(
         request,
         "403_csrf.html",
-        {"reason": reason},
+        {"reason": reason, "title": "Forbidden"},
         status=403,
     )

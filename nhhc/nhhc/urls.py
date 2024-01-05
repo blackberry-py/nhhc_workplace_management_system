@@ -25,11 +25,12 @@ urlpatterns = [
     path("__debug__/", include("debug_toolbar.urls")),
     path("control-center/", admin.site.urls),
     path("", include(web.urls)),
-    path("", include(authentication.urls)),
+    path("", include("allauth.urls")),
     re_path(
         r"^status/DNzaNdlwIbqjWCq4vMTAgGe81VxXFd1QPGt-mglUDuA/",
         include("health_check.urls"),
     ),
+    path("accounts", include(authentication.urls)),
     path("", include(portal.urls)),
     path("", include(employee.urls)),
     path("", include(compliance.urls)),
@@ -39,7 +40,8 @@ urlpatterns = [
         "robots.txt/",
         TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
     ),
-    re_path("", csrf_exempt(include("django_prometheus.urls"))),
+    re_path("", include("django_prometheus.urls")),
+    path("storage/", include("django_backblaze_b2.urls")),
     # path("404/", web.views.handler404),
     # path("500/", web.views.handler500)
 ]

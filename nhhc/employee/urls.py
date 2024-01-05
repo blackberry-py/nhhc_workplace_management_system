@@ -14,7 +14,7 @@ These URL patterns are used to define the routing for the views in the applicati
 from django.urls import path, re_path
 from django.views.decorators.csrf import csrf_exempt
 
-from . import views
+from employee import views
 
 urlpatterns = [
     path("employee/<int:pk>/", views.employee_details, name="employee"),

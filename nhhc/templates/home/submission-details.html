@@ -46,13 +46,13 @@
             <h3><strong>Desired Service:</strong></h3>
             {% if submission.desired_service == "I" %}
               <p>Intermittent Home Care</p>
-            {% elif submission.desired_service == "NM"  %}
+            {% elif submission.desired_service == "NM" %}
               <p>Non-Medical Home Care</p>
-            {% elif submission.desired_service == "MSW"  %}
+            {% elif submission.desired_service == "MSW" %}
               <p>Medical Social Work</p>
-            {% elif submission.desired_service == "OT"  %}
+            {% elif submission.desired_service == "OT" %}
               <p>Occupational Therapy</p>
-            {% elif submission.desired_service == "PT"  %}
+            {% elif submission.desired_service == "PT" %}
               <p>Physical Therapy</p>
             {% else %}
               <p>Other</p>
@@ -68,11 +68,11 @@
         <div class="row">
           <div class="col-8">
             <h3><strong>Service Address:</strong></h3>
-            <p>{{ submission.home_address1}}</p>
+            <p>{{ submission.home_address1 }}</p>
           </div>
           <div class="col-4">
             <h3><strong>Apt/Unit #:</strong></h3>
-            <p>{{ submission.home_address2}}</p>
+            <p>{{ submission.home_address2 }}</p>
           </div>
         </div>
         <div class="row">

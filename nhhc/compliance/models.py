@@ -2,6 +2,11 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_prometheus.models import ExportModelOperationsMixin
 from employee.models import Employee
+from django_backblaze_b2 import BackblazeB2Storage
+
+storage_opts = {
+    "bucket": "nhhc-employee",
+}
 
 
 class Contract(models.Model, ExportModelOperationsMixin("contracts")):
@@ -24,17 +29,18 @@ class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
         CC_SUPERVISOR = "CARE_COORDINATOR_SUPERVISOR", _("Care Coordinator Supervisor")
         HC_SUPERVISOR = "HOMECARE_SUPERVISOR", _("Homecare Supervisor")
 
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    employee = models.OneToOneField(
+        Employee,
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="compliance_profile_of",
+    )
     aps_check_passed = models.BooleanField(null=True, blank=True)
     aps_check_verification = models.FileField(
-        upload_to="verifications",
-        null=True,
-        blank=True,
+        upload_to="nhhc-employee", null=True, blank=True, storage=BackblazeB2Storage
     )
     hhs_oig_exclusionary_check_verification = models.FileField(
-        upload_to="verifications",
-        null=True,
-        blank=True,
+        upload_to="nhhc-employee", null=True, blank=True, storage=BackblazeB2Storage
     )
     hhs_oig_exclusionary_check_completed = models.BooleanField(
         null=True,
@@ -47,9 +53,7 @@ class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
         default=False,
     )
     idph_background_check_verification = models.FileField(
-        upload_to="verifications",
-        null=True,
-        blank=True,
+        upload_to="nhhc-employee", null=True, blank=True, storage=BackblazeB2Storage
     )
     initial_idph_background_check_completion_date = models.DateField(
         null=True,
@@ -61,13 +65,13 @@ class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
     )
     training_exempt = models.BooleanField(null=True, blank=True, default=False)
     pre_training_verification = models.FileField(
-        upload_to="verifications",
-        null=True,
-        blank=True,
+        upload_to="nhhc-employee", null=True, blank=True, storage=BackblazeB2Storage
     )
     pre_service_completion_date = models.DateField(null=True, blank=True)
     added_to_TTP_portal = models.BooleanField(null=True, blank=True)
-    contract_code = models.ForeignKey(Contract, on_delete=models.PROTECT, null=True)
+    contract_code = models.ForeignKey(
+        Contract, on_delete=models.PROTECT, blank=True, null=True
+    )
     job_title = models.CharField(
         null=True,
         choices=JOB_TITLE.choices,
@@ -77,7 +81,7 @@ class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
     )
 
     def __str__(self):
-        return str(self.employee.first_name)
+        return f"{self.last_name}, {self.first_name} - {self.job_title}"
 
     class Meta:
         db_table = "audit_compliance"

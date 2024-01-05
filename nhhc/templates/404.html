@@ -1,5 +1,5 @@
-{% extends 'includes/base.html' %}
-{% load static%}
+{% extends "includes/base.html" %}
+{% load static %}
 {% block customstyles %}
     <title>404 - Page not found</title>
 {% endblock customstyles %}
@@ -15,12 +15,11 @@
                         <div class="breadcrumb__links">
                             <p>The page you are looking for might have been removed had its name changed or is temporarily unavailable.</p>
                         </div>
-                        <a href="/">Go To Homepage</a>
+                        <a href="{% url 'index' %}">Go To Homepage</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
-    </div>
+
 {% endblock main %}

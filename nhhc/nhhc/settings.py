@@ -16,10 +16,13 @@ from logtail import LogtailHandler
 
 load_dotenv()
 # SECTION - Basic Application Defintion
-OFFLINE = True
+OFFLINE = False
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = get_random_secret_key()
 DEBUG = True
+CSRF_COOKIE_NAME = "nhhc-csrf"
+CSRF_USE_SESSIONS = True
+SESSION_COOKIE_NAME = "nhhc-session"
 SESSION_COOKIE_SECURE = True
 ADMINRESTRICT_ALLOW_PRIVATE_IP = False
 ALLOWED_HOSTS = [
@@ -50,7 +53,9 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 INSTALLED_APPS = [
     "kolo",
     "whitenoise.runserver_nostatic",
-    # 'django_admin_env_notice',``
+    "allauth",
+    "allauth.account",
+    #  'django_admin_env_notice',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -67,6 +72,7 @@ INSTALLED_APPS = [
     "request",
     "debug_toolbar",
     "localflavor",
+    "django_backblaze_b2",
     "captcha",
     "corsheaders",
     # "IpWhitelister",
@@ -80,6 +86,7 @@ INSTALLED_APPS = [
     "portal",
     "employee",
     "announcements",
+    "authentication",
     "compliance",
 ]
 
@@ -98,6 +105,7 @@ MIDDLEWARE = [
     "request.middleware.RequestMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "django_prometheus.middleware.PrometheusAfterMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.cache.FetchFromCacheMiddleware",
@@ -166,7 +174,11 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
         "KEY_PREFIX": "NHHC-NATIVE",
-    }
+    },
+    "django-backblaze-b2": {
+        "BACKEND": "django_prometheus.cache.backends.redis.RedisCache",
+        "LOCATION": os.getenv("S3_CACHE_URL"),
+    },
 }
 # CACHEOPS_REDIS=os.getenv("REDIS_URL")
 # CACHEOPS_CLIENT_CLASS="django_redis.client.DefaultClient"
@@ -199,6 +211,29 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    "django.contrib.auth.backends.ModelBackend",
+    # `allauth` specific authentication methods, such as login by email
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+LOGIN_REDIRECT_URL = "/dashboard"
+LOGIN_URL = "/login"
+LOGOUT_REDIRECT_URL = LOGIN_URL
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "Nett Hands Employee Portal"
+ACCOUNT_FORMS = {
+    "add_email": "allauth.account.forms.AddEmailForm",
+    "change_password": "allauth.account.forms.ChangePasswordForm",
+    "login": "authentication.forms.NHHCLoginForm",
+    "reset_password": "allauth.account.forms.ResetPasswordForm",
+    "reset_password_from_key": "allauth.account.forms.ResetPasswordKeyForm",
+    "set_password": "allauth.account.forms.SetPasswordForm",
+    "signup": "allauth.account.forms.SignupForm",
+    "user_token": "allauth.account.forms.UserTokenForm",
+}
 # !SECTION
 
 # SECTION - Internationalization
@@ -210,7 +245,32 @@ USE_TZ = False
 
 DATETIME_FORMAT = "m/d/yyyy h:mm A"
 ADMINS = [("Terry Brooks", "Terry@BrooksJr.com"), ("Admin", "admin@netthandshome.care")]
+# !SECTION
 
+# SECTION - STORAGE
+
+# STORAGES = {
+#     "default": {
+#         "BACKEND": "storages.backends.s3.S3Storage",
+#         "OPTIONS": {
+#         },
+#     },
+# }
+BACKBLAZE_CONFIG = {
+    # however you want to securely retrieve these values
+    "application_key_id": os.getenv("S3_STORAGE_ACCESS_KEY"),
+    "application_key": os.getenv("S3_STORAGE_SECRET_KEY"),
+    "bucket": "nhhc-employee",
+}
+
+
+AWS_STORAGE_BUCKET_NAME = "nhhc-employee"
+AWS_S3_REGION_NAME = "us-east-005"
+ENDPOINT_URL = "s3.us-east-005.backblazeb2.com"
+AWS_S3_ADDRESSING_STYLE = "auto"
+
+
+#! SECTION
 # SECTION -  Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 

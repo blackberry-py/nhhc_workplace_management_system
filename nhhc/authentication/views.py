@@ -4,8 +4,13 @@ Copyright (c) 2019 - present AppSeed.us
 # Create your views here.
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render, reverse
+from allauth.account.views import SignupView, LoginView
 
 from .forms import LoginForm, SignUpForm
+
+
+class MyLoginView(LoginView):
+    template_name = "login.html"
 
 
 def login_view(request):

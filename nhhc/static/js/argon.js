@@ -477,7 +477,7 @@ var CopyIcon = (function() {
 	// Variables
 
     var $element = '.btn-icon-clipboard',
-    $btn = $($element);
+        $btn = $($element);
 
 
 	// Methods
@@ -570,7 +570,7 @@ var NavbarCollapse = (function() {
 	// Variables
 
     var $nav = $('.navbar-nav'),
-    $collapse = $('.navbar .navbar-custom-collapse');
+        $collapse = $('.navbar .navbar-custom-collapse');
 
 
 	// Methods
@@ -638,7 +638,7 @@ var Popover = (function() {
 	// Variables
 
     var $popover = $('[data-toggle="popover"]'),
-    $popoverClass = '';
+        $popoverClass = '';
 
 
 	// Methods
@@ -1022,7 +1022,7 @@ var noUiSlider = (function() {
             var startValue = sliderValue.data('range-value-low');
 
             var c = document.getElementById(sliderId),
-            d = document.getElementById(sliderValueId);
+                d = document.getElementById(sliderValueId);
 
             noUiSlider.create(c, {
                 start: [parseInt(startValue)],
@@ -1042,9 +1042,9 @@ var noUiSlider = (function() {
 
     if ($("#input-slider-range")[0]) {
         var c = document.getElementById("input-slider-range"),
-        d = document.getElementById("input-slider-range-value-low"),
-        e = document.getElementById("input-slider-range-value-high"),
-        f = [d, e];
+            d = document.getElementById("input-slider-range-value-low"),
+            e = document.getElementById("input-slider-range-value-high"),
+            f = [d, e];
 
         noUiSlider.create(c, {
             start: [parseInt(d.getAttribute('data-range-value-low')), parseInt(e.getAttribute('data-range-value-high'))],

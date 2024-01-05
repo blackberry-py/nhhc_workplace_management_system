@@ -12,19 +12,25 @@ from faker import Faker
 from model_bakery import baker
 from portal.views import employment_applications, marked_reviewed, submission_detail
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
-from web.tests.test_models import gen_phone, gen_zip_code
+from nhhc.testing_utils import (
+    generate_mock_PhoneNumberField,
+    generate_mock_USSocialSecurityNumberField,
+    generate_mock_ZipCodeField,
+)
+from loguru import logger
+
 
 dummy_data = Faker()
 
 
-def gen_ssn():
-    return "353804859"
-
-
-baker.generators.add("phonenumber_field.modelfields.PhoneNumberField", gen_phone)
-baker.generators.add("phonenumber_field.modelfields.PhoneNumberField", gen_phone)
-baker.generators.add("localflavor.us.models.USZipCodeField", gen_zip_code)
-baker.generators.add("localflavor.us.models.USSocialSecurityNumberField", gen_ssn)
+baker.generators.add(
+    "phonenumber_field.modelfields.PhoneNumberField", generate_mock_PhoneNumberField
+)
+baker.generators.add("localflavor.us.models.USZipCodeField", generate_mock_ZipCodeField)
+baker.generators.add(
+    "localflavor.us.models.USSocialSecurityNumberField",
+    generate_mock_USSocialSecurityNumberField,
+)
 
 
 class ProfileTestCase(TestCase):
@@ -44,6 +50,7 @@ class ProfileTestCase(TestCase):
         )  # Check if the get request is successful
 
     def test_profile_form(self):
+        self.client.force_login(Employee)
         form_data = {
             "gender": random.choice(["M", "F", "X", "B"]),
             "social_security": dummy_data.ssn(),
@@ -96,8 +103,19 @@ class ClientInquiriesTestCase(TestCase):
             email="janesmith@example.com",
             reviewed=True,
         )
+        self.client = Client()
+        self.employee = baker.make(
+            Employee,
+            username="testuser",
+            password="testpassword",
+            is_staff=True,
+            is_superuser=False,
+        )
+        self.contract = baker.make(Contract)
+        self.compliance = baker.make(Compliance, employee=self.employee)
 
     def test_all_client_inquiries(self):
+        self.client.force_login()
         response = self.client.get(reverse("inquiries"))
         self.assertEqual(response.status_code, 200)
         inquiries = json.loads(response.content)
@@ -106,6 +124,7 @@ class ClientInquiriesTestCase(TestCase):
         self.assertEqual(inquiries[1]["email"], "janesmith@example.com")
 
     def test_client_inquiries(self):
+        self.client.force_login(Employee)
         response = self.client.get(reverse("inquiries"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "John Doe")
@@ -118,6 +137,7 @@ class ClientInquiriesTestCase(TestCase):
         self.assertContains(response, "showSearch")
 
     def test_empty_client_inquiries(self):
+        self.client.force_login(Employee)
         ClientInterestSubmissions.objects.all().delete()
         response = self.client.get(reverse("inquiries"))
         self.assertEqual(response.status_code, 200)
@@ -128,6 +148,7 @@ class ClientInquiriesTestCase(TestCase):
         self.assertContains(response, "showSearch")
 
     def test_no_unresponsed_client_inquiries(self):
+        self.client.force_login(Employee)
         self.submission1.reviewed = True
         self.submission1.save()
         response = self.client.get(reverse("inquiries"))
@@ -259,4 +280,4 @@ class MarkedReviewedTestCase(TestCase):
         # Call the view function
         response = employment_applications(request)
         # Check if the all submissions count is correct
-        self.assertEqual(response.context["all_submuission"], 0)
+        self.assertEqual(response.context["all_submission"], 0)

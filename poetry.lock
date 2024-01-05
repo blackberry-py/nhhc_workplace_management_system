@@ -84,6 +84,28 @@ tests-mypy = ["mypy (>=1.6)", "pytest-mypy-plugins"]
 tests-no-zope = ["attrs[tests-mypy]", "cloudpickle", "hypothesis", "pympler", "pytest (>=4.3.0)", "pytest-xdist[psutil]"]
 
 [[package]]
+name = "b2sdk"
+version = "1.29.0"
+description = "Backblaze B2 SDK"
+optional = false
+python-versions = "*"
+files = [
+    {file = "b2sdk-1.29.0-py3-none-any.whl", hash = "sha256:804fee2a70aa155d376cb46d4608752c40a3f3af66492e78d0392f4b71b94450"},
+    {file = "b2sdk-1.29.0.tar.gz", hash = "sha256:87fa572c6a50dbe10dc56a886fdcad7aba1ab9db12f07cfeb2b68e37eeb94ccc"},
+]
+
+[package.dependencies]
+logfury = ">=1.0.1,<2.0.0"
+packaging = ">=21.0"
+requests = ">=2.9.1,<3.0.0"
+setuptools = ">=60.0"
+tqdm = ">=4.5.0,<5.0.0"
+typing-extensions = {version = ">=4.7.1", markers = "python_version < \"3.12\""}
+
+[package.extras]
+doc = ["sadisplay", "sphinx (<6.0)", "sphinx-autobuild", "sphinx-autodoc-typehints", "sphinx-rtd-theme", "sphinxcontrib-plantuml", "tornado (>=6.3.3)"]
+
+[[package]]
 name = "beautifulsoup4"
 version = "4.12.2"
 description = "Screen-scraping library"
@@ -621,6 +643,22 @@ mfa = ["qrcode (>=7.0.0)"]
 saml = ["python3-saml (>=1.15.0,<2.0.0)"]
 
 [[package]]
+name = "django-backblaze-b2"
+version = "5.0.2"
+description = "A Django app to use backblaze b2 as storage."
+optional = false
+python-versions = ">=3.8.1,<4.0.0"
+files = [
+    {file = "django_backblaze_b2-5.0.2-py3-none-any.whl", hash = "sha256:acb0c87524600a5f4b48c49f28bec98c7de2c063ac2839b88c5b836c108ee854"},
+    {file = "django_backblaze_b2-5.0.2.tar.gz", hash = "sha256:55e2b6439d0a6508dc263287c5c52e733bfee10b6f22088cf73f2b4ed3eeb622"},
+]
+
+[package.dependencies]
+b2sdk = ">=1.23.0"
+django = ">=3.2"
+typing-extensions = ">=4.0.1,<5.0.0"
+
+[[package]]
 name = "django-cacheops"
 version = "7.0.2"
 description = "A slick ORM cache with automatic granular event-driven invalidation for Django."
@@ -851,6 +889,29 @@ files = [
 [package.dependencies]
 Django = ">=2.2"
 python-dateutil = "*"
+
+[[package]]
+name = "django-storages"
+version = "1.14.2"
+description = "Support for many storage backends in Django"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "django-storages-1.14.2.tar.gz", hash = "sha256:51b36af28cc5813b98d5f3dfe7459af638d84428c8df4a03990c7d74d1bea4e5"},
+    {file = "django_storages-1.14.2-py3-none-any.whl", hash = "sha256:1db759346b52ada6c2efd9f23d8241ecf518813eb31db9e2589207174f58f6ad"},
+]
+
+[package.dependencies]
+Django = ">=3.2"
+
+[package.extras]
+azure = ["azure-core (>=1.13)", "azure-storage-blob (>=12)"]
+boto3 = ["boto3 (>=1.4.4)"]
+dropbox = ["dropbox (>=7.2.1)"]
+google = ["google-cloud-storage (>=1.27)"]
+libcloud = ["apache-libcloud"]
+s3 = ["boto3 (>=1.4.4)"]
+sftp = ["paramiko (>=1.15)"]
 
 [[package]]
 name = "django-webtest"
@@ -1215,6 +1276,17 @@ files = [
 ]
 
 [[package]]
+name = "iniconfig"
+version = "2.0.0"
+description = "brain-dead simple config-ini parsing"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "iniconfig-2.0.0-py3-none-any.whl", hash = "sha256:b6a85871a79d2e3b22d2d1b94ac2824226a63c6b741c88f7ae975f18b6778374"},
+    {file = "iniconfig-2.0.0.tar.gz", hash = "sha256:2d91e135bf72d31a410b17c16da610a82cb55f6b0477d1a902134b24a455b8b3"},
+]
+
+[[package]]
 name = "isort"
 version = "5.13.2"
 description = "A Python utility / library to sort Python imports."
@@ -1342,6 +1414,17 @@ ulid-py = ">=1.1.0"
 
 [package.extras]
 test-generation = ["jinja2 (>=3.0.0)", "more_itertools", "sqlglot (>=16.1.1)"]
+
+[[package]]
+name = "logfury"
+version = "1.0.1"
+description = "('Toolkit for responsible, low-boilerplate logging of library method calls',)"
+optional = false
+python-versions = "*"
+files = [
+    {file = "logfury-1.0.1-py3-none-any.whl", hash = "sha256:b4f04be1701a1df644afc3384d6167d64c899f8036b7eefc3b6c570c6a9b290b"},
+    {file = "logfury-1.0.1.tar.gz", hash = "sha256:130a5daceab9ad534924252ddf70482aa2c96662b3a3825a7d30981d03b76a26"},
+]
 
 [[package]]
 name = "logtail-python"
@@ -1590,6 +1673,21 @@ docs = ["furo (>=2023.7.26)", "proselint (>=0.13)", "sphinx (>=7.1.1)", "sphinx-
 test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.4)", "pytest-cov (>=4.1)", "pytest-mock (>=3.11.1)"]
 
 [[package]]
+name = "pluggy"
+version = "1.3.0"
+description = "plugin and hook calling mechanisms for python"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "pluggy-1.3.0-py3-none-any.whl", hash = "sha256:d89c696a773f8bd377d18e5ecda92b7a3793cbe66c87060a6fb58c7b6e1061f7"},
+    {file = "pluggy-1.3.0.tar.gz", hash = "sha256:cf61ae8f126ac6f7c451172cf30e3e43d3ca77615509771b3a984a0730651e12"},
+]
+
+[package.extras]
+dev = ["pre-commit", "tox"]
+testing = ["pytest", "pytest-benchmark"]
+
+[[package]]
 name = "pre-commit"
 version = "3.6.0"
 description = "A framework for managing and maintaining multi-language pre-commit hooks."
@@ -1803,6 +1901,44 @@ files = [
     {file = "PySocks-1.7.1-py3-none-any.whl", hash = "sha256:2725bd0a9925919b9b51739eea5f9e2bae91e83288108a9ad338b2e3a4435ee5"},
     {file = "PySocks-1.7.1.tar.gz", hash = "sha256:3f8804571ebe159c380ac6de37643bb4685970655d3bba243530d6558b799aa0"},
 ]
+
+[[package]]
+name = "pytest"
+version = "7.4.4"
+description = "pytest: simple powerful testing with Python"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "pytest-7.4.4-py3-none-any.whl", hash = "sha256:b090cdf5ed60bf4c45261be03239c2c1c22df034fbffe691abe93cd80cea01d8"},
+    {file = "pytest-7.4.4.tar.gz", hash = "sha256:2cf0005922c6ace4a3e2ec8b4080eb0d9753fdc93107415332f50ce9e7994280"},
+]
+
+[package.dependencies]
+colorama = {version = "*", markers = "sys_platform == \"win32\""}
+iniconfig = "*"
+packaging = "*"
+pluggy = ">=0.12,<2.0"
+
+[package.extras]
+testing = ["argcomplete", "attrs (>=19.2.0)", "hypothesis (>=3.56)", "mock", "nose", "pygments (>=2.7.2)", "requests", "setuptools", "xmlschema"]
+
+[[package]]
+name = "pytest-django"
+version = "4.7.0"
+description = "A Django plugin for pytest."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "pytest-django-4.7.0.tar.gz", hash = "sha256:92d6fd46b1d79b54fb6b060bbb39428073396cec717d5f2e122a990d4b6aa5e8"},
+    {file = "pytest_django-4.7.0-py3-none-any.whl", hash = "sha256:4e1c79d5261ade2dd58d91208017cd8f62cb4710b56e012ecd361d15d5d662a2"},
+]
+
+[package.dependencies]
+pytest = ">=7.0.0"
+
+[package.extras]
+docs = ["sphinx", "sphinx-rtd-theme"]
+testing = ["Django", "django-configurations (>=2.0)"]
 
 [[package]]
 name = "python-dateutil"
@@ -2413,6 +2549,17 @@ files = [
 ]
 
 [[package]]
+name = "typing-extensions"
+version = "4.9.0"
+description = "Backported and Experimental Type Hints for Python 3.8+"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "typing_extensions-4.9.0-py3-none-any.whl", hash = "sha256:af72aea155e91adfc61c3ae9e0e342dbc0cba726d6cba4b6c72c1f34e47291cd"},
+    {file = "typing_extensions-4.9.0.tar.gz", hash = "sha256:23478f88c37f27d76ac8aee6c905017a143b0b1b886c3c9f66bc2fd94f9f5783"},
+]
+
+[[package]]
 name = "tzdata"
 version = "2023.4"
 description = "Provider of IANA time zone data"
@@ -2569,4 +2716,4 @@ h11 = ">=0.9.0,<1"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "7d56da0797b825daa6bb291194029ed94871a3eab63e80188bcce38f749be89e"
+content-hash = "e5ff1f0e479ae166a4f924c3d6899a1b0b07fac9a2767523903b317927157379"

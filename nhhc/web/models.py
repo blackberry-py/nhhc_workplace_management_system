@@ -32,6 +32,7 @@ from employee.models import Employee
 from localflavor.us.models import USStateField, USZipCodeField
 from loguru import logger
 from phonenumber_field.modelfields import PhoneNumberField
+from authentication.models import RandomPasswordGenerator
 
 now = arrow.now(tz="US/Central")
 
@@ -139,21 +140,6 @@ class EmploymentApplicationModel(
     )
     date_submitted = models.DateTimeField(auto_now_add=True)
 
-    def generate_random_password(self) -> str:
-        """
-        Generate a random 8-character password using lowercase letters.
-
-        Returns:
-        str: A randomly generated 8-character password.
-
-        Example:
-        >>> generate_random_password()
-        'abcdefgh'
-        """
-        letters = string.ascii_lowercase
-        random_password = "".join(random.choice(letters) for i in range(8))
-        return random_password
-
     def hire_applicant(self, hired_by: Employee) -> None:
         """
         Hire a new employee by creating a user account, generating a random password, and saving employee and compliance information in the database.
@@ -179,7 +165,9 @@ class EmploymentApplicationModel(
             )
             new_employee = Employee(
                 is_superuser=False,
-                username=username,
+                username=Employee.create_unique_username(
+                    self.first_name, self.last_name
+                ),
                 is_active=True,
                 first_name=self.first_name,
                 last_name=self.last_name,
@@ -191,7 +179,7 @@ class EmploymentApplicationModel(
                 city=self.city,
                 zipcode=self.zipcode,
             )
-            password = self.generate_random_password()
+            password = RandomPasswordGenerator.generate()
             new_employee.password = make_password(password)
             new_employee.save()
             compliance = Compliance(employee=new_employee)
@@ -204,6 +192,7 @@ class EmploymentApplicationModel(
                 f"Unable to Hire {self.last_name},{self.first_name} - REASON:{e} "
             )
             logger.error(log_message)
+            raise RuntimeError from e
 
     def reject_applicant(self, rejected_by: Employee) -> None:
         """Rejects an applicant.

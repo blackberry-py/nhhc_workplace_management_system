@@ -1,4 +1,6 @@
-{% extends 'layouts/base-fullscreen.html' %}
+{% extends "layouts/base-fullscreen.html" %}
+{% load account %}
+{% user_display user %}
 
 {% block title %} Login {% endblock title %}
 
@@ -20,21 +22,29 @@
           <div class="card-body px-lg-5 py-lg-5">
             <div class="text-center text-muted mb-4">
 
-              {% if msg %}
-                <p>{{ msg }}</p>
+              {% if form.errors %}
+                <div id="form-errors">
+                  <ul class="form-errors-list">
+                    <p class="form-error-header">Please correct the errors below and resubmit...</p>
+
+                    {% for error in form_errors %}
+                      <li class="form-error"><i class="fa-solid fa-triangle-exclamation"></i> {{ error }}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
               {% else %}
                 <p>
-                  Please enter Usernanme and Password Provided by Nett Hands Human Resource
+                  Please enter Username and Password Provided by Nett Hands Human Resource
                 </p>
               {% endif %}
 
             </div>
-            <form method="post">
+            <form action={% url 'account_login' %} method="post">
               {% csrf_token %}
               <div class="form-group mb-3">
                 <div class="input-group input-group-alternative">
                   <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
+                    <span class="input-group-text"><i class="fa fa-user"></i></span>
                   </div>
                   {{ form.username }}
                 </div>
@@ -48,21 +58,23 @@
                 </div>
               </div>
               <div class="custom-control custom-control-alternative custom-checkbox">
-                <input class="custom-control-input" id=" customCheckLogin" type="checkbox">
-                <label class="custom-control-label" for=" customCheckLogin">
-                  <span class="text-muted">Remember me</span>
-                </label>
+                {{ form.remember }}
+                <span class="text-muted">Remember me?</span>
               </div>
+
               <div class="text-center">
-                <button type="submit" class="btn btn-primary my-4">Sign in</button>
+                <input type="submit" value="Sign In" class="btn btn-primary my-4">
               </div>
             </form>
+            <div class="row justify-content-center">
+
+              <a href="{% url 'account_reset_password' %}"<p>Forgot Password?</p>
+            </div>
           </div>
         </div>
 
       </div>
     </div>
-  </div>
   </div>
 
 {% endblock content %}

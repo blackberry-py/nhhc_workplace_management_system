@@ -1,5 +1,7 @@
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth import get_user_model
+from django.db import IntegrityError
 from django.core.validators import MaxValueValidator, MinLengthValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -10,10 +12,52 @@ from localflavor.us.models import (
     USZipCodeField,
 )
 from phonenumber_field.modelfields import PhoneNumberField
+from django_backblaze_b2 import BackblazeB2Storage
+
+from django.db import IntegrityError, transaction
+from authentication.models import RandomPasswordGenerator
 
 
-# Create your models here.
+class EmployeeManager(BaseUserManager):
+    """
+    Custom user manager
+    """
+
+    def create_user(self, password, first_name, last_name):
+        if not username or not password or not first_name or not last_name:
+            raise ValueError(
+                "We need password \n first name \n and last name to create and account..."
+            )
+        username = create_unique_username(first_name, last_name)
+        user = self.model(username=username, first_name=first_name, last_name=last_name)
+        user.set_password(password)
+        user.save()
+        print(
+            f"Successfully Created an account for {first_name} with username {username}"
+        )
+        return user
+
+    def create_superuser(self, username, password, first_name, last_name):
+        if not username or not password or not first_name or not last_name:
+            raise ValueError(
+                "We need username, \n password \n first name \n and last name to create and account..."
+            )
+        user = self.create_user(
+            password=password,
+            username=create_unique_username(first_name, last_name),
+            first_name=first_name,
+            last_name=last_name,
+        )
+        user.set_password(password)
+        user.is_admin = True
+        user.is_staff = True
+        user.save()
+        return user
+
+
 class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
+    objects = EmployeeManager()
+
     class GENDER(models.TextChoices):
         MALE = "M", _("Male")
         FEMALE = "F", _("Female")
@@ -231,10 +275,57 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
         else:
             return False
 
-    def generate_random_password(self):
-        letters = string.ascii_lowercase
-        random_password = "".join(random.choice(letters) for i in range(8))
-        return random_password
+    @staticmethod
+    def create_unique_username(first_name: str, last_name: str) -> str:
+        """
+        Create a unique username by adding a number to the end of the username if it's already taken.
+
+        Args:
+            first_name (str): The first name of the user.
+            last_name (str): The last name of the user.
+
+        Returns:
+            str: The unique username for the user.
+
+        Raises:
+            IntegrityError: If the username is already taken and no available unique username can be generated.
+
+        Example:
+            create_unique_username("John", "Doe")
+        """
+        username = f"{last_name.lower()}.{first_name.lower}"
+
+        try:
+            # Try to create a new user with the given username
+            user = User(username=username)
+            user.save(commit=False)
+
+            # If no IntegrityError is raised, return the original username
+            return username
+
+        except IntegrityError:
+            # If an IntegrityError is raised, the username is already taken
+
+            # Find the maximum number currently appended to a username in the table
+            max_num = (
+                get_user_model()
+                .objects.filter(username__startswith=username)
+                .aggregate(
+                    max_num=Max(
+                        Cast(Substr(username, len(username) + 1), IntegerField())
+                    )
+                )["max_num"]
+            )
+
+            # If no number is currently appended, set the max_num to 0
+            if max_num is None:
+                max_num = 0
+
+            # Append the next number to the username and try to create a new user again
+            next_username = username + str(max_num + 1)
+
+            # Return the next available username
+            return next_username
 
     class Meta:
         db_table = "employee"

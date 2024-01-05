@@ -3,20 +3,19 @@ from django.test import TestCase
 from employee.models import Employee
 from model_bakery import baker
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
+from nhhc.testing_utils import (
+    generate_mock_PhoneNumberField,
+    generate_mock_ZipCodeField,
+)
+from pprint import pprint
+from loguru import logger
+from faker import Faker
 
-
-def gen_phone():
-    return "+17082286900"
-
-
-def gen_zip_code():
-    return "21217"
-
-
-baker.generators.add("phonenumber_field.modelfields.PhoneNumberField", gen_phone)
-baker.generators.add("localflavor.us.models.USZipCodeField", gen_zip_code)
-# baker.generators.add('phonenumber_field.modelfields.PhoneNumberField', gen_func)
-# baker.generators.add('phonenumber_field.modelfields.PhoneNumberField', gen_func)
+dummy = Faker()
+baker.generators.add(
+    "phonenumber_field.modelfields.PhoneNumberField", generate_mock_PhoneNumberField
+)
+baker.generators.add("localflavor.us.models.USZipCodeField", generate_mock_ZipCodeField)
 
 
 class TestClientInterestSubmissions(TestCase):
@@ -58,8 +57,28 @@ class TestEmploymentApplicationModel(TestCase):
         )
 
     def test_hire_applicant(self):
+        mock_number = generate_mock_PhoneNumberField()
+        mock_zipcode = generate_mock_ZipCodeField()
         new_empoloyee = baker.make(
-            EmploymentApplicationModel, last_name="test", first_name="new_empoloyee"
+            EmploymentApplicationModel,
+            last_name="test",
+            first_name="new_employee",
+            contact_number=mock_number,
+            email="Dev@gmail.com",
+            home_address1="1 North World Trade Tower",
+            home_address2="15th Floor",
+            city="Manhattan",
+            state="NY",
+            zipcode=mock_zipcode,
+            mobility="C",
+            prior_experience="J",
+            ipdh_registered=True,
+            availability_monday=True,
+            availability_tuesday=False,
+            availability_wednesday=True,
+            availability_thursday=True,
+            availability_friday=True,
+            availability_saturday=False,
         )
         hiring_manager = baker.make(Employee)
         new_empoloyee.hire_applicant(hired_by=hiring_manager)

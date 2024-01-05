@@ -15,7 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 from . import views
 
 urlpatterns = [
-    path("dashboard", views.index, name="dashboard"),
+    path("dashboard", views.portal_dashboard, name="dashboard"),
     path("my-profile/", views.profile, name="profile"),
     path("inquiries/", views.client_inquiries, name="inquiries"),
     path(
@@ -31,7 +31,7 @@ urlpatterns = [
     path(
         "all_client_inquiries/",
         csrf_exempt(views.all_client_inquiries),
-        name="all_client_inquiries",
+        name="all_client_inquiries_api",
     ),
     path("applicants/", views.employment_applications, name="applicants-list"),
     path("applicant/<int:pk>", views.applicant_details, name="applicant-details"),

@@ -13,9 +13,12 @@ services:
       - INFISICAL_TOKEN=${INFISICAL_TOKEN_FOR_REDIS}
     working_dir: /data/cache
     volumes:
-      - 'primary_hhd_netthandz:/data/cache'
+      - "/Users/terry-brooks/Documents/Github/NettHands/nhhc/logs/redis.log:/logs/redis.log"
+      - "primary_hhd_netthandz:/data/cache"
+      - "/Users/terry-brooks/Documents/Github/NettHands/redis.conf:/etc/redis/redis.conf"
     ports:
       - '7771:6379'
+    command: "redis-server /etc/redis/redis.conf"
     healthcheck:
       test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
       interval: 5m

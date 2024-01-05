@@ -54,7 +54,7 @@ logger.add(
 
 
 @login_required(login_url="/login/")
-def index(request):
+def portal_dashboard(request):
     context = dict()
     context["segment"] = "index"
     new_applications = EmploymentApplicationModel.objects.filter(
@@ -74,8 +74,10 @@ def index(request):
 @login_required(login_url="/login/")
 def profile(request):
     context = dict()
-    context["data"] = Employee.objects.get(id=request.user.id)
-    context["compliance"] = Compliance.objects.get(employee_id=request.user.id)
+    context["data"] = Compliance.objects.select_related("employee").get(
+        id=request.user.id
+    )
+    # context["compliance"] = Compliance.objects.get(employee_id=request.user.id)
     user = context["data"]
     compliance = context["compliance"]
 
