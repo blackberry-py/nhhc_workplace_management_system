@@ -20,6 +20,7 @@ Note: The module also includes choices for services, mobility, and prior experie
 import datetime
 import random
 import string
+import json
 
 import arrow
 from compliance.models import Compliance
@@ -187,13 +188,18 @@ class EmploymentApplicationModel(
             self.hired = True
             self.reviewed = True
             self.reviewed_by = hired_by
+            return {
+                "user": new_employee,
+                "plain_text_password": password,
+                "username": new_employee.username
+            }
         except Exception as e:
             log_message = (
                 f"Unable to Hire {self.last_name},{self.first_name} - REASON:{e} "
             )
             logger.error(log_message)
             raise RuntimeError from e
-
+        
     def reject_applicant(self, rejected_by: Employee) -> None:
         """Rejects an applicant.
 

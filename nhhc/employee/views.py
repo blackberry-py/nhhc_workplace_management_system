@@ -80,12 +80,12 @@ def hire(request):
     try:
         pk = request.POST.get("pk")
         submission = EmploymentApplicationModel.objects.get(pk=pk)
-        submission.hire_applicant(request.user)
-        send_new_user_credentials(submission)
+        hired_user = submission.hire_applicant(request.user)
+        send_new_user_credentials(new_user=hired_user['user'], password=hired_user['plain_text_password'], username=hired_user['username'])
         submission.save()
         return HttpResponse(status=201)
     except Exception as e:
-        logger.error(f"JS AJAX Request Failed - Applicant Not Hired = {e}")
+        logger.error(f"JS AJAX Request Failed - Applicant Not Hired = {e}"),
         return HttpResponse(status=400, content=f"Failed to hire applicant. Error: {e}")
 
 

@@ -12,10 +12,11 @@ services:
     environment:
       - INFISICAL_TOKEN=${INFISICAL_TOKEN_FOR_REDIS}
     working_dir: /data/cache
-    volumes:
+    privileged: true
       - "/Users/terry-brooks/Documents/Github/NettHands/nhhc/logs/redis.log:/logs/redis.log"
       - "primary_hhd_netthandz:/data/cache"
       - "/Users/terry-brooks/Documents/Github/NettHands/redis.conf:/etc/redis/redis.conf"
+      - "/Users/terry-brooks/Documdoents/Github/NettHands/redis_exporter.conf:/etc/redis_exporter.conf"
     ports:
       - '7771:6379'
     command: "redis-server /etc/redis/redis.conf"
@@ -26,6 +27,22 @@ services:
       retries: 5
       start_period: 2m
       start_interval: 2m
+
+  minio:
+      tty: true
+      restart: unless-stopped
+      ports:
+          - 9000:9000
+          - 9001:9001
+      volumes:
+          - /Users/terry-brooks/Documents/Github/NettHands/data/minio/obj_nhhc.compliance:/nhhc_compliance
+          - /Users/terry-brooks/Documents/Github/NettHands/data/minio/obj_nhhc.employee:/nhhc.employee
+      env_file:
+          - .env
+      container_name: minio_local
+      image: minio/minio:latest
+      command: minio server ./data/minio --console-address ":9001"
+
 
   graphite-statsd:
       container_name: graphite_netthandz
@@ -92,6 +109,7 @@ services:
 
 volumes:
   primary_hhd_netthandz:
+
 
 
 networks:

@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 from django.core.validators import MaxValueValidator, MinLengthValidator
 from django.db import models
+from django.db.models.functions import Cast, Substr
 from django.utils.translation import gettext_lazy as _
 from django_prometheus.models import ExportModelOperationsMixin
 from localflavor.us.models import (
@@ -12,23 +13,64 @@ from localflavor.us.models import (
     USZipCodeField,
 )
 from phonenumber_field.modelfields import PhoneNumberField
-from django_backblaze_b2 import BackblazeB2Storage
-
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError, transaction
 from authentication.models import RandomPasswordGenerator
+from django.db.models import Max
 
 
 class EmployeeManager(BaseUserManager):
     """
     Custom user manager
     """
+    @staticmethod
+    def create_unique_username(first_name: str, last_name: str) -> str:
+        """
+        Create a unique username by adding a number to the end of the username if it's already taken.
 
-    def create_user(self, password, first_name, last_name):
-        if not username or not password or not first_name or not last_name:
+        Args:
+            first_name (str): The first name of the user.
+            last_name (str): The last name of the user.
+
+        Returns:
+            str: The unique username for the user.
+
+        Raises:
+            IntegrityError: If the username is already taken and no available unique username can be generated.
+
+        Example:
+            create_unique_username("John", "Doe")
+        """
+        username = f"{last_name.lower()}.{first_name.lower()}"
+
+        try:
+            # Try to create a new user with the given username
+            user = get_user_model().objects.get(username=username)
+            max_num = get_user_model().objects.filter(username__startswith=username).count()
+    
+
+            # If no number is currently appended, set the max_num to 0
+            if max_num == 1:
+                max_num = 0
+
+            # Append the next number to the username and try to create a new user again
+            next_username = username + str(max_num)
+
+            # Return the next available username
+            return next_username
+        
+        except ObjectDoesNotExist:
+            # If no IntegrityError is raised, return the original username
+            return username
+
+            
+
+    def create_user(self, password, first_name, last_name, **kwargs):
+        if not password or not first_name or not last_name:
             raise ValueError(
                 "We need password \n first name \n and last name to create and account..."
             )
-        username = create_unique_username(first_name, last_name)
+        username = self.create_unique_username(first_name, last_name)
         user = self.model(username=username, first_name=first_name, last_name=last_name)
         user.set_password(password)
         user.save()
@@ -37,20 +79,21 @@ class EmployeeManager(BaseUserManager):
         )
         return user
 
-    def create_superuser(self, username, password, first_name, last_name):
-        if not username or not password or not first_name or not last_name:
+    def create_superuser(self, username, password, email, first_name="New", last_name="Admin", **kwargs):
+        if not password or not first_name or not last_name:
             raise ValueError(
                 "We need username, \n password \n first name \n and last name to create and account..."
             )
         user = self.create_user(
             password=password,
-            username=create_unique_username(first_name, last_name),
+            username=self.create_unique_username(first_name, last_name),
             first_name=first_name,
             last_name=last_name,
+            email=email
         )
-        user.set_password(password)
         user.is_admin = True
         user.is_staff = True
+        user.is_superuser = True
         user.save()
         return user
 
@@ -296,10 +339,11 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
         username = f"{last_name.lower()}.{first_name.lower}"
 
         try:
-            # Try to create a new user with the given username
-            user = User(username=username)
+            # Try to create a new user with the given username\
+            user = get_user_model().objects.get(username=username)
             user.save(commit=False)
-
+        
+        except ObjectDoesNotExist:
             # If no IntegrityError is raised, return the original username
             return username
 
@@ -332,3 +376,4 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
         ordering = ["last_name", "first_name", "-hire_date"]
         verbose_name = "Agency Employee"
         verbose_name_plural = "Agency Employees"
+        get_latest_by="-date_joined"

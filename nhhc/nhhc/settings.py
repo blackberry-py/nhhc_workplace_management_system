@@ -20,6 +20,8 @@ OFFLINE = False
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = get_random_secret_key()
 DEBUG = True
+DATETIME_FORMAT = "m/d/yyyy h:mm A"
+ADMINS = [("Terry Brooks", "Terry@BrooksJr.com")]
 CSRF_COOKIE_NAME = "nhhc-csrf"
 CSRF_USE_SESSIONS = True
 SESSION_COOKIE_NAME = "nhhc-session"
@@ -60,19 +62,21 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
+    "django.contrib.humanize",
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
     ## Installed 3rd Apps
     "coverage",
     "crispy_forms",
-    "crispy_bootstrap4",
+    "crispy_bootstrap5",
+        'storages',
     "phonenumber_field",
+        'widget_tweaks',
     "django_prometheus",
     "request",
     "debug_toolbar",
     "localflavor",
-    "django_backblaze_b2",
     "captcha",
     "corsheaders",
     # "IpWhitelister",
@@ -157,9 +161,9 @@ elif OFFLINE:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.getenv("POSTGRES_DB"),
-            "USER": os.getenv("POSTGRES_USER"),
-            "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+            "NAME": "nhhc_data_offline",
+            "USER": 'app_offline_user',
+            "PASSWORD": 'DevvyDevvy123',
             "HOST": "localhost",
             "PORT": 7732,
         },
@@ -224,16 +228,16 @@ LOGOUT_REDIRECT_URL = LOGIN_URL
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_EMAIL_SUBJECT_PREFIX = "Nett Hands Employee Portal"
-ACCOUNT_FORMS = {
-    "add_email": "allauth.account.forms.AddEmailForm",
-    "change_password": "allauth.account.forms.ChangePasswordForm",
-    "login": "authentication.forms.NHHCLoginForm",
-    "reset_password": "allauth.account.forms.ResetPasswordForm",
-    "reset_password_from_key": "allauth.account.forms.ResetPasswordKeyForm",
-    "set_password": "allauth.account.forms.SetPasswordForm",
-    "signup": "allauth.account.forms.SignupForm",
-    "user_token": "allauth.account.forms.UserTokenForm",
-}
+# ACCOUNT_FORMS = {
+#     "add_email": "allauth.account.forms.AddEmailForm",
+#     "change_password": "allauth.account.forms.ChangePasswordForm",
+#     "login": "authentication.forms.EmployeeLoginForm",
+#     "reset_password": "allauth.account.forms.ResetPasswordForm",
+#     "reset_password_from_key": "allauth.account.forms.ResetPasswordKeyForm",
+#     "set_password": "allauth.account.forms.SetPasswordForm",
+#     "signup": "allauth.account.forms.SignupForm",
+#     "user_token": "allauth.account.forms.UserTokenForm",
+# }
 # !SECTION
 
 # SECTION - Internationalization
@@ -243,8 +247,7 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = False
 
-DATETIME_FORMAT = "m/d/yyyy h:mm A"
-ADMINS = [("Terry Brooks", "Terry@BrooksJr.com"), ("Admin", "admin@netthandshome.care")]
+
 # !SECTION
 
 # SECTION - STORAGE
@@ -256,20 +259,29 @@ ADMINS = [("Terry Brooks", "Terry@BrooksJr.com"), ("Admin", "admin@netthandshome
 #         },
 #     },
 # }
-BACKBLAZE_CONFIG = {
-    # however you want to securely retrieve these values
-    "application_key_id": os.getenv("S3_STORAGE_ACCESS_KEY"),
-    "application_key": os.getenv("S3_STORAGE_SECRET_KEY"),
-    "bucket": "nhhc-employee",
-}
 
 
 AWS_STORAGE_BUCKET_NAME = "nhhc-employee"
 AWS_S3_REGION_NAME = "us-east-005"
 ENDPOINT_URL = "s3.us-east-005.backblazeb2.com"
 AWS_S3_ADDRESSING_STYLE = "auto"
+AWS_S3_REGION_NAME = "us-east-005"
+AWS_SECRET_ACCESS_KEY = os.getenv("B2_APPLICATION_KEY")
+AWS_ACCESS_KEY_ID = os.getenv("B2_ACCOUNT_ID")
+AWS_PRIVATE_BUCKET_NAME = "nhhc-employee"
+AWS_S3_ENDPOINT = f's3.{AWS_S3_REGION_NAME}.backblazeb2.com'
+AWS_S3_ENDPOINT_URL = f'https://{AWS_S3_ENDPOINT}'
+AWS_PUBLIC_MEDIA_LOCATION = 'public/media'
+AWS_PRIVATE_MEDIA_LOCATION = 'private/media'
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
 
-
+AWS_LOCATION = 'static'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STATIC_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_ENDPOINT}/"
+AWS_STATIC_LOCATION = 'statiuc'
+DEFAULT_FILE_STORAGE = 'mysite.storage_backends.MediaStorage'
 #! SECTION
 # SECTION -  Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
@@ -282,7 +294,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static", "vendor"),
 ]
 # SECTION - Templates
-TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
+TEMPLATE_DIR= os.path.join(BASE_DIR, "templates")
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",

@@ -6,15 +6,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render, reverse
 from allauth.account.views import SignupView, LoginView
 
-from .forms import LoginForm, SignUpForm
-
+from authentication.forms import EmployeeLoginForm
 
 class MyLoginView(LoginView):
     template_name = "login.html"
 
 
 def login_view(request):
-    form = LoginForm(request.POST or None)
+    form = EmployeeLoginForm(request.POST or None)
 
     msg = None
 

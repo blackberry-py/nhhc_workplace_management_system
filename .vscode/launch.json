@@ -5,16 +5,26 @@
     "version": "0.2.0",
     "configurations": [
 
+
+
         {
             "name": "Python: Django",
             "type": "python",
             "request": "launch",
+            "python": "${command:python.interpreterPath}",
             "program": "${workspaceFolder}/nhhc/manage.py",
             "args": [
                 "runserver"
             ],
             "django": true,
-            "justMyCode": true
+
+            "justMyCode": true,
+            "autoReload": {"enable": true},
+            "envFile": "${workspaceFolder}/.env",
+            "host": "localhost",
+            "port": 9000,
+            "preLaunchTask": "start venv"
+    
         }
     ]
 }

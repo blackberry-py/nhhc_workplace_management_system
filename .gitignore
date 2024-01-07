@@ -8,7 +8,7 @@ media
 
 # Backup files #
 *.bak
-
+.kolo
 # If you are using PyCharm #
 # User-specific stuff
 .idea/**/workspace.xml
@@ -19,10 +19,10 @@ media
 
 # AWS User-specific
 .idea/**/aws.xml
-
+nhhc/staticfiles/
 # Generated files
 .idea/**/contentModel.xml
-
+*/node_modules/*
 # Sensitive or high-churn files
 .idea/**/dataSources/
 .idea/**/dataSources.ids
@@ -145,3 +145,5 @@ NettHandsHomeCare/static/vendor/jvectormap-next/jquery-jvectormap.min.js.map
 *.sql
 *.sqlite3
 nhhc/logs/*
+node_modules
+node_modules

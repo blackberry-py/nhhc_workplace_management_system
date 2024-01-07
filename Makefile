@@ -1,4 +1,4 @@
-VENV := .venv-NH
+VENV := .venv
 BIN := $(VENV)/bin
 PYTHON := $(BIN)/python
 SHELL := /bin/bash
@@ -30,7 +30,7 @@ db-shell: ## Access the Postgres Docker database interactively with psql. Pass i
 
 .PHONY: test
 test: ## Run tests
-	coverage run nhhc/manage.py test web employee portal  --verbosity=2      --force-color
+	coverage run nhhc/manage.py test web employee portal  --verbosity=2  --failfast    --force-color
 
 .PHONY: run
 run: ## Run the Django server

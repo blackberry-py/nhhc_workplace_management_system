@@ -1,0 +1,6 @@
+CONFIG_YAML_PATH="/etc/vector/vector.yaml"
+BACKUP_SUFFIX=".bak-$(date +%Y%m%d%H%M%S)"
+mv "${CONFIG_YAML_PATH}" "${CONFIG_YAML_PATH}${BACKUP_SUFFIX}"
+mv "${CONFIG_YAML_PATH%.yaml}.toml" "${CONFIG_YAML_PATH%.yaml}.toml${BACKUP_SUFFIX}"
+curl -o "$CONFIG_YAML_PATH" \
+  https://logs.betterstack.com/vector-yaml/redis_with_metrics/f7RbSPf7DkNjCZHbAYcwgTkC
