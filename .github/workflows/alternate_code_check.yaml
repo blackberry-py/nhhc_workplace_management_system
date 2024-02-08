@@ -1,0 +1,22 @@
+name: General Test and Deploy - 2nd Approach
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Code Checkout
+        uses: 'Actions/Checkout@v3'
+      - name: Create VENV 
+        run: |
+          python3 -m venv .  venv
+      - name: "Setup Python, Poetry and Dependencies"
+        uses: packetcoders/action-setup-cache-python-poetry@main
+        with:
+            python-version: 3.11.4
+            poetry-version: 1.5.1
+  merge:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Deployw
+        run: echo "Deploying Code..."
