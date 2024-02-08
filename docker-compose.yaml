@@ -9,10 +9,9 @@ services:
     restart: unless-stopped
     networks:
       - netthandz-ecosystem
-    environment:
-      - INFISICAL_TOKEN=${INFISICAL_TOKEN_FOR_REDIS}
     working_dir: /data/cache
     privileged: true
+    volumes:
       - "/Users/terry-brooks/Documents/Github/NettHands/nhhc/logs/redis.log:/logs/redis.log"
       - "primary_hhd_netthandz:/data/cache"
       - "/Users/terry-brooks/Documents/Github/NettHands/redis.conf:/etc/redis/redis.conf"
@@ -69,19 +68,17 @@ services:
       - 'primary_hhd_netthandz:/grafana'
 
   redis_insight:
-    image: redislabs/redisinsight:latest
-    container_name: netthandz_Redis_Insight
+    image: postgres
+    container_name: netthandz_offline_db
     restart: unless-stopped
     networks:
         - netthandz-ecosystem
     env_file:
       - .env
     ports:
-      - '7777:8001'
-    depends_on:
-      - redis
+      - '7777:5432'
     volumes:
-      - 'primary_hhd_netthandz:/redis_insight'
+      - 'primary_hhd_netthandz:/db/data/'
 
   prometheus:
       image: prom/prometheus:latest

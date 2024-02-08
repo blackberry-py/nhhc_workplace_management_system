@@ -126,7 +126,7 @@ mimetypes.add_type("text/html", ".html", True)
 mimetypes.add_type("text/javascript", ".js", True)
 
 # SECTION - Database and Caching
-if DEBUG and not OFFLINE:
+if DEBUG:
     ENVIRONMENT_NAME = "DEVELOPMENT SERVER"
     ENVIRONMENT_COLOR = "#00FFFF"
     DATABASES = {
@@ -140,7 +140,7 @@ if DEBUG and not OFFLINE:
             "OPTIONS": {"sslmode": "require"},
         },
     }
-elif not DEBUG and not OFFLINE:
+else:
     REQUEST_BASE_URL = "https://www.netthandshome.care"
     ENVIRONMENT_NAME = "PRODUCTION SERVER"
     ENVIRONMENT_COLOR = "#FF2222"
@@ -155,19 +155,7 @@ elif not DEBUG and not OFFLINE:
             "OPTIONS": {"sslmode": "require"},
         },
     }
-elif OFFLINE:
-    ENVIRONMENT_NAME = "OFFLINE SERVER"
-    ENVIRONMENT_COLOR = "#000000"
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": "nhhc_data_offline",
-            "USER": 'app_offline_user',
-            "PASSWORD": 'DevvyDevvy123',
-            "HOST": "localhost",
-            "PORT": 7732,
-        },
-    }
+
 CACHE_TTL = 60 * 15
 CACHES = {
     "default": {
