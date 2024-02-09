@@ -70,9 +70,9 @@ INSTALLED_APPS = [
     "coverage",
     "crispy_forms",
     "crispy_bootstrap5",
-        'storages',
+    "storages",
     "phonenumber_field",
-        'widget_tweaks',
+    "widget_tweaks",
     "django_prometheus",
     "request",
     "debug_toolbar",
@@ -133,9 +133,9 @@ if DEBUG:
         "default": {
             "ENGINE": "django.db.backends.postgresql",
             "NAME": os.getenv("POSTGRES_DEV_DATABASE"),
-            "USER": os.getenv("DB_USER_DEV"),
-            "PASSWORD": os.getenv("DB_PASSWORD_DEV"),
-            "PORT": os.getenv("DB_PORT"),
+            "USER": os.getenv("POSTGRES_DEV_USER"),
+            "PASSWORD": os.getenv("POSTGRES_DEV_PASSWORD"),
+            "PORT": 5432,
             "HOST": os.getenv("POSTGRES_HOST"),
             "OPTIONS": {"sslmode": "require"},
         },
@@ -146,11 +146,11 @@ else:
     ENVIRONMENT_COLOR = "#FF2222"
     DATABASES = {
         "default": {
-            "ENGINE": "django_prometheus.cache.backends.postgresql",
+            "ENGINE": "django.db.backends.postgresql",
             "NAME": os.getenv("POSTGRES_PROD_DATABASE"),
-            "USER": os.getenv("DB_USER_PROD"),
-            "PASSWORD": os.getenv("DB_PASSWORD_PROD"),
-            "PORT": os.getenv("DB_PORT"),
+            "USER": os.getenv("POSTGRES_PROD_USER"),
+            "PASSWORD": os.getenv("POSTGRES_PROD_PASSWORD"),
+            "PORT": "5432",
             "HOST": os.getenv("POSTGRES_HOST"),
             "OPTIONS": {"sslmode": "require"},
         },
@@ -160,7 +160,7 @@ CACHE_TTL = 60 * 15
 CACHES = {
     "default": {
         "BACKEND": "django_prometheus.cache.backends.redis.RedisCache",
-        "LOCATION": os.getenv("REDIS_URL"),
+        "LOCATION": os.getenv("REDIS_CACHE_URI"),
         "OPTIONS": {
             "PARSER_CLASS": "redis.connection.HiredisParser",
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
@@ -172,7 +172,7 @@ CACHES = {
         "LOCATION": os.getenv("S3_CACHE_URL"),
     },
 }
-# CACHEOPS_REDIS=os.getenv("REDIS_URL")
+# CACHEOPS_REDIS=os.getenv("REDIS_CACHE_URI")
 # CACHEOPS_CLIENT_CLASS="django_redis.client.DefaultClient"
 # CACHEOPS_DEFAULTS = {
 #     'timeout': 60*15
@@ -216,17 +216,7 @@ LOGOUT_REDIRECT_URL = LOGIN_URL
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_EMAIL_SUBJECT_PREFIX = "Nett Hands Employee Portal"
-# ACCOUNT_FORMS = {
-#     "add_email": "allauth.account.forms.AddEmailForm",
-#     "change_password": "allauth.account.forms.ChangePasswordForm",
-#     "login": "authentication.forms.EmployeeLoginForm",
-#     "reset_password": "allauth.account.forms.ResetPasswordForm",
-#     "reset_password_from_key": "allauth.account.forms.ResetPasswordKeyForm",
-#     "set_password": "allauth.account.forms.SetPasswordForm",
-#     "signup": "allauth.account.forms.SignupForm",
-#     "user_token": "allauth.account.forms.UserTokenForm",
-# }
-# !SECTION
+
 
 # SECTION - Internationalization
 LANGUAGE_CODE = "en-us"
@@ -240,14 +230,6 @@ USE_TZ = False
 
 # SECTION - STORAGE
 
-# STORAGES = {
-#     "default": {
-#         "BACKEND": "storages.backends.s3.S3Storage",
-#         "OPTIONS": {
-#         },
-#     },
-# }
-
 
 AWS_STORAGE_BUCKET_NAME = "nhhc-employee"
 AWS_S3_REGION_NAME = "us-east-005"
@@ -257,20 +239,21 @@ AWS_S3_REGION_NAME = "us-east-005"
 AWS_SECRET_ACCESS_KEY = os.getenv("B2_APPLICATION_KEY")
 AWS_ACCESS_KEY_ID = os.getenv("B2_ACCOUNT_ID")
 AWS_PRIVATE_BUCKET_NAME = "nhhc-employee"
-AWS_S3_ENDPOINT = f's3.{AWS_S3_REGION_NAME}.backblazeb2.com'
-AWS_S3_ENDPOINT_URL = f'https://{AWS_S3_ENDPOINT}'
-AWS_PUBLIC_MEDIA_LOCATION = 'public/media'
-AWS_PRIVATE_MEDIA_LOCATION = 'private/media'
+AWS_S3_ENDPOINT = f"s3.{AWS_S3_REGION_NAME}.backblazeb2.com"
+AWS_S3_ENDPOINT_URL = f"https://{AWS_S3_ENDPOINT}"
+AWS_PUBLIC_MEDIA_LOCATION = "public/media"
+AWS_PRIVATE_MEDIA_LOCATION = "private/media"
 AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',
+    "CacheControl": "max-age=86400",
 }
 
-AWS_LOCATION = 'static'
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_LOCATION = "static"
+STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 STATIC_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_ENDPOINT}/"
-AWS_STATIC_LOCATION = 'statiuc'
-DEFAULT_FILE_STORAGE = 'mysite.storage_backends.MediaStorage'
+AWS_STATIC_LOCATION = "statiuc"
+DEFAULT_FILE_STORAGE = "mysite.storage_backends.MediaStorage"
 #! SECTION
+
 # SECTION -  Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
@@ -282,7 +265,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static", "vendor"),
 ]
 # SECTION - Templates
-TEMPLATE_DIR= os.path.join(BASE_DIR, "templates")
+TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -345,7 +328,7 @@ LOGGING = {
             "handlers": ["mail_admins"],
             "level": "ERROR",
             "propagate": False,
-        },
+      },
     },
 }
 

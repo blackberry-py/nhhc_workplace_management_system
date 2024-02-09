@@ -6,7 +6,7 @@
 		"ghcr.io/jungaretti/features/make:1": {},
 		"ghcr.io/bdsoha/devcontainers/custom-root-ca:1": {}
 	},
-	"postCreateCommand": "pip install poetry && poetry install",
+	"postCreateCommand": "pip install --user -r requirement.txt",
 	"customizations": {
 		"vscode": {
 			"extensions": [

@@ -10,7 +10,7 @@ jobs:
         run: |
           python3 -m venv .  venv
       - name: Cache Dependencies
-        uses: action/cache@v3
+        uses: actions/cache@v3
         with:
             path: ~/.cache/pypoetry
             key: poetry-packages-${{ hashFiles('**/pyproject.toml') }}
@@ -26,7 +26,7 @@ jobs:
           make test
   merge:
     runs-on: ubuntu-latest
-    needs: first-job
+    needs: test
     steps:
       - name: Deployw
         run: echo "Deploying Code"..
