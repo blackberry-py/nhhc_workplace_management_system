@@ -132,11 +132,11 @@ if DEBUG:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.getenv("DB_NAME_DEV"),
+            "NAME": os.getenv("POSTGRES_DEV_DATABASE"),
             "USER": os.getenv("DB_USER_DEV"),
             "PASSWORD": os.getenv("DB_PASSWORD_DEV"),
             "PORT": os.getenv("DB_PORT"),
-            "HOST": os.getenv("DB_HOST"),
+            "HOST": os.getenv("POSTGRES_HOST"),
             "OPTIONS": {"sslmode": "require"},
         },
     }
@@ -147,11 +147,11 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django_prometheus.cache.backends.postgresql",
-            "NAME": os.getenv("DB_NAME_PROD"),
+            "NAME": os.getenv("POSTGRES_PROD_DATABASE"),
             "USER": os.getenv("DB_USER_PROD"),
             "PASSWORD": os.getenv("DB_PASSWORD_PROD"),
             "PORT": os.getenv("DB_PORT"),
-            "HOST": os.getenv("DB_HOST"),
+            "HOST": os.getenv("POSTGRES_HOST"),
             "OPTIONS": {"sslmode": "require"},
         },
     }

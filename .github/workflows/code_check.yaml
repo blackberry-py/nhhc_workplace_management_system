@@ -1,0 +1,32 @@
+name: General Test and Deploy 
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Code Checkout
+        uses: 'Actions/Checkout@v3'
+      - name: Create VENV 
+        run: |
+          python3 -m venv .  venv
+      - name: Cache Dependencies
+        uses: action/cache@v3
+        with:
+            path: ~/.cache/pypoetry
+            key: poetry-packages-${{ hashFiles('**/pyproject.toml') }}
+      - name: Install Dep
+        run: |
+          source ./venv/bin/activate
+          pip install --upgrade pip
+          pip install poetry 
+          poetry install
+      - name: Run Tests
+        run: |
+          source ./venv/bin/activate
+          make test
+  merge:
+    runs-on: ubuntu-latest
+    needs: first-job
+    steps:
+      - name: Deployw
+        run: echo "Deploying Code"..
