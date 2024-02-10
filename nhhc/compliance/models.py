@@ -118,8 +118,8 @@ class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
     )
 
     def __str__(self):
-        return f"{self.last_name}, {self.first_name} - {self.job_title}"
-
+        return str(self.employee)
+    
     class Meta:
         db_table = "audit_compliance"
         ordering = ["employee"]

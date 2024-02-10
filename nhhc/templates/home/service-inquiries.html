@@ -56,48 +56,72 @@
                   <th scope="col"></th>
                 </tr>
               </thead>
-              <tbody class="list">
-                {% for submission in submissions %}
-                  {% if submission.reviewed is False %}
-                    <tr class="client-submission reviewed">
-                  {% elif submission.reviewed is True %}
-                    <tr class="client-submission pending">
-                  {% endif  %}
-                  <th scope="row">
-                    <div class="media align-items-center">
+              {% if submissions %}
+                <tbody class="list">
+                  {% for submission in submissions %}
+                    {% if submission.reviewed is False %}
+                      <tr class="client-submission reviewed">
+                    {% elif submission.reviewed is True %}
+                      <tr class="client-submission pending">
+                    {% endif  %}
+                    <th scope="row">
+                      <div class="media align-items-center">
 
-                      <div class="media-body">
-                        <span class="name mb-0 text-sm">{{ submission.date_submitted }}</span>
+                        <div class="media-body">
+                          <span class="name mb-0 text-sm">{{ submission.date_submitted }}</span>
+                        </div>
                       </div>
-                    </div>
-                  </th>
-                  <td>
-                    {% if submission.reviewed is True %}
-                      <img src="{% static 'img/read-submission-dot.png' %}" alt="Read Icon" width="30px" height="30px"/>
-                    {% else %}
-                      <img src="{% static 'img/new-submission-dot.png' %}" alt="Read Icon" width="30px" height="30px"/>
-                    {% endif %}
-                  </td>
-                  <td class="budget">
-                    {{ submission.first_name }}
-                  </td>
-                  <td>
-                    {{ submission.last_name }}
-                  </td>
-                  <td>
-                    {{ submission.get_desired_service_display }}
-                  </td>
-                  <td>
-                    {{ submission.contact_number }}
-                  </td>
-                  <td>
-                    <a class="btn btn-secondary" href="{% url 'client_interest_details' pk=submission.pk %}">Details</a>
-                  </td>
-                  </tr>
-                {% endfor %}
-              </tbody>
+                    </th>
+                    <td>
+                      {% if submission.reviewed is True %}
+                        <img src="{% static 'img/read-submission-dot.png' %}" alt="Read Icon" width="30px" height="30px"/>
+                      {% else %}
+                        <img src="{% static 'img/new-submission-dot.png' %}" alt="Read Icon" width="30px" height="30px"/>
+                      {% endif %}
+                    </td>
+                    <td class="budget">
+                      {{ submission.first_name }}
+                    </td>
+                    <td>
+                      {{ submission.last_name }}
+                    </td>
+                    <td>
+                      {{ submission.get_desired_service_display }}
+                    </td>
+                    <td>
+                      {{ submission.contact_number }}
+                    </td>
+                    <td>
+                      <a class="btn btn-secondary" href="{% url 'client_interest_details' pk=submission.pk %}">Details</a>
+                    </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              {% else %}
+                <h2> No Client Service Inquiries Submitted </h2>
+              {% endif %}
             </table>
+
+
           </div>
+                         {# .... **Now the pagination section** .... #}
+          {% if is_paginated %}
+            <div class="mx-auto">
+              <div class="pagination">
+                <span class="page-links">
+                  {% if page_obj.has_previous %}
+                    <a href="/inquiries?page={{ page_obj.previous_page_number }}"><i class="fa-solid fa-left-long fa-2xl"></i></a>
+                  {% endif %}
+                  <span class="page-current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                  </span>
+                  {% if page_obj.has_next %}
+                    <a href="/inquiries?page={{ page_obj.next_page_number }}"><i class="fa-solid fa-right-long fa-2xl"></i></a>
+                  {% endif %}
+                </span>
+              </div>
+            </div>
+          {% endif %}
           <!-- Card footer -->
           <div class="card-footer py-4">
             <nav aria-label="...">

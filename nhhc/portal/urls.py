@@ -11,16 +11,17 @@ Attributes:
 
 from django.urls import path, re_path
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
 from . import views
 
 urlpatterns = [
     path("dashboard", views.portal_dashboard, name="dashboard"),
     path("my-profile/", views.profile, name="profile"),
-    path("inquiries/", views.client_inquiries, name="inquiries"),
+    path("inquiries/", login_required(views.ClientInquiriesListView.as_view()), name="inquiries"),
     path(
         "inquiries/<int:pk>/",
-        views.submission_detail,
+        login_required(views.ClientInquiriesDetailView.as_view()),
         name="client_interest_details",
     ),
     path(

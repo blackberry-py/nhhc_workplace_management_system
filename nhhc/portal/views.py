@@ -37,6 +37,8 @@ from django.urls import reverse
 from django.views.generic.detail import DetailView
 from employee.forms import EmployeeForm
 from employee.models import Employee
+from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
 from loguru import logger
 from web.forms import ClientInterestForm
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
@@ -111,48 +113,28 @@ def all_client_inquiries(request):
     return HttpResponse(content=inquiries_json, status=200)
 
 
-@login_required(login_url="/login/")
-def client_inquiries(request):
-    context = dict()
-    context["submissions"] = ClientInterestSubmissions.objects.all().order_by(
-        "-date_submitted",
-    )
-    countUnresponsed = ClientInterestSubmissions.objects.filter(reviewed=False).count()
-    context["unresponsed"] = countUnresponsed
-    context["showSearch"] = True
-    context["reviewed"] = ClientInterestSubmissions.objects.filter(
+class ClientInquiriesListView(ListView):
+    template_name = "home/service-inquiries.html"
+    model = ClientInterestSubmissions
+    queryset = ClientInterestSubmissions.objects.all().order_by("-date_submitted")
+    context_object_name = "submissions"
+    paginate_by = 25
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["unresponsed"] = ClientInterestSubmissions.objects.filter(reviewed=False).count()
+        context["showSearch"] = True
+        context["reviewed"] = ClientInterestSubmissions.objects.filter(
         reviewed=True,
     ).count()
-    context["all_submuission"] = ClientInterestSubmissions.objects.all().count
-    return render(request, "home/service-inquiries.html", context)
-
-
-@login_required(login_url="/login/")
-def submission_detail(request, pk):
-    context = dict()
-    submission = ClientInterestSubmissions.objects.get(pk=pk)
-    context["type"] = "Client Interest"
-    init_values = {
-        "id": submission.id,
-        "first_name": submission.first_name,
-        "last_name": submission.last_name,
-        "email": submission.email,
-        "contact_number": submission.contact_number,
-        "home_address1": submission.home_address1,
-        "home_address2": submission.home_address2,
-        "city": submission.city,
-        "state": submission.state,
-        "zipcode": submission.zipcode,
-        "insurance_carrier": submission.insurance_carrier,
-        "desired_service": submission.desired_service,
-        "date_submitted": submission.date_submitted,
-        "reviewed": submission.reviewed,
-        "reviewed_by": submission.reviewed_by,
-    }
-    context["submission"] = init_values
-
-    return render(request, "home/submission-details.html", context)
-
+        context["all_submuission"] = ClientInterestSubmissions.objects.all().count()
+        return context
+        
+class ClientInquiriesDetailView(DetailView):
+    template_name = "home/submission-details.html"
+    model = ClientInterestSubmissions
+    context_object_name = "submission"
+    pk_url_kwarg = "pk"
 
 def marked_reviewed(request):
     try:

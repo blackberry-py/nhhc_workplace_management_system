@@ -1,9 +1,7 @@
-VENV := .venv
-BIN := $(VENV)/bin
-PYTHON := $(BIN)/python
+
+PYTHON := $(PYTHON_ROOT)/current/bin/python
 SHELL := /bin/bash
 
-include .env
 
 .PHONY: help
 help: ## Show this help
