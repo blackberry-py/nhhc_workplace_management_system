@@ -1,18 +1,20 @@
 """
-Module:  portal.views
-This module contains views for handling client inquiries, employment applications, and user profiles.
+module: portal.views
 
-The module includes the following functions:
-- index(request): Renders the home page with new job applications and announcements.
-- profile(request): Handles user profile updates and displays user information.
-- all_client_inquiries(request): Retrieves all client inquiries and returns them as JSON.
-- client_inquiries(request): Renders the client inquiries page with the number of unreviewed submissions.
-- submission_detail(request, pk): Renders the details of a specific client inquiry submission.
-- marked_reviewed(request): Marks a client inquiry submission as reviewed.
-- employment_applications(request): Renders the employment applications page with the number of unreviewed submissions.
-- applicant_details(request, pk): Renders the details of a specific employment application submission.
-- all_applicants(request): Retrieves all employment applications and returns them as JSON.
+Functions:
+- portal_dashboard: Renders the portal dashboard page.
+- profile: Renders the user profile page and allows users to update their profile information.
+- all_client_inquiries: Retrieves all client inquiries and returns them as JSON.
+- marked_reviewed: Marks a client inquiry as reviewed.
+- coming_soon: Renders a "coming soon" page.
+
+Classes:
+- ClientInquiriesListView: Renders a list of client inquiries.
+- ClientInquiriesDetailView: Renders details of a specific client inquiry.
+- EmploymentApplicationListView: Renders a list of submitted employment applications.
+- EmploymentApplicationDetailView: Renders details of a specific employment application.
 """
+
 import csv
 import json
 import os
@@ -20,6 +22,7 @@ import os
 import arrow
 from announcements.forms import AnnouncementForm
 from announcements.models import Announcements
+from typing import Dict
 from cacheops import cached_view_as
 from compliance.models import Compliance
 from django import template
@@ -30,14 +33,13 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.core.files.storage import FileSystemStorage
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpRequest
 from django.shortcuts import redirect, render, reverse
 from django.template import loader
 from django.urls import reverse
 from django.views.generic.detail import DetailView
 from employee.forms import EmployeeForm
 from employee.models import Employee
-from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from loguru import logger
 from web.forms import ClientInterestForm
@@ -56,7 +58,18 @@ logger.add(
 
 
 @login_required(login_url="/login/")
-def portal_dashboard(request):
+def portal_dashboard(request: HttpRequest) -> HttpResponse:
+    """
+    Renders the portal dashboard page.
+
+    Retrieves new applications, client requests, and announcements to display on the dashboard.
+
+    Args:
+    - request: HTTP request object
+
+    Returns:
+    - HttpResponse: Rendered HTML template
+    """
     context = dict()
     context["segment"] = "index"
     new_applications = EmploymentApplicationModel.objects.filter(
@@ -72,20 +85,28 @@ def portal_dashboard(request):
     html_template = loader.get_template("home/index.html")
     return HttpResponse(html_template.render(context, request))
 
-
+# TODO: Convert to Class-Based
 @login_required(login_url="/login/")
-def profile(request):
+def profile(request: HttpRequest) -> HttpResponseRedirect:
+    """
+    Renders the user profile page and allows users to update their profile information.
+
+    Retrieves user and compliance data to display on the profile page.
+
+    Args:
+    - request: HTTP request object
+
+    Returns:
+    - HttpResponse: Rendered HTML template
+    """
     context = dict()
     context["data"] = Compliance.objects.select_related("employee").get(
         id=request.user.id
     )
-    # context["compliance"] = Compliance.objects.get(employee_id=request.user.id)
     user = context["data"]
-    compliance = context["compliance"]
 
     if request.method == "POST":
         user = Employee.objects.get(username=request.user.username)
-        compliance = Compliance.objects.get(employee=request.user.is_staff)
         form = EmployeeForm(
             request.POST,
             request.FILES or None,
@@ -106,21 +127,30 @@ def profile(request):
             context=context,
         )
 
+# TODO: Implement REST endpoint with DRF 
+def all_client_inquiries(request: HttpRequest) -> HttpResponse:
+    """
+    Retrieves all client inquiries and returns them as JSON.
 
-def all_client_inquiries(request):
+    Returns:
+    - HttpResponse: JSON response containing all client inquiries
+    """
     inquiries = ClientInterestSubmissions.objects.all().values()
     inquiries_json = json.dumps(list(inquiries), cls=DjangoJSONEncoder)
     return HttpResponse(content=inquiries_json, status=200)
 
-
+# SECTION - Class-Based Views 
 class ClientInquiriesListView(ListView):
+    """
+    Renders a list of client inquiries.
+    """
     template_name = "home/service-inquiries.html"
     model = ClientInterestSubmissions
     queryset = ClientInterestSubmissions.objects.all().order_by("-date_submitted")
     context_object_name = "submissions"
     paginate_by = 25
     
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs)  -> Dict[str, str]:
         context = super().get_context_data(**kwargs)
         context["unresponsed"] = ClientInterestSubmissions.objects.filter(reviewed=False).count()
         context["showSearch"] = True
@@ -131,12 +161,69 @@ class ClientInquiriesListView(ListView):
         return context
         
 class ClientInquiriesDetailView(DetailView):
+    """
+    Renders details of a specific client inquiry.
+    """
     template_name = "home/submission-details.html"
     model = ClientInterestSubmissions
     context_object_name = "submission"
     pk_url_kwarg = "pk"
 
+
+
+
+class EmploymentApplicationListView(ListView):
+    """
+    Renders a list of submitted employment applications.
+    """
+    template_name = "home/submitted-applications.html"
+    model = EmploymentApplicationModel
+    queryset = EmploymentApplicationModel.objects.all().order_by("-date_submitted")
+    context_object_name = "submissions"
+    paginate_by = 25
+                                                                                                            
+    def get_context_data(self, **kwargs) -> Dict[str, str]:
+        context = super().get_context_data(**kwargs)
+        context["unresponsed"] = EmploymentApplicationModel.objects.filter(reviewed=False).count()
+        context["reviewed"] = EmploymentApplicationModel.objects.filter(
+        reviewed=True,
+    ).count()
+        context["all_submissions"] = EmploymentApplicationModel.objects.all().count()
+        return context
+
+class EmploymentApplicationDetailView(DetailView):
+    """
+    Renders details of a specific employment application.
+    """
+    template_name = "home/applicant-details.html"
+    model = ClientInterestSubmissions
+    context_object_name = "submission"
+    pk_url_kwarg = "pk"
+
+# TODO: Implement REST endpoint with DRF 
+@login_required(login_url="/login/")
+def all_applicants(request: Ht) -> HttpResponse:
+    """
+    Retrieves all employment applications and returns them as JSON.
+
+    Returns:
+    - HttpResponse: JSON response containing all employment applications
+    """
+    inquiries = EmploymentApplicationModel.objects.all().values()
+    for inquiry in inquiries:
+        inquiry["contact_number"] = str(inquiry["contact_number"])
+    applicant_json = json.dumps(list(inquiries), cls=DjangoJSONEncoder)
+    return HttpResponse(content=applicant_json, status=200)
+# !SECTION - END OF CLASS-BASED VIEWS
+
+# SECTION - AJAX Hooks
 def marked_reviewed(request):
+    """
+    Marks a client inquiry as reviewed.
+
+    Returns:
+    - HttpResponse: Success or error response
+    """
     try:
         body_unicode = request.body.decode("utf-8")
         body = json.loads(body_unicode)
@@ -155,94 +242,18 @@ def marked_reviewed(request):
     except Exception as e:
         logger.error(f"ERROR: Unable to Mark {submission.id} REVIEWED: {e}")
         return HttpResponse(status=500)
+# !SECTION - END OF AJAX HOOKS
 
-
-# @login_required(login_url="/login/")
-# def employment_applications(request):
-#     context = dict()
-#     context["submissions"] = EmploymentApplicationModel.objects.all().order_by(
-#         "-date_submitted",
-#     )
-#     countUnresponsed = EmploymentApplicationModel.objects.filter(reviewed=False).count()
-#     context["unresponsed"] = countUnresponsed
-#     context["showSearch"] = True
-#     context["reviewed"] = EmploymentApplicationModel.objects.filter(
-#         reviewed=True,
-#     ).count()
-#     context["all_submuission"] = EmploymentApplicationModel.objects.all().count
-#     return render(request, "home/submitted-applications.html", context)
-
-class EmploymentApplicationListView(ListView):
-    template_name = "home/submitted-applications.html"
-    model = EmploymentApplicationModel
-    queryset = EmploymentApplicationModel.objects.all().order_by("-date_submitted")
-    context_object_name = "submissions"
-    paginate_by = 25
-                                                                                                            
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["unresponsed"] = EmploymentApplicationModel.objects.filter(reviewed=False).count()
-        context["showSearch"] = True
-        context["reviewed"] = EmploymentApplicationModel.objects.filter(
-        reviewed=True,
-    ).count()
-        context["all_submissions"] = EmploymentApplicationModel.objects.all().count()
-        return context
-
-class EmploymentApplicationDetailView(DetailView):
-    template_name = "home/applicant-details.html"
-    model = ClientInterestSubmissions
-    context_object_name = "submission"
-    pk_url_kwarg = "pk"
-
+# SECTION - Temp Endpoints 
+# TODO: Remove this once the features they are Referencing is implemented. 
+    
 @login_required(login_url="/login/")
-def applicant_details(request, pk):
-    if request.user.is_staff:
-        context = dict()
-        submission = EmploymentApplicationModel.objects.get(pk=pk)
-        context["type"] = "Client Interest"
-        init_values = {
-            "id": submission.id,
-            "first_name": submission.first_name,
-            "last_name": submission.last_name,
-            "contact_number": submission.contact_number,
-            "email": submission.email,
-            "home_address1": submission.home_address1,
-            "home_address2": submission.home_address2,
-            "city": submission.city,
-            "state": submission.state,
-            "zipcode": submission.zipcode,
-            "mobility": submission.mobility,
-            "prior_experience": submission.prior_experience,
-            "ipdh_registered": submission.ipdh_registered,
-            "availability_monday": submission.availability_monday,
-            "availability_tuesday": submission.availability_tuesday,
-            "availability_wednesday": submission.availability_wednesday,
-            "availability_thursday": submission.availability_thursday,
-            "availability_friday": submission.availability_friday,
-            "availability_saturday": submission.availability_saturday,
-            "availability_sunday": submission.availability_sunday,
-            "reviewed": submission.reviewed,
-            "hired": submission.hired,
-            "reviewed_by": submission.reviewed_by,
-            "date_submitted": submission.date_submitted,
-        }
-        context["submission"] = init_values
+def coming_soon(request) -> HttpResponse:
+    """
+    Renders a "coming soon" page.
 
-        return render(request, "home/applicant-details.html", context)
-    else:
-        raise PermissionDenied()
-
-
-@login_required(login_url="/login/")
-def all_applicants(request) -> HttpResponse:
-    inquiries = EmploymentApplicationModel.objects.all().values()
-    for inquiry in inquiries:
-        inquiry["contact_number"] = str(inquiry["contact_number"])
-    applicant_json = json.dumps(list(inquiries), cls=DjangoJSONEncoder)
-    return HttpResponse(content=applicant_json, status=200)
-
-
-@login_required(login_url="/login/")
-def coming_soon(request):
+    Returns:
+    - HttpResponse: Rendered HTML template
+    """
     return render(request, "coming_soon.html", {})
+ that is all ladies

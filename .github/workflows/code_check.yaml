@@ -6,20 +6,19 @@ jobs:
     steps:
       - name: Get Code Checkout
         uses: 'Actions/Checkout@v3'
-      - name: Create VENV 
-        run: |
-          python3 -m venv .  venv
-      - name: Cache Dependencies
+      - name: cache dependencies
         uses: actions/cache@v3
         with:
-            path: ~/.cache/pypoetry
-            key: poetry-packages-${{ hashFiles('**/pyproject.toml') }}
-      - name: Install Dep
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          source ./venv/bin/activate
           pip install --upgrade pip
           pip install poetry 
-          poetry install
+          pip install --user -r requirements.txt
       - name: Run Tests
         run: |
           source ./venv/bin/activate
