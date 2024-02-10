@@ -32,7 +32,8 @@
 				"DavidAnson.vscode-markdownlint",
 				"WolfiesHorizon.python-auto-venv",
 				"teticio.python-envy",
-				"ms-python.black-formatter"
+				"ms-python.black-formatter",
+				"ExodiusStudios.comment-anchors"
 			]
 		}
 	}, 

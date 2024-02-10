@@ -34,8 +34,8 @@ urlpatterns = [
         csrf_exempt(views.all_client_inquiries),
         name="all_client_inquiries_api",
     ),
-    path("applicants/", views.employment_applications, name="applicants-list"),
-    path("applicant/<int:pk>", views.applicant_details, name="applicant-details"),
+    path("applicants/", login_required(views.EmploymentApplicationListView.as_view()), name="applicants-list"),
+    path("applicant/<int:pk>", login_required(views.EmploymentApplicationDetailView.as_view()), name="applicant-details"),
     path("all_applicants", views.all_applicants, name="submitted-applicants-api"),
     path("coming-soon/", views.coming_soon, name="coming-soon"),
 ]

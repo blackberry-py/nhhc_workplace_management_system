@@ -127,7 +127,7 @@ class ClientInquiriesListView(ListView):
         context["reviewed"] = ClientInterestSubmissions.objects.filter(
         reviewed=True,
     ).count()
-        context["all_submuission"] = ClientInterestSubmissions.objects.all().count()
+        context["all_submissions"] = ClientInterestSubmissions.objects.all().count()
         return context
         
 class ClientInquiriesDetailView(DetailView):
@@ -157,21 +157,43 @@ def marked_reviewed(request):
         return HttpResponse(status=500)
 
 
-@login_required(login_url="/login/")
-def employment_applications(request):
-    context = dict()
-    context["submissions"] = EmploymentApplicationModel.objects.all().order_by(
-        "-date_submitted",
-    )
-    countUnresponsed = EmploymentApplicationModel.objects.filter(reviewed=False).count()
-    context["unresponsed"] = countUnresponsed
-    context["showSearch"] = True
-    context["reviewed"] = EmploymentApplicationModel.objects.filter(
+# @login_required(login_url="/login/")
+# def employment_applications(request):
+#     context = dict()
+#     context["submissions"] = EmploymentApplicationModel.objects.all().order_by(
+#         "-date_submitted",
+#     )
+#     countUnresponsed = EmploymentApplicationModel.objects.filter(reviewed=False).count()
+#     context["unresponsed"] = countUnresponsed
+#     context["showSearch"] = True
+#     context["reviewed"] = EmploymentApplicationModel.objects.filter(
+#         reviewed=True,
+#     ).count()
+#     context["all_submuission"] = EmploymentApplicationModel.objects.all().count
+#     return render(request, "home/submitted-applications.html", context)
+
+class EmploymentApplicationListView(ListView):
+    template_name = "home/submitted-applications.html"
+    model = EmploymentApplicationModel
+    queryset = EmploymentApplicationModel.objects.all().order_by("-date_submitted")
+    context_object_name = "submissions"
+    paginate_by = 25
+                                                                                                            
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["unresponsed"] = EmploymentApplicationModel.objects.filter(reviewed=False).count()
+        context["showSearch"] = True
+        context["reviewed"] = EmploymentApplicationModel.objects.filter(
         reviewed=True,
     ).count()
-    context["all_submuission"] = EmploymentApplicationModel.objects.all().count
-    return render(request, "home/submitted-applications.html", context)
+        context["all_submissions"] = EmploymentApplicationModel.objects.all().count()
+        return context
 
+class EmploymentApplicationDetailView(DetailView):
+    template_name = "home/applicant-details.html"
+    model = ClientInterestSubmissions
+    context_object_name = "submission"
+    pk_url_kwarg = "pk"
 
 @login_required(login_url="/login/")
 def applicant_details(request, pk):
