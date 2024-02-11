@@ -31,17 +31,22 @@ from django.core.files.storage import FileSystemStorage
 from django.core.mail import send_mail
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpRequest
 from django.shortcuts import redirect, render, reverse
 from django.template import loader
 from django.urls import reverse
 from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
 from employee.forms import EmployeeForm
 from employee.models import Employee
 from loguru import logger
 from web.forms import ClientInterestForm
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
+from django.conf import settings
 
+logger.add(settings.DEBUG_LOG_FILE, diagnose=True, catch=True, backtrace=True, level="DEBUG")
+logger.add(settings.PRIMARY_LOG_FILE, diagnose=False, catch=True, backtrace=False, level="INFO")
+logger.add(settings.LOGTAIL_HANDLER, diagnose=False, catch=True, backtrace=False, level="INFO")
 
 # Create your views here.
 def send_new_user_credentials(new_user: Employee, password, username) -> bool:
@@ -54,8 +59,7 @@ def send_new_user_credentials(new_user: Employee, password, username) -> bool:
         username: str Username for the newly created account
 
     Returns:
-        bool - True of the email was successdfully send.
-
+        bool - True of the email was successdfully send. 200  HTTP Status Code if successful or 400  Bad Request if not successful and logs a JSON Error object with details
 
     """
     try:
@@ -65,9 +69,9 @@ def send_new_user_credentials(new_user: Employee, password, username) -> bool:
         sender_password = os.getenv("EMAIL_ACCT_PASSWORD")
         subject = f"Welcome to Nett Hands - {new_user.first_name}!"
         content = f"Welcome to Nett Hands, Please Login Your New Employee Account at https://www.netthandshome.care/login/ and Complete Onboarding Information in the Personal Information Section:\n Username = {username} \n Password = {password} \n  Welcome to the Family, {new_user.first_name}! \n "
-        send_mail(subject, content, email_from, recipient_email)
+        # send_mail(subject, content, email_from, recipient_email)
         return HttpResponse(
-            status=200, content=json.loads({"status": "SENT", "username": username})
+            status=200, content={"status": "SENT", "username": username}
         )
     except Exception as e:
         logger.error(f"Unable to Send New User Credentials...{e}")
@@ -76,20 +80,53 @@ def send_new_user_credentials(new_user: Employee, password, username) -> bool:
         )
 
 
-def hire(request):
+def hire(request: HttpRequest) -> HttpResponse:
+    """
+    This function is used to hire an applicant based on the provided 'pk' value in the request.
+    
+    Args:
+    - request (HttpRequest): The HTTP request object containing the 'pk' value.
+    
+    Returns:
+    - HttpResponse: Returns an HTTP response with a status code indicating the success or failure of the hiring process.
+    """
     try:
-        pk = request.POST.get("pk")
+        pk = int(request.POST.get("pk"))
+    except (ValueError, TypeError):
+        logger.exception('Bad Request to Hire Applicant, Invaild or NO Applcation PK Submitted')
+        return HttpResponse(status=400, content="Failed to hire applicant. Invalid or no 'pk' value provided in the request.")
+
+    try:
         submission = EmploymentApplicationModel.objects.get(pk=pk)
+    except EmploymentApplicationModel.DoesNotExist:
+        logger.exception(f"Failed to hire applicant. Employment application not found.")
+        return HttpResponse(status=400, content="Failed to hire applicant. Employment application not found.")
+
+    try:
         hired_user = submission.hire_applicant(request.user)
-        send_new_user_credentials(new_user=hired_user['user'], password=hired_user['plain_text_password'], username=hired_user['username'])
-        submission.save()
-        return HttpResponse(status=201)
     except Exception as e:
-        logger.error(f"JS AJAX Request Failed - Applicant Not Hired = {e}"),
-        return HttpResponse(status=400, content=f"Failed to hire applicant. Error: {e}")
+        logger.error(f"Failed to hire applicant. Error: {e}.")
+        return HttpResponse(status=400, content=f"Failed to hire applicant. Error: {e}.")
+
+    try:
+        submission.save()  
+        send_new_user_credentials(new_user=hired_user['user'], password=hired_user['plain_text_password'], username=hired_user['username'])
+        return HttpResponse(status=201, content=f"username: {hired_user['username']},  password: {hired_user['plain_text_password']}")
+    except Exception as e:
+        logger.error(f"Failed to send new user credentials. Error: {e}")
+        return HttpResponse(status=400, content=f"Failed to send new user credentials. Error: {e}")
 
 
-def reject(request):
+def reject(request: HttpRequest) -> HttpResponse:
+    """
+    Ajax Hook that updates EmploymentApplicationModel sets application status to REJECTED
+    
+    Args:
+        request: HttpRequest  instance of the current request being processed
+        
+    Returns:
+        HttpResponse - Returns status  code 204 if successful or a 418 and logs error message on failure
+    """
     try:
         pk = request.POST.get("pk")
         submission = EmploymentApplicationModel.objects.get(id=pk)
@@ -100,13 +137,16 @@ def reject(request):
         logger.error(f"JS AJAX Request Failed - Applicant Not Rejected = {e}")
         return HttpResponse(status=418)
 
+class EmployeeRoster(ListView):
+    model = Employee
+    queryset = Employee.objects.all().order_by("last_name")
+    template_name = 'home/employee-listing.html'
+    context_object_name = "employees"
 
-def employee_roster(request):
-    context = dict()
-    employees = Employee.objects.all().order_by("last_name")
-    context["employees"] = employees
-    context["showSearch"] = True
-    return render(request, "home/employee-listing.html", context)
+class EmployeeDetail(DetailView):
+    model = Employee
+    template_name = 'home/employee-details.html'
+    context_object_name = 'employee'
 
 
 def employee_details(request, pk):

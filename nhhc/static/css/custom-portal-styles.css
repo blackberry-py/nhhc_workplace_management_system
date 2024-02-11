@@ -6,7 +6,19 @@
 .green {
     color: #50C878;
 }
+.form-control:focus {
+  box-shadow: none;
+}
 
+.form-control-underlined {
+  border-width: 0;
+  border-bottom-width: 1px;
+  border-radius: 0;
+  padding-left: 0;
+}
+#toast-node {
+  z-index: 500;
+}
 .outline-red {
   border: 2px solid #ff0000;
   background-color: #ffb6c1;

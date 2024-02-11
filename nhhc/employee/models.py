@@ -1,9 +1,11 @@
+from authentication.models import RandomPasswordGenerator
+from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.contrib.auth import get_user_model
-from django.db import IntegrityError
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import MaxValueValidator, MinLengthValidator
-from django.db import models
+from django.db import IntegrityError, models, transaction
+from django.db.models import Max
 from django.db.models.functions import Cast, Substr
 from django.utils.translation import gettext_lazy as _
 from django_prometheus.models import ExportModelOperationsMixin
@@ -13,10 +15,13 @@ from localflavor.us.models import (
     USZipCodeField,
 )
 from phonenumber_field.modelfields import PhoneNumberField
-from django.core.exceptions import ObjectDoesNotExist
-from django.db import IntegrityError, transaction
-from authentication.models import RandomPasswordGenerator
-from django.db.models import Max
+from loguru import logger   
+from django.conf import settings
+
+
+logger.add(settings.DEBUG_LOG_FILE, diagnose=True, catch=True, backtrace=True, level="DEBUG")
+logger.add(settings.PRIMARY_LOG_FILE, diagnose=False, catch=True, backtrace=False, level="INFO")
+logger.add(settings.LOGTAIL_HANDLER, diagnose=False, catch=True, backtrace=False, level="INFO")
 
 
 class EmployeeManager(BaseUserManager):
@@ -41,7 +46,10 @@ class EmployeeManager(BaseUserManager):
         Example:
             create_unique_username("John", "Doe")
         """
-        username = f"{last_name.lower()}.{first_name.lower()}"
+        last_name = last_name.lower()
+        first_name = first_name.lower()
+        username = f"{last_name}.{first_name}"
+        logger.debug(f"Inital Username: {username}")
 
         try:
             # Try to create a new user with the given username
@@ -57,10 +65,12 @@ class EmployeeManager(BaseUserManager):
             next_username = username + str(max_num)
 
             # Return the next available username
+            logger.debug(f"Inital Username Unavailable. Next Available Username: {next_username}")
             return next_username
         
         except ObjectDoesNotExist:
             # If no IntegrityError is raised, return the original username
+            logger.deug(f"Inital Username Available")
             return username
 
             
@@ -336,40 +346,32 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
         Example:
             create_unique_username("John", "Doe")
         """
-        username = f"{last_name.lower()}.{first_name.lower}"
+        last_name = last_name.lower()
+        first_name = first_name.lower()
+        username = f"{last_name}.{first_name}"
+        logger.debug(f"Inital Username: {username}")
 
         try:
-            # Try to create a new user with the given username\
+            # Try to create a new user with the given username
             user = get_user_model().objects.get(username=username)
-            user.save(commit=False)
-        
-        except ObjectDoesNotExist:
-            # If no IntegrityError is raised, return the original username
-            return username
-
-        except IntegrityError:
-            # If an IntegrityError is raised, the username is already taken
-
-            # Find the maximum number currently appended to a username in the table
-            max_num = (
-                get_user_model()
-                .objects.filter(username__startswith=username)
-                .aggregate(
-                    max_num=Max(
-                        Cast(Substr(username, len(username) + 1), IntegerField())
-                    )
-                )["max_num"]
-            )
+            max_num = get_user_model().objects.filter(username__startswith=username).count()
+    
 
             # If no number is currently appended, set the max_num to 0
-            if max_num is None:
+            if max_num == 1:
                 max_num = 0
 
             # Append the next number to the username and try to create a new user again
-            next_username = username + str(max_num + 1)
+            next_username = username + str(max_num)
 
             # Return the next available username
+            logger.debug(f"Inital Username Unavailable. Next Available Username: {next_username}")
             return next_username
+        
+        except ObjectDoesNotExist:
+            # If no IntegrityError is raised, return the original username
+            logger.deug(f"Inital Username Available")
+            return username
 
     class Meta:
         db_table = "employee"

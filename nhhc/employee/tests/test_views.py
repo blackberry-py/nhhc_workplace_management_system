@@ -1,19 +1,20 @@
 from unittest.mock import patch
 
-from django.core.exceptions import PermissionDenied
+from compliance.models import Compliance, Contract
 from django.contrib.auth import get_user_model
 from django.core import mail
+from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory, TestCase
+from employee.models import Employee
 from employee.views import employee_details, hire, reject, send_new_user_credentials
 from model_bakery import baker
 from web.models import EmploymentApplicationModel
-from employee.models import Employee
+
 from nhhc.testing_utils import (
     generate_mock_PhoneNumberField,
-    generate_mock_ZipCodeField,
     generate_mock_USSocialSecurityNumberField,
+    generate_mock_ZipCodeField,
 )
-from compliance.models import Compliance, Contract
 
 baker.generators.add(
     "phonenumber_field.modelfields.PhoneNumberField", generate_mock_PhoneNumberField

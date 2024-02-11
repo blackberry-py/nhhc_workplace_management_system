@@ -1,15 +1,17 @@
+from pprint import pprint
+
 import arrow
 from django.test import TestCase
 from employee.models import Employee
+from faker import Faker
+from loguru import logger
 from model_bakery import baker
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
+
 from nhhc.testing_utils import (
     generate_mock_PhoneNumberField,
     generate_mock_ZipCodeField,
 )
-from pprint import pprint
-from loguru import logger
-from faker import Faker
 
 dummy = Faker()
 baker.generators.add(

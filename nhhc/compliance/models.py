@@ -41,7 +41,10 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_prometheus.models import ExportModelOperationsMixin
 from employee.models import Employee
+
 from nhhc.storage_backends import PrivateMediaStorage
+
+
 class Contract(models.Model, ExportModelOperationsMixin("contracts")):
     code = models.CharField(max_length=10, unique=True)
 

@@ -11,10 +11,10 @@ from email.mime.text import MIMEText
 from string import Template
 
 from django.conf import settings
+from django.contrib import messages
 from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseServerError
 from django.shortcuts import redirect, render
-from django.contrib import messages
 from django.template import RequestContext
 from django.views.decorators.cache import cache_page
 from dotenv import load_dotenv

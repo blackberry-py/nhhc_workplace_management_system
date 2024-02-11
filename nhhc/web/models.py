@@ -18,22 +18,23 @@ Note: The module also includes choices for services, mobility, and prior experie
 """
 
 import datetime
+import json
 import random
 import string
-import json
 
 import arrow
+from authentication.models import RandomPasswordGenerator
 from compliance.models import Compliance
 from django.contrib.auth.hashers import make_password
 from django.core.validators import MaxValueValidator
 from django.db import models
+from typing import Dict
 from django.utils.translation import gettext_lazy as _
 from django_prometheus.models import ExportModelOperationsMixin
 from employee.models import Employee
 from localflavor.us.models import USStateField, USZipCodeField
 from loguru import logger
 from phonenumber_field.modelfields import PhoneNumberField
-from authentication.models import RandomPasswordGenerator
 
 now = arrow.now(tz="US/Central")
 
@@ -141,7 +142,7 @@ class EmploymentApplicationModel(
     )
     date_submitted = models.DateTimeField(auto_now_add=True)
 
-    def hire_applicant(self, hired_by: Employee) -> None:
+    def hire_applicant(self, hired_by: Employee) -> Dict[str, str]:
         """
         Hire a new employee by creating a user account, generating a random password, and saving employee and compliance information in the database.
 
@@ -161,9 +162,7 @@ class EmploymentApplicationModel(
         applicant.hire_applicant(hired_by='HR_Manager')
         """
         try:
-            username = (
-                f"{self.first_name.lower()}.{self.last_name.lower().replace(' ', '.')}"
-            )
+        
             new_employee = Employee(
                 is_superuser=False,
                 username=Employee.create_unique_username(

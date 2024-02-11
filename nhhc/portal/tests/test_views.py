@@ -9,16 +9,16 @@ from django.urls import reverse
 from employee.forms import EmployeeForm
 from employee.models import Employee
 from faker import Faker
+from loguru import logger
 from model_bakery import baker
-from portal.views import employment_applications, marked_reviewed, submission_detail
+from portal.views import EmploymentApplicationListView, marked_reviewed, ClientInquiriesListView
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
+
 from nhhc.testing_utils import (
     generate_mock_PhoneNumberField,
     generate_mock_USSocialSecurityNumberField,
     generate_mock_ZipCodeField,
 )
-from loguru import logger
-
 
 dummy_data = Faker()
 

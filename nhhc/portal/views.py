@@ -196,13 +196,13 @@ class EmploymentApplicationDetailView(DetailView):
     Renders details of a specific employment application.
     """
     template_name = "home/applicant-details.html"
-    model = ClientInterestSubmissions
+    model = EmploymentApplicationModel
     context_object_name = "submission"
     pk_url_kwarg = "pk"
 
 # TODO: Implement REST endpoint with DRF 
 @login_required(login_url="/login/")
-def all_applicants(request: Ht) -> HttpResponse:
+def all_applicants(request: HttpRequest) -> HttpResponse:
     """
     Retrieves all employment applications and returns them as JSON.
 
@@ -249,11 +249,10 @@ def marked_reviewed(request):
     
 @login_required(login_url="/login/")
 def coming_soon(request) -> HttpResponse:
-    """
+    """ 
     Renders a "coming soon" page.
 
     Returns:
     - HttpResponse: Rendered HTML template
     """
     return render(request, "coming_soon.html", {})
- that is all ladies

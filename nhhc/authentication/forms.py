@@ -67,13 +67,14 @@
 """
 Copyright (c) 2019 - present AppSeed.us
 """
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import get_user_model
 from allauth.account.authentication import record_authentication
-from django.utils.translation import gettext_lazy as _
-from django.urls import reverse
 from allauth.account.forms import LoginForm
+from django import forms
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
+
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:

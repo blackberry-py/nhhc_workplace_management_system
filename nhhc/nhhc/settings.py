@@ -18,7 +18,7 @@ load_dotenv()
 # SECTION - Basic Application Defintion
 OFFLINE = False
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = get_random_secret_key()
+SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = True
 DATETIME_FORMAT = "m/d/yyyy h:mm A"
 ADMINS = [("Terry Brooks", "Terry@BrooksJr.com")]
@@ -48,7 +48,7 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.getenv("EMAIL_SERVER")
 EMAIL_USE_TLS = True
 EMAIL_PORT = os.getenv("EMAIL_TSL_PORT")
-EMAIL_HOST_USER = os.getenv("NOTIFICATION_SENDER_EMAIL")
+EMAIL_HOST_USER = os.getenv("EMAIL")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_ACCT_PASSWORD")
 APPEND_SLASH = True
 CRISPY_TEMPLATE_PACK = "bootstrap4"
@@ -172,17 +172,7 @@ CACHES = {
         "LOCATION": os.getenv("S3_CACHE_URL"),
     },
 }
-# CACHEOPS_REDIS=os.getenv("REDIS_CACHE_URI")
-# CACHEOPS_CLIENT_CLASS="django_redis.client.DefaultClient"
-# CACHEOPS_DEFAULTS = {
-#     'timeout': 60*15
-# }
-# CACHEOPS = {
-#     'auth.user': {'ops': 'get', 'timeout': 60*15},
-#     'auth.*': {'ops': ('fetch', 'get')},
-#     'auth.permission': {'ops': 'all'},
-#     '*.*': {},
-# }
+
 # !SECTION
 
 # SECTION - Password validation

@@ -152,10 +152,10 @@
           </div>
         </div>
         <hr class="my-4" />
-
-        <div class="row">
+{% comment %} TODO: Form Work  {% endcomment %}
+        {% comment %} <div class="row">
           {% crispy form %}
-        </div>
+        </div> {% endcomment %}
 
       </div>
       <div class="w-full text-center">
@@ -170,5 +170,4 @@
 
 <!-- Specific JS goes HERE -->
 {% block javascripts %}
-  <script src="{% static 'js/alerts.js' %}"></script>
 {% endblock javascripts %}

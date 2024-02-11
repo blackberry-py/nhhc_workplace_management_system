@@ -13,12 +13,12 @@ These URL patterns are used to define the routing for the views in the applicati
 """
 from django.urls import path, re_path
 from django.views.decorators.csrf import csrf_exempt
-
+from django.contrib.auth.decorators import login_required
 from employee import views
 
 urlpatterns = [
-    path("employee/<int:pk>/", views.employee_details, name="employee"),
+    path("employee/<int:pk>/", login_required(views.EmployeeDetail.as_view()), name="employee"),
     path("rejected", csrf_exempt(views.reject), name="reject-application"),
-    path("roster/", views.employee_roster, name="roster"),
-    path("hired/", csrf_exempt(views.hire), name="hire-employee"),
+    path("roster/", login_required(views.EmployeeRoster.as_view()), name="roster"),
+    path("hired", csrf_exempt(views.hire), name="hire-employee"),
 ]
