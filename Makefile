@@ -1,5 +1,5 @@
 
-PYTHON := $(PYTHON_ROOT)/current/bin/python
+PYTHON := .venv/bin/python
 SHELL := /bin/bash
 
 
@@ -28,7 +28,7 @@ db-shell: ## Access the Postgres Docker database interactively with psql. Pass i
 
 .PHONY: test
 test: ## Run tests
-	coverage run nhhc/manage.py test web employee portal  --verbosity=2  --failfast    --force-color
+	coverage run nhhc/manage.py test web employee portal  --verbosity=2  --keepdb    --force-color
 
 .PHONY: run
 run: ## Run the Django server

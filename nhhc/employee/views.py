@@ -93,13 +93,13 @@ def hire(request: HttpRequest) -> HttpResponse:
     try:
         pk = int(request.POST.get("pk"))
     except (ValueError, TypeError):
-        logger.exception('Bad Request to Hire Applicant, Invaild or NO Applcation PK Submitted')
+        logger.warning('Bad Request to Hire Applicant, Invaild or NO Applcation PK Submitted')
         return HttpResponse(status=400, content="Failed to hire applicant. Invalid or no 'pk' value provided in the request.")
 
     try:
         submission = EmploymentApplicationModel.objects.get(pk=pk)
     except EmploymentApplicationModel.DoesNotExist:
-        logger.exception(f"Failed to hire applicant. Employment application not found.")
+        logger.warning(f"Failed to hire applicant. Employment application not found.")
         return HttpResponse(status=400, content="Failed to hire applicant. Employment application not found.")
 
     try:
@@ -148,6 +148,36 @@ class EmployeeDetail(DetailView):
     template_name = 'home/employee-details.html'
     context_object_name = 'employee'
 
+def terminate(request: HttpRequest) -> HttpResponse:
+    """
+    This function is used to terminates an applicant based on the provided 'pk' value in the request.
+    
+    Args:
+    - request (HttpRequest): The HTTP request object containing the 'pk' value.
+    
+    Returns:
+    - HttpResponse: Returns an HTTP response with a status code indicating the success or failure of the hiring process.
+    """
+    try:
+        logger.debug(request.POST )
+        pk = request.POST.get("pk")
+    except (ValueError, TypeError):
+        logger.info('Bad Request to Hire Applicant, Invaild or NO Applcation PK Submitted')
+        return HttpResponse(status=400, content="Failed to terminate applicant. Invalid or no 'pk' value provided in the request.")
+
+    try:
+        terminated_employee = Employee.objects.get(id=pk)
+    except Employee.DoesNotExist:
+        logger.info(f"Failed to hire applicant. Employment application not found.")
+        return HttpResponse(status=404, content="Failed to terminate applicant. Employee not found.")
+
+    try:
+        terminated_employee.terminate_employment()
+        logger.info(f"employment status for {terminated_employee.last_name}, {terminated_employee.first_name} TERMINATED")
+        return HttpResponse(status=204)
+    except Exception as e:
+        logger.exception(f"Failed to hire applicant. Error: {e}.")
+        return HttpResponse(status=400, content=f"Failed to terminate applicant. Error: {e}.")
 
 def employee_details(request, pk):
     if request.user.is_staff:

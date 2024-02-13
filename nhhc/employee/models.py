@@ -17,13 +17,13 @@ from localflavor.us.models import (
 from phonenumber_field.modelfields import PhoneNumberField
 from loguru import logger   
 from django.conf import settings
-
+import arrow
 
 logger.add(settings.DEBUG_LOG_FILE, diagnose=True, catch=True, backtrace=True, level="DEBUG")
 logger.add(settings.PRIMARY_LOG_FILE, diagnose=False, catch=True, backtrace=False, level="INFO")
 logger.add(settings.LOGTAIL_HANDLER, diagnose=False, catch=True, backtrace=False, level="INFO")
 
-
+now = str(arrow.now().format('YYYY-MM-DD'))
 class EmployeeManager(BaseUserManager):
     """
     Custom user manager
@@ -290,6 +290,7 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
     zipcode = USZipCodeField(null=True)
 
     hire_date = models.DateField(auto_now=True)
+    termination_date = models.DateField(null=True, blank=True)
     qualifications = models.CharField(
         null=True,
         choices=QUALIFICATIONS.choices,
@@ -300,10 +301,25 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
     in_compliance = models.BooleanField(default=False, null=True)
     onboarded = models.DateField(null=True, blank=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"(Employee Id:{self.id}), Name: {self.last_name}, {self.first_name} | Username: {self.username}"
+    
+    def terminate_employment(self):
+        self.termination_date = now
+        self.username = self.username + "X"
+        self.is_active = False
+        self.save()
+        
+    def complete_onboarding(self) -> bool:
+        """
+        This method checks if all required fields for onboarding are filled out and marks the user as onboarded if so.
+        Args:
+            self: The instance of the class.
 
-    def onboarding_complete(self):
+        Returns:
+            bool: True if all required fields are filled out, False otherwise.
+            
+        """
         valid_fields = 0
         fields_to_be_validated = [
             self.social_security,
@@ -324,6 +340,7 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
 
         if valid_fields == 10:
             self.onboarded = now
+            self.save()
             return True
         else:
             return False
@@ -343,8 +360,6 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
         Raises:
             IntegrityError: If the username is already taken and no available unique username can be generated.
 
-        Example:
-            create_unique_username("John", "Doe")
         """
         last_name = last_name.lower()
         first_name = first_name.lower()
@@ -370,7 +385,7 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
         
         except ObjectDoesNotExist:
             # If no IntegrityError is raised, return the original username
-            logger.deug(f"Inital Username Available")
+            logger.debug(f"Inital Username Available")
             return username
 
     class Meta:

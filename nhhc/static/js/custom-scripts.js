@@ -114,6 +114,28 @@ function hireApplicant(pk) {
 };
 
 
+function rejectApplicant(pk) {
+  let data = {
+    "pk": pk
+  }
+  console.log(`Hiring Applicant with primary key ${pk}`);
+
+  var request = $.post('/rejected', data).done((response) => {
+    if (response.success){
+    console.log(response)
+      swal('SUCCESS!', response, 'success').then(() => {
+        window.location.reload();
+      })
+    } else {
+      console.error(`Done Response: ${response}`)
+      swal('ERROR: Applicant Not Rejected', `Applicant Not Rejected: ${response.message}`, 'error');
+    }
+  })
+    .fail((xhr, status, error) => {
+      console.error(response)
+      swal("Error: Applicant Not Rejected", `Error Rejecting Applicant:\n${error}\n \nStatus Code: ${status}`, "error");
+    });
+};
 
 
 function rejectApplicant(pk) {
@@ -166,4 +188,62 @@ function postAnnouncement(title, message, message_type) {
 
 // SECTION - SNACKBAR Notification
 /* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
+function terminateEmployee(pk) {
+  let data = {
+    "pk": pk
+  }
+
+  console.log(`Terminating Employee with primary key ${pk}`);
+
+  var request = $.ajax({
+    type: "POST", 
+    url:'/terminate', 
+    data: data, 
+    dataType: "json",
+    success: function(data, textStatus, jqXHR){
+    Swal.fire({title:'SUCCESS!', text: response, icon:'success'}).then(()=> {    window.location.reload()})},
+    error: function (request, status, error) {
+            Swal.fire({title:"Error: Employee Not Terrminated", text:`Error Terrminating Applicant:\n${error}\n \nStatus Code: ${status}`, icon:"error"})},
+    fail: function( jqXHR, textStatus, errorThrown) { 
+        Swal.fire({title:'ERROR: Employee Not Terrminated', text: `Employee Not Terrminated: ${response.message}`, icon: 'error'}).then(()=> {    window.location.reload()})}
+
+    });
+  }
+//     if (response.success){
+//     console.log(response)
+//     Swal.fire({title:'SUCCESS!', text: response, icon:'success'}).then(() => {
+//         window.location.reload();
+//       })
+//     } else {
+//       console.error(`Done Response: ${response.message}`)
+//        Swal.fire({title:'ERROR: Employee Not Terrminated', text: `Employee Not Terrminated: ${response.message}`, icon: 'error'});
+//     }
+//   })
+//     .fail((xhr, status, error) => {
+//       console.error(response)
+//       Swal.fire({title:"Error: Employee Not Terrminated", text:`Error Terrminating Applicant:\n${error}\n \nStatus Code: ${status}`, icon:"error"});
+//     });
+// };
+function confirmTermination(pk){
+  Swal.fire({
+    title: 'Confirm Termination Of Employee',
+    showDenyButton: false,
+    showCancelButton: true,
+    confirmButtonText: 'Terminate',
+    text: "Please confirm you wish to terminate the employment of the  selected employee. This CANNOT be undone",
+    icon:"warning",
+    customClass: {
+      actions: 'my-actions',
+      cancelButton: 'order-1 right-gap',
+      confirmButton: 'order-2',
+      denyButton: 'order-3',
+    },
+  }).then((result) => {
+    if (result.isConfirmed) {
+      terminateEmployee(pk)
+    } else if (result.isDenied) {
+      Swal.fire('Changes are not saved', '', 'info')
+    }
+  })
+}
 

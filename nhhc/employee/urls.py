@@ -2,6 +2,7 @@
 Modeule: employee.urls
 This module contains the URL patterns for the employee management application.
 
+
 The URL patterns include:
 - employee_details: Retrieves details of a specific employee
 - reject-application: Allows for the rejection of an application with CSRF exemption
@@ -21,4 +22,5 @@ urlpatterns = [
     path("rejected", csrf_exempt(views.reject), name="reject-application"),
     path("roster/", login_required(views.EmployeeRoster.as_view()), name="roster"),
     path("hired", csrf_exempt(views.hire), name="hire-employee"),
+    path('terminate', csrf_exempt(views.terminate), name="terminate_employee"),
 ]
