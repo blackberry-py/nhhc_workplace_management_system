@@ -10,13 +10,13 @@
     <div class="card">
       <div class="card-header">
         <div class="row align-items-center">
-          <div class="col-8">
-            <h3 class="mb-0">Applicant Details </h3>
+          <div class="col-12">
+            <h2 class="mb-0">Applicant Details - {{submission.last_name}}, {{submission.first_name}} {% if submission.hired is not None %} <span class="badge badge-pill badge-info">Reviewed</span></h2> {% endif %} {% if submission.ipdh_registered is True %} <a  target="_blank" href="https://hcwrpub.dph.illinois.gov/SearchResults.aspx?ps=0|{{submission.first_name}}||{{submission.last_name}}" class="badge badge-pill badge-success animate__animated animate__heartBeat animate__infinite">IDPH Registered</a></h2> {% endif %}
           </div>
         </div>
       </div>
       <div class="card-body">
-        <div class="row">
+        <div class="row">                                                                                                                                                                                                                    
           <div class="col-6">
             <h3><strong>First Name:</strong></h3>
             <p>{{ submission.first_name }}</p>
@@ -27,7 +27,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-6">
+          <div class="col-6"> 
             <h3><strong>Email Address:</strong></h3>
             <p>{{ submission.email }}</p>
           </div>
@@ -92,43 +92,31 @@
           <h1>Availability</h1>
         </div>
         <div class="row">
-          <div class="col-3">
-            <h3><strong>Monday:</strong></h3>
-            <p>{{ submission.availability_monday }}</p>
+          <ul class="availability-list">
+            {% if submission.availability_monday %}
+            <li><p>Monday</p></li>
+            {% endif %}
+            {% if submission.availability_tuesday %}
+            <li><p>Tuesday</p></li>
+            {% endif %}
+            {% if submission.availability_wednesday %}
+            <li><p>Wednesday</p></li>
+            {% endif %}
+            {% if submission.availability_thursday %}
+            <li><p>Thursday</p></li>
+            {% endif %}
+            {% if submission.availability_friday %}
+            <li><p>Friday</p></li>
+            {% endif %}
+            {% if submission.availability_saturday %}
+            <li><p>Saturday</p></li>
+            {% endif %}
+            {% if submission.availability_sunday %}
+            <p>Sunday</p>
+            {% endif %}
+          </ul>
           </div>
-          <div class="col-3">
-            <h3><strong>Tuesday:</strong></h3>
-            <p>{{ submission.availability_tuesday }}</p>
-          </div>
-          <div class="col-3">
-            <h3><strong>Wednesday:</strong></h3>
-            <p>{{ submission.availability_wednesday }}</p>
-          </div>
-          <div class="col-3">
-            <h3><strong>Thursday:</strong></h3>
-            <p>{{ submission.availability_thursday }}</p>
-          </div>
-        </div>
         <div class="row">
-          <div class="col-4">
-            <h3><strong>Friday:</strong></h3>
-            <p>{{ submission.availability_friday }}</p>
-          </div>
-          <div class="col-4">
-            <h3><strong>Saturday:</strong></h3>
-            <p>{{ submission.availability_saturday }}</p>
-          </div>
-          <div class="col-4">
-            <h3><strong>Sunday:</strong></h3>
-            <p>{{ submission.availability_sunday }}</p>
-          </div>
-        </div>
-        <hr class="my-4" />
-        <div class="row">
-          <div class="col-6">
-            <h3><strong>Reviewed By Staff:</strong></h3>
-            <p>{{ submission.reviewed }}</p>
-          </div>
           {% if submission.reviewed is True %}
             <div class="col-6">
               <h3><strong> Staff Member Who Reviewed Request:</strong></h3>
@@ -136,10 +124,10 @@
             </div>
           {% endif %}
         </div>
-        <div class="w-full text-center">
+        <div class="w-full text-center mb-3">
           {% if submission.hired is None %}
-            <button id="mark-reviewed-btn" onclick="hireApplicant({{ submission.id }})" class="btn btn-success">Hire</button>
-            <button id="mark-reviewed-btn" onclick="rejectApplicant({{ submission.id }})" class="btn btn-danger">Reject</button>
+            <button id="mark-reviewed-btn" onclick="confirmHire({{ submission.id }})" class="btn btn-success">Hire</button>
+            <button id="mark-reviewed-btn" onclick="confirmRejection({{ submission.id }})" class="btn btn-danger">Reject</button>
           {% endif %}
         </div>
         <div class="w-full text-center">

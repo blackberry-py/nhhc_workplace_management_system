@@ -6,7 +6,7 @@ from django.core import mail
 from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory, TestCase
 from employee.models import Employee
-from employee.views import employee_details, hire, reject, send_new_user_credentials
+from employee.views import employee_details, hire, reject,  send_new_user_credentials
 from model_bakery import baker
 from web.models import EmploymentApplicationModel
 

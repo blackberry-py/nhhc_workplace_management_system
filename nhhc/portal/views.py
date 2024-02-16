@@ -41,6 +41,7 @@ from django.views.generic.detail import DetailView
 from employee.forms import EmployeeForm
 from employee.models import Employee
 from django.views.generic.list import ListView
+from django.views.generic.edit import FormView
 from loguru import logger
 from web.forms import ClientInterestForm
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
@@ -86,46 +87,58 @@ def portal_dashboard(request: HttpRequest) -> HttpResponse:
     return HttpResponse(html_template.render(context, request))
 
 # TODO: Convert to Class-Based
-@login_required(login_url="/login/")
-def profile(request: HttpRequest) -> HttpResponseRedirect:
-    """
-    Renders the user profile page and allows users to update their profile information.
+class ProfileFormView(FormView):
+    form_class = EmployeeForm
+    template_name = "home/profile.html"
+    success_url = '/profile'
 
-    Retrieves user and compliance data to display on the profile page.
+    def get_initial(self):
+        initial = super(ProfileFormView, self).get_initial()
+        if self.request.user.is_authenticated:
+            initial.update({'name': self.request.user.get_full_name()})
+        return initial
 
-    Args:
-    - request: HTTP request object
 
-    Returns:
-    - HttpResponse: Rendered HTML template
-    """
-    context = dict()
-    context["data"] = Compliance.objects.select_related("employee").get(
-        id=request.user.id
-    )
-    user = context["data"]
+# @login_required(login_url="/login/")
+# def profile(request: HttpRequest) -> HttpResponseRedirect:
+#     """
+#     Renders the user profile page and allows users to update their profile information.
 
-    if request.method == "POST":
-        user = Employee.objects.get(username=request.user.username)
-        form = EmployeeForm(
-            request.POST,
-            request.FILES or None,
-            prefix="profile",
-        )
-        if form.has_changed:
-            for changed_field in form.changed_data:
-                user.changed_data = form.data.get(changed_field)
-            user.save()
-            return redirect(reverse("profile"))
+#     Retrieves user and compliance data to display on the profile page.
 
-    elif request.method == "GET":
-        context["form"] = EmployeeForm(instance=request.user)
-        context["compliance"] = Compliance.objects.get(employee=request.user)
-        return render(
-            request=request,
-            template_name="home/profile.html",
-            context=context,
-        )
+#     Args:
+#     - request: HTTP request object
+
+#     Returns:
+#     - HttpResponse: Rendered HTML template
+#     """
+#     context = dict()
+#     context["data"] = Compliance.objects.select_related("employee").get(
+#         id=request.user.id
+#     )
+#     user = context["data"]
+
+#     if request.method == "POST":
+#         user = Employee.objects.get(username=request.user.username)
+#         form = EmployeeForm(
+#             request.POST,
+#             request.FILES or None,
+#             prefix="profile",
+#         )
+#         if form.has_changed:
+#             for changed_field in form.changed_data:
+#                 user.changed_data = form.data.get(changed_field)
+#             user.save()
+#             return redirect(reverse("profile"))
+
+#     elif request.method == "GET":
+#         context["form"] = EmployeeForm(instance=request.user)
+#         context["compliance"] = Compliance.objects.get(employee=request.user)
+#         return render(
+#             request=request,
+#             template_name="home/profile.html",
+#             context=context,
+#         )
 
 # TODO: Implement REST endpoint with DRF 
 def all_client_inquiries(request: HttpRequest) -> HttpResponse:

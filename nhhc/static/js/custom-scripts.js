@@ -90,28 +90,6 @@ function markSubmissionAsReviewed(pk) {
   });
 };
 
-function hireApplicant(pk) {
-  let data = {
-    "pk": pk
-  }
-  console.log(`Hiring Applicant with primary key ${pk}`);
-
-  var request = $.post('/hired', data).done((response) => {
-    if (response.success){
-    console.log(response)
-      swal('SUCCESS!', response, 'success').then(() => {
-        window.location.reload();
-      })
-    } else {
-      console.error(`Done Response: ${response}`)
-      swal('ERROR: Applicant Not Hired', `Applicant Rejected: ${response.message}`, 'error');
-    }
-  })
-    .fail((xhr, status, error) => {
-      console.error(response)
-      swal("Error: Applicant Not Hired", `Error Hiring Applicant:\n${error}\n \nStatus Code: ${status}`, "error");
-    });
-};
 
 
 function rejectApplicant(pk) {
@@ -121,8 +99,8 @@ function rejectApplicant(pk) {
   console.log(`Hiring Applicant with primary key ${pk}`);
 
   var request = $.post('/rejected', data).done((response) => {
-    if (response.success){
-    console.log(response)
+    if (response.success) {
+      console.log(response)
       swal('SUCCESS!', response, 'success').then(() => {
         window.location.reload();
       })
@@ -188,62 +166,102 @@ function postAnnouncement(title, message, message_type) {
 
 // SECTION - SNACKBAR Notification
 /* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
-function terminateEmployee(pk) {
-  let data = {
+
+function confirmTermination(pk) {
+  let sentData = {
     "pk": pk
   }
+  console.log(`Sending Termination Request with Employee ID ${pk}`);
 
-  console.log(`Terminating Employee with primary key ${pk}`);
-
-  var request = $.ajax({
-    type: "POST", 
-    url:'/terminate', 
-    data: data, 
-    dataType: "json",
-    success: function(data, textStatus, jqXHR){
-    Swal.fire({title:'SUCCESS!', text: response, icon:'success'}).then(()=> {    window.location.reload()})},
-    error: function (request, status, error) {
-            Swal.fire({title:"Error: Employee Not Terrminated", text:`Error Terrminating Applicant:\n${error}\n \nStatus Code: ${status}`, icon:"error"})},
-    fail: function( jqXHR, textStatus, errorThrown) { 
-        Swal.fire({title:'ERROR: Employee Not Terrminated', text: `Employee Not Terrminated: ${response.message}`, icon: 'error'}).then(()=> {    window.location.reload()})}
-
-    });
-  }
-//     if (response.success){
-//     console.log(response)
-//     Swal.fire({title:'SUCCESS!', text: response, icon:'success'}).then(() => {
-//         window.location.reload();
-//       })
-//     } else {
-//       console.error(`Done Response: ${response.message}`)
-//        Swal.fire({title:'ERROR: Employee Not Terrminated', text: `Employee Not Terrminated: ${response.message}`, icon: 'error'});
-//     }
-//   })
-//     .fail((xhr, status, error) => {
-//       console.error(response)
-//       Swal.fire({title:"Error: Employee Not Terrminated", text:`Error Terrminating Applicant:\n${error}\n \nStatus Code: ${status}`, icon:"error"});
-//     });
-// };
-function confirmTermination(pk){
   Swal.fire({
-    title: 'Confirm Termination Of Employee',
-    showDenyButton: false,
+    title: "Confirm Termination",
+    html:"<p>You are about to terminate employment for this employee.\n It will lock them out of their account and archive their compliance profile.</p> <p><strong>Note: </strong>Archived profiles will still have the documents available, but cannot be modified.</p>  <br/> <p><strong>Please type \"terminate\" to confirm employment termination</strong></p> ",
     showCancelButton: true,
-    confirmButtonText: 'Terminate',
-    text: "Please confirm you wish to terminate the employment of the  selected employee. This CANNOT be undone",
-    icon:"warning",
-    customClass: {
-      actions: 'my-actions',
-      cancelButton: 'order-1 right-gap',
-      confirmButton: 'order-2',
-      denyButton: 'order-3',
-    },
-  }).then((result) => {
-    if (result.isConfirmed) {
-      terminateEmployee(pk)
-    } else if (result.isDenied) {
-      Swal.fire('Changes are not saved', '', 'info')
-    }
-  })
+    icon: "warning",
+    input: "text",
+    confirmButtonText: "Terminate",
+    showLoaderOnConfirm: true,
+    preConfirm: (input) => {
+      if (input === "terminate"){
+      try {
+        var request = $.post("/terminate", sentData, (data, status) => {
+          Swal.fire({
+            title: "Employment Terminated!",
+            icon: "success" ,
+            text: `Employee Terminated. They have been notified via email.`,
+            didClose: () => { window.location.reload() }
+          });
+        })
+      } catch (error) {
+        Swal.showValidationMessage(`Request failed: ${error}`);
+      }
+    } else {
+      Swal.showValidationMessage('Please type "terminate" exactly to confirm')
+    }},
+    allowOutsideClick: () => !Swal.isLoading(),
+})
 }
 
+
+
+function confirmHire(pk) {
+  let sentData = {
+    "pk": pk
+  }
+  console.log(`Hiring Applicant with primary key ${pk}`);
+
+  Swal.fire({
+    title: "Confirm Hire",
+    html:"You are about to start employment and create and employment profile.",
+    showCancelButton: true,
+    icon: "warning",
+    confirmButtonText: "Hire",
+    showLoaderOnConfirm: true,
+    preConfirm: () => {
+      try {
+        var request = $.post("/z", sentData, (data, status) => {
+          Swal.fire({
+            title: "Success!",
+            icon: "success" ,
+            html: `<h1>Employee Hired.</h1>\n ${data}`,
+            didClose: () => { window.location.reload() }
+          });
+        })
+      } catch (error) {
+        Swal.showValidationMessage(`Request failed: ${error}`);
+      }
+    },
+    allowOutsideClick: () => !Swal.isLoading(),
+})
+}
+
+function confirmRejection(pk) {
+  let sentData = {
+    "pk": pk
+  }
+  console.log(`Rejecting Applicant with primary key ${pk}`);
+
+  Swal.fire({
+    title: "Confirm Rejection",
+    text:"You are about to reject this applicant. This will send a email of notifying the applicant",
+    showCancelButton: true,
+    icon: "warning",
+    confirmButtonText: "Reject",
+    showLoaderOnConfirm: true,
+    preConfirm: () => {
+      try {
+        var request = $.post("/rejected", sentData, (data, status) => {
+          Swal.fire({
+            title: "Applicant Rejected",
+            icon: "info" ,
+            text: `Applicant rejected. \n They have been  notified by email`,
+            didClose: () => { window.location.reload() }
+          });
+        })
+      } catch (error) {
+        Swal.showValidationMessage(`Request failed: ${error}`);
+      }
+    },
+    allowOutsideClick: () => !Swal.isLoading(),
+})
+}

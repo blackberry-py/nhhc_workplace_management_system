@@ -91,19 +91,22 @@ def hire(request: HttpRequest) -> HttpResponse:
     - HttpResponse: Returns an HTTP response with a status code indicating the success or failure of the hiring process.
     """
     try:
-        pk = int(request.POST.get("pk"))
+        pk = request.POST.get("pk")
+        logger.debug(f' Recieved Hire Request for pk={pk}')
     except (ValueError, TypeError):
         logger.warning('Bad Request to Hire Applicant, Invaild or NO Applcation PK Submitted')
         return HttpResponse(status=400, content="Failed to hire applicant. Invalid or no 'pk' value provided in the request.")
 
     try:
         submission = EmploymentApplicationModel.objects.get(pk=pk)
+        logger.debug(f"Located Application for New Hire: {submission.last_name}, {submission.first_name}")
     except EmploymentApplicationModel.DoesNotExist:
-        logger.warning(f"Failed to hire applicant. Employment application not found.")
+        logger.error(f"Failed to hire applicant. Employment application not found.")
         return HttpResponse(status=400, content="Failed to hire applicant. Employment application not found.")
 
     try:
         hired_user = submission.hire_applicant(request.user)
+        logger.debug(f"Created User Account. Returning: {hired_user}")
     except Exception as e:
         logger.error(f"Failed to hire applicant. Error: {e}.")
         return HttpResponse(status=400, content=f"Failed to hire applicant. Error: {e}.")
@@ -111,9 +114,10 @@ def hire(request: HttpRequest) -> HttpResponse:
     try:
         submission.save()  
         send_new_user_credentials(new_user=hired_user['user'], password=hired_user['plain_text_password'], username=hired_user['username'])
-        return HttpResponse(status=201, content=f"username: {hired_user['username']},  password: {hired_user['plain_text_password']}")
+        content=f"username: {hired_user['username']},  password: {hired_user['plain_text_password']}"
+        return HttpResponse(status=201, content=content)
     except Exception as e:
-        logger.error(f"Failed to send new user credentials. Error: {e}")
+        logger.exception(f"Failed to send new user credentials. Error: {e}")
         return HttpResponse(status=400, content=f"Failed to send new user credentials. Error: {e}")
 
 
@@ -142,6 +146,7 @@ class EmployeeRoster(ListView):
     queryset = Employee.objects.all().order_by("last_name")
     template_name = 'home/employee-listing.html'
     context_object_name = "employees"
+    paginate_by = 25
 
 class EmployeeDetail(DetailView):
     model = Employee

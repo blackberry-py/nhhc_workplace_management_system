@@ -33,6 +33,7 @@ urlpatterns = [
     # path("", include(authentication.urls)),
     path("", include(portal.urls)),
     path("", include(employee.urls)),
+    re_path(r'^s3direct/', include('s3direct.urls')),
     path("", include(compliance.urls)),
     path("", include(announcements.urls)),
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}),

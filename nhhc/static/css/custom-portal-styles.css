@@ -9,12 +9,21 @@
 .form-control:focus {
   box-shadow: none;
 }
+.former {
+  background-color: grey;
+  color: rgba(255,255,255,0.3);
 
+}
 .form-control-underlined {
   border-width: 0;
   border-bottom-width: 1px;
   border-radius: 0;
   padding-left: 0;
+}
+form#navbar-search-main {
+  z-index: 300;
+  position: relative;
+  top: -4rem;
 }
 #toast-node {
   z-index: 500;
@@ -35,10 +44,20 @@
   order: 3;
 }
 
+#terminated-notice {
+  background-color: rgba(0,0,0,0.8);
+  color: red;
+  font-size: large;
+  font-weight: bolder;
+  
+}
+
 .right-gap {
   margin-right: auto;
 }
-
+.availability-list {
+  list-style: none;
+}
 .outline-red {
   border: 2px solid #ff0000;
   background-color: #ffb6c1;
