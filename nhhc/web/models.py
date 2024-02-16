@@ -147,11 +147,10 @@ class EmploymentApplicationModel(
         Hire a new employee by creating a user account, generating a random password, and saving employee and compliance information in the database.
 
         Args:
-          hired_by (str): The user who is hiring the applicant.
+          hired_by (Employee): Instance of the Employee who is hiring the applicant.
 
         Returns:
-        None
-
+            dict: A dictionary containing the auto-generated username, auto-generated password and instance of the user
         Raises:
         Exception: If an error occurs during the hiring process.
 
@@ -197,7 +196,7 @@ class EmploymentApplicationModel(
                 f"Unable to Hire {self.last_name},{self.first_name} - REASON:{e} "
             )
             logger.error(log_message)
-            raise RuntimeError from e
+            return RuntimeError(e)
         
     def reject_applicant(self, rejected_by: Employee) -> None:
         """Rejects an applicant.

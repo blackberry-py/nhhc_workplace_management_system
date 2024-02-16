@@ -51,7 +51,7 @@ EMAIL_PORT = os.getenv("EMAIL_TSL_PORT")
 EMAIL_HOST_USER = os.getenv("EMAIL")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_ACCT_PASSWORD")
 APPEND_SLASH = True
-CRISPY_TEMPLATE_PACK = "bootstrap4"
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 INSTALLED_APPS = [
     "kolo",
     "whitenoise.runserver_nostatic",
@@ -166,11 +166,7 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
         "KEY_PREFIX": "NHHC-NATIVE",
-    },
-    "django-backblaze-b2": {
-        "BACKEND": "django_prometheus.cache.backends.redis.RedisCache",
-        "LOCATION": os.getenv("S3_CACHE_URL"),
-    },
+    }
 }
 
 # !SECTION
@@ -219,37 +215,50 @@ USE_TZ = False
 # !SECTION
 
 # SECTION - STORAGE
+# AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
+# AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+# AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+# AWS_BUCKET_NAME =  os.getenv("AWS_STORAGE_BUCKET_NAME")
+# AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL")
+# S3DIRECT_DESTINATIONS = {
+#     'primary_destination': {
+#         'key': 'uploads/',
+#     },
+# }
 
+STORAGE_DESTINATION = os.getenv('STORAGE_DESTINATION')
 
-AWS_STORAGE_BUCKET_NAME = "nhhc-employee"
-AWS_S3_REGION_NAME = "us-east-005"
-ENDPOINT_URL = "s3.us-east-005.backblazeb2.com"
-AWS_S3_ADDRESSING_STYLE = "auto"
-AWS_S3_REGION_NAME = "us-east-005"
-AWS_SECRET_ACCESS_KEY = os.getenv("B2_APPLICATION_KEY")
-AWS_ACCESS_KEY_ID = os.getenv("B2_ACCOUNT_ID")
-AWS_PRIVATE_BUCKET_NAME = "nhhc-employee"
-AWS_S3_ENDPOINT = f"s3.{AWS_S3_REGION_NAME}.backblazeb2.com"
-AWS_S3_ENDPOINT_URL = f"https://{AWS_S3_ENDPOINT}"
-AWS_PUBLIC_MEDIA_LOCATION = "public/media"
-AWS_PRIVATE_MEDIA_LOCATION = "private/media"
-AWS_S3_OBJECT_PARAMETERS = {
-    "CacheControl": "max-age=86400",
-}
+if STORAGE_DESTINATION == 's3':
+    # aws settings
+    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+    AWS_DEFAULT_ACL = None
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+    # s3 static settings
+    STATIC_LOCATION = 'static'
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+    STATICFILES_STORAGE = 'nhhc.storage_backends.StaticStorage'
+    # s3 public media settings
+    PUBLIC_MEDIA_LOCATION = 'media'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
+    DEFAULT_FILE_STORAGE = 'nhhc.storage_backends.PublicMediaStorage'
+    # s3 private media settings
+    PRIVATE_MEDIA_LOCATION = 'private'
+    PRIVATE_FILE_STORAGE = 'nhhc.storage_backends.PrivateMediaStorage'
+else:
+    STATIC_URL = '/staticfiles/'
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    MEDIA_URL = '/mediafiles/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 
-AWS_LOCATION = "static"
-STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-STATIC_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_ENDPOINT}/"
-AWS_STATIC_LOCATION = "statiuc"
-DEFAULT_FILE_STORAGE = "mysite.storage_backends.MediaStorage"
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 #! SECTION
 
 # SECTION -  Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = "/static/"
-STATIC_ROOT = "staticfiles/"
-STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static/"),
     os.path.join(BASE_DIR, "static", "vendor"),

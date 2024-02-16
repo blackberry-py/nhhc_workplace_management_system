@@ -17,7 +17,7 @@ from . import views
 
 urlpatterns = [
     path("dashboard", views.portal_dashboard, name="dashboard"),
-    path("my-profile/", views.profile, name="profile"),
+    path("profile/", views.ProfileFormView.as_view(), name="profile"),
     path("inquiries/", login_required(views.ClientInquiriesListView.as_view()), name="inquiries"),
     path(
         "inquiries/<int:pk>/",

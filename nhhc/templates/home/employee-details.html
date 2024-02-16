@@ -3,17 +3,21 @@
 {% block title %} {{ type }} Employee - {{ submission.last_name }}, {{ submission.first_name }} {% endblock title %}
 {% load crispy_forms_tags %}
 {% load anonymize %}
-
+{% load humanize %}
 <link rel="stylesheet" href="{% static 'css/custom-portal-styles.css' %}" type="text/css"/>
 
 
 {% block content %}
+{% if employee.termination_date is not None %}
+<div id="terminated-notice" class="w-100 p-3 text-center sticky-top "><strong>Notice:</strong>This Profile is for a Terminated Employee</div>
+{% endif %}
   <div class="col-xl-8 order-xl-1">
     <div class="card">
       <div class="card-header">
         <div class="row align-items-center">
           <div class="col-8">
-            <h3 class="mb-0">Employee Details </h3>
+            <h3 class="mb-0">Employee Details - {{employee.last_name}}, {{employee.first_name}}  
+            </h3>
           </div>
         </div>
       </div>
@@ -124,10 +128,26 @@
         </div>
         <div class="row">
 
-          <div class="col-12">
+          <div class="col-4">
             <h3><strong>Hire Date:</strong></h3>
             <p>{{ employee.hire_date }}</p>
           </div>
+
+          <div class="col-4">
+            <h3><strong>Length of Employment:</strong></h3>
+            {% if employee.termination_date is None %}
+            <p>{{ employee.hire_date|naturalday }}</p>
+            {% comment %} {% else %} {% endcomment %}
+            {% comment %} FIXME: Correct te Calculkation of Length if Employment Possible Tag {% endcomment %}
+            {% comment %} {{employee.termination_date - employee.hire_date}} {% endcomment %}
+            {% endif %}
+          </div>
+          {% if employee.termination_date is not None %}
+          <div class="col-4">
+            <h3><strong>Termination Date:</strong></h3>
+            <p>{{ employee.termination_date }}</p>
+          </div>
+          {% endif %}
         </div>
         <div class="row">
           <div class="col-4">
@@ -171,4 +191,5 @@
 
 <!-- Specific JS goes HERE -->
 {% block javascripts %}
+if()
 {% endblock javascripts %}

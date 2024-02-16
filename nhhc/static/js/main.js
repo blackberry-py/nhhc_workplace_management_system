@@ -57,6 +57,7 @@
     /*------------------
 		Hero Slider
 	--------------------*/
+    if ($('.hero_slider')){
     $('.hero__slider').owlCarousel({
         loop: true,
         dots: true,
@@ -69,6 +70,7 @@
         autoHeight: false,
         autoplay: true,
     });
+}
 
     var dot = $('.hero__slider .owl-dot');
     dot.each(function () {

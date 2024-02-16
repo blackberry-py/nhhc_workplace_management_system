@@ -261,12 +261,12 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
     city = models.CharField(max_length=255, default="", null=True, blank=True)
 
     qualifications_verification = models.FileField(
-        upload_to="verifications",
+        upload_to="verifications_resumes",
         null=True,
         blank=True,
     )
     cpr_verification = models.FileField(
-        upload_to="verifications",
+        upload_to="verifications_cpr",
         null=True,
         blank=True,
     )
@@ -303,11 +303,15 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
 
     def __str__(self) -> str:
         return f"(Employee Id:{self.id}), Name: {self.last_name}, {self.first_name} | Username: {self.username}"
+    #TODO: Add Code to also delete the Compliasnce profile
     
-    def terminate_employment(self):
+    
+    def terminate_employment(self) -> None:
         self.termination_date = now
         self.username = self.username + "X"
         self.is_active = False
+        # compliance_profile = Compliance.objects.get(employee=self)
+        # compliance_profile
         self.save()
         
     def complete_onboarding(self) -> bool:
@@ -393,4 +397,5 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
         ordering = ["last_name", "first_name", "-hire_date"]
         verbose_name = "Agency Employee"
         verbose_name_plural = "Agency Employees"
+        unique_together = ["username", "email"]
         get_latest_by="-date_joined"

@@ -42,7 +42,6 @@ from django.utils.translation import gettext_lazy as _
 from django_prometheus.models import ExportModelOperationsMixin
 from employee.models import Employee
 
-from nhhc.storage_backends import PrivateMediaStorage
 
 
 class Contract(models.Model, ExportModelOperationsMixin("contracts")):
@@ -72,14 +71,8 @@ class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
         related_name="compliance_profile_of",
     )
     aps_check_passed = models.BooleanField(null=True, blank=True)
-    aps_check_verification = models.FileField(
-        upload_to="nhhc-employee", null=True, blank=True, storage=PrivateMediaStorage()
-
-    )
-    hhs_oig_exclusionary_check_verification = models.FileField(
-        upload_to="nhhc-employee", null=True, blank=True, storage=PrivateMediaStorage()
-
-    )
+    aps_check_verification = models.FileField(upload_to='aps_check_verification', blank=True, null=True)
+    hhs_oig_exclusionary_check_verification = models.FileField(upload_to='hhg-oig', blank=True, null=True)
     hhs_oig_exclusionary_check_completed = models.BooleanField(
         null=True,
         blank=True,
@@ -90,10 +83,7 @@ class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
         blank=True,
         default=False,
     )
-    idph_background_check_verification = models.FileField(
-        upload_to="nhhc-employee", null=True, blank=True, storage=PrivateMediaStorage()
-
-    )
+    idph_background_check_verification = models.FileField(upload_to='idph_bg_check', blank=True, null=True)
     initial_idph_background_check_completion_date = models.DateField(
         null=True,
         blank=True,
@@ -103,10 +93,7 @@ class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
         blank=True,
     )
     training_exempt = models.BooleanField(null=True, blank=True, default=False)
-    pre_training_verification = models.FileField(
-        upload_to="nhhc-employee", null=True, blank=True, storage=PrivateMediaStorage()
-
-    )
+    pre_training_verification = models.FileField (upload_to='pretraining_verification', blank=True, null=True)
     pre_service_completion_date = models.DateField(null=True, blank=True)
     added_to_TTP_portal = models.BooleanField(null=True, blank=True)
     contract_code = models.ForeignKey(

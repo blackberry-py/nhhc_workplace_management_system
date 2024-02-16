@@ -27,6 +27,19 @@
           <!-- Card header -->
           <div class="card-header border-0">
             <h3 class="mb-0">Employees</h3>
+            <div id="list-looker">
+              <form class="navbar-search navbar-search-light form-inline mr-sm-3" id="navbar-search-main">
+                <div class="form-group mb-0">
+                  <div class="p-1 bg-light rounded rounded-pill shadow-sm mb-4">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <button id="button-addon2" type="submit" class="btn btn-link text-warning"><i class="fa fa-search"></i></button>
+                      </div>
+                      <input type="search" placeholder="Search by Name, Contact Number" aria-describedby="button-addon2" class="search form-control border-0 bg-light">
+                    </div>
+                  </div>
+                </div>
+              </form>
 
           </div>
           <!-- Light table -->
@@ -63,16 +76,19 @@
                         <div class="media align-items-center">
                           <div class="media-body">
                             {{ employee.username }}
+                            {% if employee.is_superuser %}
+                            <span class="badge badge-pill badge-warning">Admin</span>
+                            {% endif %}
                           </div>
                         </div>
                       </th>
-                      <td>
+                      <td class="first-name">
                         {{ employee.first_name }}
                       </td>
-                      <td class="budget">
+                      <td class="last-name">
                         {{ employee.last_name }}
                       </td>
-                      <td>
+                      <td class="phone">
                         {{ employee.phone }}
                       </td>
                       <td>
@@ -88,16 +104,18 @@
                         <div class="media align-items-center">
                           <div class="media-body">
                             {{ employee.username }}
+                            <span class="badge badge-pill badge-dark">Terminated</span>
+
                           </div>
                         </div>
                       </th>
-                      <td>
+                      <td class="first-name">
                         {{ employee.first_name }}
                       </td>
-                      <td class="budget">
+                      <td class="last-name">
                         {{ employee.last_name }}
                       </td>
-                      <td>
+                      <td class="phone">
                         {{ employee.phone }}
                       </td>
                       <td>
@@ -109,21 +127,29 @@
                     </tr>
                   {% endif %}
                 {% endfor %}
-
+                  </div>
               </tbody>
             </table>
+                                        {# .... **Now the pagination section** .... #}
+          {% if is_paginated %}
+          <div class="mx-auto text-center">
+            <div id="pagination-navigation" class="pagination">
+              <span class="page-links">
+                {% if page_obj.has_previous %}
+                  <a href="/inquiries?page={{ page_obj.previous_page_number }}"><i class="fa-solid fa-left-long fa-2xl"></i></a>
+                {% endif %}
+                <span class="page-current">
+                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+                {% if page_obj.has_next %}
+                  <a href="/inquiries?page={{ page_obj.next_page_number }}"><i class="fa-solid fa-right-long fa-2xl"></i></a>
+                {% endif %}
+                {% endif %}
+            </div>
+        <!-- Card footer -->
           </div>
           <!-- Card footer -->
-          <div class="card-footer py-4">
-            <nav aria-label="...">
-              <ul class="pagination__list pagination justify-content-end mb-0">
-              </ul>
-            </nav>
-          </div>
-        </div>
-      </div>
-    </div>
-
+          
     {% include "includes/footer.html" %}
 
   </div>
