@@ -105,6 +105,8 @@ ENV/
 env.bak/
 venv.bak/
 .venv-*
+.devcontainer/devcontainer.env
+.aws/
 # mkdocs documentation
 /site
 
@@ -147,3 +149,4 @@ NettHandsHomeCare/static/vendor/jvectormap-next/jquery-jvectormap.min.js.map
 nhhc/logs/*
 node_modules
 node_modules
+.devcontainer/devcontainer.json
