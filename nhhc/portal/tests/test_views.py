@@ -11,7 +11,11 @@ from employee.models import Employee
 from faker import Faker
 from loguru import logger
 from model_bakery import baker
-from portal.views import EmploymentApplicationListView, marked_reviewed, ClientInquiriesListView
+from portal.views import (
+    EmploymentApplicationListView,
+    marked_reviewed,
+    ClientInquiriesListView,
+)
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
 
 from nhhc.testing_utils import (

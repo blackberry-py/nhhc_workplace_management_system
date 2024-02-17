@@ -42,6 +42,11 @@ crispy-bootstrap5 = "^2023.10"
 django-widget-tweaks = "^1.5.0"
 django-s3direct = "^2.0.3"
 s3cmd = "^2.4.0"
+djangorestframework = "^3.14.0"
+markdown = "^3.5.2"
+django-filter = "^23.5"
+django-filer = {extras = ["heif"], version = "^3.1.1"}
+python-magic = "^0.4.27"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.6.0"
@@ -53,7 +58,6 @@ djlint = "^1.31.1"
 kolo = "^2.17.0"
 django-debug-toolbar = "^4.2.0"
 poetry-plugin-export = "^1.6.0"
-coverage = "^7.4.1"
 
 
 

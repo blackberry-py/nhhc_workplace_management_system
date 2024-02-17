@@ -90,6 +90,21 @@ services:
       volumes:
       - primary_hhd_netthandz:/prometheus/data/11
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  
+  secure_file_server:
+    image: nginx
+
+    ports:
+      - 9999:90
+    volumes:
+      - primary_hhd_netthandz:/etc/nginx/nginx.conf:ro
+    command: [nginx-debug, '-g', 'daemon off;']
+    healthcheck:
+      test: ['CMD', '/bin/healthcheck.sh']
+      interval: 1m
+      timeout: 5s
+      retries: 3
+
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest

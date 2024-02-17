@@ -18,9 +18,13 @@ from django.contrib.auth.decorators import login_required
 from employee import views
 
 urlpatterns = [
-    path("employee/<int:pk>/", login_required(views.EmployeeDetail.as_view()), name="employee"),
+    path(
+        "employee/<int:pk>/",
+        login_required(views.EmployeeDetail.as_view()),
+        name="employee",
+    ),
     path("rejected", csrf_exempt(views.reject), name="reject-application"),
     path("roster/", login_required(views.EmployeeRoster.as_view()), name="roster"),
     path("hired", csrf_exempt(views.hire), name="hire-employee"),
-    path('terminate', csrf_exempt(views.terminate), name="terminate_employee"),
+    path("terminate", csrf_exempt(views.terminate), name="terminate_employee"),
 ]

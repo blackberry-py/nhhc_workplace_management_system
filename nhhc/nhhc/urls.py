@@ -24,6 +24,8 @@ from django.http import HttpResponse
 urlpatterns = [
     path("__debug__/", include("debug_toolbar.urls")),
     path("control-center/", admin.site.urls),
+    re_path(r"^compliance/", include("filer.urls")),
+    re_path(r"^", include("filer.server.urls")),
     path("", include(web.urls)),
     path("", include("allauth.urls")),
     re_path(
@@ -33,7 +35,7 @@ urlpatterns = [
     # path("", include(authentication.urls)),
     path("", include(portal.urls)),
     path("", include(employee.urls)),
-    re_path(r'^s3direct/', include('s3direct.urls')),
+    re_path(r"^s3direct/", include("s3direct.urls")),
     path("", include(compliance.urls)),
     path("", include(announcements.urls)),
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}),

@@ -41,118 +41,118 @@
                 </div>
               </form>
 
-          </div>
+            </div>
           <!-- Light table -->
-          <ul class="nav nav-tabs">
-            <li class="tab nav-item">
-              <a class="nav-link tab active" id="active" aria-current="page" href="#">{{ active }} Active Employees Applications</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link tab" id="former" href="#">{{ former }} Former Employees</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link tab" id="all" href="#">{{ all }} All Employees</a>
-            </li>
+            <ul class="nav nav-tabs">
+              <li class="tab nav-item">
+                <a class="nav-link tab active" id="active" aria-current="page" href="#">{{ active }} Active Employees Applications</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link tab" id="former" href="#">{{ former }} Former Employees</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link tab" id="all" href="#">{{ all }} All Employees</a>
+              </li>
 
-          </ul>
-          <div class="table-responsive">
-            <table class="table align-items-center table-flush">
-              <thead class="thead-light">
-                <tr>
-                  <th scope="col" class="sort" data-sort="name">Username</th>
+            </ul>
+            <div class="table-responsive">
+              <table class="table align-items-center table-flush">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" class="sort" data-sort="name">Username</th>
 
-                  <th scope="col" class="sort" data-sort="budget">First Name</th>
-                  <th scope="col" class="sort" data-sort="status">Last Name</th>
-                  <th scope="col" class="sort" data-sort="completion">Phone</th>
-                  <th scope="col" class="sort" data-sort="reviewed">Hire Date</th>
-                  <th scope="col"></th>
-                </tr>
-              </thead>
-              <tbody class="list">
-                {% for employee in employees %}
-                  {% if employee.is_active %}
-                    <tr class="employee active">
-                      <th scope="row">
-                        <div class="media align-items-center">
-                          <div class="media-body">
-                            {{ employee.username }}
-                            {% if employee.is_superuser %}
-                            <span class="badge badge-pill badge-warning">Admin</span>
-                            {% endif %}
+                    <th scope="col" class="sort" data-sort="budget">First Name</th>
+                    <th scope="col" class="sort" data-sort="status">Last Name</th>
+                    <th scope="col" class="sort" data-sort="completion">Phone</th>
+                    <th scope="col" class="sort" data-sort="reviewed">Hire Date</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody class="list">
+                  {% for employee in employees %}
+                    {% if employee.is_active %}
+                      <tr class="employee active">
+                        <th scope="row">
+                          <div class="media align-items-center">
+                            <div class="media-body">
+                              {{ employee.username }}
+                              {% if employee.is_superuser %}
+                                <span class="badge badge-pill badge-warning">Admin</span>
+                              {% endif %}
+                            </div>
                           </div>
-                        </div>
-                      </th>
-                      <td class="first-name">
-                        {{ employee.first_name }}
-                      </td>
-                      <td class="last-name">
-                        {{ employee.last_name }}
-                      </td>
-                      <td class="phone">
-                        {{ employee.phone }}
-                      </td>
-                      <td>
-                        {{ employee.hire_date }}
-                      </td>
-                      <td>
-                        <a class="btn btn-secondary" href="{% url 'employee' pk=employee.id %}">Employee Details</a>
-                      </td>
-                    </tr>
-                  {% elif not employee.is_active %}
-                    <tr class="employee former">
-                      <th scope="row">
-                        <div class="media align-items-center">
-                          <div class="media-body">
-                            {{ employee.username }}
-                            <span class="badge badge-pill badge-dark">Terminated</span>
+                        </th>
+                        <td class="first-name">
+                          {{ employee.first_name }}
+                        </td>
+                        <td class="last-name">
+                          {{ employee.last_name }}
+                        </td>
+                        <td class="phone">
+                          {{ employee.phone }}
+                        </td>
+                        <td>
+                          {{ employee.hire_date }}
+                        </td>
+                        <td>
+                          <a class="btn btn-secondary" href="{% url 'employee' pk=employee.id %}">Employee Details</a>
+                        </td>
+                      </tr>
+                    {% elif not employee.is_active %}
+                      <tr class="employee former">
+                        <th scope="row">
+                          <div class="media align-items-center">
+                            <div class="media-body">
+                              {{ employee.username }}
+                              <span class="badge badge-pill badge-dark">Terminated</span>
 
+                            </div>
                           </div>
-                        </div>
-                      </th>
-                      <td class="first-name">
-                        {{ employee.first_name }}
-                      </td>
-                      <td class="last-name">
-                        {{ employee.last_name }}
-                      </td>
-                      <td class="phone">
-                        {{ employee.phone }}
-                      </td>
-                      <td>
-                        {{ employee.hire_date }}
-                      </td>
-                      <td>
-                        <a class="btn btn-secondary" href="{% url 'employee' pk=employee.id %}">Employee Details</a>
-                      </td>
-                    </tr>
-                  {% endif %}
-                {% endfor %}
-                  </div>
+                        </th>
+                        <td class="first-name">
+                          {{ employee.first_name }}
+                        </td>
+                        <td class="last-name">
+                          {{ employee.last_name }}
+                        </td>
+                        <td class="phone">
+                          {{ employee.phone }}
+                        </td>
+                        <td>
+                          {{ employee.hire_date }}
+                        </td>
+                        <td>
+                          <a class="btn btn-secondary" href="{% url 'employee' pk=employee.id %}">Employee Details</a>
+                        </td>
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+                </div>
               </tbody>
             </table>
                                         {# .... **Now the pagination section** .... #}
-          {% if is_paginated %}
-          <div class="mx-auto text-center">
-            <div id="pagination-navigation" class="pagination">
-              <span class="page-links">
-                {% if page_obj.has_previous %}
-                  <a href="/inquiries?page={{ page_obj.previous_page_number }}"><i class="fa-solid fa-left-long fa-2xl"></i></a>
-                {% endif %}
-                <span class="page-current">
-                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-                </span>
-                {% if page_obj.has_next %}
-                  <a href="/inquiries?page={{ page_obj.next_page_number }}"><i class="fa-solid fa-right-long fa-2xl"></i></a>
-                {% endif %}
-                {% endif %}
-            </div>
-        <!-- Card footer -->
+            {% if is_paginated %}
+              <div class="mx-auto text-center">
+                <div id="pagination-navigation" class="pagination">
+                  <span class="page-links">
+                    {% if page_obj.has_previous %}
+                      <a href="/inquiries?page={{ page_obj.previous_page_number }}"><i class="fa-solid fa-left-long fa-2xl"></i></a>
+                    {% endif %}
+                    <span class="page-current">
+                      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+                    {% if page_obj.has_next %}
+                      <a href="/inquiries?page={{ page_obj.next_page_number }}"><i class="fa-solid fa-right-long fa-2xl"></i></a>
+                    {% endif %}
+            {% endif %}
           </div>
+        <!-- Card footer -->
+        </div>
           <!-- Card footer -->
-          
-    {% include "includes/footer.html" %}
 
-  </div>
+        {% include "includes/footer.html" %}
+
+      </div>
 
 {% endblock content %}
 

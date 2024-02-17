@@ -161,7 +161,6 @@ class EmploymentApplicationModel(
         applicant.hire_applicant(hired_by='HR_Manager')
         """
         try:
-        
             new_employee = Employee(
                 is_superuser=False,
                 username=Employee.create_unique_username(
@@ -189,7 +188,7 @@ class EmploymentApplicationModel(
             return {
                 "user": new_employee,
                 "plain_text_password": password,
-                "username": new_employee.username
+                "username": new_employee.username,
             }
         except Exception as e:
             log_message = (
@@ -197,7 +196,7 @@ class EmploymentApplicationModel(
             )
             logger.error(log_message)
             return RuntimeError(e)
-        
+
     def reject_applicant(self, rejected_by: Employee) -> None:
         """Rejects an applicant.
 

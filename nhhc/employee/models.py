@@ -15,19 +15,30 @@ from localflavor.us.models import (
     USZipCodeField,
 )
 from phonenumber_field.modelfields import PhoneNumberField
-from loguru import logger   
+from loguru import logger
 from django.conf import settings
 import arrow
+from filer.fields.file import FilerFileField
+from nhhc.storage_backends import PrivateMediaStorage
 
-logger.add(settings.DEBUG_LOG_FILE, diagnose=True, catch=True, backtrace=True, level="DEBUG")
-logger.add(settings.PRIMARY_LOG_FILE, diagnose=False, catch=True, backtrace=False, level="INFO")
-logger.add(settings.LOGTAIL_HANDLER, diagnose=False, catch=True, backtrace=False, level="INFO")
+logger.add(
+    settings.DEBUG_LOG_FILE, diagnose=True, catch=True, backtrace=True, level="DEBUG"
+)
+logger.add(
+    settings.PRIMARY_LOG_FILE, diagnose=False, catch=True, backtrace=False, level="INFO"
+)
+logger.add(
+    settings.LOGTAIL_HANDLER, diagnose=False, catch=True, backtrace=False, level="INFO"
+)
 
-now = str(arrow.now().format('YYYY-MM-DD'))
+now = str(arrow.now().format("YYYY-MM-DD"))
+
+
 class EmployeeManager(BaseUserManager):
     """
     Custom user manager
     """
+
     @staticmethod
     def create_unique_username(first_name: str, last_name: str) -> str:
         """
@@ -54,8 +65,9 @@ class EmployeeManager(BaseUserManager):
         try:
             # Try to create a new user with the given username
             user = get_user_model().objects.get(username=username)
-            max_num = get_user_model().objects.filter(username__startswith=username).count()
-    
+            max_num = (
+                get_user_model().objects.filter(username__startswith=username).count()
+            )
 
             # If no number is currently appended, set the max_num to 0
             if max_num == 1:
@@ -65,15 +77,15 @@ class EmployeeManager(BaseUserManager):
             next_username = username + str(max_num)
 
             # Return the next available username
-            logger.debug(f"Inital Username Unavailable. Next Available Username: {next_username}")
+            logger.debug(
+                f"Inital Username Unavailable. Next Available Username: {next_username}"
+            )
             return next_username
-        
+
         except ObjectDoesNotExist:
             # If no IntegrityError is raised, return the original username
             logger.deug(f"Inital Username Available")
             return username
-
-            
 
     def create_user(self, password, first_name, last_name, **kwargs):
         if not password or not first_name or not last_name:
@@ -89,7 +101,9 @@ class EmployeeManager(BaseUserManager):
         )
         return user
 
-    def create_superuser(self, username, password, email, first_name="New", last_name="Admin", **kwargs):
+    def create_superuser(
+        self, username, password, email, first_name="New", last_name="Admin", **kwargs
+    ):
         if not password or not first_name or not last_name:
             raise ValueError(
                 "We need username, \n password \n first name \n and last name to create and account..."
@@ -99,7 +113,7 @@ class EmployeeManager(BaseUserManager):
             username=self.create_unique_username(first_name, last_name),
             first_name=first_name,
             last_name=last_name,
-            email=email
+            email=email,
         )
         user.is_admin = True
         user.is_staff = True
@@ -262,11 +276,13 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
 
     qualifications_verification = models.FileField(
         upload_to="verifications_resumes",
+        storage=PrivateMediaStorage(),
         null=True,
         blank=True,
     )
     cpr_verification = models.FileField(
         upload_to="verifications_cpr",
+        storage=PrivateMediaStorage(),
         null=True,
         blank=True,
     )
@@ -303,9 +319,9 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
 
     def __str__(self) -> str:
         return f"(Employee Id:{self.id}), Name: {self.last_name}, {self.first_name} | Username: {self.username}"
-    #TODO: Add Code to also delete the Compliasnce profile
-    
-    
+
+    # TODO: Add Code to also delete the Compliasnce profile
+
     def terminate_employment(self) -> None:
         self.termination_date = now
         self.username = self.username + "X"
@@ -313,7 +329,7 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
         # compliance_profile = Compliance.objects.get(employee=self)
         # compliance_profile
         self.save()
-        
+
     def complete_onboarding(self) -> bool:
         """
         This method checks if all required fields for onboarding are filled out and marks the user as onboarded if so.
@@ -322,7 +338,7 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
 
         Returns:
             bool: True if all required fields are filled out, False otherwise.
-            
+
         """
         valid_fields = 0
         fields_to_be_validated = [
@@ -373,8 +389,9 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
         try:
             # Try to create a new user with the given username
             user = get_user_model().objects.get(username=username)
-            max_num = get_user_model().objects.filter(username__startswith=username).count()
-    
+            max_num = (
+                get_user_model().objects.filter(username__startswith=username).count()
+            )
 
             # If no number is currently appended, set the max_num to 0
             if max_num == 1:
@@ -384,9 +401,11 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
             next_username = username + str(max_num)
 
             # Return the next available username
-            logger.debug(f"Inital Username Unavailable. Next Available Username: {next_username}")
+            logger.debug(
+                f"Inital Username Unavailable. Next Available Username: {next_username}"
+            )
             return next_username
-        
+
         except ObjectDoesNotExist:
             # If no IntegrityError is raised, return the original username
             logger.debug(f"Inital Username Available")
@@ -398,4 +417,4 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
         verbose_name = "Agency Employee"
         verbose_name_plural = "Agency Employees"
         unique_together = ["username", "email"]
-        get_latest_by="-date_joined"
+        get_latest_by = "-date_joined"

@@ -44,9 +44,16 @@ from web.forms import ClientInterestForm
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
 from django.conf import settings
 
-logger.add(settings.DEBUG_LOG_FILE, diagnose=True, catch=True, backtrace=True, level="DEBUG")
-logger.add(settings.PRIMARY_LOG_FILE, diagnose=False, catch=True, backtrace=False, level="INFO")
-logger.add(settings.LOGTAIL_HANDLER, diagnose=False, catch=True, backtrace=False, level="INFO")
+logger.add(
+    settings.DEBUG_LOG_FILE, diagnose=True, catch=True, backtrace=True, level="DEBUG"
+)
+logger.add(
+    settings.PRIMARY_LOG_FILE, diagnose=False, catch=True, backtrace=False, level="INFO"
+)
+logger.add(
+    settings.LOGTAIL_HANDLER, diagnose=False, catch=True, backtrace=False, level="INFO"
+)
+
 
 # Create your views here.
 def send_new_user_credentials(new_user: Employee, password, username) -> bool:
@@ -83,51 +90,69 @@ def send_new_user_credentials(new_user: Employee, password, username) -> bool:
 def hire(request: HttpRequest) -> HttpResponse:
     """
     This function is used to hire an applicant based on the provided 'pk' value in the request.
-    
+
     Args:
     - request (HttpRequest): The HTTP request object containing the 'pk' value.
-    
+
     Returns:
     - HttpResponse: Returns an HTTP response with a status code indicating the success or failure of the hiring process.
     """
     try:
         pk = request.POST.get("pk")
-        logger.debug(f' Recieved Hire Request for pk={pk}')
+        logger.debug(f" Recieved Hire Request for pk={pk}")
     except (ValueError, TypeError):
-        logger.warning('Bad Request to Hire Applicant, Invaild or NO Applcation PK Submitted')
-        return HttpResponse(status=400, content="Failed to hire applicant. Invalid or no 'pk' value provided in the request.")
+        logger.warning(
+            "Bad Request to Hire Applicant, Invaild or NO Applcation PK Submitted"
+        )
+        return HttpResponse(
+            status=400,
+            content="Failed to hire applicant. Invalid or no 'pk' value provided in the request.",
+        )
 
     try:
         submission = EmploymentApplicationModel.objects.get(pk=pk)
-        logger.debug(f"Located Application for New Hire: {submission.last_name}, {submission.first_name}")
+        logger.debug(
+            f"Located Application for New Hire: {submission.last_name}, {submission.first_name}"
+        )
     except EmploymentApplicationModel.DoesNotExist:
         logger.error(f"Failed to hire applicant. Employment application not found.")
-        return HttpResponse(status=400, content="Failed to hire applicant. Employment application not found.")
+        return HttpResponse(
+            status=400,
+            content="Failed to hire applicant. Employment application not found.",
+        )
 
     try:
         hired_user = submission.hire_applicant(request.user)
         logger.debug(f"Created User Account. Returning: {hired_user}")
     except Exception as e:
         logger.error(f"Failed to hire applicant. Error: {e}.")
-        return HttpResponse(status=400, content=f"Failed to hire applicant. Error: {e}.")
+        return HttpResponse(
+            status=400, content=f"Failed to hire applicant. Error: {e}."
+        )
 
     try:
-        submission.save()  
-        send_new_user_credentials(new_user=hired_user['user'], password=hired_user['plain_text_password'], username=hired_user['username'])
-        content=f"username: {hired_user['username']},  password: {hired_user['plain_text_password']}"
+        submission.save()
+        send_new_user_credentials(
+            new_user=hired_user["user"],
+            password=hired_user["plain_text_password"],
+            username=hired_user["username"],
+        )
+        content = f"username: {hired_user['username']},  password: {hired_user['plain_text_password']}"
         return HttpResponse(status=201, content=content)
     except Exception as e:
         logger.exception(f"Failed to send new user credentials. Error: {e}")
-        return HttpResponse(status=400, content=f"Failed to send new user credentials. Error: {e}")
+        return HttpResponse(
+            status=400, content=f"Failed to send new user credentials. Error: {e}"
+        )
 
 
 def reject(request: HttpRequest) -> HttpResponse:
     """
     Ajax Hook that updates EmploymentApplicationModel sets application status to REJECTED
-    
+
     Args:
         request: HttpRequest  instance of the current request being processed
-        
+
     Returns:
         HttpResponse - Returns status  code 204 if successful or a 418 and logs error message on failure
     """
@@ -141,48 +166,63 @@ def reject(request: HttpRequest) -> HttpResponse:
         logger.error(f"JS AJAX Request Failed - Applicant Not Rejected = {e}")
         return HttpResponse(status=418)
 
+
 class EmployeeRoster(ListView):
     model = Employee
     queryset = Employee.objects.all().order_by("last_name")
-    template_name = 'home/employee-listing.html'
+    template_name = "home/employee-listing.html"
     context_object_name = "employees"
     paginate_by = 25
 
+
 class EmployeeDetail(DetailView):
     model = Employee
-    template_name = 'home/employee-details.html'
-    context_object_name = 'employee'
+    template_name = "home/employee-details.html"
+    context_object_name = "employee"
+
 
 def terminate(request: HttpRequest) -> HttpResponse:
     """
     This function is used to terminates an applicant based on the provided 'pk' value in the request.
-    
+
     Args:
     - request (HttpRequest): The HTTP request object containing the 'pk' value.
-    
+
     Returns:
     - HttpResponse: Returns an HTTP response with a status code indicating the success or failure of the hiring process.
     """
     try:
-        logger.debug(request.POST )
+        logger.debug(request.POST)
         pk = request.POST.get("pk")
     except (ValueError, TypeError):
-        logger.info('Bad Request to Hire Applicant, Invaild or NO Applcation PK Submitted')
-        return HttpResponse(status=400, content="Failed to terminate applicant. Invalid or no 'pk' value provided in the request.")
+        logger.info(
+            "Bad Request to Hire Applicant, Invaild or NO Applcation PK Submitted"
+        )
+        return HttpResponse(
+            status=400,
+            content="Failed to terminate applicant. Invalid or no 'pk' value provided in the request.",
+        )
 
     try:
         terminated_employee = Employee.objects.get(id=pk)
     except Employee.DoesNotExist:
         logger.info(f"Failed to hire applicant. Employment application not found.")
-        return HttpResponse(status=404, content="Failed to terminate applicant. Employee not found.")
+        return HttpResponse(
+            status=404, content="Failed to terminate applicant. Employee not found."
+        )
 
     try:
         terminated_employee.terminate_employment()
-        logger.info(f"employment status for {terminated_employee.last_name}, {terminated_employee.first_name} TERMINATED")
+        logger.info(
+            f"employment status for {terminated_employee.last_name}, {terminated_employee.first_name} TERMINATED"
+        )
         return HttpResponse(status=204)
     except Exception as e:
         logger.exception(f"Failed to hire applicant. Error: {e}.")
-        return HttpResponse(status=400, content=f"Failed to terminate applicant. Error: {e}.")
+        return HttpResponse(
+            status=400, content=f"Failed to terminate applicant. Error: {e}."
+        )
+
 
 def employee_details(request, pk):
     if request.user.is_staff:

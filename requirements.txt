@@ -89,8 +89,6 @@ model-bakery==1.17.0
 more-itertools==10.2.0
 msgpack==1.0.7
 mypy-extensions==1.0.0
-# Editable Git install with no remote (nhhc==0.1.0)
--e /workspaces/NettHands
 nodeenv==1.8.0
 oauthlib==3.2.2
 outcome==1.3.0.post0

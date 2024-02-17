@@ -3,6 +3,6 @@ from datetime import date
 
 register = template.Library()
 
+
 def calculateLengthOfEmployment(start, end):
-    date(start) 
-    
+    date(start)

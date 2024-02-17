@@ -18,7 +18,7 @@ load_dotenv()
 # SECTION - Basic Application Defintion
 OFFLINE = False
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = True
 DATETIME_FORMAT = "m/d/yyyy h:mm A"
 ADMINS = [("Terry Brooks", "Terry@BrooksJr.com")]
@@ -51,7 +51,7 @@ EMAIL_PORT = os.getenv("EMAIL_TSL_PORT")
 EMAIL_HOST_USER = os.getenv("EMAIL")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_ACCT_PASSWORD")
 APPEND_SLASH = True
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 INSTALLED_APPS = [
     "kolo",
     "whitenoise.runserver_nostatic",
@@ -74,11 +74,15 @@ INSTALLED_APPS = [
     "phonenumber_field",
     "widget_tweaks",
     "django_prometheus",
+    "rest_framework",
     "request",
+    "django_filters",
     "debug_toolbar",
     "localflavor",
     "captcha",
     "corsheaders",
+    "easy_thumbnails",
+    "filer",
     # "IpWhitelister",
     "health_check",  # required
     "health_check.db",  # stock Django health checkers
@@ -226,34 +230,67 @@ USE_TZ = False
 #     },
 # }
 
-STORAGE_DESTINATION = os.getenv('STORAGE_DESTINATION')
+STORAGE_DESTINATION = os.getenv("STORAGE_DESTINATION")
 
-if STORAGE_DESTINATION == 's3':
+if STORAGE_DESTINATION == "s3":
     # aws settings
-    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
-    AWS_DEFAULT_ACL = None
-    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
-    # s3 static settings
-    STATIC_LOCATION = 'static'
-    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
-    STATICFILES_STORAGE = 'nhhc.storage_backends.StaticStorage'
-    # s3 public media settings
-    PUBLIC_MEDIA_LOCATION = 'media'
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
-    DEFAULT_FILE_STORAGE = 'nhhc.storage_backends.PublicMediaStorage'
-    # s3 private media settings
-    PRIVATE_MEDIA_LOCATION = 'private'
-    PRIVATE_FILE_STORAGE = 'nhhc.storage_backends.PrivateMediaStorage'
-else:
-    STATIC_URL = '/staticfiles/'
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-    MEDIA_URL = '/mediafiles/'
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+    AWS_DEFAULT_ACL = "private"
+    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+    AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+    AWS_S3_SIGNATURE_VERSION = "s3v4"
+    AWS_QUERYSTRING_EXPIRE = "3600"
+    AWS_CLOUDFRONT_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_CLOUDFRONT_KEY = os.getenv("AWS_CLOUDFRONT_KEY")
 
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+    # s3 static settings
+    STATIC_LOCATION = "static"
+    STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/"
+    STATICFILES_STORAGE = "nhhc.storage_backends.StaticStorage"
+    # s3 public media settings
+    PUBLIC_MEDIA_LOCATION = "media"
+    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
+    DEFAULT_FILE_STORAGE = "nhhc.storage_backends.PublicMediaStorage"
+    # s3 private media settings
+    PRIVATE_MEDIA_LOCATION = "restricted"
+    MEDIA_DIRECTORY = "/restricted/compliance"
+    PRIVATE_FILE_STORAGE = "nhhc.storage_backends.PrivateMediaStorage"
+else:
+    STATIC_URL = "/staticfiles/"
+    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+    MEDIA_URL = "/mediafiles/"
+    MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
+
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
+
+
+# SECTION - File Management
+FILER_ADD_FILE_VALIDATORS = {
+    "text/html": ["filer.validation.deny_html"],
+    "image/svg+xml": ["filer.validation.deny"],
+}
+FILER_UPLOADER_MAX_FILE_SIZE = 2
+FILER_MIME_TYPE_WHITELIST = [
+    "text/plain",
+    "application/pdf",
+    "image/*",
+]
+FILER_ADD_FILE_VALIDATORS["aspx"] = ["filer.validation.deny"]
+FILER_ADD_FILE_VALIDATORS["asp"] = ["filer.validation.deny"]
+FILER_ADD_FILE_VALIDATORS["css"] = ["filer.validation.deny"]
+FILER_ADD_FILE_VALIDATORS["swf"] = ["filer.validation.deny"]
+FILER_ADD_FILE_VALIDATORS["xhtml"] = ["filer.validation.deny"]
+FILER_ADD_FILE_VALIDATORS["rhtml"] = ["filer.validation.deny"]
+FILER_ADD_FILE_VALIDATORS["jsp"] = ["filer.validation.deny"]
+FILER_ADD_FILE_VALIDATORS["js"] = ["filer.validation.deny"]
+FILER_ADD_FILE_VALIDATORS["pl"] = ["filer.validation.deny"]
+FILER_ADD_FILE_VALIDATORS["php"] = ["filer.validation.deny"]
+FILER_ADD_FILE_VALIDATORS["cgi"] = ["filer.validation.deny"]
+FILER_ADD_FILE_VALIDATORS["py"] = ["filer.validation.deny"]
+FILER_ADD_FILE_VALIDATORS["xml"] = ["filer.validation.deny"]
+
 #! SECTION
 
 # SECTION -  Static files (CSS, JavaScript, Images)
@@ -327,7 +364,7 @@ LOGGING = {
             "handlers": ["mail_admins"],
             "level": "ERROR",
             "propagate": False,
-      },
+        },
     },
 }
 

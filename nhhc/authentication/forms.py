@@ -7,7 +7,7 @@
 # from allauth.account.authentication import record_authentication
 # from django.utils.translation import gettext_lazy as _
 
-# 
+#
 
 
 # class NHHCLoginForm(LoginForm):
@@ -81,11 +81,21 @@ class CustomUserCreationForm(UserCreationForm):
         model = get_user_model()
         fields = ("username", "email", "password1", "password2")
         widgets = {
-            "first_name": forms.TextInput(attrs={"placeholder": "Employee First Name", "class": "form-control"}),
-            "last_name": forms.TextInput(attrs={"placeholder": "Employee Last Name", "class": "form-control"}),
-            "email": forms.EmailInput(attrs={"placeholder": "Email", "class": "form-control"}),
-            "password1": forms.PasswordInput(attrs={"placeholder": "Password", "class": "form-control"}),
-            "password2": forms.PasswordInput(attrs={"placeholder": "Confirm Password", "class": "form-control"}),
+            "first_name": forms.TextInput(
+                attrs={"placeholder": "Employee First Name", "class": "form-control"}
+            ),
+            "last_name": forms.TextInput(
+                attrs={"placeholder": "Employee Last Name", "class": "form-control"}
+            ),
+            "email": forms.EmailInput(
+                attrs={"placeholder": "Email", "class": "form-control"}
+            ),
+            "password1": forms.PasswordInput(
+                attrs={"placeholder": "Password", "class": "form-control"}
+            ),
+            "password2": forms.PasswordInput(
+                attrs={"placeholder": "Confirm Password", "class": "form-control"}
+            ),
         }
 
 
@@ -103,15 +113,17 @@ class EmployeeLoginForm(LoginForm):
     remember = forms.BooleanField(label=_("Remember Me"), required=False)
 
     def login(self, *args, **kwargs):
-        username = self.cleaned_data.get('username')
-        password = self.cleaned_data.get('password')
+        username = self.cleaned_data.get("username")
+        password = self.cleaned_data.get("password")
         remember = self.cleaned_data.get("remember")
 
         user = authenticate(username=username, password=password)
         if user is not None:
             if user.is_active:
                 login(self.request, user)
-                return super(EmployeeLoginForm, self).login(request, redirect_url=reverse('dashboard'))
+                return super(EmployeeLoginForm, self).login(
+                    request, redirect_url=reverse("dashboard")
+                )
             else:
                 return forms.ValidationError("This account is currently inactive.")
         else:
