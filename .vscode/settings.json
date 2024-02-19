@@ -6,4 +6,10 @@
     "[html][django-html][handlebars][hbs][mustache][jinja][jinja-html][nj][njk][nunjucks][twig]": {
         "editor.defaultFormatter": "monosans.djlint"
     },
+    "eslint.enable": false,
+    "djlint.pythonPath": "/home/codespace/.python/current/bin/python",
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "pythonautovenv.pythonPath": "/home/codespace/.python",
+    "python.defaultInterpreterPath": "/home/codespace/.python/current/bin/python",
+    "python.pythonPath": "/workspaces/NettHands/.venv/bin/python",
 }

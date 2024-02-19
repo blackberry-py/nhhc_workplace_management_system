@@ -150,3 +150,6 @@ nhhc/logs/*
 node_modules
 node_modules
 .devcontainer/devcontainer.json
+private_key.pem
+public_key.pem
+nhhc/nhhc/private_key.py
