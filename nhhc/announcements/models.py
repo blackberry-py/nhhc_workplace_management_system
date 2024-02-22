@@ -7,15 +7,15 @@ from employee.models import Employee
 # Create your models here.
 class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
     class STATUS(models.TextChoices):
-        ACTIVE = "A", _("Active")
-        DRAFT = "D", _("Draft")
-        DELETED = "X", _("Deleted")
+        ACTIVE = "A", _(message="Active")
+        DRAFT = "D", _(message="Draft")
+        DELETED = "X", _(message="Deleted")
 
     class IMPORTANCE(models.TextChoices):
-        SAFETY = "C", _("Safety")
-        TRAINING = "T", _("Training")
-        COMPLIANCE = "X", _("Compliance")
-        GENERAL = "G", _("General")
+        SAFETY = "C", _(message="Safety")
+        TRAINING = "T", _(message="Training")
+        COMPLIANCE = "X", _(message="Compliance")
+        GENERAL = "G", _(message="General")
 
     message = models.TextField()
     announcement_title = models.CharField(max_length=255, default="")

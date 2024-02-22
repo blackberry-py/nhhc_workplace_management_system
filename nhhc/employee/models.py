@@ -1,4 +1,5 @@
-from authentication.models import RandomPasswordGenerator
+import arrow
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, BaseUserManager
@@ -9,17 +10,17 @@ from django.db.models import Max
 from django.db.models.functions import Cast, Substr
 from django.utils.translation import gettext_lazy as _
 from django_prometheus.models import ExportModelOperationsMixin
+from filer.fields.file import FilerFileField
 from localflavor.us.models import (
     USSocialSecurityNumberField,
     USStateField,
     USZipCodeField,
 )
-from phonenumber_field.modelfields import PhoneNumberField
 from loguru import logger
-from django.conf import settings
-import arrow
-from filer.fields.file import FilerFileField
+from phonenumber_field.modelfields import PhoneNumberField
+
 from nhhc.storage_backends import PrivateMediaStorage
+from nhhc.utils import RandomPasswordGenerator
 
 logger.add(
     settings.DEBUG_LOG_FILE, diagnose=True, catch=True, backtrace=True, level="DEBUG"
@@ -84,7 +85,7 @@ class EmployeeManager(BaseUserManager):
 
         except ObjectDoesNotExist:
             # If no IntegrityError is raised, return the original username
-            logger.deug(f"Inital Username Available")
+            logger.debug(f"Inital Username Available")
             return username
 
     def create_user(self, password, first_name, last_name, **kwargs):
@@ -238,7 +239,6 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
         choices=MARITAL_STATUS.choices,
         default=MARITAL_STATUS.NEVER_MARRIED,
     )
-
     emergency_contact_first_name = models.CharField(
         max_length=255,
         default="",
@@ -304,7 +304,7 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
         blank=True,
     )
     zipcode = USZipCodeField(null=True)
-
+    application_id = models.BigIntegerField(default=0, unique=True)
     hire_date = models.DateField(auto_now=True)
     termination_date = models.DateField(null=True, blank=True)
     qualifications = models.CharField(
@@ -318,26 +318,23 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
     onboarded = models.DateField(null=True, blank=True)
 
     def __str__(self) -> str:
-        return f"(Employee Id:{self.id}), Name: {self.last_name}, {self.first_name} | Username: {self.username}"
-
-    # TODO: Add Code to also delete the Compliasnce profile
+        return f"(Employee Id:{self.pk}), Name: {self.last_name}, {self.first_name} | Username: {self.username}"
 
     def terminate_employment(self) -> None:
         self.termination_date = now
         self.username = self.username + "X"
         self.is_active = False
-        # compliance_profile = Compliance.objects.get(employee=self)
-        # compliance_profile
+
         self.save()
 
-    def complete_onboarding(self) -> bool:
+    def is_profile_complete(self) -> bool:
         """
         This method checks if all required fields for onboarding are filled out and marks the user as onboarded if so.
         Args:
             self: The instance of the class.
 
         Returns:
-            bool: True if all required fields are filled out, False otherwise.
+            bool: True if all mandatory profile fields, False otherwise.
 
         """
         valid_fields = 0
@@ -353,6 +350,8 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
             self.emergency_contact_last_name,
             self.emergency_contact_first_name,
             self.marital_status,
+            self.qualifications_verification,
+            self.qualifications,
         ]
         for field in fields_to_be_validated:
             if field is not None or field != " ":

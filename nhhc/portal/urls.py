@@ -33,15 +33,20 @@ urlpatterns = [
         csrf_exempt(views.marked_reviewed),
         name="marked_reviewed",
     ),
-    path(
-        "api/inquiries",
-        csrf_exempt(views.ClientInquiriesAPIListView.as_view()),
-        name="all_client_inquiries_api",
-    ),
+    # path(
+    #     "api/inquiries",
+    #     csrf_exempt(views.ClientInquiriesAPIListView.as_view()),
+    #     name="all_client_inquiries_api",
+    # ),
     path(
         "applicants/",
         login_required(views.EmploymentApplicationListView.as_view()),
         name="applicants-list",
+    ),
+    path(
+        "api/applicants",
+        login_required(views.EmploymentApplicationModelAPIListView.as_view()),
+        name="applicants_api",
     ),
     path(
         "applicant/<int:pk>",

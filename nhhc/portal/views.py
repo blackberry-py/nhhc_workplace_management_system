@@ -18,43 +18,38 @@ Classes:
 import csv
 import json
 import os
+from typing import Dict, Union, Any
 
 import arrow
-from announcements.forms import AnnouncementForm
-from announcements.models import Announcements
-from typing import Dict
-from cacheops import cached_view_as
+
 from compliance.models import Compliance
 from django import template
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
-from django.core.files.storage import FileSystemStorage
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
-from django.http import HttpResponse, HttpResponseRedirect, HttpRequest
-from django.shortcuts import redirect, render, reverse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.shortcuts import redirect, render
 from django.template import loader
 from django.urls import reverse
 from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
+from django_filters.rest_framework import DjangoFilterBackend
 from employee.forms import EmployeeForm
 from employee.models import Employee
-from django.views.generic.list import ListView
-from django.views.generic.edit import FormView
+from formset.upload import FileUploadMixin
+from formset.views import FormView
 from loguru import logger
-from web.forms import ClientInterestForm
-from web.models import ClientInterestSubmissions, EmploymentApplicationModel
-from rest_framework import permissions
-from rest_framework import generics
-from rest_framework import mixins
 from portal.serializers import (
     ClientInquiriesSerializer,
     EmploymentApplicationSerializer,
 )
+from rest_framework import generics, mixins, permissions, status
 from rest_framework.response import Response
-from rest_framework import status
-from django_filters.rest_framework import DjangoFilterBackend
+from web.forms import ClientInterestForm
+from web.models import ClientInterestSubmissions, EmploymentApplicationModel
 
 now = arrow.now(tz="America/Chicago")
 logger.add(
@@ -84,79 +79,76 @@ def portal_dashboard(request: HttpRequest) -> HttpResponse:
     context = dict()
     context["segment"] = "index"
     new_applications = EmploymentApplicationModel.objects.filter(
-        reviewed=False
+        reviewed__in=[False, None]
     ).order_by("-date_submitted")
     new_client_requests = ClientInterestSubmissions.objects.filter(
-        reviewed=False
+        reviewed__in=[False, None]
     ).order_by("-date_submitted")
-    announcements = Announcements.objects.all().order_by("-date_posted")[:10]
-    context["announcements"] = announcements
+    context["announcements"] = []
     context["new_applications"] = new_applications
     context["new_client_requests"] = new_client_requests
-    html_template = loader.get_template("home/index.html")
+    html_template = loader.get_template("dashboard.html")
     return HttpResponse(html_template.render(context, request))
 
 
 # TODO: Convert to Class-Based
-class ProfileFormView(FormView):
+class ProfileFormView(FormView, FileUploadMixin):
     form_class = EmployeeForm
-    template_name = "home/profile.html"
+    model = Employee
+    template_name = "profile.html"
     success_url = "/profile"
 
-    def get_initial(self):
+    def get_initial(self) -> dict[str, Any]:
         initial = super(ProfileFormView, self).get_initial()
         if self.request.user.is_authenticated:
-            initial.update({"name": self.request.user.get_full_name()})
+            initial["username"] = self.request.user.username  # type: ignore
+            initial["first_name"] = self.request.user.first_name  # type: ignore
+            initial["last_name"] = self.request.user.last_name  # type: ignore
+            initial["middle_name"] = self.request.user.middle_name  # type: ignore
+            initial["social_security"] = self.request.user.social_security  # type: ignore
+            initial["date_of_birth"] = self.request.user.date_of_birth  # type: ignore
+            initial["street_address1"] = self.request.user.street_address1  # type: ignore
+            initial["street_address2"] = self.request.user.street_address2  # type: ignore
+            initial["marital_status"] = self.request.user.marital_status  # type: ignore
+            initial[  # type: ignore
+                "emergency_contact_first_name"
+            ] = self.request.user.emergency_contact_first_name  # type: ignore
+            initial["ethnicity"] = self.request.user.ethnicity  # type: ignore
+            initial[
+                "emergency_contact_last_name"
+            ] = self.request.user.emergency_contact_last_name  # type: ignore
+            initial["race"] = self.request.user.race  # type: ignore
+            initial[
+                "emergency_contact_relationship"
+            ] = self.request.user.emergency_contact_relationship  # type: ignore
+            initial[
+                "qualifications_verification"
+            ] = self.request.user.qualifications_verification  # type: ignore
+            initial["cpr_verification"] = self.request.user.cpr_verification  # type: ignore
+            initial["family_hca"] = self.request.user.family_hca  # type: ignore
+            initial["phone"] = self.request.user.phone  # type: ignore
+            initial["state"] = self.request.user.state  # type: ignore
+            initial["zipcode"] = self.request.user.zipcode  # type: ignore
+            initial["hire_date"] = self.request.user.hire_date  # type: ignore
+            initial["termination_date"] = self.request.user.termination_date  # type: ignore
+            initial["qualifications"] = self.request.user.qualifications  # type: ignore
+            initial["in_compliance"] = self.request.user.in_compliance  # type: ignore
+            initial["onboarded"] = self.request.user.onboarded  # type: ignore
         return initial
 
+    def form_vaild(self, form) -> HttpResponseRedirect:
+        pass
+        # if self.request.user.is_superuser or self.request.user ==
 
-# @login_required(login_url="/login/")
-# def profile(request: HttpRequest) -> HttpResponseRedirect:
-#     """
-#     Renders the user profile page and allows users to update their profile information.
-
-#     Retrieves user and compliance data to display on the profile page.
-
-#     Args:
-#     - request: HTTP request object
-
-#     Returns:
-#     - HttpResponse: Rendered HTML template
-#     """
-#     context = dict()
-#     context["data"] = Compliance.objects.select_related("employee").get(
-#         id=request.user.id
-#     )
-#     user = context["data"]
-
-#     if request.method == "POST":
-#         user = Employee.objects.get(username=request.user.username)
-#         form = EmployeeForm(
-#             request.POST,
-#             request.FILES or None,
-#             prefix="profile",
-#         )
-#         if form.has_changed:
-#             for changed_field in form.changed_data:
-#                 user.changed_data = form.data.get(changed_field)
-#             user.save()
-#             return redirect(reverse("profile"))
-
-#     elif request.method == "GET":
-#         context["form"] = EmployeeForm(instance=request.user)
-#         context["compliance"] = Compliance.objects.get(employee=request.user)
-#         return render(
-#             request=request,
-#             template_name="home/profile.html",
-#             context=context,
-#         )
 
 # TODO: Implement REST endpoint with DRF
 
 
-class ClientInquiriesAPIListView(mixins.DestroyModelMixin, generics.ListCreateAPIView):
-    queryset = ClientInterestSubmissions.objects.all()
-    serializer_class = ClientInquiriesSerializer
+class EmploymentApplicationModelAPIListView(
+    mixins.DestroyModelMixin, generics.ListCreateAPIView
+):
+    queryset = EmploymentApplicationModel.objects.all()
+    serializer_class = (EmploymentApplicationModel,)
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = [
@@ -182,15 +174,15 @@ class ClientInquiriesAPIListView(mixins.DestroyModelMixin, generics.ListCreateAP
         "date_submitted",
     ]
 
-    def perform_destroy(self, instance):
-        user = self.request.user
-        if user.is_superuser is False:
+    def destroy(self, request, instance):
+        if self.request.user.is_superuser is False:  # type: ignore
             return Response(
                 data="Only Managers can preform a delete operation",
                 status=status.HTTP_403_FORBIDDEN,
             )
         else:
-            return instance.destory()
+            instance.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 def all_client_inquiries(request: HttpRequest) -> HttpResponse:
@@ -211,7 +203,7 @@ class ClientInquiriesListView(ListView):
     Renders a list of client inquiries.
     """
 
-    template_name = "home/service-inquiries.html"
+    template_name = "service-inquiries.html"
     model = ClientInterestSubmissions
     queryset = ClientInterestSubmissions.objects.all().order_by("-date_submitted")
     context_object_name = "submissions"
@@ -235,7 +227,7 @@ class ClientInquiriesDetailView(DetailView):
     Renders details of a specific client inquiry.
     """
 
-    template_name = "home/submission-details.html"
+    template_name = "submission-details.html"
     model = ClientInterestSubmissions
     context_object_name = "submission"
     pk_url_kwarg = "pk"
@@ -246,7 +238,7 @@ class EmploymentApplicationListView(ListView):
     Renders a list of submitted employment applications.
     """
 
-    template_name = "home/submitted-applications.html"
+    template_name = "submitted-applications.html"
     model = EmploymentApplicationModel
     queryset = EmploymentApplicationModel.objects.all().order_by("-date_submitted")
     context_object_name = "submissions"
@@ -269,7 +261,7 @@ class EmploymentApplicationDetailView(DetailView):
     Renders details of a specific employment application.
     """
 
-    template_name = "home/applicant-details.html"
+    template_name = "applicant-details.html"
     model = EmploymentApplicationModel
     context_object_name = "submission"
     pk_url_kwarg = "pk"

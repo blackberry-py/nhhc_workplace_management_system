@@ -12,10 +12,30 @@ The URL patterns include:
 These URL patterns are used to define the routing for the views in the application.
 
 """
-from django.urls import path, re_path
-from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.urls import include, path, re_path
+from django.views.decorators.csrf import csrf_exempt
 from employee import views
+from employee.models import Employee
+from rest_framework import routers, serializers, viewsets
+
+
+# Serializers define the API representation.
+class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Employee
+        fields = "__all__"
+
+
+# ViewSets define the view behavior.
+class EmployeeViewSet(viewsets.ModelViewSet):
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeSerializer
+
+
+# Routers provide an easy way of automatically determining the URL conf.
+router = routers.DefaultRouter()
+router.register(r"employees", EmployeeViewSet)
 
 urlpatterns = [
     path(
@@ -26,5 +46,9 @@ urlpatterns = [
     path("rejected", csrf_exempt(views.reject), name="reject-application"),
     path("roster/", login_required(views.EmployeeRoster.as_view()), name="roster"),
     path("hired", csrf_exempt(views.hire), name="hire-employee"),
+    re_path(r"^accounts/login/$", views.force_pwd_login),
     path("terminate", csrf_exempt(views.terminate), name="terminate_employee"),
+    path(
+        "api", include(router.urls)
+    ),  # The API URLs are reused by Django Rest Framework
 ]

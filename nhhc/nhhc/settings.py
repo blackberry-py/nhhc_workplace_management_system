@@ -14,7 +14,8 @@ from django_redis import client
 from dotenv import load_dotenv
 from logtail import LogtailHandler
 
-load_dotenv()
+from nhhc.private_key import PRIVATE_KEY
+
 # SECTION - Basic Application Defintion
 OFFLINE = False
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +27,10 @@ CSRF_COOKIE_NAME = "nhhc-csrf"
 CSRF_USE_SESSIONS = True
 SESSION_COOKIE_NAME = "nhhc-session"
 SESSION_COOKIE_SECURE = True
+ROBOTS_USE_HOST = False
+
 ADMINRESTRICT_ALLOW_PRIVATE_IP = False
+FIRST_DAY_OF_WEEK = 1
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
@@ -36,6 +40,7 @@ ALLOWED_HOSTS = [
     "netthandshome.care",
     "0.0.0.0",
 ]
+ROBOTS_SITEMAP_VIEW_NAME = "cached-sitemap"
 CSRF_FAILURE_VIEW = "web.views.csrf_failure"
 RECAPTCHA_PUBLIC_KEY = os.getenv("RECAPTCHA_PUBLIC_KEY")
 RECAPTCHA_PRIVATE_KEY = os.getenv("RECAPTCHA_PRIVATE_KEY")
@@ -43,6 +48,8 @@ RESTRICT_ADMIN_BY_IPS = True
 ALLOWED_ADMIN_IPS = os.getenv("ALLOWED_IPS")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 SITE_ID = 1
+ROBOTS_CACHE_TIMEOUT = 60 * 60 * 24
+
 ENVIRONMENT_FLOAT = True
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.getenv("EMAIL_SERVER")
@@ -51,17 +58,25 @@ EMAIL_PORT = os.getenv("EMAIL_TSL_PORT")
 EMAIL_HOST_USER = os.getenv("EMAIL")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_ACCT_PASSWORD")
 APPEND_SLASH = True
-CRISPY_TEMPLATE_PACK = "bootstrap4"
+CRISPY_ALLOWED_TEMPLATE_PACKS = (
+    "bootstrap",
+    "uni_form",
+    "bootstrap5",
+    "bootstrap4",
+)
+
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 INSTALLED_APPS = [
     "kolo",
     "whitenoise.runserver_nostatic",
     "allauth",
     "allauth.account",
-    #  'django_admin_env_notice',
+    "django_admin_env_notice",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
+    "django.contrib.sites",
     "django.contrib.humanize",
     "django.contrib.messages",
     "django.contrib.staticfiles",
@@ -75,7 +90,9 @@ INSTALLED_APPS = [
     "widget_tweaks",
     "django_prometheus",
     "rest_framework",
+    "rest_framework.authtoken",
     "request",
+    "formset",
     "django_filters",
     "debug_toolbar",
     "localflavor",
@@ -83,6 +100,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "easy_thumbnails",
     "filer",
+    "robots",
     # "IpWhitelister",
     "health_check",  # required
     "health_check.db",  # stock Django health checkers
@@ -105,6 +123,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    # "nhhc.middleware.PasswordChangeMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
@@ -130,7 +149,10 @@ mimetypes.add_type("text/html", ".html", True)
 mimetypes.add_type("text/javascript", ".js", True)
 
 # SECTION - Database and Caching
+CACHE_TTL = 60 * 15
+
 if DEBUG:
+    SITE_ID = 1
     ENVIRONMENT_NAME = "DEVELOPMENT SERVER"
     ENVIRONMENT_COLOR = "#00FFFF"
     DATABASES = {
@@ -144,7 +166,14 @@ if DEBUG:
             "OPTIONS": {"sslmode": "require"},
         },
     }
+
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+        }
+    }
 else:
+    SITE_ID = 3
     REQUEST_BASE_URL = "https://www.netthandshome.care"
     ENVIRONMENT_NAME = "PRODUCTION SERVER"
     ENVIRONMENT_COLOR = "#FF2222"
@@ -159,23 +188,22 @@ else:
             "OPTIONS": {"sslmode": "require"},
         },
     }
-
-CACHE_TTL = 60 * 15
-CACHES = {
-    "default": {
-        "BACKEND": "django_prometheus.cache.backends.redis.RedisCache",
-        "LOCATION": os.getenv("REDIS_CACHE_URI"),
-        "OPTIONS": {
-            "PARSER_CLASS": "redis.connection.HiredisParser",
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        },
-        "KEY_PREFIX": "NHHC-NATIVE",
+    CACHES = {
+        "default": {
+            "BACKEND": "django_prometheus.cache.backends.redis.RedisCache",
+            "LOCATION": os.getenv("REDIS_CACHE_URI"),
+            "OPTIONS": {
+                "PARSER_CLASS": "redis.connection.HiredisParser",
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            },
+            "KEY_PREFIX": "NHHC-NATIVE",
+        }
     }
-}
 
 # !SECTION
 
 # SECTION - Password validation
+AUTH_PROFILE_MODULE = "authentication.UserProfile"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 ADMINRESTRICT_ENABLE_CACHE = True
 ADMINRESTRICT_DENIED_MSG = "Unable To Access Admin From This IP Address"
@@ -219,19 +247,9 @@ USE_TZ = False
 # !SECTION
 
 # SECTION - STORAGE
-# AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
-# AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-# AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-# AWS_BUCKET_NAME =  os.getenv("AWS_STORAGE_BUCKET_NAME")
-# AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL")
-# S3DIRECT_DESTINATIONS = {
-#     'primary_destination': {
-#         'key': 'uploads/',
-#     },
-# }
 
 STORAGE_DESTINATION = os.getenv("STORAGE_DESTINATION")
-
+FILE_UPLOAD_TEMP_DIR = BASE_DIR / "tmp"
 if STORAGE_DESTINATION == "s3":
     # aws settings
     AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
@@ -241,14 +259,18 @@ if STORAGE_DESTINATION == "s3":
     AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
     AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
     AWS_S3_SIGNATURE_VERSION = "s3v4"
-    AWS_QUERYSTRING_EXPIRE = "3600"
+    AWS_QUERYSTRING_EXPIRE = 3600
+    AWS_S3_REGION_NAME = "us-east-2"
     AWS_CLOUDFRONT_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-    AWS_CLOUDFRONT_KEY = os.getenv("AWS_CLOUDFRONT_KEY")
+    AWS_CLOUDFRONT_KEY = PRIVATE_KEY
 
     # s3 static settings
-    STATIC_LOCATION = "static"
-    STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/"
-    STATICFILES_STORAGE = "nhhc.storage_backends.StaticStorage"
+    STATIC_LOCATION = "staticfiles"
+    STATIC_URL = f"https://nhhc.b-cdn.net/{STATIC_LOCATION}/"
+    STATIC_ROOT = STATIC_URL
+    STATICFILES_STORAGE = (
+        "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
+    )
     # s3 public media settings
     PUBLIC_MEDIA_LOCATION = "media"
     MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
@@ -257,6 +279,20 @@ if STORAGE_DESTINATION == "s3":
     PRIVATE_MEDIA_LOCATION = "restricted"
     MEDIA_DIRECTORY = "/restricted/compliance"
     PRIVATE_FILE_STORAGE = "nhhc.storage_backends.PrivateMediaStorage"
+
+    FILER_STORAGES = {
+        "private": {
+            "hhg-oig": {
+                "ENGINE": "fnhhc.storage_backends.PrivateMediaStorage",
+                "OPTIONS": {
+                    "location": f"https://{AWS_S3_CUSTOM_DOMAIN}/{PRIVATE_MEDIA_LOCATION}",
+                    "base_url": "/smedia/filer/",
+                },
+                "UPLOAD_TO": "filer.utils.generate_filename.randomized",
+                "UPLOAD_TO_PREFIX": "filer_public",
+            },
+        }
+    }
 else:
     STATIC_URL = "/staticfiles/"
     STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
@@ -277,6 +313,7 @@ FILER_MIME_TYPE_WHITELIST = [
     "application/pdf",
     "image/*",
 ]
+
 FILER_ADD_FILE_VALIDATORS["aspx"] = ["filer.validation.deny"]
 FILER_ADD_FILE_VALIDATORS["asp"] = ["filer.validation.deny"]
 FILER_ADD_FILE_VALIDATORS["css"] = ["filer.validation.deny"]
@@ -301,11 +338,18 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static", "vendor"),
 ]
 # SECTION - Templates
-TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
+TEMPLATE_DIR = [
+    os.path.join(BASE_DIR, "templates"),
+    os.path.join(BASE_DIR, "web", "templates"),
+    os.path.join(BASE_DIR, "employee", "templates"),
+    os.path.join(BASE_DIR, "authentication", "templates"),
+    os.path.join(BASE_DIR, "portal", "templates"),
+    os.path.join(BASE_DIR, "compliance", "templates"),
+]
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [TEMPLATE_DIR],
+        "DIRS": TEMPLATE_DIR,
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -381,7 +425,10 @@ REQUEST_TRAFFIC_MODULES = [
     "request.traffic.User" "request.traffic.Error404",
     "request.traffic.Error",
 ]
-# SECTION - Preformence Monitoring
+# SECTION - Preformence MonitoringSCOUT_MONITOR
+SCOUT_MONITOR = True
+SCOUT_NAME = "nhhc"
+SCOUT_KEY = os.getenv("SCOUT_KEY")
 PROMETHEUS_LATENCY_BUCKETS = (
     0.1,
     0.2,
@@ -403,3 +450,12 @@ PROMETHEUS_LATENCY_BUCKETS = (
     float("inf"),
 )
 PROMETHEUS_METRIC_NAMESPACE = "nhhc"
+
+# SECTION  - REST API CONFIGURATIONS
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+    ]
+}

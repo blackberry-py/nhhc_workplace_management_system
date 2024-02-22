@@ -1,44 +1,57 @@
-import random
-import string
+from collections.abc import Callable
+from uuid import uuid4
+
+from compliance.models import Compliance
+from django.conf import settings
+from django.db import models
+from django.db.models import signals
+from employee.models import Employee
+from loguru import logger
+
+logger.add(
+    settings.DEBUG_LOG_FILE, diagnose=True, catch=True, backtrace=True, level="DEBUG"
+)
+logger.add(
+    settings.PRIMARY_LOG_FILE, diagnose=False, catch=True, backtrace=False, level="INFO"
+)
+logger.add(
+    settings.LOGTAIL_HANDLER, diagnose=False, catch=True, backtrace=False, level="INFO"
+)
 
 
-class RandomPasswordGenerator:
-    """
-    A class for generating random passwords.
+class UserProfile(models.Model):
+    user = models.OneToOneField(Employee, unique=True, on_delete=models.CASCADE)
+    force_password_change = models.BooleanField(default=True)
+    last_password_change = models.DateTimeField(auto_now_add=True)
 
-    Attributes:
-    min_length (int): The minimum length of the generated password.
-    max_length (int): The maximum length of the generated password.
-    """
 
-    # Set minimum and maximum password length
-    min_length = 8
-    max_length = 12
+def create_user_profile_signal(sender: Callable, instance, created, **kwargs) -> None:
+    if created:
+        UserProfile.objects.create(user=instance)
+        logger.debug(f"Signal Triggered for UserProfile Creation for {instance}")
+        Compliance.objects.create(employee=instance)
+        logger.debug(f"Signal Triggered for Compliance Creation for {instance}")
 
-    @staticmethod
-    def generate():
-        """
-        Generates a random password.
-        Args:
-            None
 
-        Returns:
-            str: A randomly generated password.
+def password_change_signal(sender, instance, **kwargs) -> None:
+    try:
+        user = Employee.objects.get(username=instance.username)
+        if not user.password == instance.password:
+            profile = user.get_profile()
+            profile.force_password_change = False
+            profile.save()
+    except Employee.DoesNotExist:
+        pass
 
-        Rasies:
-            None
-        """
-        # Define the character sets to be used for password generation
-        # Use all lowercase, uppercase, and punctuation characters
-        chars = string.ascii_lowercase + string.ascii_uppercase + string.punctuation
 
-        # Generate a random password length between min_length and max_length
-        password_length = random.randint(
-            RandomPasswordGenerator.min_length, RandomPasswordGenerator.max_length
-        )
+signals.pre_save.connect(
+    password_change_signal,
+    sender=Employee,
+    dispatch_uid=f"employee.models + {str(uuid4())}",
+)
 
-        # Generate a random password by randomly selecting a character from the character set
-        # and repeating this process until the desired password length is reached
-        random_password = "".join(random.choice(chars) for i in range(password_length))
-
-        return random_password
+signals.post_save.connect(
+    create_user_profile_signal,
+    sender=Employee,
+    dispatch_uid=f"employee.models + {str(uuid4())}",
+)

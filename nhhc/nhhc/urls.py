@@ -13,6 +13,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path, re_path
+from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
 from loguru import logger
@@ -35,14 +36,16 @@ urlpatterns = [
     # path("", include(authentication.urls)),
     path("", include(portal.urls)),
     path("", include(employee.urls)),
-    re_path(r"^s3direct/", include("s3direct.urls")),
     path("", include(compliance.urls)),
+    path("api-auth/", include("rest_framework.urls")),
     path("", include(announcements.urls)),
-    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}),
-    path(
-        "robots.txt/",
-        TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
+    re_path(
+        r"^sitemap.xml$",
+        cache_page(60)(sitemaps),
+        {"sitemaps": sitemaps},
+        name="cached-sitemap",
     ),
+    re_path(r"^robots\.txt", include("robots.urls")),
     re_path("", include("django_prometheus.urls")),
     # path("404/", web.views.handler404),
     # path("500/", web.views.handler500)

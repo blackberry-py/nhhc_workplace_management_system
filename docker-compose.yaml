@@ -2,6 +2,18 @@
 version: "3"
 
 services:
+  app:
+    image: terrybrooks/netthands:latest
+    container_name:  nett_hands_web_portal
+    restart: unless-stopped
+    networks:
+      - netthandz-ecosystem
+    volumes:
+      - 'primary_hhd_netthandz:/usr/'
+    env_file:
+      - '.env'
+    ports:
+      - "6777:8000"
 
   redis:
     image: redis:latest
@@ -19,13 +31,6 @@ services:
     ports:
       - '7771:6379'
     command: "redis-server /etc/redis/redis.conf"
-    healthcheck:
-      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
-      interval: 5m
-      timeout: 2m
-      retries: 5
-      start_period: 2m
-      start_interval: 2m
 
   minio:
       tty: true
@@ -90,7 +95,7 @@ services:
       volumes:
       - primary_hhd_netthandz:/prometheus/data/11
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
-  
+
   secure_file_server:
     image: nginx
 

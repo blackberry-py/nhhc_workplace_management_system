@@ -57,18 +57,20 @@
     /*------------------
 		Hero Slider
 	--------------------*/
-    $('.hero__slider').owlCarousel({
-        loop: true,
-        dots: true,
-        mouseDrag: false,
-        animateOut: 'fadeOut',
-        animateIn: 'fadeIn',
-        items: 1,
-        margin: 0,
-        smartSpeed: 1200,
-        autoHeight: false,
-        autoplay: true,
-    });
+    if ($('.hero_slider')){
+        $('.hero__slider').owlCarousel({
+            loop: true,
+            dots: true,
+            mouseDrag: false,
+            animateOut: 'fadeOut',
+            animateIn: 'fadeIn',
+            items: 1,
+            margin: 0,
+            smartSpeed: 1200,
+            autoHeight: false,
+            autoplay: true,
+        });
+    }
 
     var dot = $('.hero__slider .owl-dot');
     dot.each(function () {
@@ -180,3 +182,5 @@
     });
 
 })(jQuery);
+
+console.log('Main JS')

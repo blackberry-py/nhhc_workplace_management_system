@@ -21,20 +21,23 @@ import datetime
 import json
 import random
 import string
+from typing import Dict
 
 import arrow
-from authentication.models import RandomPasswordGenerator
 from compliance.models import Compliance
 from django.contrib.auth.hashers import make_password
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MaxValueValidator
 from django.db import models
-from typing import Dict
 from django.utils.translation import gettext_lazy as _
 from django_prometheus.models import ExportModelOperationsMixin
 from employee.models import Employee
 from localflavor.us.models import USStateField, USZipCodeField
 from loguru import logger
 from phonenumber_field.modelfields import PhoneNumberField
+
+from nhhc.utils import RandomPasswordGenerator
 
 now = arrow.now(tz="US/Central")
 
@@ -141,6 +144,7 @@ class EmploymentApplicationModel(
         blank=True,
     )
     date_submitted = models.DateTimeField(auto_now_add=True)
+    employee_id = models.BigIntegerField(blank=True, null=True)
 
     def hire_applicant(self, hired_by: Employee) -> Dict[str, str]:
         """
@@ -170,18 +174,18 @@ class EmploymentApplicationModel(
                 first_name=self.first_name,
                 last_name=self.last_name,
                 email=self.email,
-                phone=self.contact_number,
                 street_address1=self.home_address1,
                 street_address2=self.home_address2,
                 state=self.state,
                 city=self.city,
                 zipcode=self.zipcode,
+                application_id=self.pk,
             )
             password = RandomPasswordGenerator.generate()
             new_employee.password = make_password(password)
             new_employee.save()
-            compliance = Compliance(employee=new_employee)
-            compliance.save()
+            # compliance_profile = Compliance.objects.create(employee=new_employee)
+            # compliance_profile.save()
             self.hired = True
             self.reviewed = True
             self.reviewed_by = hired_by
@@ -189,6 +193,7 @@ class EmploymentApplicationModel(
                 "user": new_employee,
                 "plain_text_password": password,
                 "username": new_employee.username,
+                "employee_id": new_employee.pk,
             }
         except Exception as e:
             log_message = (

@@ -7,7 +7,27 @@ const $paginationList = document.querySelector('.pagination__list');
 const $submissionSearch = document.getElementById('searchbar');
 const itemTotal = 10;
 
+// Preloaded Logic
 
+document.addEventListener("DOMContentLoaded", () => {
+  // Simulate an API request or any async operation
+  setTimeout(() => {
+      hideLoader();
+      showContent();
+  }, 3000); // Replace with your actual data loading logic and time
+
+  function hideLoader() {
+      $("#loader-3").fadeOut(1800)
+     // const loader = document.getElementById("loader-3");
+     // loader.style.display = "none";
+  }
+
+  function showContent() {
+      $("#body-hide").fadeIn(1600)
+    //  const content = document.getElementById("body-hide");
+    //  content.style.display = "block";
+  }
+});
 // hide all
 function hideAll() {
   $submissions.each((field) => {
@@ -183,23 +203,23 @@ function confirmTermination(pk) {
     showLoaderOnConfirm: true,
     preConfirm: (input) => {
       if (input === "terminate"){
-      try {
-        var request = $.post("/terminate", sentData, (data, status) => {
-          Swal.fire({
-            title: "Employment Terminated!",
-            icon: "success" ,
-            text: `Employee Terminated. They have been notified via email.`,
-            didClose: () => { window.location.reload() }
-          });
-        })
-      } catch (error) {
-        Swal.showValidationMessage(`Request failed: ${error}`);
-      }
-    } else {
-      Swal.showValidationMessage('Please type "terminate" exactly to confirm')
-    }},
+        try {
+          var request = $.post("/terminate", sentData, (data, status) => {
+            Swal.fire({
+              title: "Employment Terminated!",
+              icon: "success" ,
+              text: `Employee Terminated. They have been notified via email.`,
+              didClose: () => { window.location.reload() }
+            });
+          })
+        } catch (error) {
+          Swal.showValidationMessage(`Request failed: ${error}`);
+        }
+      } else {
+        Swal.showValidationMessage('Please type "terminate" exactly to confirm')
+      }},
     allowOutsideClick: () => !Swal.isLoading(),
-})
+  })
 }
 
 
@@ -219,12 +239,12 @@ function confirmHire(pk) {
     showLoaderOnConfirm: true,
     preConfirm: () => {
       try {
-        var request = $.post("/z", sentData, (data, status) => {
+        var request = $.post("/hired", sentData, (data, status) => {
           Swal.fire({
             title: "Success!",
             icon: "success" ,
             html: `<h1>Employee Hired.</h1>\n ${data}`,
-            didClose: () => { window.location.reload() }
+            didClose: () => { window.location.href(`/employee/${data.employee_id}`) }
           });
         })
       } catch (error) {
@@ -232,7 +252,7 @@ function confirmHire(pk) {
       }
     },
     allowOutsideClick: () => !Swal.isLoading(),
-})
+  })
 }
 
 function confirmRejection(pk) {
@@ -263,5 +283,10 @@ function confirmRejection(pk) {
       }
     },
     allowOutsideClick: () => !Swal.isLoading(),
-})
+  })
+}
+
+function dismissLoadSpinner(){
+  document.getElementById('load-cover').style.display = "none";
+  document.getElementById('body-hide').style.display = "block";
 }

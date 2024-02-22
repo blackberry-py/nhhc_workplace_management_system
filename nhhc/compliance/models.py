@@ -37,11 +37,26 @@ Note: This model utilizes the ExportModelOperationsMixin from django_prometheus 
 
 
 from django.db import models
+from django.db.models import signals
 from django.utils.translation import gettext_lazy as _
 from django_prometheus.models import ExportModelOperationsMixin
 from employee.models import Employee
-from nhhc.storage_backends import PrivateMediaStorage
 from filer.fields.file import FilerFileField
+from loguru import logger
+from typing import Union
+from django.conf import settings
+
+from nhhc.storage_backends import PrivateMediaStorage
+
+logger.add(
+    settings.DEBUG_LOG_FILE, diagnose=True, catch=True, backtrace=True, level="DEBUG"
+)
+logger.add(
+    settings.PRIMARY_LOG_FILE, diagnose=False, catch=True, backtrace=False, level="INFO"
+)
+logger.add(
+    settings.LOGTAIL_HANDLER, diagnose=False, catch=True, backtrace=False, level="INFO"
+)
 
 
 class Contract(models.Model, ExportModelOperationsMixin("contracts")):
@@ -124,8 +139,30 @@ class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
     def __str__(self):
         return str(self.employee)
 
+    def is_eligible_to_work(self) -> bool:
+        employee_profile = Employee.objects.get(pk=self.employee.pk)
+        # TODO: Implement Miniminally Needed Documentation Check Logic to Determined Ready to Start
+        raise NotImplementedError("Logic to Determine This Forth Coming")
+
     class Meta:
         db_table = "audit_compliance"
         ordering = ["employee"]
         verbose_name = "Compliance-Auditing Data"
         verbose_name_plural = "Compliance-Auditing Data"
+
+
+def employee_terminated_signal(sender, instance, **kwargs) -> None:
+    try:
+        employee = Employee.objects.get(username=instance.username)
+        if not employee.is_active and employee.termination_date is not None:
+            logger.info(
+                f"Archiving Terminated Employee - {employee.last_name}, {employee.first_name}"
+            )
+            # TODO: Complete Stroage Set up AND then implement profile archival
+    except Employee.DoesNotExist:
+        pass
+
+
+signals.pre_save.connect(
+    employee_terminated_signal, sender=Employee, dispatch_uid="employee.models"
+)

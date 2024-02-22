@@ -1,3 +1,5 @@
+import os
+
 from django.shortcuts import render
 
 # Create your views here.
@@ -5,12 +7,6 @@ from django.shortcuts import render
 
 def create_contract(request):
     pass
-
-
-def employee_report_export(request):
-    employees = Employee.objects.all().values()
-    employee_json = json.dumps(list(employees), cls=DjangoJSONEncoder)
-    return HttpResponse(content=employee_json, status=200)
 
 
 def generate_report(requst):

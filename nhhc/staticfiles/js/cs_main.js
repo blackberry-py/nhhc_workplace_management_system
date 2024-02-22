@@ -1,4 +1,5 @@
-y6
+console.log('Coming Soon JS Loaded')
+
 (function ($) {
     "use strict";
 

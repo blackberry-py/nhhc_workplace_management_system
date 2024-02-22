@@ -1,10 +1,10 @@
-import unittest
+from http import HTTPStatus
 
-from django.test import RequestFactory
+from django.test import RequestFactory, TestCase
 from web.views import about, index
 
 
-class TestViews(unittest.TestCase):
+class TestViews(TestCase):
     def test_index_happy_path(self):
         # Create a request object
         request = RequestFactory().get("/")
@@ -34,3 +34,17 @@ class TestViews(unittest.TestCase):
         request = RequestFactory().get("/")
         response = about(request)
         # Add assertions for any edge cases specific to the about function
+
+
+class RobotsTxtTests(TestCase):
+    def test_get(self):
+        response = self.client.get("/robots.txt")
+
+        assert response.status_code == HTTPStatus.OK
+        assert response["content-type"] == "text/plain"
+        assert response.content.startswith(b"User-Agent: *\n")
+
+    def test_post_disallowed(self):
+        response = self.client.post("/robots.txt")
+
+        assert response.status_code == HTTPStatus.METHOD_NOT_ALLOWED

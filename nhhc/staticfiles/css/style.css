@@ -230,71 +230,156 @@ ol {
 }
 
 /* Preloder */
-#preloder {
+
+.loader-wrapper{
+  display: none;
   position: fixed;
   width: 100%;
   height: 100%;
-  top: 0;
-  left: 0;
-  z-index: 999999;
-  background: #000;
+  z-index: 1;
+
 }
 
-.loader {
-  width: 40px;
-  height: 40px;
+/*Horizontal circles as bars loader-3 */
+
+#loader-3 #loader{
   position: absolute;
-  top: 50%;
+  width: 2vw;
+  height: 2vw;
+  background: rgb(244 244 244);
+  top:50%;
   left: 50%;
-  margin-top: -13px;
-  margin-left: -13px;
-  border-radius: 60px;
-  animation: loader 0.8s linear infinite;
-  -webkit-animation: loader 0.8s linear infinite;
+  border-radius: 50%;
+  z-index: 1500;
+  -webkit-animation: forward 2.3s linear infinite;
+  -moz-animation: forward 2.3s linear infinite;
+  -o-animation: forward 2.3s linear infinite;
+  animation: forward 2.3s linear infinite ;
 }
 
-@keyframes loader {
+
+.loader-wrapper{
+  display: none;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+
+}
+
+#loader-3 > #loader:nth-of-type(1) {
+  -webkit-animation-delay: -0.46s;
+  -moz-animation-delay: -0.46s;
+  -o-animation-delay: -0.46s;
+  animation-delay: -0.46s;
+}
+
+#loader-3 > #loader:nth-of-type(2) {
+  -webkit-animation-delay: -0.92s;
+  -moz-animation-delay: -0.92s;
+  -o-animation-delay: -0.92s;
+  animation-delay: -0.92s;
+}
+#loader-3 > #loader:nth-of-type(3) {
+  -webkit-animation-delay: -1.38s;
+  -moz-animation-delay: -1.38s;
+  -o-animation-delay: -1.38s;
+  animation-delay: -1.38s;
+}
+#loader-3 > #loader:nth-of-type(4) {
+  -webkit-animation-delay: -1.84s;
+  -moz-animation-delay: -1.84s;
+  -o-animation-delay: -1.84s;
+  animation-delay: -1.84s;
+}
+
+/*keyframes for forward animations*/
+
+@-webkit-keyframes forward {
   0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-    border: 4px solid #f44336;
-    border-left-color: transparent;
+    left: 40%;
+    opacity: 0;
+    background: rgb(75,0,130);
   }
-  50% {
-    -webkit-transform: rotate(180deg);
-    transform: rotate(180deg);
-    border: 4px solid #673ab7;
-    border-left-color: transparent;
+  10% {
+    left: 45%;
+    opacity: 1;
+  }
+  90% {
+    left: 55%;
+    opacity: 1;
   }
   100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-    border: 4px solid #f44336;
-    border-left-color: transparent;
+    left: 62%;
+    opacity: 0;
   }
 }
-@-webkit-keyframes loader {
+
+@-moz-keyframes forward {
   0% {
-    -webkit-transform: rotate(0deg);
-    border: 4px solid #f44336;
-    border-left-color: transparent;
+    left: 40%;
+    opacity: 0;
+    background: rgb(75,0,130);
   }
-  50% {
-    -webkit-transform: rotate(180deg);
-    border: 4px solid #673ab7;
-    border-left-color: transparent;
+  10% {
+    left: 45%;
+    opacity: 1;
+  }
+  90% {
+    left: 55%;
+    opacity: 1;
   }
   100% {
-    -webkit-transform: rotate(360deg);
-    border: 4px solid #f44336;
-    border-left-color: transparent;
+    left: 62%;
+    opacity: 0;
   }
 }
+
+@-o-keyframes forward {
+  0% {
+    left: 40%;
+    opacity: 0;
+    background: rgb(75,0,130);
+  }
+  10% {
+    left: 45%;
+    opacity: 1;
+  }
+  90% {
+    left: 55%;
+    opacity: 1;
+  }
+  100% {
+    left: 62%;
+    opacity: 0;
+  }
+}
+
+@keyframes forward {
+  0% {
+    left: 40%;
+    opacity: 0;
+    background: rgb(75,0,130);
+  }
+  10% {
+    left: 45%;
+    opacity: 1;
+  }
+  90% {
+    left: 55%;
+    opacity: 1;
+  }
+  100% {
+    left: 62%;
+    opacity: 0;
+  }
+}
+
 /*---------------------
   Header
 -----------------------*/
 .header {
-  position: absolute;
+
   left: 0;
   top: 0;
   width: 100%;
@@ -308,6 +393,10 @@ ol {
 }
 .header__logo a {
   display: inline-block;
+}
+
+form#profile {
+  width: 100%;
 }
 
 .header__nav__option {
@@ -849,7 +938,7 @@ ol {
   Footer
 -----------------------*/
 .footer {
-  background: #0a0119;
+  background: #0a0119 !important;
 }
 
 .footer__top {
@@ -2165,10 +2254,7 @@ ol {
   font-size: 1.5em;
   letter-spacing: .23em;
 }
-#google-map {
-  /* position: relative;
-  top: 150px; */
-}
+
 #blackberry-py-logo{
   height:100px;
   width: auto;
@@ -2204,6 +2290,7 @@ img#check{
 #interest-form>p,
 .application-text {
   color: #FFF;
+
 }
 section#interest-form {
   display: flex;
@@ -2354,4 +2441,23 @@ h3.out-of-compliance {
   .hide-mobile {
     display: block;
   }
+}
+
+.form-header-text{
+  color: silver;
+}
+
+ul.form-errors-list{
+  list-style-type: none;
+}
+#form-errors {
+  border: 3px red dotted;
+  height: auto;
+  width: 100%;
+}
+.form-error-header{
+  color: red;
+  letter-spacing: 2px;
+  font-size: 18px;
+  font-weight: bolder;
 }

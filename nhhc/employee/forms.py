@@ -1,17 +1,38 @@
 from compliance.models import Contract
-from crispy_forms.bootstrap import FormActions, Modal, UneditableField
+from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Column, Layout, Reset, Row, Submit
-from django import forms
+from django.forms import ModelChoiceField, ModelForm, fields, forms
+from django.forms.widgets import DateInput
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from employee.models import Employee
+from formset.views import FormView
+from formset.widgets import UploadedFileInput
 
 
-class EmployeeForm(forms.ModelForm):
+class EmployeeForm(ModelForm):
     """Form definition for Employee Model."""
 
-    contract_code = forms.ModelChoiceField(queryset=Contract.objects.all())
+    # contract_code = ModelChoiceField(queryset=Contract.objects.all())
+    # qualifications_verification = fields.FileField(
+    #     label="resume_qualifications",
+    #     widget=UploadedFileInput(attrs={
+    #         'max-size': 1024 * 1024,
+    #     }),
+    #     help_text="Please do not upload files larger than 1MB",
+    #     required=False
+    # )
+    cpr_verification = fields.FileField(
+        label="cpr_verification",
+        widget=UploadedFileInput(
+            attrs={
+                "max-size": 1024 * 1024,
+            }
+        ),
+        help_text="Please do not upload files larger than 1MB",
+        required=False,
+    )
 
     class Meta:
         """Meta definition for EmployeeForm."""
@@ -67,7 +88,7 @@ class EmployeeForm(forms.ModelForm):
         self.helper.form_id = "profile"
         self.helper.form_method = "post"
         self.helper.form
-        self.fields["date_of_birth"].widget = forms.widgets.DateInput(
+        self.fields["date_of_birth"].widget = DateInput(
             attrs={"type": "date", "class": "form-control"},
         )
         self.helper.layout = Layout(
@@ -78,7 +99,7 @@ class EmployeeForm(forms.ModelForm):
         """,
             ),
             Row(
-                UneditableField("username", css_class="form-group col-6 mb-0 "),
+                Column("username", css_class="form-group col-6 mb-0", disabled=True),
                 Column(
                     "email",
                     css_class="form-group col-6 mb-0  editable",

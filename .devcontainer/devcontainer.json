@@ -33,9 +33,10 @@
 				"WolfiesHorizon.python-auto-venv",
 				"teticio.python-envy",
 				"ms-python.black-formatter",
-				"ExodiusStudios.comment-anchors"
+				"ExodiusStudios.comment-anchors",
+				"aaron-bond.better-comments"
 			]
 		}
-	}, 
+	},
 
 }

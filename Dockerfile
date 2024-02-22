@@ -12,7 +12,8 @@ ENV PATH="$VIRTUALENV/bin:$PATH"
 
 COPY --chown=nhhc_app pyproject.toml requirements.txt ./
 
-RUN python -m pip install -r requirements.txt
+RUN python -m pip install poetry
+RUN python -m poetry install
 
 
 COPY --chown=nhhc_app init.sh ./

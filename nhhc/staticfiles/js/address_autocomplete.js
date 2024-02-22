@@ -6,11 +6,11 @@ let state;
 let city;
 
 function initAutocomplete() {
-  address1Field = document.querySelector("#home_address1");
-  address2Field = document.querySelector("#home_address2");
-  postalField = document.querySelector("#zipcode");
-  state = document.querySelector("#state");
-  city = document.querySelector("#city");
+  address1Field = document.querySelector("#id_home_address1");
+  address2Field = document.querySelector("#id_home_address2");
+  postalField = document.querySelector("#id_zipcode");
+  state = document.querySelector("#id_state");
+  city = document.querySelector("#id_city");
   // Create the autocomplete object, restricting the search predictions to
   // addresses in the US and Canada.
   autocomplete = new google.maps.places.Autocomplete(address1Field, {
@@ -59,10 +59,10 @@ function fillInAddress() {
         break;
       }
       case "locality":
-        document.querySelector("#locality").value = component.long_name;
+        document.querySelector("#id_city").value = component.long_name;
         break;
       case "administrative_area_level_1": {
-        document.querySelector("#state").value = component.short_name;
+        document.querySelector("#id_state").value = component.short_name;
         break;
       }
     }
@@ -77,3 +77,10 @@ function fillInAddress() {
 }
 
 window.initAutocomplete = initAutocomplete;
+
+
+inputs = document.getElementById("employment-application").querySelectorAll('input[type="text"]');
+
+inputs.forEach(neutralizeFieldValidationColorsOnLoad)
+
+console.log('Address Auto Complete JS')
