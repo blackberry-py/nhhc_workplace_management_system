@@ -16,6 +16,7 @@ To use the functions in this module, import the module and call the desired func
 
 
 from compliance.models import Compliance
+from compliance.forms import ComplianceForm
 from django.conf import settings
 from django.contrib.auth import login
 from django.core.exceptions import PermissionDenied
@@ -34,22 +35,11 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.permissions import IsAuthenticated
 from web.models import EmploymentApplicationModel
 
-from nhhc.utils import (
+from nhhc.utils.helpers import (
     get_content_for_unauthorized_or_forbidden,
     get_status_code_for_unauthorized_or_forbidden,
     send_new_user_credentials,
 )
-
-logger.add(
-    settings.DEBUG_LOG_FILE, diagnose=True, catch=True, backtrace=True, level="DEBUG"
-)
-logger.add(
-    settings.PRIMARY_LOG_FILE, diagnose=False, catch=True, backtrace=False, level="INFO"
-)
-logger.add(
-    settings.LOGTAIL_HANDLER, diagnose=False, catch=True, backtrace=False, level="INFO"
-)
-
 
 # SECTION - Template - Rendering & API Class-Based Views
 
@@ -67,6 +57,8 @@ class EmployeeDetail(DetailView):
     model = Employee
     template_name = "employee-details.html"
     context_object_name = "employee"
+    
+    
 
 
 # !SECTION

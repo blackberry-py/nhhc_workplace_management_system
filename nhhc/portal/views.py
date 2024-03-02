@@ -18,10 +18,9 @@ Classes:
 import csv
 import json
 import os
-from typing import Dict, Union, Any
+from typing import Any, Dict, Union
 
 import arrow
-
 from compliance.models import Compliance
 from django import template
 from django.conf import settings
@@ -52,16 +51,6 @@ from web.forms import ClientInterestForm
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
 
 now = arrow.now(tz="America/Chicago")
-logger.add(
-    settings.DEBUG_LOG_FILE, diagnose=True, catch=True, backtrace=True, level="DEBUG"
-)
-logger.add(
-    settings.PRIMARY_LOG_FILE, diagnose=False, catch=True, backtrace=False, level="INFO"
-)
-logger.add(
-    settings.LOGTAIL_HANDLER, diagnose=False, catch=True, backtrace=False, level="INFO"
-)
-
 
 @login_required(login_url="/login/")
 def portal_dashboard(request: HttpRequest) -> HttpResponse:
@@ -91,7 +80,6 @@ def portal_dashboard(request: HttpRequest) -> HttpResponse:
     return HttpResponse(html_template.render(context, request))
 
 
-# TODO: Convert to Class-Based
 class ProfileFormView(FormView, FileUploadMixin):
     form_class = EmployeeForm
     model = Employee

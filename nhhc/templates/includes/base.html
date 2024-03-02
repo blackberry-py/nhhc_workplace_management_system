@@ -12,7 +12,6 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>Nett Hands Home Care - {{ title }}</title>
 
-
         <!-- Google Tag Manager -->
         <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -43,16 +42,6 @@
     <!-- Page Preloder -->
         <script>
 
-        //function dismissLoadSpinner(){
-          //  document.getElementById('loader-3').style.display = "none";
-            //document.getElementById('body-hide').style.display = "block"
-
-           // $('#body-hide').fadeIn("800");
-       // }
-        // script.js
-
-
-
         </script>
         <div class="loader-wrapper" id="loader-3" style="display: inherit; background-color:black;">
             <div id="loader"></div>
@@ -63,7 +52,7 @@
         </div>
 
 
-        <div id="body-hide" class="animate__animated animate__slower animate__fadeIn`" style="display:none;">
+        <div id="body-hide" class="animate__animated animate__slower animate__fadeIn" style="display:none;">
     <!-- Header Section Begin -->
             <header class="header" style="position: absolute;">
                 <div class="container">
@@ -72,7 +61,7 @@
                             <div class="navbar-brand">
 
                                 {% if title == "Home" %}
-                                    <a href="{% url 'index' %}"><img src="{% static 'img/logo-dark.png' %}" alt="LOGO"></a>
+                                    <a href="{% url 'index' %}"><img src="{% static '/img/logo-dark.png' %}" alt="LOGO"></a>
                                     </div>
                                     </div>
                                     <div class="col-lg-10">
@@ -92,6 +81,7 @@
                                                     </li>
                                                     <li><a href="#contact">Contact</a></li>
                                                 </ul>
+                                            </nav>
                                 {% else %}
                                     <a href="{% url 'index' %}"><img src="{% static '/img/logo-light.png' %}" alt=""></a>
                                     </div>
@@ -116,7 +106,7 @@
         <body>
             {% block main %}
 
-            {% endblock %}
+            {% endblock main %}
         </body>
         <footer class="footer">
             <div class="container">
@@ -183,7 +173,7 @@
                                 <h5>Quick Links</h5>
                                 <ul>
                                     <li><a href="{% url 'application' %}">Employment Application</a></li>
-                                    <li><a href="{% url 'client-interest'%}">Client Interest Form</a></li>
+                                    <li><a href="{% url 'client-interest' %}">Client Interest Form</a></li>
                                     <li class="disabled"><a href="{% url 'account_login' %}">Employee Portal</a></li>
                                 </ul>
                                 <br>
@@ -214,6 +204,7 @@
                                  src="https://cdn.jsdelivr.net/gh/Terry-BrooksJr/MindHealthCDN@29bc6662f28312e838bbfad943be62691705f062/images/BBerry-pY.png">
                             <p> Created and Maintained by <a target="_blank" href="https://www.brooksjr.com">Blackberry-Py Development</a>
                             </p>
+                            <iframe src="https://status.netthandshome.care/badge?theme=dark" width="250" height="30" frameborder="0" scrolling="no"></iframe>
                         </div>
                     </div>
                 </div>

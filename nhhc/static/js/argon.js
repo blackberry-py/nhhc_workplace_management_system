@@ -1066,24 +1066,24 @@ var noUiSlider = (function() {
 
 'use strict';
 
-var Scrollbar = (function() {
+// var Scrollbar = (function() {
 
-	// Variables
+// 	// Variables
 
-    var $scrollbar = $('.scrollbar-inner');
-
-
-	// Methods
-
-    function init() {
-        $scrollbar.scrollbar().scrollLock()
-    }
+//     var $scrollbar = $('.scrollbar-inner');
 
 
-	// Events
+// 	// Methods
 
-    if ($scrollbar.length) {
-        init();
-    }
+//     function init() {
+//         $scrollbar.scrollbar().scrollLock()
+//     }
 
-})();
+
+// 	// Events
+
+//     if ($scrollbar.length) {
+//         init();
+//     }
+
+// })();

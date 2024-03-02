@@ -1,7 +1,7 @@
 {% extends "layouts/base.html" %}
 
 {% block title %} Dashboard {% endblock title %}
-
+{% load recent_announcements %}
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}{% endblock stylesheets %}
 
@@ -17,7 +17,6 @@
         <div class="row align-items-center py-4">
           <div class="col-lg-6 col-7">
             <h1 class="display-1 text-white">Announcements</h1>
-
             <hr class="uk-divider-icon"/>
             <div class="timer">
               <div id="home-date"></div>
@@ -34,51 +33,8 @@
     {% comment %} {% if announcements %} {% endcomment %}
   <div class="align-content-end">
 
-    {% for announcement in announcements %}
-      {% if announcement.status == "A" %}
-        {% if announcement.message_type == 'C' %}
-          <div class="card  col-12 outline-red">
-            <div class="card-header">
-              {{ announcement.get_message_type_display }} Announcement
-            </div>
-            <div class="card-body">
-              <h5 class="card-title"><strong>{{ announcement.announcement_title }}</strong> - Posted: {{ announcement.date_posted }}</h5>
-              <p class="card-text">{{ announcement.message }}</p>
-            </div>
-          </div>
-        {% elif announcement.message_type == 'X' %}
-          <div class="card col-12 outline-yellow">
-            <div class="card-header">
-              {{ announcement.get_message_type_display }} Announcement
-            </div>
-            <div class="card-body">
-              <h5 class="card-title"><strong>{{ announcement.announcement_title }}</strong> - Posted: {{ announcement.date_posted }}</h5>
-              <p class="card-text">{{ announcement.message }}</p>
-            </div>
-          </div>
-        {% elif announcement.message_type == 'T' %}
-          <div class="card col-lg-12 outline-blue">
-            <div class="card-header">
-              {{ announcement.get_message_type_display }} Announcement
-            </div>
-            <div class="card-body">
-              <h5 class="card-title"><strong>{{ announcement.announcement_title }}</strong> - Posted: {{ announcement.date_posted }}</h5>
-              <p class="card-text">{{ announcement.message }}</p>
-            </div>
-          </div>
-        {% else %}
-          <div class="card col-12 outline-black">
-            <div class="card-header">
-              {{ announcement.get_message_type_display }} Announcement
-            </div>
-            <div class="card-body">
-              <h5 class="card-title"><strong>{{ announcement.announcement_title }}</strong> - Posted: {{ announcement.date_posted }}</h5>
-              <p class="card-text">{{ announcement.message }}</p>
-            </div>
-          </div>
-        {% endif  %}
-      {% endif %}
-    {% endfor %}
+    {% recent_announcements %}
+
 
     <div><a href="{% url 'announcements' %}">See More Announcements</a></div>
 

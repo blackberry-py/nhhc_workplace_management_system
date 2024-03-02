@@ -37,7 +37,7 @@ from localflavor.us.models import USStateField, USZipCodeField
 from loguru import logger
 from phonenumber_field.modelfields import PhoneNumberField
 
-from nhhc.utils import RandomPasswordGenerator
+from nhhc.utils.password_generator import RandomPasswordGenerator
 
 now = arrow.now(tz="US/Central")
 

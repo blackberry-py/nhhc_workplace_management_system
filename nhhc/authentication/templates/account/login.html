@@ -66,9 +66,9 @@
 
                 </div>
               </div>
-              <div class="custom-control custom-control-alternative custom-checkbox">
-                {{ form.remember }}
-                <span class="text-muted">Remember me?</span>
+              <div class="form-check form-switch">
+                {% render_field form.remember type="checkbox" id="remember-me"  role="switch" class="form-check-input" %}
+                <span class="text-muted form-check-label≈">Remember me?</span>
               </div>
 
               <div class="text-center">

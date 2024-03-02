@@ -8,22 +8,14 @@ from django.db.models import signals
 from employee.models import Employee
 from loguru import logger
 
-logger.add(
-    settings.DEBUG_LOG_FILE, diagnose=True, catch=True, backtrace=True, level="DEBUG"
-)
-logger.add(
-    settings.PRIMARY_LOG_FILE, diagnose=False, catch=True, backtrace=False, level="INFO"
-)
-logger.add(
-    settings.LOGTAIL_HANDLER, diagnose=False, catch=True, backtrace=False, level="INFO"
-)
-
 
 class UserProfile(models.Model):
     user = models.OneToOneField(Employee, unique=True, on_delete=models.CASCADE)
     force_password_change = models.BooleanField(default=True)
     last_password_change = models.DateTimeField(auto_now_add=True)
-
+    
+    def __str__(self) -> str:
+        return f"User Profile of {self.user.last_name}, {self.user.first_name} ({self.user.pk})"
 
 def create_user_profile_signal(sender: Callable, instance, created, **kwargs) -> None:
     if created:

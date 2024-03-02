@@ -20,17 +20,7 @@ from loguru import logger
 from phonenumber_field.modelfields import PhoneNumberField
 
 from nhhc.storage_backends import PrivateMediaStorage
-from nhhc.utils import RandomPasswordGenerator
-
-logger.add(
-    settings.DEBUG_LOG_FILE, diagnose=True, catch=True, backtrace=True, level="DEBUG"
-)
-logger.add(
-    settings.PRIMARY_LOG_FILE, diagnose=False, catch=True, backtrace=False, level="INFO"
-)
-logger.add(
-    settings.LOGTAIL_HANDLER, diagnose=False, catch=True, backtrace=False, level="INFO"
-)
+from nhhc.utils.password_generator import RandomPasswordGenerator
 
 now = str(arrow.now().format("YYYY-MM-DD"))
 

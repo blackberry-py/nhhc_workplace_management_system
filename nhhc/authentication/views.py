@@ -2,7 +2,6 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 from allauth.account.views import LoginView, SignupView
-from authentication.forms import EmployeeLoginForm
 from compliance.models import Compliance
 
 # Create your views here.

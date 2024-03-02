@@ -25,8 +25,26 @@
 <script type="text/javascript" src="{% static 'vendor/js-cookie/js.cookie.js' %}"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slicknav@1.0.8/dist/jquery.slicknav.min.js"></script>
 <script type="module" src="{% static 'formset/js/django-formset.js' %}" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/highlight.run"></script>
 
+<!-- Highlight.io APM Trace and Session Monitoring -->
+<script>
+    H.init('jdkmrpog', {
+        environment: 'development',
+        version: 'v:1',
+        tracingOrigins: true,
+        networkRecording: {
+            enabled: true,
+            recordHeadersAndBody: true,
+            urlBlocklist: [
 
+            ],
+        },
+    });
+</script>
+
+<!-- BetterStack - Uptime  Annoucement Injector  -->
+<script src="https://uptime.betterstack.com/widgets/announcement.js" data-id="181789" async="async" type="text/javascript"></script>
 <!-- Plugins and libraries -->
 <script src="{% static 'js/mixitup.min.js' %}" defer></script>
 <script src="{% static 'js/masonry.pkgd.min.js' %}" defer></script>
@@ -37,3 +55,7 @@
 <script src="{% static 'js/pagination.js' %}" defer></script>
 <script type="module" src="{% static 'js/main.js' %}" ></script>
 <script src="{% static 'js/custom-scripts.js' %}" ></script>
+
+
+
+

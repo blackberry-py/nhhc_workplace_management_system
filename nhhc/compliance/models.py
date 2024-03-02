@@ -36,6 +36,9 @@ Note: This model utilizes the ExportModelOperationsMixin from django_prometheus 
 """
 
 
+from typing import Union
+
+from django.conf import settings
 from django.db import models
 from django.db.models import signals
 from django.utils.translation import gettext_lazy as _
@@ -43,20 +46,8 @@ from django_prometheus.models import ExportModelOperationsMixin
 from employee.models import Employee
 from filer.fields.file import FilerFileField
 from loguru import logger
-from typing import Union
-from django.conf import settings
 
 from nhhc.storage_backends import PrivateMediaStorage
-
-logger.add(
-    settings.DEBUG_LOG_FILE, diagnose=True, catch=True, backtrace=True, level="DEBUG"
-)
-logger.add(
-    settings.PRIMARY_LOG_FILE, diagnose=False, catch=True, backtrace=False, level="INFO"
-)
-logger.add(
-    settings.LOGTAIL_HANDLER, diagnose=False, catch=True, backtrace=False, level="INFO"
-)
 
 
 class Contract(models.Model, ExportModelOperationsMixin("contracts")):
@@ -136,8 +127,8 @@ class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
         blank=True,
     )
 
-    def __str__(self):
-        return str(self.employee)
+    def __str__(self) -> str:
+        return f"Compliance Profile of {self.employee.last_name}, {self.employee.first_name} ({self.employee.pk})"
 
     def is_eligible_to_work(self) -> bool:
         employee_profile = Employee.objects.get(pk=self.employee.pk)

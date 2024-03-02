@@ -4,15 +4,17 @@
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content="internal employee management CMS portal for Nett Hands Home Care Employees"/>
+    <meta name="keywords" content="employee management, CMS, portal Nett Hands Home Care, Employees"/>
 
     <title>
       Nett Hands Home Care Portal - {% block title %}  {% endblock title %}
     </title>
 
     <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.png' %}">
-    <link rel=="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.png' %}">
-    ]
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.png' %}">
+
   <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
@@ -53,9 +55,7 @@
       </div>
 
       {% block content %}
-        <div id="toast-node"></div>
       {% endblock content %}
-
 
     </div>
 
@@ -63,7 +63,6 @@
 
   <!-- Specific JS goes HERE -->
     {% block javascripts %}{% endblock javascripts %}
-
 
   </body>
 

@@ -1,7 +1,7 @@
 from announcements.models import Announcements
-from crispy_forms.bootstrap import FormActions, Modal, UneditableField
+from crispy_forms.bootstrap import FormActions, InlineRadios, Modal
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import HTML, Column, Layout, Reset, Row, Submit
+from crispy_forms.layout import HTML, Button, Column, Layout, Reset, Row, Submit
 from django import forms
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -28,19 +28,26 @@ class AnnouncementForm(forms.ModelForm):
                         css_id="announcement_title",
                     ),
                     Column(
-                        "message_type",
+                        InlineRadios("message_type"),
                         css_class="form-group col-lg-4 mb-0 editable ",
                         css_id="message_type",
-                    ),
-                ),
+                    ),                 css_class="form-row "),
                 Row(
                     Column(
-                        Column(
                             "message",
-                            css_class="form-group col-lg-4 mb-0 editable form-text-area",
+                            css_class="form-group col-12 mb-0 editable form-text-area",
                             css_id="message",
-                        ),
-                    ),
-                ),
+                   ),
+                                css_class="form-row "),
+            Row(
+                FormActions(
+                    Button("submit", "Post Announcement", onClick="confirmAnnouncementPost"),
+                    Button("cancel", "Cancel", css_class="btn btn-danger"),
+                    Button("submit","Save Draft", css_class="btn btn-danger", onClick="confirmAnnouncementDraft")
+                )
+            ), 
+        css_id="new-annoucement-modal",
+        title="Create New Announcement",
+        title_class="w-100 text-center",
             ),
         )

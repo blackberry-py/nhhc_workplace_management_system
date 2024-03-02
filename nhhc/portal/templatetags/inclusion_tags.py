@@ -1,6 +1,7 @@
-from typing import Union, Optional
-from django import template
+from typing import Optional, Union
+
 from announcements.models import Announcements
+from django import template
 
 register = template.Library()
 
