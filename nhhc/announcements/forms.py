@@ -17,7 +17,7 @@ class AnnouncementForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_action = "/"
-        self.helper.form_id = "announcement"
+        self.helper.form_id = "announcement-form"
         self.helper.form_method = "post"
         self.helper.layout = Layout(
             Modal(
@@ -31,23 +31,35 @@ class AnnouncementForm(forms.ModelForm):
                         InlineRadios("message_type"),
                         css_class="form-group col-lg-4 mb-0 editable ",
                         css_id="message_type",
-                    ),                 css_class="form-row "),
+                    ),
+                    css_class="form-row ",
+                ),
                 Row(
                     Column(
-                            "message",
-                            css_class="form-group col-12 mb-0 editable form-text-area",
-                            css_id="message",
-                   ),
-                                css_class="form-row "),
-            Row(
-                FormActions(
-                    Button("submit", "Post Announcement", onClick="confirmAnnouncementPost"),
-                    Button("cancel", "Cancel", css_class="btn btn-danger"),
-                    Button("submit","Save Draft", css_class="btn btn-danger", onClick="confirmAnnouncementDraft")
-                )
-            ), 
-        css_id="new-annoucement-modal",
-        title="Create New Announcement",
-        title_class="w-100 text-center",
+                        "message",
+                        css_class="form-group col-12 mb-0 editable form-text-area",
+                        css_id="message",
+                    ),
+                    css_class="form-row ",
+                ),
+                Row(
+                    FormActions(
+                        Button(
+                            "submit",
+                            "Post Announcement",
+                            onClick="confirmAnnouncementPost",
+                        ),
+                        Button("cancel", "Cancel", css_class="btn btn-danger"),
+                        Button(
+                            "submit",
+                            "Save Draft",
+                            css_class="btn btn-danger",
+                            onClick="confirmAnnouncementDraft",
+                        ),
+                    )
+                ),
+                css_id="new-annoucement-modal",
+                title="Create New Announcement",
+                title_class="w-100 text-center",
             ),
         )

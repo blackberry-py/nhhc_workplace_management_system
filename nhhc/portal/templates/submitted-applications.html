@@ -41,7 +41,6 @@
                 </div>
               </form>
 
-
           <!-- Light table -->
               <ul class="nav nav-tabs">
                 <li class="tab nav-item">
@@ -76,7 +75,7 @@
                           <tr class="client-submission reviewed">
                         {% elif submission.reviewed is True %}
                           <tr class="client-submission pending">
-                        {% endif  %}
+                        {% endif %}
                         </tr>
                         <th scope="row">
                           <div class="media align-items-center">
@@ -114,14 +113,15 @@
                         </tr>
 
                       {% endfor %}
-                    </div>
-                    </tbody>
+           
                   {% else %}
                     <h2>No Submitted Applications</h2>
-                    d                   </tbody>
+                    </tbody>
 
                   {% endif %}
                 </table>
+                </div>
+                
 
                                    {# .... **Now the pagination section** .... #}
                 {% if is_paginated %}

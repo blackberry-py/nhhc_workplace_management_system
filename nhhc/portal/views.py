@@ -52,6 +52,7 @@ from web.models import ClientInterestSubmissions, EmploymentApplicationModel
 
 now = arrow.now(tz="America/Chicago")
 
+
 @login_required(login_url="/login/")
 def portal_dashboard(request: HttpRequest) -> HttpResponse:
     """

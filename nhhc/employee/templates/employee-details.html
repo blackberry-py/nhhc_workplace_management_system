@@ -23,22 +23,22 @@
           </div>
         </div>
       </div>
-    {% if form.errors %}
-      <div id="form-errors">
-        <ul class="form-errors-list">
-          <p class="form-error-header">Please correct the errors below and resubmit...</p>
-          {% for field, errors in form.errors.items %}
-            `              {% for error in errors %}
-              <li class="form-error">{{ error }}</li>
+      {% if form.errors %}
+        <div id="form-errors">
+          <ul class="form-errors-list">
+            <p class="form-error-header">Please correct the errors below and resubmit...</p>
+            {% for field, errors in form.errors.items %}
+              `              {% for error in errors %}
+                <li class="form-error">{{ error }}</li>
+              {% endfor %}
+              </ul>
             {% endfor %}
-            </ul>
-          {% endfor %}
-        </div>
-    {% endif %}
+          </div>
+      {% endif %}
       <div class="card-body">
         <div class="row">
           <div class="col-12 mb-0">
-            
+
             <h1>Personal Information</h1>
           </div>
         </div>
@@ -141,84 +141,84 @@
         <div class="row">
           <form>
             {% csrf_token %}
-           {% crispy compliance_form %}
-          <h2>Position Details</h2>
-        </div>
-        <div class="row">
-
-          <div class="col-4">
-            <h3><strong>Hire Date:</strong></h3>
-            <p>{{ employee.hire_date }}</p>
+            {% crispy compliance_form %}
+            <h2>Position Details</h2>
           </div>
+          <div class="row">
 
-          <div class="col-4">
-            <h3><strong>Length of Employment:</strong></h3>
-            {% if employee.termination_date is None %}
-              <p>{{ employee.hire_date|naturalday }}</p>
+            <div class="col-4">
+              <h3><strong>Hire Date:</strong></h3>
+              <p>{{ employee.hire_date }}</p>
+            </div>
+
+            <div class="col-4">
+              <h3><strong>Length of Employment:</strong></h3>
+              {% if employee.termination_date is None %}
+                <p>{{ employee.hire_date|naturalday }}</p>
             {% comment %} {% else %} {% endcomment %}
             {% comment %} FIXME: Correct te Calculkation of Length if Employment Possible Tag {% endcomment %}
             {% comment %} {{employee.termination_date - employee.hire_date}} {% endcomment %}
+              {% endif %}
+            </div>
+            {% if employee.termination_date is not None %}
+              <div class="col-4">
+                <h3><strong>Termination Date:</strong></h3>
+                <p>{{ employee.termination_date }}</p>
+              </div>
             {% endif %}
           </div>
-          {% if employee.termination_date is not None %}
+          <div class="row">
             <div class="col-4">
-              <h3><strong>Termination Date:</strong></h3>
-              <p>{{ employee.termination_date }}</p>
+              <h3><strong>Related to Client:</strong></h3>
+              <p>{{ employee.family_hca }}</p>
             </div>
-          {% endif %}
-        </div>
-        <div class="row">
-          <div class="col-4">
-            <h3><strong>Related to Client:</strong></h3>
-            <p>{{ employee.family_hca }}</p>
-          </div>
-          <div class="col-4">
-            <h3><strong>GED/High School Diploma:</strong></h3>
-            {% if employee.qualifications_verification %}
-            <a href={{ employee.qualifications_verification.url }} target="_blank"><p>{{ employee.qualifications_verification.name }}</p></a>
-            {% else %}
-              <p>No File Available</p>
-            {% endif %}
-          </div>
-          <div class="col-4">
-            <h3><strong>CPR Verification:</strong></h3>
-            {% if employee.cpr_verification %}
-            <div class="center">
-            <a href={{ employee.cpr_verification.url }} target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
+            <div class="col-4">
+              <h3><strong>GED/High School Diploma:</strong></h3>
+              {% if employee.qualifications_verification %}
+                <a href={{ employee.qualifications_verification.url }} target="_blank"><p>{{ employee.qualifications_verification.name }}</p></a>
+              {% else %}
+                <p>No File Available</p>
+              {% endif %}
             </div>
-            {% else %}
-              <p>No File Available</p>
-            {% endif %}
+            <div class="col-4">
+              <h3><strong>CPR Verification:</strong></h3>
+              {% if employee.cpr_verification %}
+                <div class="center">
+                  <a href={{ employee.cpr_verification.url }} target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
+                </div>
+              {% else %}
+                <p>No File Available</p>
+              {% endif %}
+            </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-6">
-            <label for="job_title" class="form-check-label">Agency Job Tile</label>
-            {% render_field compliance_form.job_title  class="form-control" %}
-          </div>
+          <div class="row">
+            <div class="col-6">
+              <label for="job_title" class="form-check-label">Agency Job Tile</label>
+              {% render_field compliance_form.job_title  class="form-control" %}
+            </div>
             <div class="col-6">
               <label for="contract_code" class="form-check-label">Contract Code</label>
               {% render_field compliance_form.contract_code  class="form-control" %}
             </div>
           </div>
-            <hr class="my-4" />
-        <div class="row">
-          <h2>Regulatory and Compliance</h2>
-        </div> 
-        <div class="row">'
-          <div class="col-4">
-          <label for="aps_check_passed" class="f  orm-check-label">APS Background Check Passed?</label>
-          {% render_field compliance_form.aps_check_passed  class="form-control" %}
+          <hr class="my-4" />
+          <div class="row">
+            <h2>Regulatory and Compliance</h2>
           </div>
+          <div class="row">'
+            <div class="col-4">
+              <label for="aps_check_passed" class="f  orm-check-label">APS Background Check Passed?</label>
+              {% render_field compliance_form.aps_check_passed  class="form-control" %}
+            </div>
+          </div>
+          <div class="w-full text-center">
+            {% if request.user.is_superuser %}
+              <button id="terminate-employee-btn" onclick="confirmTermination({{ employee.id }})" class="btn btn-danger" >Terminate Employment</button>
+            {% endif %}
+            <a  class="btn btn-secondary" href="{% url 'roster' %}">Back to Employee Roster</a>
+          </div>
+        </div>
       </div>
-      <div class="w-full text-center">
-        {% if request.user.is_superuser %}
-          <button id="terminate-employee-btn" onclick="confirmTermination({{ employee.id }})" class="btn btn-danger" >Terminate Employment</button>
-        {% endif %}
-        <a  class="btn btn-secondary" href="{% url 'roster' %}">Back to Employee Roster</a>
-      </div>
-    </div>
-  </div>
 
 {% endblock content %}
 

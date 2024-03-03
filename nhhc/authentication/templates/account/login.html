@@ -29,7 +29,7 @@
                     <p class="form-error-header">Please correct the errors below and resubmit...</p>
                     {% for field, errors in form.errors.items %}
                       `              {% for error in errors %}
-                        <li class="form-error">{{ field }}: {{ error }}</li>
+                        <li class="form-error">{{ error }}</li>
                       {% endfor %}
                       </ul>
                     {% endfor %}
@@ -68,7 +68,7 @@
               </div>
               <div class="form-check form-switch">
                 {% render_field form.remember type="checkbox" id="remember-me"  role="switch" class="form-check-input" %}
-                <span class="text-muted form-check-label≈">Remember me?</span>
+                <span class="text-muted form-check-label">Remember me?</span>
               </div>
 
               <div class="text-center">

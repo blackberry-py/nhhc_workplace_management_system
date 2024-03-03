@@ -136,18 +136,26 @@
                 <div id="pagination-navigation" class="pagination">
                   <span class="page-links">
                     {% if page_obj.has_previous %}
-                      <a href="/inquiries?page={{ page_obj.previous_page_number }}"><i class="fa-solid fa-left-long fa-2xl"></i></a>
+                      <a href="{% url 'roster' page=page_obj.previous_page_number %}"><i class="fa-solid fa-left-long fa-2xl"></i></a>
                     {% endif %}
                     <span class="page-current">
                       Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
                     </span>
                     {% if page_obj.has_next %}
-                      <a href="/inquiries?page={{ page_obj.next_page_number }}"><i class="fa-solid fa-right-long fa-2xl"></i></a>
+                      <a href="{% url 'roster' page=page_obj.next_page_number %}"><i class="fa-solid fa-right-long fa-2xl"></i></a>
                     {% endif %}
+                  </span>
+
             {% endif %}
           </div>
         <!-- Card footer -->
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
           <!-- Card footer -->
 
 

@@ -16,53 +16,41 @@
   <!-- Header container -->
     <div class="container-fluid d-flex align-items-center">
       <div class="row">
-        <div class="col-12">
-          <h1 class="display-2 text-white">
-            Hello {{ request.user.first_name }}!
-          </h1>
-          <p class="text-white mt-0 mb-5"></p>
-          <button id="edit-button" class="btn btn-neutral">Edit Employee Profile</button>
-        </div>
+
       </div>
     </div>
   </div>
 <!-- Page content -->
   <div class="container-fluid mt--6">
     <div class="row">
-      <div class="col-xl-4 order-xl-2">
-        <div class="card card-profile">
-          <img src="{% static 'img/profile-card-image.png' %}" alt="Image placeholder" class="card-img-top" height="auto" width="auto" />
-          <div class="row justify-content-center">
-            <div class="col-lg-3 order-lg-2">=2
-              <div class="col-xl-8 order-xl-1">
-                <div class="card">
-                  <div class="card-header">
-                    <div class="row align-items-center">
-                      <div class="col-8">
-                        <h3 class="mb-0">Create New Announcement </h3>
+      <div class="card">
+        <div class="card-header">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h3 class="mb-0">Create New Announcement </h3>
+              <div class="card-body">
+                {% if messages %}
+                  <h3 class="red"> Please Correct The Following Errors:</h3>
+                  <ul class="messages">
+                    {% for message in messages %}
+                      <li class="red">{{ message }}</li>
+                    {% endfor %}
+                  </ul>
+                  <hr class="my-4" />
 
-                        <div class="card-body">
-                          {% if messages %}
-                            <h3 class="red"> Please Correct The Following Errors:</h3>
-                            <ul class="messages">
-                              {% for message in messages %}
-                                <li class="red">{{ message }}</li>
-                              {% endfor %}
-                            </ul>
-                            <hr class="my-4" />
+                {% endif %}
+                {% csrf_token %}
+                {% crispy form %}
 
-                          {% endif %}
-                          {% csrf_token %}
-                          {% crispy form %}
-
-                          <hr class="my-4" />
+                <hr class="my-4" />
             <!-- Description -->
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {% include "includes/footer.html" %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 {% endblock content %}
 

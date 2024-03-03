@@ -1,5 +1,5 @@
 from compliance.models import Compliance, Contract
-from crispy_forms.bootstrap import FormActions, Modal, UneditableField
+from crispy_forms.bootstrap import FormActions, Modal
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Column, Layout, Reset, Row, Submit
 from django import forms

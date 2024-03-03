@@ -13,9 +13,10 @@ class UserProfile(models.Model):
     user = models.OneToOneField(Employee, unique=True, on_delete=models.CASCADE)
     force_password_change = models.BooleanField(default=True)
     last_password_change = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self) -> str:
         return f"User Profile of {self.user.last_name}, {self.user.first_name} ({self.user.pk})"
+
 
 def create_user_profile_signal(sender: Callable, instance, created, **kwargs) -> None:
     if created:
@@ -34,16 +35,3 @@ def password_change_signal(sender, instance, **kwargs) -> None:
             profile.save()
     except Employee.DoesNotExist:
         pass
-
-
-signals.pre_save.connect(
-    password_change_signal,
-    sender=Employee,
-    dispatch_uid=f"employee.models + {str(uuid4())}",
-)
-
-signals.post_save.connect(
-    create_user_profile_signal,
-    sender=Employee,
-    dispatch_uid=f"employee.models + {str(uuid4())}",
-)

@@ -27,8 +27,7 @@ class EmployeeAdmin(admin.ModelAdmin):
     actions = []
     date_hierarchy = "hire_date"
 
-
-      # SECTION - Custom Admin Actions
+    # SECTION - Custom Admin Actions
     @admin.action(description="Rehire selected Employee Groups")
     def rehire(self, request: HttpRequest, queryset: QuerySet[Employee]) -> None:
         """
@@ -46,7 +45,9 @@ class EmployeeAdmin(admin.ModelAdmin):
             None
         """
         if queryset.exists():
-            updated = queryset.update(is_active=True, termination_date=None, hire_date=now())
+            updated = queryset.update(
+                is_active=True, termination_date=None, hire_date=now()
+            )
             self.message_user(
                 request,
                 ngettext(

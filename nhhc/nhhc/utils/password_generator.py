@@ -42,4 +42,3 @@ class RandomPasswordGenerator:
         random_password = "".join(random.choice(chars) for i in range(password_length))
 
         return random_password
-    

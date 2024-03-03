@@ -57,8 +57,6 @@ class EmployeeDetail(DetailView):
     model = Employee
     template_name = "employee-details.html"
     context_object_name = "employee"
-    
-    
 
 
 # !SECTION

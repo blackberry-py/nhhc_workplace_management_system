@@ -27,6 +27,7 @@
           <!-- Card header -->
           <div class="card-header border-0">
             <h3 class="mb-0">Submissions</h3>
+          </div>
             <div id="list-looker">
               <form class="navbar-search navbar-search-light form-inline mr-sm-3" id="navbar-search-main">
                 <div class="form-group mb-0">
@@ -74,14 +75,14 @@
                           <tr class="client-submission reviewed">
                         {% elif submission.reviewed is True %}
                           <tr class="client-submission pending">
-                        {% endif  %}
+                        {% endif %}
                         <th scope="row">
                           <div class="media align-items-center">
-
                             <div class="media-body">
                               {% if submission.reviewed is False %}
                                 <span class="badge badge-pill badge-success">New</span>
                               {% endif %}
+                            </div>
                             </th>
                             <td class="date-submitted">
                               {{ submission.date_submitted }}
@@ -102,12 +103,14 @@
                               <a class="btn btn-secondary" href="{% url 'client_interest_details' pk=submission.pk %}">Details</a>
                             </td>
                           </tr>
+                        </tr>
                       {% endfor %}
-                    </div>
-                    </tbody>
                   {% else %}
                     <h2> No Client Service Request Inquiries Submitted </h2>
                     </tbody>
+                  </div>
+                  </div>
+
                   {% endif %}
                 </table>
                 {% if is_paginated %}
@@ -115,22 +118,24 @@
                     <div class="pagination">
                       <span class="page-links">
                         {% if page_obj.has_previous %}
-                          <a href="/inquiries?page={{ page_obj.previous_page_number }}"><i class="fa-solid fa-left-long fa-2xl"></i></a>
+                          <a href="{% url 'inquiries' page=page_obj.previous_page_number %}"><i class="fa-solid fa-left-long fa-2xl"></i></a>
                         {% endif %}
                         <span class="page-current">
                           Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
                         </span>
                         {% if page_obj.has_next %}
-                          <a href="/inquiries?page={{ page_obj.next_page_number }}"><i class="fa-solid fa-right-long fa-2xl"></i></a>
+                          <a href="{% url 'inquiries' page=page_obj.next_page_number %}"><i class="fa-solid fa-right-long fa-2xl"></i></a>
                         {% endif %}
                       </span>
                     </div>
                   </div>
                 {% endif %}
-
-
-          <!-- Card footer -->
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
 
 {% endblock content %}
 

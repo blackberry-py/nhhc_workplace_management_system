@@ -40,7 +40,6 @@ from typing import Union
 
 from django.conf import settings
 from django.db import models
-from django.db.models import signals
 from django.utils.translation import gettext_lazy as _
 from django_prometheus.models import ExportModelOperationsMixin
 from employee.models import Employee
@@ -140,20 +139,3 @@ class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
         ordering = ["employee"]
         verbose_name = "Compliance-Auditing Data"
         verbose_name_plural = "Compliance-Auditing Data"
-
-
-def employee_terminated_signal(sender, instance, **kwargs) -> None:
-    try:
-        employee = Employee.objects.get(username=instance.username)
-        if not employee.is_active and employee.termination_date is not None:
-            logger.info(
-                f"Archiving Terminated Employee - {employee.last_name}, {employee.first_name}"
-            )
-            # TODO: Complete Stroage Set up AND then implement profile archival
-    except Employee.DoesNotExist:
-        pass
-
-
-signals.pre_save.connect(
-    employee_terminated_signal, sender=Employee, dispatch_uid="employee.models"
-)

@@ -8,7 +8,7 @@
       <div class="header-body">
         <div class="row align-items-center py-4">
           <div class="col-lg-6 col-7">
-            <h6 class="h2 text-white d-inline-block mb-0">Submitted Employment Applications</h6>
+            <h6 class="h2 text-white d-inline-block mb-0">Announcements</h6>
             <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
             </nav>
           </div>
@@ -31,102 +31,92 @@
           <!-- Light table -->
           {% if request.user.is_superuser %}
             <div class="col-lg-3 text-right">
-              <a href= data-bs-target="#modal-create-new-announcement" class="btn btn-sm btn-neutral">New Announcement</a>
+              <button data-toggle="modal" data-target="#new-annoucement-modal" class="btn btn-lg btn-neutral">New Announcement</button>
             </div>
-            {% endif %}
-            <ul class="nav nav-tabs">
-              <li class="tab nav-item">
-                <a class="nav-link tab active" id="all" aria-current="page" href="#">{{ all_submission }} Total Announcements</a>
+          {% endif %}
+          <ul class="nav nav-tabs">
+            <li class="tab nav-item">
+              <a class="nav-link tab active" id="all" aria-current="page" href="#">{{ all_submission }} Total Announcements</a>
+            </li>
+            {% if request.user.is_superuser %}
+              <li class="nav-item">
+                <a class="nav-link tab" id="deleted" href="#">{{ deleted }} Archived Announcements </a>
               </li>
-              {% if request.user.is_superuser %}
-                <li class="nav-item">
-                  <a class="nav-link tab" id="deleted" href="#">{{ deleted }} Archived Announcements </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link tab" id="draft" href="#">{{ draft }} Draft Announcements</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link tab" id="active" href="#">{{ active }} Active Announcements</a>
-                </li>
-              {% endif %}
-            </ul>
+              <li class="nav-item">
+                <a class="nav-link tab" id="draft" href="#">{{ draft }} Draft Announcements</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link tab" id="active" href="#">{{ active }} Active Announcements</a>
+              </li>
+            {% endif %}
+          </ul>
 
-            <div class="table-responsive">
-              <table class="table align-items-center table-flush table-hover">
-                <thead class="thead-light">
-                  <tr>
-                    <th scope="col" class="sort" data-sort="name">Status</th>
-                    <th scope="col" class="sort" data-sort="name">Created By</th>
-                    <th scope="col" class="sort" data-sort="budget">Catagory</th>
-                    <th scope="col" class="sort" data-sort="budget">Message</th>
-                    <th scope="col"></th>
-                  </tr>
-                </thead>
-                <tbody class="list">
-                  {% for anouncement in announcements %}
-                    {% if anouncement.status == 'D' %}
-                      <tr class="client-submission draft">
-                    {% elif anouncement.status == 'A' %}
-                      <tr class="client-submission active">
-                    {% elif anouncement.status == 'X' %}
-                      <tr class="client-submission deleted">
-                    {% endif %}
-                    <td>
-                      {{ anouncement.get_status_display }}
-                    </td>
-                    <td class="budget">
-                      {{ anouncement.posted_by.first_name }} {{anouncement.posted_by.last_name}}
-                    </td>
-                    <td>
-                      {{ anouncement.get_message_type_display }}
-                    </td>
+          <div class="table-responsive">
+            <table class="table align-items-center table-flush table-hover">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col" class="sort" data-sort="name">Status</th>
+                  <th scope="col" class="sort" data-sort="name">Created By</th>
+                  <th scope="col" class="sort" data-sort="budget">Catagory</th>
+                  <th scope="col" class="sort" data-sort="budget">Message</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody class="list">
+                {% for anouncement in announcements %}
+                  {% if anouncement.status == 'D' %}
+                    <tr class="client-submission draft">
+                  {% elif anouncement.status == 'A' %}
+                    <tr class="client-submission active">
+                  {% elif anouncement.status == 'X' %}
+                    <tr class="client-submission deleted">
+                  {% endif %}
+                  <td>
+                    {{ anouncement.get_status_display }}
+                  </td>
+                  <td class="budget">
+                    {{ anouncement.posted_by.first_name }} {{ anouncement.posted_by.last_name }}
+                  </td>
+                  <td>
+                    {{ anouncement.get_message_type_display }}
+                  </td>
 
-                    <td class="text-break">
-                      {{ anouncement.message }}
-                    </td>
+                  <td class="text-break">
+                    {{ anouncement.message }}
+                  </td>
 
-                    <td>
-                      <a class="btn btn-secondary" href="#">Edit</a>
-                    </td>
-                    </tr>
-                    </tr>
-                    </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-                                         {# .... **Now the pagination section** .... #}
-              {% if is_paginated %}
-                <div class="mx-auto text-center">
-                  <div id="pagination-navigation" class="pagination">
-                    <span class="page-links">
-                      {% if page_obj.has_previous %}
-                        <a href="/inquiries?page={{ page_obj.previous_page_number }}"><i class="fa-solid fa-left-long fa-2xl"></i></a>
-                      {% endif %}
-                      <span class="page-current">
-                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                  <td>
+                    <a class="btn btn-secondary" href="{{ url }}">Edit</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% if is_paginated %}
+                  <div class="mx-auto text-center">
+                    <div class="pagination">
+                      <span class="page-links">
+                        {% if page_obj.has_previous %}
+                          <a href="{% url 'announcements' page=page_obj.previous_page_number %}"><i class="fa-solid fa-left-long fa-2xl"></i></a>
+                        {% endif %}
+                        <span class="page-current">
+                          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        </span>
+                        {% if page_obj.has_next %}
+                          <a href="{% url 'announcements' page=page_obj.next_page_number %}"><i class="fa-solid fa-right-long fa-2xl"></i></a>
+                        {% endif %}
                       </span>
-                      {% if page_obj.has_next %}
-                        <a href="/inquiries?page={{ page_obj.next_page_number }}"><i class="fa-solid fa-right-long fa-2xl"></i></a>
-                      {% endif %}
-              {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
             </div>
-          <!-- Card footer -->
-            <div class="card-footer py-4">
-              <nav aria-label="...">
-                <ul class="pagination__list pagination justify-content-end mb-0">
-                </ul>
-              </nav>
-            </div>
-            </div>
-            </div>
-            </div>
+          </div>
+        </div>
+      </div>
+    
 
-
-            </div>
-
-          {% endblock content %}
+{% endblock content %}
 
 <!-- Specific JS goes HERE -->
-          {% block javascripts %}
-
-          {% endblock javascripts %}
+{% block javascripts %}{% endblock javascripts %}

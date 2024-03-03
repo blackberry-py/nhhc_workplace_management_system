@@ -472,8 +472,6 @@ function  confirmAnnouncementDraft(title, message, message_type) {
 
     )
 
-
-        }})
 /*
     data = JSON.stringify(data)
     $.ajax({
