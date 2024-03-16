@@ -153,3 +153,4 @@ node_modules
 private_key.pem
 public_key.pem
 nhhc/nhhc/private_key.py
+.rubberduck/template/create_function_docstring.rdt.md
