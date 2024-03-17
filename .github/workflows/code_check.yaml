@@ -36,6 +36,7 @@ jobs:
           poetry install  --without dev --without test
       - name: Run Tests
         run: |
+          . .venv/bin/activate
           python nhhc/manage.py test
           
   merge:
