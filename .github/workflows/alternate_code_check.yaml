@@ -12,6 +12,8 @@ jobs:
         with:
           doppler-token: ${{ secrets.DOPPLER_TOKEN }}
           inject-env-vars: true
+          doppler-project: nhhc
+          doppler-config: stg
       - name: Create VENV 
         run: |
           python3 -m venv .  venv

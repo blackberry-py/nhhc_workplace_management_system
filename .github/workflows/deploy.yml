@@ -1,11 +1,10 @@
 name: Render Deploy
 
 on:
-  pull_request:
-    branches:
-      - main
-      - production
-
+  workflow_call: 
+    inputs:
+      render-api-key:  
+        type: secret  
 
 jobs:
   deploy:
