@@ -14,6 +14,11 @@ jobs:
           inject-env-vars: true
           doppler-project: nhhc
           doppler-config: stg
+      - name: Setup Python3.12
+        uses: actions/setup-python@v5
+        with:
+            python-version: 3.12
+            cache: poetry
       - name: cache dependencies
         uses: actions/cache@v3
         with:

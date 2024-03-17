@@ -20,9 +20,8 @@ jobs:
       - name: "Setup Python, Poetry and Dependencies"
         uses: packetcoders/action-setup-cache-python-poetry@main
         with:
-            python-version: 3.11.4
+            python-version: 3.12
             poetry-version: 1.5.1
-            install-args: --without dev test
       - name: Run Unit Tests
         run: |
           source .venv/bin/activate
