@@ -14,6 +14,8 @@ jobs:
           inject-env-vars: true
           doppler-project: nhhc
           doppler-config: stg
+      - name: Install poetry
+        run: pipx install poetry
       - name: Setup Python3.12
         uses: actions/setup-python@v5
         with:
