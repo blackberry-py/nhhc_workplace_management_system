@@ -28,10 +28,14 @@ db-shell: ## Access the Postgres Docker database interactively with psql. Pass i
 
 .PHONY: test
 test: ## Run tests
-	coverage run nhhc/manage.py test web employee portal  --verbosity=2  --keepdb  --failfast  --force-color
+	doppler run -- coverage run nhhc/manage.py test web employee portal  --verbosity=2  --keepdb  --failfast  --force-color
+
+.PHONY: test
+pipeline-test: ## Run tests
+	$(PYTHON) nhhc/manage.py test web employee portal  --verbosity=2  --keepdb  --failfast  --force-color
 
 .PHONY: run
 run: ## Run the Django server
-	$(PYTHON) nhhc/manage.py runserver
+	doppler run -- 	$(PYTHON) nhhc/manage.py runserver
 
 start: install migrate run ## Install requirements, apply migrations, then start development server

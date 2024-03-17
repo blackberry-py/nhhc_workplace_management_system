@@ -5,7 +5,7 @@ import django_prometheus.models
 from django.conf import settings
 from django.db import migrations, models
 
-import nhhc.storage_backends
+import nhhc.backends.storage_backends
 
 
 class Migration(migrations.Migration):
@@ -60,7 +60,7 @@ class Migration(migrations.Migration):
                     models.FileField(
                         blank=True,
                         null=True,
-                        storage=nhhc.storage_backends.PrivateMediaStorage(),
+                        storage=nhhc.backends.storage_backends.PrivateMediaStorage(),
                         upload_to="aps_check_verification",
                     ),
                 ),
@@ -69,7 +69,7 @@ class Migration(migrations.Migration):
                     models.FileField(
                         blank=True,
                         null=True,
-                        storage=nhhc.storage_backends.PrivateMediaStorage(),
+                        storage=nhhc.backends.storage_backends.PrivateMediaStorage(),
                         upload_to="hhg-oig",
                     ),
                 ),
@@ -86,7 +86,7 @@ class Migration(migrations.Migration):
                     models.FileField(
                         blank=True,
                         null=True,
-                        storage=nhhc.storage_backends.PrivateMediaStorage(),
+                        storage=nhhc.backends.storage_backends.PrivateMediaStorage(),
                         upload_to="idph_bg_check",
                     ),
                 ),
@@ -107,7 +107,7 @@ class Migration(migrations.Migration):
                     models.FileField(
                         blank=True,
                         null=True,
-                        storage=nhhc.storage_backends.PrivateMediaStorage(),
+                        storage=nhhc.backends.storage_backends.PrivateMediaStorage(),
                         upload_to="pretraining_verification",
                     ),
                 ),

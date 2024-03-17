@@ -18,7 +18,6 @@ from highlight_io.integrations.django import DjangoIntegration
 from logtail import LogtailHandler
 from loguru import logger
 
-from nhhc.private_key import PRIVATE_KEY
 
 # SECTION - Basic Application Defintion
 OFFLINE = False
@@ -75,7 +74,6 @@ INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
     "allauth",
     "allauth.account",
-    "django_admin_env_notice",
     "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -128,7 +126,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    # "nhhc.middleware.PasswordChangeMiddleware",
+    # "nhhc.middleware.password_change.PasswordChangeMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
@@ -141,8 +139,7 @@ MIDDLEWARE = [
     "django_prometheus.middleware.PrometheusAfterMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.cache.FetchFromCacheMiddleware",
-    # "django_admin_env_notice.context_processors.from_settings",
-    # "ip_restriction.IpWhitelister",
+
 ]
 AUTH_USER_MODEL = "employee.Employee"
 ROOT_URLCONF = "nhhc.urls"
@@ -156,54 +153,32 @@ mimetypes.add_type("text/javascript", ".js", True)
 # SECTION - Database and Caching
 CACHE_TTL = 60 * 15
 
-if DEBUG:
-    SITE_ID = 1
-    ENVIRONMENT_NAME = "DEVELOPMENT SERVER"
-    ENVIRONMENT_COLOR = "#00FFFF"
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.getenv("POSTGRES_DEV_DATABASE"),
-            "USER": os.getenv("POSTGRES_DEV_USER"),
-            "PASSWORD": os.getenv("POSTGRES_DEV_PASSWORD"),
-            "PORT": 5432,
-            "HOST": os.getenv("POSTGRES_HOST"),
-            "OPTIONS": {"sslmode": "require"},
+SITE_ID = int(os.getenv("SITE_ID"))
+ENVIRONMENT_NAME = os.getenv("ENVIRONMENT_NAME")
+ENVIRONMENT_COLOR = os.getenv("ENVIRONMENT_COLOR")
+REQUEST_BASE_URL =  os.getenv("REQUEST_BASE_URL")
+DATABASES = {
+    "default": {
+        "ENGINE": "django_prometheus.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DATABASE"),
+        "USER": os.getenv("POSTGRES_USER"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "PORT": 5432,
+        "HOST": os.getenv("POSTGRES_HOST"),
+        "OPTIONS": {"sslmode": "require"},
+    },
+}
+CACHES = {
+    "default": {
+        "BACKEND": os.getenv("CACHE_BACKEND"),
+        "LOCATION": os.getenv("REDIS_CACHE_URI"),
+        "OPTIONS": {
+            "PARSER_CLASS": os.getenv("CACHE_PARSER"),
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
+        "KEY_PREFIX": "NHHC-NATIVE",
     }
-
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.dummy.DummyCache",
-        }
-    }
-else:
-    SITE_ID = 3
-    REQUEST_BASE_URL = "https://www.netthandshome.care"
-    ENVIRONMENT_NAME = "PRODUCTION SERVER"
-    ENVIRONMENT_COLOR = "#FF2222"
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.getenv("POSTGRES_PROD_DATABASE"),
-            "USER": os.getenv("POSTGRES_PROD_USER"),
-            "PASSWORD": os.getenv("POSTGRES_PROD_PASSWORD"),
-            "PORT": "5432",
-            "HOST": os.getenv("POSTGRES_HOST"),
-            "OPTIONS": {"sslmode": "require"},
-        },
-    }
-    CACHES = {
-        "default": {
-            "BACKEND": "django_prometheus.cache.backends.redis.RedisCache",
-            "LOCATION": os.getenv("REDIS_CACHE_URI"),
-            "OPTIONS": {
-                "PARSER_CLASS": "redis.connection.HiredisParser",
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            },
-            "KEY_PREFIX": "NHHC-NATIVE",
-        }
-    }
+}
 
 # !SECTION
 
@@ -266,8 +241,8 @@ if STORAGE_DESTINATION == "s3":
     AWS_S3_SIGNATURE_VERSION = "s3v4"
     AWS_QUERYSTRING_EXPIRE = 3600
     AWS_S3_REGION_NAME = "us-east-2"
-    AWS_CLOUDFRONT_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-    AWS_CLOUDFRONT_KEY = PRIVATE_KEY
+    AWS_CLOUDFRONT_KEY_ID = os.getenv("AWS_CLOUDFRONT_KEY_ID")
+    AWS_CLOUDFRONT_KEY = os.getenv("AWS_CLOUDFRONT_PRIVATE_KEY")
     # s3 static settings
     STATIC_LOCATION = "staticfiles"
     STATIC_URL = f"https://cdn.netthandshome.care/{STATIC_LOCATION}/"
@@ -278,16 +253,16 @@ if STORAGE_DESTINATION == "s3":
     # s3 public media settings
     PUBLIC_MEDIA_LOCATION = "media"
     MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
-    DEFAULT_FILE_STORAGE = "nhhc.storage_backends.PublicMediaStorage"
+    DEFAULT_FILE_STORAGE = "nhhc.backends.storage_backends.PublicMediaStorage"
     # s3 private media settings
     PRIVATE_MEDIA_LOCATION = "restricted"
     MEDIA_DIRECTORY = "/restricted/compliance"
-    PRIVATE_FILE_STORAGE = "nhhc.storage_backends.PrivateMediaStorage"
+    PRIVATE_FILE_STORAGE = "nhhc.backends.storage_backends.PrivateMediaStorage"
 
     FILER_STORAGES = {
         "private": {
             "hhg-oig": {
-                "ENGINE": "fnhhc.storage_backends.PrivateMediaStorage",
+                "ENGINE": "fnhhc.backends.storage_backends.PrivateMediaStorage",
                 "OPTIONS": {
                     "location": f"https://{AWS_S3_CUSTOM_DOMAIN}/{PRIVATE_MEDIA_LOCATION}",
                     "base_url": "/smedia/filer/",

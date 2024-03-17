@@ -19,7 +19,7 @@ from localflavor.us.models import (
 from loguru import logger
 from phonenumber_field.modelfields import PhoneNumberField
 
-from nhhc.storage_backends import PrivateMediaStorage
+from nhhc.backends.storage_backends import PrivateMediaStorage
 from nhhc.utils.password_generator import RandomPasswordGenerator
 
 now = str(arrow.now().format("YYYY-MM-DD"))

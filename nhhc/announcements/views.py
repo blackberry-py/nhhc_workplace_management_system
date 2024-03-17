@@ -12,7 +12,8 @@ from typing import Dict
 
 def app_status(request:HttpRequest) -> HttpResponse:
     """Return the status of the application."""
-    if 
+    # TODO: Imple=ment App Specific Heartbeart 
+    pass
     
     
 class AnnoucementsListView(ListView):

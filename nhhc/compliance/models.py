@@ -46,7 +46,7 @@ from employee.models import Employee
 from filer.fields.file import FilerFileField
 from loguru import logger
 
-from nhhc.storage_backends import PrivateMediaStorage
+from nhhc.backends.storage_backends import PrivateMediaStorage
 
 
 class Contract(models.Model, ExportModelOperationsMixin("contracts")):

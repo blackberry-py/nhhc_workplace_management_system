@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 
-import nhhc.storage_backends
+import nhhc.backends.storage_backends
 
 
 class Migration(migrations.Migration):
@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             field=models.FileField(
                 blank=True,
                 null=True,
-                storage=nhhc.storage_backends.PrivateMediaStorage(),
+                storage=nhhc.backends.storage_backends.PrivateMediaStorage(),
                 upload_to="verifications_cpr",
             ),
         ),
@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
             field=models.FileField(
                 blank=True,
                 null=True,
-                storage=nhhc.storage_backends.PrivateMediaStorage(),
+                storage=nhhc.backends.storage_backends.PrivateMediaStorage(),
                 upload_to="verifications_resumes",
             ),
         ),

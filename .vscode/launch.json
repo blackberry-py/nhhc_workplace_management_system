@@ -20,10 +20,12 @@
 
             "justMyCode": true,
             "autoReload": {"enable": true},
-            "envFile": "${workspaceFolder}/.env",
             "host": "localhost",
             "port": 9000,
-            "preLaunchTask": "start venv"
+            "preLaunchTask": "start venv",
+            "env": {
+                "DOPPLER_ENV":"1"
+            }
     
         }
     ]

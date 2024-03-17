@@ -1,5 +1,5 @@
 """
-Module: nhhc.storage_backends
+Module: nhhc.backends.storage_backends
 
 This module contains custom classes for S3Boto3Storage, which are used for storing static, public media, and private media files in AWS S3.
 

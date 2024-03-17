@@ -1,0 +1,44 @@
+{
+	"build": {
+		"dockerfile": "Dockerfile",
+		"context": "."
+	},
+	"features": {
+		"ghcr.io/devcontainers-contrib/features/coverage-py:2": {},
+		"ghcr.io/devcontainers-contrib/features/isort:2": {},
+		"ghcr.io/jungaretti/features/make:1": {},
+		"ghcr.io/itsmechlark/features/doppler:2": {}
+	},
+	"postCreateCommand": "pip install --user -r requirement.txt",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"njpwerner.autodocstring",
+				"Blackboxapp.blackbox",
+				"batisteo.vscode-django",
+				"monosans.djlint",
+				"ms-azuretools.vscode-docker",
+				"github.vscode-github-actions",
+				"VisualStudioExptTeam.vscodeintellicode",
+				"VisualStudioExptTeam.intellicode-api-usage-examples",
+				"ms-vscode.makefile-tools",
+				"ms-python.vscode-pylance",
+				"ms-python.python",
+				"ms-python.debugpy",
+				"donjayamanne.python-environment-manager",
+				"rubberduck.rubberduck-vscode",
+				"wholroyd.jinja",
+				"KevinRose.vsc-python-indent",
+				"ms-vscode-remote.remote-containers",
+				"Rajeshwaran.developer-theme-dark",
+				"GitHub.codespaces",
+				"DavidAnson.vscode-markdownlint",
+				"WolfiesHorizon.python-auto-venv",
+				"teticio.python-envy",
+				"ms-python.black-formatter",
+				"ExodiusStudios.comment-anchors",
+				"aaron-bond.better-comments"
+			]
+		}
+	}
+}
