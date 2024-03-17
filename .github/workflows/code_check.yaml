@@ -36,7 +36,6 @@ jobs:
           poetry install  --without dev --without test
       - name: Run Tests
         run: |
-          poetry shell
           python nhhc/manage.py test
           
   merge:
