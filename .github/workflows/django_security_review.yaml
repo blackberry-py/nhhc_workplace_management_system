@@ -1,0 +1,48 @@
+name: Django Security Check
+
+on: 
+   push:
+   merge_group:
+     
+
+env:
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  FAIL_LEVEL: WARNING
+  ENV_TYPE: venv
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out master
+        uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+      - name: Fetch Env Vars From Doppler
+        uses: dopplerhq/secrets-fetch-action@v1.1.3
+        id: doppler
+        with:
+          doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+          inject-env-vars: true
+          doppler-project: nhhc
+          doppler-config: stg
+      - name: Scan Django settings for security issues
+        id: check
+        uses: victoriadrake/django-security-check@master
+      - id: results
+        run: |
+          OUTPUT=$(cat output.txt)
+          FORMATTED=${OUTPUT//$'\n'/%0A}
+          echo ::set-output name=file::**Django Security Check identified issues:** %0A$FORMATTED
+      - name: Comment with output
+        uses: actions/github-script@v3
+        with:
+          script: |
+            github.issues.createComment({
+              issue_number: ${{ github.event.number }},
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `${{ steps.results.outputs.file }}`
+            })
