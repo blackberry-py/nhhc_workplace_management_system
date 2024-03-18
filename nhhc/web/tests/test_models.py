@@ -8,7 +8,7 @@ from loguru import logger
 from model_bakery import baker
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
 
-from nhhc.testing_utils import (
+from nhhc.utils.testing import (
     generate_mock_PhoneNumberField,
     generate_mock_ZipCodeField,
 )

@@ -9,8 +9,9 @@ from employee.models import Employee
 from employee.views import employee_details, hire, reject, send_new_user_credentials
 from model_bakery import baker
 from web.models import EmploymentApplicationModel
+import random
 
-from nhhc.testing_utils import (
+from nhhc.utils.testing import (
     generate_mock_PhoneNumberField,
     generate_mock_USSocialSecurityNumberField,
     generate_mock_ZipCodeField,
@@ -60,6 +61,7 @@ class TestEmployeeActions(TestCase):
             username="staffuser",
             password="12345",
             is_staff=True,
+            application_id=random.randint(2,5655)
         )
         self.contact = baker.make(Contract, code="FAKE")
         self.staff_user_compliance = baker.make(

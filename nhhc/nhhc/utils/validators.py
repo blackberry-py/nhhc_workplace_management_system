@@ -1,5 +1,5 @@
 """
-module: nhhc.validators
+module: nhhc.utils.validators
 
 Module for handling file uploads and validation.
 

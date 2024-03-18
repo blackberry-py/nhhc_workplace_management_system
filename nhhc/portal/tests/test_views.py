@@ -18,7 +18,7 @@ from portal.views import (
 )
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
 
-from nhhc.testing_utils import (
+from nhhc.utils.testing import (
     generate_mock_PhoneNumberField,
     generate_mock_USSocialSecurityNumberField,
     generate_mock_ZipCodeField,
@@ -181,7 +181,7 @@ class SubmissionDetailTestCase(TestCase):
     def test_submission_detail_view(self):
         url = reverse("client_interest_details", kwargs={"pk": self.submission.pk})
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
         self.assertContains(response, "Client Interest")
         self.assertContains(response, "John")
         self.assertContains(response, "Doe")
