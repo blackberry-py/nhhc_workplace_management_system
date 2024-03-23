@@ -158,11 +158,6 @@ class EmploymentApplicationModel(
         Raises:
         Exception: If an error occurs during the hiring process.
 
-        Example:
-        # Create an instance of the Applicant class
-        applicant = Applicant(first_name='John', last_name='Doe', email='john.doe@example.com', contact_number='123-456-7890')
-        # Hire the applicant
-        applicant.hire_applicant(hired_by='HR_Manager')
         """
         try:
             new_employee = Employee(
@@ -194,6 +189,7 @@ class EmploymentApplicationModel(
                 "plain_text_password": password,
                 "username": new_employee.username,
                 "employee_id": new_employee.pk,
+                "email":  new_employee.email,
             }
         except Exception as e:
             log_message = (

@@ -34,6 +34,7 @@ from django.shortcuts import redirect, render
 from django.template import loader
 from django.urls import reverse
 from django.views.generic.detail import DetailView
+from django.views.generic.edit import   UpdateView
 from django.views.generic.list import ListView
 from django_filters.rest_framework import DjangoFilterBackend
 from employee.forms import EmployeeForm

@@ -4,6 +4,7 @@ from employee.models import Employee
 
 User = get_user_model()
 
+
 class EmployeeModelTests(TestCase):
     def test_create_unique_username(self):
         """

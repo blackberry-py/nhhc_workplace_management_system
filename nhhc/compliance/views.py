@@ -1,14 +1,18 @@
 import os
 
 from django.shortcuts import render
-
+from django.views.generic.edit import FormView
+from compliance.forms import ContractForm
 # Create your views here.
 
 
 def create_contract(request):
     pass
 
-
+class CreateContractFormView(FormView):
+    template_name = 'new_contract.html'
+    form_class =  ContractForm
+    
 def generate_report(requst):
     sessionDataCSV = f"TTPUpload{now.to_date_string()}.csv"
     sessions = employee_report_export()

@@ -193,7 +193,7 @@ def hire(request: HttpRequest) -> HttpResponse:
     try:
         applicant.save()
         send_new_user_credentials(
-            new_user_email=hired_user["user"]["email"],  # type: ignore
+            new_user_email=hired_user["email"],  
             new_user_first_name=hired_user["first_name"],
             password=hired_user["plain_text_password"],
             username=hired_user["username"],

@@ -8,32 +8,34 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from formset.views import FormView
 from typing import Dict
+
 # Create your views here.
 
-def app_status(request:HttpRequest) -> HttpResponse:
+
+def app_status(request: HttpRequest) -> HttpResponse:
     """Return the status of the application."""
-    # TODO: Imple=ment App Specific Heartbeart 
+    # TODO: Imple=ment App Specific Heartbeart
     pass
-    
-    
+
+
 class AnnoucementsListView(ListView):
     model = Announcements
     queryset = Announcements.objects.all().order_by("-date_posted")
     template_name = "annoucements.html"
     context_object_name = "anouncement"
     paginate_by = 25
-    
+
     def get_context_data(self, **kwargs) -> Dict[str, str]:
         context = super().get_context_data(**kwargs)
-        context['form'] = AnnouncementForm()
+        context["form"] = AnnouncementForm()
         return context
-    
+
+
 class AnnouncementFormView(FormView):
     form_class = AnnouncementForm
     model = Announcements
     template_name = "new_.html"
     success_url = "/profile"
-
 
 
 def announcements(request: HttpRequest) -> HttpResponse:

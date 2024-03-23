@@ -1,6 +1,5 @@
 #!/bin/bash
 # Activate Virtual VENV & Poetry Install
-python3 -m venv .venv
 source .venv/bin/activate
 pip install poetry
 if poetry install; then

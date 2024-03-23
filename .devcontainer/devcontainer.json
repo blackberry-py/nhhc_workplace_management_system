@@ -7,7 +7,8 @@
 		"ghcr.io/devcontainers-contrib/features/coverage-py:2": {},
 		"ghcr.io/devcontainers-contrib/features/isort:2": {},
 		"ghcr.io/jungaretti/features/make:1": {},
-		"ghcr.io/itsmechlark/features/doppler:2": {}
+		"ghcr.io/itsmechlark/features/doppler:2": {},
+		"ghcr.io/devcontainers/features/java:1": {}
 	},
 	"postCreateCommand": "pip install --user -r requirement.txt",
 	"customizations": {
@@ -37,7 +38,8 @@
 				"teticio.python-envy",
 				"ms-python.black-formatter",
 				"ExodiusStudios.comment-anchors",
-				"aaron-bond.better-comments"
+				"aaron-bond.better-comments",
+				"djlynn03.add-to-git-ignore"
 			]
 		}
 	}

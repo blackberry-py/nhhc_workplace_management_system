@@ -65,8 +65,6 @@ kolo = "^2.17.0"
 django-debug-toolbar = "^4.2.0"
 poetry-plugin-export = "^1.6.0"
 
-
-
 [tool.poetry.group.test.dependencies]
 django-webtest = "^1.9.11"
 coverage = "^7.3.4"
@@ -77,11 +75,6 @@ factory-boy = "^3.3.0"
 selenium = "^4.16.0"
 faker = "^22.0.0"
 tblib = "^3.0.0"
-
-
-
-
-[tool.poetry.group.testing.dependencies]
 pytest-django = "^4.7.0"
 
 
@@ -97,7 +90,23 @@ line-length = 88
 target-version = ['py37']
 
 [tool.coverage.report]
-exclude_also = []
+exclude_also = [
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+    ]
+omit = [ 
+    "*/migrations/*",
+    ]
+ignore_errors = true
+skip_empty = true
 
 [tool.djlint]
 ignore="H021 H006"

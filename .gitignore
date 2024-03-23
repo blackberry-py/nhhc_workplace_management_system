@@ -129,7 +129,7 @@ Control.ca-list
 Control.ca-bundle
 Control.system-ca-bundle
 GitHub.sublime-settings
-
+/workspaces/NettHands/https:*
 # Visual Studio Code #
 .vscode/*
 !.vscode/settings.json
@@ -154,3 +154,7 @@ private_key.pem
 public_key.pem
 nhhc/nhhc/private_key.py
 .rubberduck/template/create_function_docstring.rdt.md
+.rubberduck/*
+*/*/st
+https:/cdn.netthandshome.care/staticfiles/*
+https\:/*

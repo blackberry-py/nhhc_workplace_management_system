@@ -28,7 +28,7 @@
                   <ul class="form-errors-list">
                     <p class="form-error-header">Please correct the errors below and resubmit...</p>
                     {% for field, errors in form.errors.items %}
-                      `              {% for error in errors %}
+                        {% for error in errors %}
                         <li class="form-error">{{ error }}</li>
                       {% endfor %}
                       </ul>
@@ -49,7 +49,6 @@
                     <span class="input-group-text"><i class="fa fa-user"></i></span>
                   </div>
                   {{ form.login.errors | safe }}
-                  {% comment %} {{ form.login }} {% endcomment %}
                   {% render_field form.login placeholder="Username or Email" class="form-control" id="username" name="username" %}
 
                 </div>
@@ -61,13 +60,12 @@
                   </div>
                   {{ form.password.errors | safe }}
 
-                  {% comment %} {{ form.password }} {% endcomment %}
                   {% render_field form.password placeholder="Password" class="form-control" %}
 
                 </div>
               </div>
               <div class="form-check form-switch">
-                {% render_field form.remember type="checkbox" id="remember-me"  role="switch" class="form-check-input" %}
+                {% render_field form.remember type="checkbox" id="remember-me" role="switch" class="form-check-input" %}
                 <span class="text-muted form-check-label">Remember me?</span>
               </div>
 

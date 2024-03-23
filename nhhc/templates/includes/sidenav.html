@@ -6,7 +6,6 @@
       <a class="navbar-brand" href="{% url 'index' %}">
         <img height="60px" width="60px" id="sidenav-logo" src="{% static 'img/logo-dark.png' %}" alt="LOGO" class="navbar-brand-img"/>
       </a>
-      <p>Welcome, {{request.user.first_name}}</p>
     </div>
     <div class="navbar-inner">
       <!-- Collapse -->
@@ -14,24 +13,29 @@
         <!-- Nav items -->
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link {% if 'profile' in segment %} active {% endif %}" href="{% url 'dashboard' %}">
+            <a class="nav-link {% if request.path == '/dashboard' %} active {% endif %}" href="{% url 'dashboard' %}">
               <i class="ni ni-shop text-blue"></i>
               <span class="nav-link-text">Home</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if 'profile' in segment %} active {% endif %}" href="{% url 'profile' %}">
+            <a class="nav-link {% if request.path == '/profile' %} active {% endif %}" href="{% url 'profile' %}">
               <i class="ni ni-single-02 text-yellow"></i>
               <span class="nav-link-text">Personal Information</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if 'tables' in segment %} active {% endif %}" href="{% url 'coming-soon' %}">
-              <i class="ni ni-paper-diploma text-default"></i>
+            <a class="nav-link {% if request.path == '/training' %} active {% endif %}" href="{% url 'coming-soon' %}">
+              <i class="ni ni-paper-diploma text-green"></i>
               <span class="nav-link-text">Training</span>
             </a>
           </li>
-
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/announcements' %} active {% endif %}" href="{% url 'announcements' %}">
+              <i class="ni ni-notification-70 text-red"></i>
+              <span class="nav-link-text">Announcements</span>
+            </a>
+          </li>
         </ul>
         <!-- Divider -->
         {% if user.is_staff %}
@@ -43,13 +47,13 @@
         <!-- Navigation -->
           <ul class="navbar-nav mb-md-3">
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'coming-soon' %}">
+              <a class="nav-link {% if request.path == '/reporting' %} active {% endif %}" href="{% url 'coming-soon' %}">
                 <i class="ni ni-chart-bar-32 text-green"></i>
                 <span class="nav-link-text">Reporting</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'inquiries' %}">
+              <a class="nav-link {% if request.path == '/inquiries' %} active {% endif %}" href="{% url 'inquiries' %}">
                 <i class="ni ni-collection text-purple"></i>
                 <span class="nav-link-text">Service Inquiries</span>
               </a>

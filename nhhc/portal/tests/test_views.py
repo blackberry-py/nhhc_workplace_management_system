@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 from compliance.models import Compliance, Contract
 from django.contrib.auth import get_user_model
-from django.test import Client, RequestFactory, TestCase
+from django.test import Client, RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from employee.forms import EmployeeForm
 from employee.models import Employee
@@ -38,6 +38,9 @@ baker.generators.add(
 
 
 class ProfileTestCase(TestCase):
+    @override_settings(
+        STORAGE_DESTINATION="testing"
+   )
     def setUp(self):
         self.client = Client()
         self.employee = baker.make(
@@ -94,6 +97,11 @@ class ProfileTestCase(TestCase):
 
 
 class ClientInquiriesTestCase(TestCase):
+    @override_settings(
+        STORAGE_DESTINATION="testing",
+        POSTGRES_USER="test_user",
+        POSTGRES_PASSWORD="pWxH7dzX",
+   )
     def setUp(self):
         self.submission1 = baker.make(
             ClientInterestSubmissions,
@@ -164,6 +172,9 @@ class ClientInquiriesTestCase(TestCase):
 
 
 class SubmissionDetailTestCase(TestCase):
+    @override_settings(
+        STORAGE_DESTINATION="testing"
+   )
     def setUp(self):
         self.submission = ClientInterestSubmissions.objects.create(
             first_name="John",

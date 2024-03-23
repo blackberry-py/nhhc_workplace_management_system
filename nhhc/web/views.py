@@ -13,8 +13,8 @@ from string import Template
 from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseServerError
-from django.shortcuts import redirect, render
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseServerError, HttpRequest, FileResponse
+from django.shortcuts import redirect, render, reverse
 from django.template import RequestContext
 from django.views.decorators.cache import cache_page
 from dotenv import load_dotenv
@@ -31,7 +31,7 @@ CACHE_TTL = settings.CACHE_TTL
 
 
 @cache_page(CACHE_TTL)
-def index(request):
+def index(request: HttpRequest) -> HttpResponse:
     """Primary Render Function that Renders the Homepage template located in index.html.
 
     Args:
@@ -54,7 +54,7 @@ def index(request):
 
 
 @cache_page(CACHE_TTL)
-def about(request):
+def about(request: HttpRequest) -> HttpResponse:
     """Primary Render Function that Renders the about sub-page template located in contact.html.
 
     Args:
@@ -65,7 +65,10 @@ def about(request):
     """
     return render(request, "about.html", {"title": "About Nett Hands"})
 
-
+@cache_page(CACHE_TTL)
+def favicon(request: HttpRequest) -> HttpResponse:
+    favicon = open('/workspaces/NettHands/nhhc/static/img/favicon.ico', 'rb')
+    return FileResponse(favicon)
 #!SECTION
 
 # SECTION - Internal Functional View

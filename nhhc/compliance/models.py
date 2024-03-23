@@ -1,7 +1,65 @@
 """
 Module: compliance.models
 
-This module defines the Compliance model, which is responsible for storing and managing compliance and auditing data for employees.
+"""
+
+
+from typing import Union
+
+from django.conf import settings
+from django.db import models
+from django.utils.translation import gettext_lazy as _
+from django_prometheus.models import ExportModelOperationsMixin
+from employee.models import Employee
+from filer.fields.file import FilerFileField
+from loguru import logger
+
+from nhhc.backends.storage_backends import PrivateMediaStorage
+
+
+class Contract(models.Model, ExportModelOperationsMixin("contracts")):
+    """
+    Model representing a contract.
+    
+    Attributes:
+    - code: CharField with max length of 10 characters, unique
+    - name: CharField with max length of 255 characters, not blank and not null
+    - description: TextField, optional
+    - contract_year_start: DateField for the start year of the contract, optional
+    - contract_year_end: DateField for the end year of the contract, optional
+    - active: BooleanField, default is True
+    """
+    
+    code = models.CharField(max_length=10, unique=True)
+    name = models.CharField(max_length=255,  blank=False, null=False)
+    description = models.TextField(blank=True, null=True)
+    contract_year_start = models.DateField(verbose_name="Start Year", blank=True, null=True)
+    contract_year_end = models.DateField(verbose_name="End Year", blank=True, null=True)
+    active = models.BooleanField(default=True)
+    
+    def __str__(self):
+        """
+        Method to return a string representation of the contract.
+        Returns the name and code of the contract.
+        """
+        return f"{self.name} - {self.code}"
+
+    class Meta:
+        """
+        Class Meta options for the Contract model.
+        - db_table: Set the database table name to "contracts"
+        - ordering: Order by contract_year_start in descending order
+        - verbose_name: Singular name for the model
+        - verbose_name_plural: Plural name for the model
+        """
+        db_table = "contracts"
+        ordering = ["-contract_year_start"]
+        verbose_name = "State Contract"
+        verbose_name_plural = "State Contracts"
+
+class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
+    """
+    This module defines the Compliance model, which is responsible for storing and managing compliance and auditing data for employees.
 
 Attributes:
     - employee: One-to-one relationship with the Employee model, serving as the primary key and related name for the compliance profile of the employee.
@@ -34,35 +92,6 @@ Meta:
 
 Note: This model utilizes the ExportModelOperationsMixin from django_prometheus for exporting model operations to Prometheus.
 """
-
-
-from typing import Union
-
-from django.conf import settings
-from django.db import models
-from django.utils.translation import gettext_lazy as _
-from django_prometheus.models import ExportModelOperationsMixin
-from employee.models import Employee
-from filer.fields.file import FilerFileField
-from loguru import logger
-
-from nhhc.backends.storage_backends import PrivateMediaStorage
-
-
-class Contract(models.Model, ExportModelOperationsMixin("contracts")):
-    code = models.CharField(max_length=10, unique=True)
-
-    def __str__(self):
-        return self.code
-
-    class Meta:
-        db_table = "contracts"
-        ordering = ["code"]
-        verbose_name = "State Contract"
-        verbose_name_plural = "State Contracts"
-
-
-class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
     class JOB_TITLE(models.TextChoices):
         AIDE = "AIDE", _("Homecare Aide")
         COORDINATOR = "CARE_COORDINATOR", _("Care Coordinator")

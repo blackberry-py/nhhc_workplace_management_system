@@ -1,117 +1,6 @@
 {% load static %}
 {% load humanize %}
 
-<style>
-    *,*::after, *::before {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-
-    body {
-        background-color: rgb(241 245 249);
-    }
-    .announced-by{
-        color:rgba(0,0,0,0.5)
-    }
-    .announcement-title{
-        font-size:25px;
-    }
-    main {
-        width: 100vw;
-        height: 100vh;
-        flex-direction: row;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-    }
-
-    em {
-        color: #702963;
-    }
-
-    /* Controls */
-    .carousel-control-next {
-        margin: 0 3em;
-    }
-
-    i.fa-arrow-right,
-    i.fa-arrow-left {
-        background: none;
-        border: 2px solid #702963;
-        color: #702963;
-        padding: 10px;
-        border-radius: 100%;
-        transition: background .6s ease;
-    }
-
-    i.fa-arrow-right:hover,
-    i.fa-arrow-left:hover {
-        background: #702963;
-        color: white;
-    }
-
-    /* Indicators */
-    .carousel-indicators {
-        justify-content: flex-start;
-        transform: translate(-40px, 50px);
-    }
-
-    .carousel-indicators [data-bs-target] {
-        width: 10px;
-        height: 10px;
-        border-radius: 100%;
-        border: 2px solid #702963;
-    }
-
-    .carousel-indicators .active {
-        opacity: 1;
-        background-color:  #702963	;
-    }
-
-    /* Control buttons */
-    .control-btn {
-        position: absolute;
-        top: 8px;
-        right: 10em;
-    }
-    .carousel-control-next,
-    .carousel-control-prev {
-        top: 1em;
-        left: 3em;
-    }
-
-    .testimonial-text {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        column-gap: 20px;
-    }
-
-    .wow {
-        position: relative;
-        grid-column: span 2;
-    }
-
-    .carousel-landmark {
-        grid-column: span 3;
-    }
-
-    @media screen and (max-width: 576px) {
-        .testimonial-text {
-            margin-top: 50px;
-            row-gap: 50px;
-
-        }
-        .wow {
-            grid-column: span 5;
-        }
-
-        .carousel-landmark {
-            grid-column: span 5;
-        }
-    }
-</style>
 
 <div class="container-xxl py-5">
     <div class="container py-5">
@@ -119,6 +8,7 @@
             <div class="wow fadeIn" data-wow-delay="0.1s">
                 <h1>Recent Annoucements</h1>
                 <p class="text-muted fs-4 textimal-text">Snapshot of the Most Recent Announcements.</p>
+                <div><a href="{% url 'announcements' %}">See More Announcements</a></div>
 
             </div>
         <!-- </section>End of Testimonial Here -->
@@ -128,14 +18,10 @@
           <!-- <section>
             <div class="control-bar"></div>
         </section> -->
-                    <div class="carousel-indicators">
-                        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                    </div>
+
                     {% for annoncement in announcements %}
                         <div class="carousel-inner"><!--The Carousel Container-->
-                            <div class="carousel-item carousel-item-1 active"><!--The Carousel item 1-->
+                            <div class="carousel-item"><!--The Carousel item 1-->
                                 <div class="testimonial-item ps-5">
                                     {% if announcement.message_type == 'C' %}
                                         <span class="badge rounded-pill text-bg-primary text-bg-danger px-3 mb-3">{{announcement.message_type}}</span>
@@ -161,38 +47,13 @@
                                 </div>
                             </div>
                         </div>
-        <!-- </section>End of Testimonial Here -->
 
                         <section class="carousel-landmark wow fadeIn" data-wow-delay="0.5s">
                             <div id="carouselNavigation" class="carousel slide testimonial-carousel border-start border-primary">
-          <!-- <section>
-            <div class="control-bar"></div>
-        </section> -->
-                                <div class="carousel-indicators">
-                                    <button type="button" data-bs-target="#carouselNavigation" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Announcement 1"></button>
-                                    <button type="button" data-bs-target="#carouselNavigation" data-bs-slide-to="1" aria-label="Announcement 2"></button>
-                                    <button type="button" data-bs-target="#carouselNavigation" data-bs-slide-to="2" aria-label="Announcement 3"></button>
-                                    <button type="button" data-bs-target="#carouselNavigation" data-bs-slide-to="3" aria-label="Announcement 4"></button>
-                                    <button type="button" data-bs-target="#carouselNavigation" data-bs-slide-to="4" aria-label="Announcement 5"></button>
-                                </div>
-                                <div class="carousel-inner"><!--The Carousel Container-->
-                                    <div class="carousel-item carousel-item-1 active"><!--The Carousel item 1-->
-                                        <div class="testimonial-item ps-5">
-                                            <i class="fa fa-quote-left fa-2x  mb-3" style="color:#702963"></i>
-                                            <p class="fs-4 textimal-text">{{ announcement.message }}</p>
-                                            <div class="d-flex align-items-center">
-                                                <div class="ps-3">
-                                                    <h5 class="mb-1 announced-by">{{ announcement.posted_by.first_name }}</h5>
 
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
                     {% endfor %}
                 <!-- Control Buttons -->
-                    <div class="control-btn">
+                    <div class="control-btn float-start">
                         <button class="carousel-control-prev" type="button" data-bs-target="#carouselNavigation" data-bs-slide="prev">
                             <i class="fa-solid fa-arrow-left"></i>
                             <span class="carousel-control-prev-icon visually-hidden" aria-hidden="true"></span>
@@ -200,15 +61,13 @@
                         </button>
                         <button class="carousel-control-next" type="button" data-bs-target="#carouselNavigation" data-bs-slide="next">
                             <i class="fa-solid fa-arrow-right"></i>
-
                             <span class="carousel-control-next-icon visually-hidden" aria-hidden="true"></span>
                             <span class="visually-hidden">Next</span>
                         </button>
-                    </div><!--[carousel-item-3]-->
-                </div><!--[End of Container]-->
-
-            </div>
-        </section><!--End of Carousel Landmark-->
-    </div><!--End of row g-5-->
-</div><!-- container py-5 -->
+                    </div>
+                </div>
+            </section><!--End of Carousel Landmark-->
+        </div><!--End of row g-5-->
+    </div><!-- container py-5 -->
 </div><!--End of Container-xxl py-5 -->
+</div>

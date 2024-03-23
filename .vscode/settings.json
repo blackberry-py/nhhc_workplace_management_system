@@ -12,4 +12,5 @@
     "pythonautovenv.pythonPath": "/home/codespace/.python",
     "python.defaultInterpreterPath": "/home/codespace/.python/current/bin/python",
     "python.pythonPath": "/workspaces/NettHands/.venv/bin/python",
+    "makefile.buildLog": "/workspaces/NettHands/nhhc/logs/build.log",
 }

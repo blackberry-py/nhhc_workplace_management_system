@@ -28,114 +28,114 @@
           <div class="card-header border-0">
             <h3 class="mb-0">Submissions</h3>
           </div>
-            <div id="list-looker">
-              <form class="navbar-search navbar-search-light form-inline mr-sm-3" id="navbar-search-main">
-                <div class="form-group mb-0">
-                  <div class="p-1 bg-light rounded rounded-pill shadow-sm mb-4">
-                    <div class="input-group">
-                      <div class="input-group-prepend">
-                        <button id="button-addon2" type="submit" class="btn btn-link text-warning"><i class="fa fa-search"></i></button>
-                      </div>
-                      <input type="search" placeholder="Search by Name, Contact Number or Service" aria-describedby="button-addon2" class="form-control search border-0 bg-light">
+          <div id="list-looker">
+            <form class="navbar-search navbar-search-light form-inline mr-sm-3" id="navbar-search-main">
+              <div class="form-group mb-0">
+                <div class="p-1 bg-light rounded rounded-pill shadow-sm mb-4">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <button id="button-addon2" type="submit" class="btn btn-link text-warning"><i class="fa fa-search"></i></button>
                     </div>
+                    <input type="search" placeholder="Search by Name, Contact Number or Service" aria-describedby="button-addon2" class="form-control search border-0 bg-light">
                   </div>
                 </div>
-              </form>
+              </div>
+            </form>
 
           <!-- Light table -->
-              <ul class="nav nav-tabs">
-                <li class="tab nav-item">
-                  <a class="nav-link tab active" id="all" aria-current="page" href="#">{{ all_submuission }} Total Submissions</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link tab" id="pending" href="#">{{ reviewed }} Submissions Reviewed</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link tab" id="reviewed" href="#">{{ unresponsed }} Submissions Pending Review</a>
-                </li>
+            <ul class="nav nav-tabs">
+              <li class="tab nav-item">
+                <a class="nav-link tab active" id="all" aria-current="page" href="#">{{ all_submuission }} Total Submissions</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link tab" id="pending" href="#">{{ reviewed }} Submissions Reviewed</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link tab" id="reviewed" href="#">{{ unresponsed }} Submissions Pending Review</a>
+              </li>
 
-              </ul>
-              <div class="table-responsive">
-                <table class="table align-items-center table-flush table-hover">
-                  <thead class="thead-light">
-                    <tr>
-                      <th scope="col" class="sort" data-sort="name"></th>
-                      <th scope="col" class="sort" data-sort="reviewed">Submission Date</th>
-                      <th scope="col" class="sort" data-sort="budget">First Name</th>
-                      <th scope="col" class="sort" data-sort="status">Last Name</th>
-                      <th scope="col">Desired Service</th>
-                      <th scope="col" class="sort" data-sort="completion">Phone</th>
-                      <th scope="col"></th>
-                    </tr>
-                  </thead>
-                  {% if submissions %}
-                    <tbody id="submission-list" class="list">
-                      {% for submission in submissions %}
-                        {% if submission.reviewed is False %}
-                          <tr class="client-submission reviewed">
-                        {% elif submission.reviewed is True %}
-                          <tr class="client-submission pending">
-                        {% endif %}
-                        <th scope="row">
-                          <div class="media align-items-center">
-                            <div class="media-body">
-                              {% if submission.reviewed is False %}
-                                <span class="badge badge-pill badge-success">New</span>
-                              {% endif %}
-                            </div>
-                            </th>
-                            <td class="date-submitted">
-                              {{ submission.date_submitted }}
-                            </td>
-                            <td class="first-name">
-                              {{ submission.first_name }}
-                            </td>
-                            <td class="last-name">
-                              {{ submission.last_name }}
-                            </td>
-                            <td class="desired-service">
-                              {{ submission.get_desired_service_display }}
-                            </td>
-                            <td class="phone">
-                              {{ submission.contact_number }}
-                            </td>
-                            <td>
-                              <a class="btn btn-secondary" href="{% url 'client_interest_details' pk=submission.pk %}">Details</a>
-                            </td>
-                          </tr>
-                        </tr>
-                      {% endfor %}
-                  {% else %}
-                    <h2> No Client Service Request Inquiries Submitted </h2>
-                    </tbody>
+            </ul>
+            <div class="table-responsive">
+              <table class="table align-items-center table-flush table-hover">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" class="sort" data-sort="name"></th>
+                    <th scope="col" class="sort" data-sort="reviewed">Submission Date</th>
+                    <th scope="col" class="sort" data-sort="budget">First Name</th>
+                    <th scope="col" class="sort" data-sort="status">Last Name</th>
+                    <th scope="col">Desired Service</th>
+                    <th scope="col" class="sort" data-sort="completion">Phone</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                {% if submissions %}
+                  <tbody id="submission-list" class="list">
+                    {% for submission in submissions %}
+                      {% if submission.reviewed is False %}
+                        <tr class="client-submission reviewed">
+                      {% elif submission.reviewed is True %}
+                        <tr class="client-submission pending">
+                      {% endif %}
+                      <th scope="row">
+                        <div class="media align-items-center">
+                          <div class="media-body">
+                            {% if submission.reviewed is False %}
+                              <span class="badge badge-pill badge-success">New</span>
+                            {% endif %}
+                          </div>
+                        </th>
+                        <td class="date-submitted">
+                          {{ submission.date_submitted }}
+                        </td>
+                        <td class="first-name">
+                          {{ submission.first_name }}
+                        </td>
+                        <td class="last-name">
+                          {{ submission.last_name }}
+                        </td>
+                        <td class="desired-service">
+                          {{ submission.get_desired_service_display }}
+                        </td>
+                        <td class="phone">
+                          {{ submission.contact_number }}
+                        </td>
+                        <td>
+                          <a class="btn btn-secondary" href="{% url 'client_interest_details' pk=submission.pk %}">Details</a>
+                        </td>
+                      </tr>
+                      </tr>
+                    {% endfor %}
+                {% else %}
+                  <h2> No Client Service Request Inquiries Submitted </h2>
+                  </tbody>
                   </div>
                   </div>
 
-                  {% endif %}
-                </table>
-                {% if is_paginated %}
-                  <div class="mx-auto text-center">
-                    <div class="pagination">
-                      <span class="page-links">
-                        {% if page_obj.has_previous %}
-                          <a href="{% url 'inquiries' page=page_obj.previous_page_number %}"><i class="fa-solid fa-left-long fa-2xl"></i></a>
-                        {% endif %}
-                        <span class="page-current">
-                          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-                        </span>
-                        {% if page_obj.has_next %}
-                          <a href="{% url 'inquiries' page=page_obj.next_page_number %}"><i class="fa-solid fa-right-long fa-2xl"></i></a>
-                        {% endif %}
-                      </span>
-                    </div>
-                  </div>
                 {% endif %}
-              </div>
+              </table>
+              {% if is_paginated %}
+                <div class="position-relative bottom-0 start-50  text-center">
+                  <div class="pagination">
+                    <span class="page-links">
+                      {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}"><i class="fa-solid fa-left-long fa-2xl"></i></a>
+                      {% endif %}
+                      <span class="page-current">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                      </span>
+                      {% if page_obj.has_next %}
+                      <a href="?page={{ page_obj.next_page_number }}"><i class="fa-solid fa-right-long fa-2xl"></i></a>
+                      {% endif %}
+                    </span>
+                  </div>
+                </div>
+              {% endif %}
             </div>
           </div>
         </div>
       </div>
-    
+    </div>
+
 
 {% endblock content %}
 

@@ -45,7 +45,7 @@ ALLOWED_HOSTS = [
 ]
 ROBOTS_SITEMAP_VIEW_NAME = "cached-sitemap"
 CSRF_FAILURE_VIEW = "web.views.csrf_failure"
-RECAPTCHA_PUBLIC_KEY = os.getenv("RECAPTCHA_PUBLIC_KEY")
+RECAPTCHA_PUBLIC_KEY = "6LfUVpYfAAAAACZD9QFphmmpjkmHqW48VDZE9l8v"
 RECAPTCHA_PRIVATE_KEY = os.getenv("RECAPTCHA_PRIVATE_KEY")
 RESTRICT_ADMIN_BY_IPS = True
 ALLOWED_ADMIN_IPS = os.getenv("ALLOWED_IPS")
@@ -115,7 +115,6 @@ INSTALLED_APPS = [
     "portal",
     "employee",
     "announcements",
-    "nhhc",
     "authentication",
     "compliance",
 ]
@@ -124,9 +123,9 @@ MIDDLEWARE = [
     "django.middleware.cache.UpdateCacheMiddleware",
     "django_prometheus.middleware.PrometheusBeforeMiddleware",
     "kolo.middleware.KoloMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     # "nhhc.middleware.password_change.PasswordChangeMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -140,7 +139,6 @@ MIDDLEWARE = [
     "django_prometheus.middleware.PrometheusAfterMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.cache.FetchFromCacheMiddleware",
-
 ]
 AUTH_USER_MODEL = "employee.Employee"
 ROOT_URLCONF = "nhhc.urls"
@@ -157,7 +155,7 @@ CACHE_TTL = 60 * 15
 SITE_ID = int(os.getenv("SITE_ID"))
 ENVIRONMENT_NAME = os.getenv("ENVIRONMENT_NAME")
 ENVIRONMENT_COLOR = os.getenv("ENVIRONMENT_COLOR")
-REQUEST_BASE_URL =  os.getenv("REQUEST_BASE_URL")
+REQUEST_BASE_URL = os.getenv("REQUEST_BASE_URL")
 DATABASES = {
     "default": {
         "ENGINE": "django_prometheus.db.backends.postgresql",
@@ -228,18 +226,7 @@ USE_TZ = False
 # !SECTION
 
 # SECTION - STORAGE
-STORAGES = {
-    "default":{
-            "BACKEND" : "nhhc.backends.storage_backends.PublicMediaStorage"
 
-    },
-"staticfiles": {
-    "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-},
-# TODO: Add all ST0RAGES to dict 
-# "private":{
-    # "BACKEND": 
-}
 STORAGE_DESTINATION = os.getenv("STORAGE_DESTINATION")
 FILE_UPLOAD_TEMP_DIR = BASE_DIR / "tmp"
 if STORAGE_DESTINATION == "s3":
@@ -259,11 +246,13 @@ if STORAGE_DESTINATION == "s3":
     STATIC_LOCATION = "staticfiles"
     STATIC_URL = f"https://cdn.netthandshome.care/{STATIC_LOCATION}/"
     STATIC_ROOT = STATIC_URL
-
-
+    STATICFILES_STORAGE = (
+        "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
+    )
     # s3 public media settings
     PUBLIC_MEDIA_LOCATION = "media"
     MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
+    DEFAULT_FILE_STORAGE = "nhhc.backends.storage_backends.PublicMediaStorage"
     # s3 private media settings
     PRIVATE_MEDIA_LOCATION = "restricted"
     MEDIA_DIRECTORY = "/restricted/compliance"
@@ -272,7 +261,7 @@ if STORAGE_DESTINATION == "s3":
     FILER_STORAGES = {
         "private": {
             "hhg-oig": {
-                "ENGINE": "nhhc.backends.storage_backends.PrivateMediaStorage",
+                "ENGINE": "fnhhc.backends.storage_backends.PrivateMediaStorage",
                 "OPTIONS": {
                     "location": f"https://{AWS_S3_CUSTOM_DOMAIN}/{PRIVATE_MEDIA_LOCATION}",
                     "base_url": "/smedia/filer/",
@@ -288,7 +277,6 @@ else:
     MEDIA_URL = "/mediafiles/"
     MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
 
-WHITENOISE_MANIFEST_STRICT=False 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
 

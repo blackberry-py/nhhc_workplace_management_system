@@ -4,7 +4,7 @@ from compliance.models import Compliance, Contract
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.exceptions import PermissionDenied
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory, TestCase, override_settings
 from employee.models import Employee
 from employee.views import employee_details, hire, reject, send_new_user_credentials
 from model_bakery import baker
@@ -61,7 +61,7 @@ class TestEmployeeActions(TestCase):
             username="staffuser",
             password="12345",
             is_staff=True,
-            application_id=random.randint(2,5655)
+            application_id=random.randint(2, 5655),
         )
         self.contact = baker.make(Contract, code="FAKE")
         self.staff_user_compliance = baker.make(
