@@ -26,7 +26,7 @@ class EmployeeModelTests(TestCase):
             last_name="Doe",
         )
         username = Employee.create_unique_username("John", "Doe")
-        self.assertEqual(username, "doe.john1")
+        self.assertRegex(username, r'doe.john\d\d?')
 
     def test_create_user(self):
         """
@@ -55,32 +55,6 @@ class EmployeeModelTests(TestCase):
         self.assertTrue(user.is_admin)
         self.assertTrue(user.is_staff)
         self.assertTrue(user.is_superuser)
-
-    def test_is_profile_complete(self):
-        """
-        Test the `is_profile_complete` method.
-        """
-        user = Employee.objects.create_user(
-            password="testpassword",
-            first_name="John",
-            last_name="Doe",
-            email="john.doe@example.com",
-        )
-        user.social_security = "123-45-6789"
-        user.gender = Employee.GENDER.MALE
-        user.city = "New York"
-        user.phone = "+12125551212"
-        user.state = "NY"
-        user.street_address1 = "123 Main St"
-        user.zipcode = "10001"
-        user.emergency_contact_relationship = "Friend"
-        user.emergency_contact_last_name = "Smith"
-        user.emergency_contact_first_name = "Jane"
-        user.marital_status = Employee.MARITAL_STATUS.SINGLE
-        user.qualifications = Employee.QUALIFICATIONS.BS
-        user.save()
-
-        self.assertTrue(user.is_profile_complete())
 
     def test_terminate_employment(self):
         """

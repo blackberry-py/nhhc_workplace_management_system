@@ -200,7 +200,7 @@ def hire(request: HttpRequest) -> HttpResponse:
         )
         content = f"username: {hired_user['username']},  password: {hired_user['plain_text_password']}, employee_id: {hired_user['employee_id']}"
         logger.success(
-            f"Successfully Converted Appicant to Employee - {hired_user.last_name}, {hired_user.last_name}"
+            f"Successfully Converted Appicant to Employee - {hired_user['last_name']}, {hired_user['last_name']}"
         )
         return HttpResponse(
             status=status.HTTP_201_CREATED, content=bytes(content, "utf-8")

@@ -190,6 +190,8 @@ class EmploymentApplicationModel(
                 "username": new_employee.username,
                 "employee_id": new_employee.pk,
                 "email":  new_employee.email,
+                "first_name": new_employee.first_name,
+                "last_name": new_employee.last_name
             }
         except Exception as e:
             log_message = (

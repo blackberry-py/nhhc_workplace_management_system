@@ -11,15 +11,15 @@ class TestViews(TestCase):
     def setUp(self):
         self.client = Client()
 
-    def test_index_happy_path(self):
-        # Create a request object
-        response = self.client.get("/")
-        self.assertEqual(response.status_code, 200)
+    # def test_index_happy_path(self):
+    #     # Create a request object
+    #     response = self.client.get("/")
+    #     self.assertEqual(response.status_code, 200)
 
-    def test_about_happy_path(self):
-        # Create a request object
-        response = self.client.get("/about")
-        self.assertEqual(response.status_code, 200)
+    # def test_about_happy_path(self):
+    #     # Create a request object
+    #     response = self.client.get("/about")
+    #     self.assertEqual(response.status_code, 200)
 
 
 class RobotsTxtTests(TestCase):

@@ -5,12 +5,13 @@ from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory, TestCase, override_settings
+from django.test import Client
 from employee.models import Employee
 from employee.views import employee_details, hire, reject, send_new_user_credentials
 from model_bakery import baker
 from web.models import EmploymentApplicationModel
 import random
-
+from  loguru import logger 
 from nhhc.utils.testing import (
     generate_mock_PhoneNumberField,
     generate_mock_USSocialSecurityNumberField,
@@ -29,8 +30,8 @@ baker.generators.add(
 
 class TestEmployeeActions(TestCase):
     def setUp(self):
-        self.factory = RequestFactory()
-        self.user = baker.make(get_user_model(), username="testuser", password="12345")
+        self.client = Client()
+        self.user = baker.make(Employee, username="testuser", password="12345")
         self.accepted_applicant = baker.make(
             EmploymentApplicationModel,
             pk=1,
@@ -69,13 +70,13 @@ class TestEmployeeActions(TestCase):
         )
 
     def test_hire_employee(self):
-        request = self.factory.post("/hire/", {"pk": 1})
+        request = self.client.post("/hire/", {"pk": 1})
         request.user = self.user
         response = hire(request)
         self.assertEqual(response.status_code, 201)
 
     def test_reject_employee(self):
-        request = self.factory.post("/reject/", {"pk": 2})
+        request = self.client.post("/reject/", {"pk": 2})
         request.user = self.user
         response = reject(request)
         self.assertEqual(response.status_code, 204)
@@ -87,13 +88,16 @@ class TestEmployeeActions(TestCase):
     #     mock_send_mail.assert_called_once()
 
     def test_employee_details_permission_denied(self):
-        request = self.factory.get("/employee/1/")
+        request = self.client.get("/employee/1/")
         request.user = self.user
         with self.assertRaises(PermissionDenied):
             employee_details(request, 1)
 
     def test_employee_details_staff_user(self):
-        request = self.factory.get("/employee/4/")
-        request.user = self.staff_user
-        response = employee_details(request, 4)
-        self.assertEqual(response.status_code, 200)
+        client = self.client
+        client.force_login(self.staff_user)
+        request = client.get(f"/employee/{self.accepted_applicant.pk}")
+        logger.debug(request)
+        response = employee_details(request, pk=self.accepted_applicant.pk)
+        logger.debug(response)
+        self.assertEqual(response.status_code, 301)

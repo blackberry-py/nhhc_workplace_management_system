@@ -228,21 +228,17 @@ USE_TZ = False
 # !SECTION
 
 # SECTION - STORAGE
-STORAGES = {
-    "default":{
-            "BACKEND" : "nhhc.backends.storage_backends.PublicMediaStorage"
+# SECTION - StaticFiles VARS
+BUNNY_USERNAME = os.getenv("BUNNY_USERNAME")
+BUNNY_PASSWORD = os.getenv("BUNNY_PASSWORD")
+BUNNY_REGION = os.getenv("BUNNY_REGION")
+BUNNY_HOSTNAME = os.getenv("BUNNY_HOSTNAME")
+BUNNY_BASE_DIR = os.getenv("BUNNY_BASE_DIR")
+# ! SECTION - StaticFiles VARS
 
-    },
-"staticfiles": {
-    "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-},
-# TODO: Add all ST0RAGES to dict 
-# "private":{
-    # "BACKEND": 
-}
 STORAGE_DESTINATION = os.getenv("STORAGE_DESTINATION")
 FILE_UPLOAD_TEMP_DIR = BASE_DIR / "tmp"
-if STORAGE_DESTINATION == "s3":
+if STORAGE_DESTINATION == "S3":
     # aws settings
     AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
@@ -282,6 +278,19 @@ if STORAGE_DESTINATION == "s3":
             },
         }
     }
+    # STORAGES = {
+    #     "default":{
+    #             "BACKEND" : "nhhc.backends.storage_backends.PublicMediaStorage"
+
+    #     },
+    # "staticfiles": {
+    #     "BACKEND": "nhhc.backends.storage_backends.StaticStorage",
+    # },
+    # # TODO: Add all ST0RAGES to dict 
+    # "private":{
+    #     "BACKEND": "nhhc.backends.storage_backends.PrivateMediaStorage",
+    # }
+    # }
 else:
     STATIC_URL = "/staticfiles/"
     STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")

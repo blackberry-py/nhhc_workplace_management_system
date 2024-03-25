@@ -28,7 +28,7 @@ db-shell: ## Access the Postgres Docker database interactively with psql. Pass i
 
 .PHONY: test
 test: ## Run tests
-	doppler run -- coverage run nhhc/manage.py test web employee portal  --verbosity=2  --keepdb  --failfast  --force-color
+	doppler run -- coverage run nhhc/manage.py test web employee portal  --verbosity=2 --keepdb   --failfast  --force-color
 
 .PHONY: test
 pipeline-test: ## Run tests

@@ -70,7 +70,7 @@ h6 {
   font-size: 16px;
 }
 
-p {
+p, li {
   font-size: 16px;
   font-family: "Josefin Sans", sans-serif;
   color: #adadad;
@@ -379,7 +379,7 @@ ol {
   Header
 -----------------------*/
 .header {
-
+  position: absolute !important;
   left: 0;
   top: 0;
   width: 100%;
@@ -393,10 +393,6 @@ ol {
 }
 .header__logo a {
   display: inline-block;
-}
-
-form#profile {
-  width: 100%;
 }
 
 .header__nav__option {
@@ -1078,6 +1074,7 @@ form#profile {
   color: #ffffff;
   font-size: 50px;
   font-weight: 700;
+  font-family: 'Play';
   margin-bottom: 12px;
 }
 
