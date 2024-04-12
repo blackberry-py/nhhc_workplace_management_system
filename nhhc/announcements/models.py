@@ -19,7 +19,7 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
 
     message = models.TextField()
     announcement_title = models.CharField(max_length=255, default="")
-    posted_by = models.ForeignKey(Employee, on_delete=models.PROTECT)
+    posted_by = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, blank=True)
     date_posted = models.DateTimeField(auto_now=True)
     message_type = models.CharField(
         max_length=255,

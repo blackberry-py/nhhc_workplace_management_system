@@ -19,8 +19,8 @@ freeze: ## Pin current dependencies
 	$(BIN)/pip freeze > requirements.txt
 
 migrate: ## Make and run migrations
-	$(PYTHON) nhhc/manage.py makemigrations
-	$(PYTHON) nhhc/manage.py migrate
+	doppler run -- 	$(PYTHON) nhhc/manage.py makemigrations
+	doppler run -- 	$(PYTHON) nhhc/manage.py migrate
 
 
 db-shell: ## Access the Postgres Docker database interactively with psql. Pass in DBNAME=<name>.

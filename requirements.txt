@@ -24,6 +24,7 @@ Deprecated==1.2.14
 Django==5.0.2
 django-admin-env-notice==1.0
 django-allauth==0.60.1
+django-appconf==1.0.6
 django-bunny==1.1.6
 django-cors-headers==4.3.1
 django-crispy-forms==2.1
@@ -37,6 +38,7 @@ django-ipware==5.0.2
 django-jazzmin==2.6.0
 django-localflavor==4.0
 django-loguru==1.0.3
+django-pgcrypto-fields==2.6.0
 django-phonenumber-field==7.3.0
 django-polymorphic==3.1.0
 django-prometheus==2.3.1

@@ -12,13 +12,14 @@ from django.utils.translation import gettext_lazy as _
 from django_prometheus.models import ExportModelOperationsMixin
 from filer.fields.file import FilerFileField
 from localflavor.us.models import (
-    USSocialSecurityNumberField,
     USStateField,
     USZipCodeField,
+
 )
+from pgcrypto import EncryptedDateField, EncryptedTextField, EncryptedEmailField
+
 from loguru import logger
 from phonenumber_field.modelfields import PhoneNumberField
-
 from nhhc.backends.storage_backends import PrivateMediaStorage
 from nhhc.utils.password_generator import RandomPasswordGenerator
 
@@ -113,7 +114,7 @@ class EmployeeManager(BaseUserManager):
         return user
 
 
-class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
+class Employee(AbstractUser):
     objects = EmployeeManager()
 
     class GENDER(models.TextChoices):
@@ -197,7 +198,10 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
         POLISH = "POLISH", _("Polish")
         SWEDISH = "SWEDISH", _("Swedish")
         VIETNAMESE = "VIETNAMESE", _("Vietnamese")
-
+        
+    username =  models.CharField(
+        max_length=150, 
+        unique=False)
     gender = models.CharField(
         max_length=255,
         choices=GENDER.choices,
@@ -213,8 +217,8 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
         null=True,
         default=LANGUAGE.ENGLISH,
     )
-    social_security = USSocialSecurityNumberField(unique=True, null=True, blank=True)
-    date_of_birth = models.DateField(null=True, blank=True)
+    social_security = EncryptedTextField(unique=True, null=True, blank=True)
+    date_of_birth = EncryptedDateField(null=True, blank=True)
     middle_name = models.CharField(max_length=255, default="", null=True, blank=True)
     street_address1 = models.CharField(
         max_length=255, default="", null=True, blank=True
@@ -240,7 +244,7 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
         blank=True,
         choices=ETHNICITY.choices,
         default=ETHNICITY.UNKNOWN,
-        null=False,
+        null=True,
     )
     emergency_contact_last_name = models.CharField(
         max_length=255,
@@ -253,7 +257,8 @@ class Employee(AbstractUser, ExportModelOperationsMixin("employee")):
         blank=True,
         choices=RACE.choices,
         default=RACE.UNKNOWN,
-        null=False,
+        null=True
+  
     )
     emergency_contact_relationship = models.CharField(
         max_length=255,

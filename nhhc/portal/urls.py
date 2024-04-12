@@ -17,7 +17,7 @@ from . import views
 
 urlpatterns = [
     path("dashboard", views.portal_dashboard, name="dashboard"),
-    path("profile/", views.ProfileFormView.as_view(), name="profile"),
+    path("profile/", views.Profile.as_view(), name="profile"),
     path(
         "inquiries/",
         login_required(views.ClientInquiriesListView.as_view()),
@@ -33,11 +33,11 @@ urlpatterns = [
         csrf_exempt(views.marked_reviewed),
         name="marked_reviewed",
     ),
-    # path(
-    #     "api/inquiries",
-    #     csrf_exempt(views.ClientInquiriesAPIListView.as_view()),
-    #     name="all_client_inquiries_api",
-    # ),
+    path(
+        "api/inquiries",
+        csrf_exempt(views.ClientInquiriesAPIListView.as_view()),
+        name="all_client_inquiries_api",
+    ),
     path(
         "applicants/",
         login_required(views.EmploymentApplicationListView.as_view()),

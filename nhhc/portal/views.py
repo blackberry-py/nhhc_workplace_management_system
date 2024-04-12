@@ -33,7 +33,8 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.template import loader
 from django.urls import reverse
-from django.views.generic.detail import DetailView
+from django.views import View
+from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import   UpdateView
 from django.views.generic.list import ListView
 from django_filters.rest_framework import DjangoFilterBackend
@@ -82,55 +83,97 @@ def portal_dashboard(request: HttpRequest) -> HttpResponse:
     return HttpResponse(html_template.render(context, request))
 
 
-class ProfileFormView(FormView, FileUploadMixin):
+class ProfileDetailView(DetailView):
+    model = Employee
+    template_name = "profile.html"
+    
+    def get_object(self, queryset=Employee.objects.all()):
+        pk = self.request.user.id
+        if pk is not None:
+            queryset = queryset.filter(pk=pk)
+        if pk is None and slug is None:
+            raise AttributeError(
+                "Generic detail view %s must be called with either an object "
+                "pk or a slug in the URLconf." % self.__class__.__name__
+            )
+        try:
+            # Get the single item from the filtered queryset
+            obj = queryset.get()
+        except queryset.model.DoesNotExist:
+            raise Http404(
+                _("No %(verbose_name)s found matching the query")
+                % {"verbose_name": queryset.model._meta.verbose_name}
+            )
+        return obj
+    
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["form"] = EmployeeForm
+        return context
+    
+
+
+class ProfileFormView(SingleObjectMixin, FormView, FileUploadMixin):
     form_class = EmployeeForm
     model = Employee
     template_name = "profile.html"
-    success_url = "/profile"
+    
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden()
+        self.object = self.get_object()
+        return super().post(request, *args, **kwargs)
+    
+    
+    def get_success_url(self):
+        return reverse("profile")
+    # def get_initial(self) -> dict[str, Any]:
+    #     initial = super(ProfileFormView, self).get_initial()
+    #     if self.request.user.is_authenticated:
+    #         initial["username"] = self.request.user.username  # type: ignore
+    #         initial["first_name"] = self.request.user.first_name  # type: ignore
+    #         initial["last_name"] = self.request.user.last_name  # type: ignore
+    #         initial["middle_name"] = self.request.user.middle_name  # type: ignore
+    #         initial["social_security"] = self.request.user.social_security  # type: ignore
+    #         initial["date_of_birth"] = self.request.user.date_of_birth  # type: ignore
+    #         initial["street_address1"] = self.request.user.street_address1  # type: ignore
+    #         initial["street_address2"] = self.request.user.street_address2  # type: ignore
+    #         initial["marital_status"] = self.request.user.marital_status  # type: ignore
+    #         initial[  # type: ignore
+    #             "emergency_contact_first_name"
+    #         ] = self.request.user.emergency_contact_first_name  # type: ignore
+    #         initial["ethnicity"] = self.request.user.ethnicity  # type: ignore
+    #         initial[
+    #             "emergency_contact_last_name"
+    #         ] = self.request.user.emergency_contact_last_name  # type: ignore
+    #         initial["race"] = self.request.user.race  # type: ignore
+    #         initial[
+    #             "emergency_contact_relationship"
+    #         ] = self.request.user.emergency_contact_relationship  # type: ignore
+    #         initial[
+    #             "qualifications_verification"
+    #         ] = self.request.user.qualifications_verification  # type: ignore
+    #         initial["cpr_verification"] = self.request.user.cpr_verification  # type: ignore
+    #         initial["family_hca"] = self.request.user.family_hca  # type: ignore
+    #         initial["phone"] = self.request.user.phone  # type: ignore
+    #         initial["state"] = self.request.user.state  # type: ignore
+    #         initial["zipcode"] = self.request.user.zipcode  # type: ignore
+    #         initial["hire_date"] = self.request.user.hire_date  # type: ignore
+    #         initial["termination_date"] = self.request.user.termination_date  # type: ignore
+    #         initial["qualifications"] = self.request.user.qualifications  # type: ignore
+    #         initial["in_compliance"] = self.request.user.in_compliance  # type: ignore
+    #         initial["onboarded"] = self.request.user.onboarded  # type: ignore
+    #     return initial
 
-    def get_initial(self) -> dict[str, Any]:
-        initial = super(ProfileFormView, self).get_initial()
-        if self.request.user.is_authenticated:
-            initial["username"] = self.request.user.username  # type: ignore
-            initial["first_name"] = self.request.user.first_name  # type: ignore
-            initial["last_name"] = self.request.user.last_name  # type: ignore
-            initial["middle_name"] = self.request.user.middle_name  # type: ignore
-            initial["social_security"] = self.request.user.social_security  # type: ignore
-            initial["date_of_birth"] = self.request.user.date_of_birth  # type: ignore
-            initial["street_address1"] = self.request.user.street_address1  # type: ignore
-            initial["street_address2"] = self.request.user.street_address2  # type: ignore
-            initial["marital_status"] = self.request.user.marital_status  # type: ignore
-            initial[  # type: ignore
-                "emergency_contact_first_name"
-            ] = self.request.user.emergency_contact_first_name  # type: ignore
-            initial["ethnicity"] = self.request.user.ethnicity  # type: ignore
-            initial[
-                "emergency_contact_last_name"
-            ] = self.request.user.emergency_contact_last_name  # type: ignore
-            initial["race"] = self.request.user.race  # type: ignore
-            initial[
-                "emergency_contact_relationship"
-            ] = self.request.user.emergency_contact_relationship  # type: ignore
-            initial[
-                "qualifications_verification"
-            ] = self.request.user.qualifications_verification  # type: ignore
-            initial["cpr_verification"] = self.request.user.cpr_verification  # type: ignore
-            initial["family_hca"] = self.request.user.family_hca  # type: ignore
-            initial["phone"] = self.request.user.phone  # type: ignore
-            initial["state"] = self.request.user.state  # type: ignore
-            initial["zipcode"] = self.request.user.zipcode  # type: ignore
-            initial["hire_date"] = self.request.user.hire_date  # type: ignore
-            initial["termination_date"] = self.request.user.termination_date  # type: ignore
-            initial["qualifications"] = self.request.user.qualifications  # type: ignore
-            initial["in_compliance"] = self.request.user.in_compliance  # type: ignore
-            initial["onboarded"] = self.request.user.onboarded  # type: ignore
-        return initial
+class Profile(View):
+    def get(self, request, *args, **kwargs):
+        view = ProfileDetailView.as_view()
+        return view(request, *args, **kwargs)
 
-    def form_vaild(self, form) -> HttpResponseRedirect:
-        pass
-        # if self.request.user.is_superuser or self.request.user ==
-
-
+    def post(self, request, *args, **kwargs):
+        view = ProfileFormView.as_view()
+        return view(request, *args, **kwargs)
+    
 # TODO: Implement REST endpoint with DRF
 
 
@@ -186,7 +229,12 @@ def all_client_inquiries(request: HttpRequest) -> HttpResponse:
     inquiries_json = json.dumps(list(inquiries), cls=DjangoJSONEncoder)
     return HttpResponse(content=inquiries_json, status=status.HTTP_200_OK)
 
-
+class ClientInquiriesAPIListView(generics.ListCreateAPIView):
+    queryset = ClientInterestSubmissions.objects.all()
+    serializer_class = ClientInquiriesSerializer
+    permission_classes = [permissions.IsAuthenticated,]
+    filter_backends = [DjangoFilterBackend]
+    
 # SECTION - Class-Based Views
 class ClientInquiriesListView(ListView):
     """
