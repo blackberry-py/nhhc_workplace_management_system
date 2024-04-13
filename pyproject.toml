@@ -83,6 +83,11 @@ tblib = "^3.0.0"
 pytest-django = "^4.7.0"
 
 
+
+[tool.poetry.group.testing.dependencies]
+flake8 = "^7.0.0"
+isort = "^5.13.2"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
