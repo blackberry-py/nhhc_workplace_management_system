@@ -45,4 +45,4 @@ jobs:
           - uses: syphar/restore-virtualenv@v1
             id: cache-virtualenv
 
-          - run: py.test
+          - run: make pipeline-test
