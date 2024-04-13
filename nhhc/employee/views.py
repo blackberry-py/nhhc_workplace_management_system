@@ -55,7 +55,7 @@ class EmployeeRoster(ListView):
 
 class EmployeeDetail(DetailView):
     model = Employee
-    template_name = "employee-details.html"
+    template_name = "employee-detail.html"
     context_object_name = "employee"
 
 
@@ -299,7 +299,7 @@ def employee_details(request, pk):
             context["form"] = EmployeeForm(instance=Employee.objects.get(id=pk))
             return render(
                 request=request,
-                template_name="home/employee-details.html",
+                template_name="employee-detail.html",
                 context=context,
             )
     else:

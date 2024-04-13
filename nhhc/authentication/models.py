@@ -4,7 +4,6 @@ from uuid import uuid4
 from compliance.models import Compliance
 from django.conf import settings
 from django.db import models
-from django.db.models import signals
 from employee.models import Employee
 from loguru import logger
 

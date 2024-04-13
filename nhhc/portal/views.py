@@ -51,6 +51,7 @@ from rest_framework import generics, mixins, permissions, status
 from rest_framework.response import Response
 from web.forms import ClientInterestForm
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
+from django.forms.models import model_to_dict
 
 now = arrow.now(tz="America/Chicago")
 
@@ -87,43 +88,30 @@ class ProfileDetailView(DetailView):
     model = Employee
     template_name = "profile.html"
     
-    def get_object(self, queryset=Employee.objects.all()):
-        pk = self.request.user.id
-        if pk is not None:
-            queryset = queryset.filter(pk=pk)
-        if pk is None and slug is None:
-            raise AttributeError(
-                "Generic detail view %s must be called with either an object "
-                "pk or a slug in the URLconf." % self.__class__.__name__
-            )
-        try:
-            # Get the single item from the filtered queryset
-            obj = queryset.get()
-        except queryset.model.DoesNotExist:
-            raise Http404(
-                _("No %(verbose_name)s found matching the query")
-                % {"verbose_name": queryset.model._meta.verbose_name}
-            )
-        return obj
+    def get_object(self):
+        return Employee.objects.get(pk=self.request.user.pk)
     
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context["form"] = EmployeeForm
+        inital = model_to_dict(self.get_object())
+        context["form"] = EmployeeForm(initial= inital)
         return context
     
 
 
-class ProfileFormView(SingleObjectMixin, FormView, FileUploadMixin):
+class ProfileFormView(UpdateView, FileUploadMixin):
     form_class = EmployeeForm
     model = Employee
     template_name = "profile.html"
     
-    def post(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return HttpResponseForbidden()
-        self.object = self.get_object()
-        return super().post(request, *args, **kwargs)
-    
+    # def post(self, request, *args, **kwargs):
+    #     if not request.user.is_authenticated:
+    #         return HttpResponseForbidden()
+    #     self.object = self.get_object()
+    #     return super().post(request, *args, **kwargs)
+
+    def get_object(self):
+        return Employee.objects.get(pk=self.request.user.pk)
     
     def get_success_url(self):
         return reverse("profile")

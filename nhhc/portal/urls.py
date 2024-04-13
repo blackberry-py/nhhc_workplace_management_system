@@ -17,7 +17,7 @@ from . import views
 
 urlpatterns = [
     path("dashboard", views.portal_dashboard, name="dashboard"),
-    path("profile/", views.Profile.as_view(), name="profile"),
+    re_path(r"^profile/$", views.Profile.as_view(), name="profile"),
     path(
         "inquiries/",
         login_required(views.ClientInquiriesListView.as_view()),
