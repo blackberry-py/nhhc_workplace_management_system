@@ -8,7 +8,7 @@ media
 
 # Backup files #
 *.bak
-.kolo
+
 # If you are using PyCharm #
 # User-specific stuff
 .idea/**/workspace.xml
@@ -19,10 +19,10 @@ media
 
 # AWS User-specific
 .idea/**/aws.xml
-nhhc/staticfiles/
+
 # Generated files
 .idea/**/contentModel.xml
-*/node_modules/*
+
 # Sensitive or high-churn files
 .idea/**/dataSources/
 .idea/**/dataSources.ids
@@ -62,6 +62,7 @@ parts/
 sdist/
 var/
 wheels/
+*.whl
 *.egg-info/
 .installed.cfg
 *.egg
@@ -83,7 +84,7 @@ nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
-
+.rubberduck/*
 # Jupyter Notebook
 .ipynb_checkpoints
 
@@ -104,9 +105,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-.venv-*
-.devcontainer/devcontainer.env
-.aws/
+
 # mkdocs documentation
 /site
 
@@ -129,32 +128,19 @@ Control.ca-list
 Control.ca-bundle
 Control.system-ca-bundle
 GitHub.sublime-settings
-/workspaces/NettHands/https:*
+
 # Visual Studio Code #
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-.historypoet
-.env*
-.flaskenv*
-!.env.project
-!.env.vault
-NettHandsHomeCare/node_modules/*
-NettHandsHomeCare/static/vendor/jvectormap-next/jquery-jvectormap.min.js.map
-*/credentials.json
-*.sql
-*.sqlite3
-nhhc/logs/*
-node_modules
-node_modules
+.history
+https:/*
+htmlcov/*
+.kolo/*
+nhhc/staticfiles/*
 .devcontainer/devcontainer.json
-private_key.pem
-public_key.pem
-nhhc/nhhc/private_key.py
-.rubberduck/template/create_function_docstring.rdt.md
-.rubberduck/*
-*/*/st
-https:/cdn.netthandshome.care/staticfiles/*
-https\:/*
+.devcontainer/devcontainer.env
+.devcontainer/devcontainer.json
+.devcontainer/devcontainer.json

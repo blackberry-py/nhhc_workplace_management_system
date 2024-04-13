@@ -1,7 +1,7 @@
 name: General Test and Deploy 
 on: push
 jobs:
-  test:
+  setup-virtualenv:
     runs-on: ubuntu-latest
     steps:
       - name: Get Code Checkout
@@ -14,34 +14,35 @@ jobs:
           inject-env-vars: true
           doppler-project: nhhc
           doppler-config: stg
-      - name: Install poetry
-        run: pipx install poetry
-      - name: Setup Python3.12
-        uses: actions/setup-python@v5
-        with:
-            python-version: 3.12
-            cache: 'poetry'
-      - name: cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-      - name: Install Dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          pip install --upgrade pip
-          pip install poetry 
-          poetry install --without dev --without test
-      - name: Run Tests
-        run: |
-          poetry shell
-          python nhhc/manage.py test
-          
-  merge:
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - name: Deployw
-        run: echo "Deploying Code"..r
+      - uses: actions/checkout@v1
+      - uses: actions/setup-python@v2
+      - uses: syphar/restore-virtualenv@v1
+        id: cache-virtualenv
+      - uses: syphar/restore-pip-download-cache@v1
+        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+      - run: pip install -r requirements.txt
+        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+  linter:
+        needs: setup-virtualenv
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v1
+        - uses: actions/setup-python@v2
+        - uses: syphar/restore-virtualenv@v1
+          id: cache-virtualenv
+    
+        - run: flake8
+        - run: pydocstyle
+        - run: isort . --diff --check-only
+        - run: black --check --diff .
+
+  tests:
+          needs: setup-virtualenv
+          runs-on: ubuntu-latest
+          steps:
+          - uses: actions/checkout@v1
+          - uses: actions/setup-python@v2
+          - uses: syphar/restore-virtualenv@v1
+            id: cache-virtualenv
+      
+          - run: py.test
