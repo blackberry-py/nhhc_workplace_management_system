@@ -14,9 +14,8 @@ from filer.fields.file import FilerFileField
 from localflavor.us.models import (
     USStateField,
     USZipCodeField,
-
 )
-from pgcrypto import EncryptedDateField, EncryptedTextField, EncryptedEmailField
+from sage_encrypt.fields.asymmetric import EncryptedCharField, EncryptedDateField
 
 from loguru import logger
 from phonenumber_field.modelfields import PhoneNumberField
@@ -198,10 +197,8 @@ class Employee(AbstractUser):
         POLISH = "POLISH", _("Polish")
         SWEDISH = "SWEDISH", _("Swedish")
         VIETNAMESE = "VIETNAMESE", _("Vietnamese")
-        
-    username =  models.CharField(
-        max_length=150, 
-        unique=False)
+
+    username = models.CharField(max_length=150, unique=False)
     gender = models.CharField(
         max_length=255,
         choices=GENDER.choices,
@@ -217,7 +214,7 @@ class Employee(AbstractUser):
         null=True,
         default=LANGUAGE.ENGLISH,
     )
-    social_security = EncryptedTextField(unique=True, null=True, blank=True)
+    social_security = EncryptedCharField(unique=True, null=True, blank=True)
     date_of_birth = EncryptedDateField(null=True, blank=True)
     middle_name = models.CharField(max_length=255, default="", null=True, blank=True)
     street_address1 = models.CharField(
@@ -257,8 +254,7 @@ class Employee(AbstractUser):
         blank=True,
         choices=RACE.choices,
         default=RACE.UNKNOWN,
-        null=True
-  
+        null=True,
     )
     emergency_contact_relationship = models.CharField(
         max_length=255,

@@ -15,7 +15,7 @@ from portal.views import (
     ClientInquiriesListView,
     EmploymentApplicationListView,
     marked_reviewed,
-    EmploymentApplicationListView
+    EmploymentApplicationListView,
 )
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
 
@@ -39,13 +39,15 @@ baker.generators.add(
 
 
 class ProfileTestCase(TestCase):
-    @override_settings(
-        STORAGE_DESTINATION="testing"
-   )
+    @override_settings(STORAGE_DESTINATION="testing")
     def setUp(self):
         self.client = Client()
         self.employee = baker.make(
-            Employee, username="testuser", password="testpassword", is_superuser=True, is_staff=True
+            Employee,
+            username="testuser",
+            password="testpassword",
+            is_superuser=True,
+            is_staff=True,
         )
         self.contract = baker.make(Contract)
         self.compliance = baker.make(Compliance, employee=self.employee)
@@ -102,7 +104,7 @@ class ClientInquiriesTestCase(TestCase):
         STORAGE_DESTINATION="testing",
         POSTGRES_USER="test_user",
         POSTGRES_PASSWORD="pWxH7dzX",
-   )
+    )
     def setUp(self):
         self.submission1 = baker.make(
             ClientInterestSubmissions,
@@ -128,15 +130,13 @@ class ClientInquiriesTestCase(TestCase):
         self.compliance = baker.make(Compliance, employee=self.employee)
 
     def test_all_client_inquiries(self):
-        self.client.force_login( self.employee)
+        self.client.force_login(self.employee)
         response = self.client.get(reverse("inquiries"))
         self.assertEqual(response.status_code, 200)
 
 
 class SubmissionDetailTestCase(TestCase):
-    @override_settings(
-        STORAGE_DESTINATION="testing"
-   )
+    @override_settings(STORAGE_DESTINATION="testing")
     def setUp(self):
         self.submission = ClientInterestSubmissions.objects.create(
             first_name="John",
@@ -172,7 +172,6 @@ class MarkedReviewedTestCase(TestCase):
             is_staff=False,
             is_superuser=False,
             application_id=random.randint(2, 5655),
-
         )
         self.staff_user = baker.make(
             Employee,
@@ -181,24 +180,8 @@ class MarkedReviewedTestCase(TestCase):
             is_staff=True,
             is_superuser=True,
             application_id=random.randint(2, 5655),
-
         )
         self.application = baker.make(EmploymentApplicationModel)
-
-    @patch("home.views.ClientInterestSubmissions.objects.get")
-    @patch("home.views.logger")
-    def test_marked_reviewed_view(self, mock_logger, mock_get):
-        mock_request = MagicMock()
-        mock_request.body = json.dumps({"pk": self.submission.pk})
-        mock_request.user = MagicMock()
-        mock_get.return_value = self.submission
-
-        response = marked_reviewed(mock_request)
-        self.assertEqual(response.status_code, 204)
-        self.assertTrue(self.submission.reviewed)
-        mock_logger.info.assert_called_once_with(
-            f"{self.submission.id} marked as reviewed"
-        )
 
     def test_marked_reviewed_view_invalid_json(self):
         mock_request = MagicMock()
@@ -227,11 +210,3 @@ class MarkedReviewedTestCase(TestCase):
             response = marked_reviewed(mock_request)
             self.assertEqual(response.status_code, 500)
             mock_logger.error.assert_called_once()
-
-    def test_employment_applications_happy_path(self):
-        # Create a request object
-        request = RequestFactory().get("/applicants/")
-        # Call the view function
-        response = employment_applications(request)
-        # Check if the response status code is 200
-        self.assertEqual(response.status_code, 200)

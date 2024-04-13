@@ -108,6 +108,7 @@ INSTALLED_APPS = [
     "health_check",  # required
     "health_check.db",  # stock Django health checkers
     "health_check.cache",
+    "sage_encrypt",
     "health_check.storage",
     "health_check.contrib.migrations",
     ## Installed Internal Apps
@@ -140,7 +141,6 @@ MIDDLEWARE = [
     "django_prometheus.middleware.PrometheusAfterMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.cache.FetchFromCacheMiddleware",
-
 ]
 AUTH_USER_MODEL = "employee.Employee"
 ROOT_URLCONF = "nhhc.urls"
@@ -157,7 +157,7 @@ CACHE_TTL = 60 * 15
 SITE_ID = int(os.getenv("SITE_ID"))
 ENVIRONMENT_NAME = os.getenv("ENVIRONMENT_NAME")
 ENVIRONMENT_COLOR = os.getenv("ENVIRONMENT_COLOR")
-REQUEST_BASE_URL =  os.getenv("REQUEST_BASE_URL")
+REQUEST_BASE_URL = os.getenv("REQUEST_BASE_URL")
 DATABASES = {
     "default": {
         "ENGINE": "django_prometheus.db.backends.postgresql",
@@ -169,6 +169,11 @@ DATABASES = {
         "OPTIONS": {"sslmode": "require"},
     },
 }
+# SECTION - Database Encryption
+ENCRYPT_KEY = os.environ["ENCRYPT_KEY"]
+ENCRYPT_PRIVATE_KEY = os.environ["DB_GPG_PRIVATE_KEY"]
+ENCRYPT_PUBLIC_KEY = os.environ["DB_GPG_PUBLIC_KEY"]
+
 CACHES = {
     "default": {
         "BACKEND": os.getenv("CACHE_BACKEND"),
@@ -256,7 +261,6 @@ if STORAGE_DESTINATION == "S3":
     STATIC_URL = f"https://cdn.netthandshome.care/{STATIC_LOCATION}/"
     STATIC_ROOT = STATIC_URL
 
-
     # s3 public media settings
     PUBLIC_MEDIA_LOCATION = "media"
     MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
@@ -286,7 +290,7 @@ if STORAGE_DESTINATION == "S3":
     # "staticfiles": {
     #     "BACKEND": "nhhc.backends.storage_backends.StaticStorage",
     # },
-    # # TODO: Add all ST0RAGES to dict 
+    # # TODO: Add all ST0RAGES to dict
     # "private":{
     #     "BACKEND": "nhhc.backends.storage_backends.PrivateMediaStorage",
     # }
@@ -297,7 +301,7 @@ else:
     MEDIA_URL = "/mediafiles/"
     MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
 
-WHITENOISE_MANIFEST_STRICT=False 
+WHITENOISE_MANIFEST_STRICT = False
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
 
