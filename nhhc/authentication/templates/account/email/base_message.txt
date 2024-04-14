@@ -1,0 +1,10 @@
+{% load i18n %}{% autoescape off %}Hello from NettCare!
+
+{% block content %}{% endblock content %}
+
+
+
+
+--
+Thank you for using NettCare!
+{% endautoescape %}

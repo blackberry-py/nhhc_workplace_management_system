@@ -22,7 +22,7 @@ from loguru import logger
 # SECTION - Basic Application Defintion
 OFFLINE = False
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.environ["SECRET_KEY"]
 DEBUG = True
 DATETIME_FORMAT = "m/d/yyyy h:mm A"
 ADMINS = [("Terry Brooks", "Terry@BrooksJr.com")]
@@ -45,21 +45,21 @@ ALLOWED_HOSTS = [
 ]
 ROBOTS_SITEMAP_VIEW_NAME = "cached-sitemap"
 CSRF_FAILURE_VIEW = "web.views.csrf_failure"
-RECAPTCHA_PUBLIC_KEY = os.getenv("RECAPTCHA_PUBLIC_KEY")
-RECAPTCHA_PRIVATE_KEY = os.getenv("RECAPTCHA_PRIVATE_KEY")
+RECAPTCHA_PUBLIC_KEY = os.environ["RECAPTCHA_PUBLIC_KEY"]
+RECAPTCHA_PRIVATE_KEY = os.environ["RECAPTCHA_PRIVATE_KEY"]
 RESTRICT_ADMIN_BY_IPS = True
-ALLOWED_ADMIN_IPS = os.getenv("ALLOWED_IPS")
+ALLOWED_ADMIN_IPS = list(os.environ["ALLOWED_IPS"].split(","))
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 SITE_ID = 1
 ROBOTS_CACHE_TIMEOUT = 60 * 60 * 24
 
 ENVIRONMENT_FLOAT = True
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = os.getenv("EMAIL_SERVER")
+EMAIL_HOST = os.environ["EMAIL_SERVER"]
 EMAIL_USE_TLS = True
-EMAIL_PORT = os.getenv("EMAIL_TSL_PORT")
-EMAIL_HOST_USER = os.getenv("EMAIL")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_ACCT_PASSWORD")
+EMAIL_PORT = os.environ["EMAIL_TSL_PORT"]
+EMAIL_HOST_USER = os.environ["EMAIL"]
+EMAIL_HOST_PASSWORD = os.environ["EMAIL_ACCT_PASSWORD"]
 APPEND_SLASH = True
 CRISPY_ALLOWED_TEMPLATE_PACKS = (
     "bootstrap",
@@ -154,18 +154,18 @@ mimetypes.add_type("text/javascript", ".js", True)
 # SECTION - Database and Caching
 CACHE_TTL = 60 * 15
 
-SITE_ID = int(os.getenv("SITE_ID"))
-ENVIRONMENT_NAME = os.getenv("ENVIRONMENT_NAME")
-ENVIRONMENT_COLOR = os.getenv("ENVIRONMENT_COLOR")
-REQUEST_BASE_URL = os.getenv("REQUEST_BASE_URL")
+SITE_ID = int(os.environ["SITE_ID"])
+ENVIRONMENT_NAME = os.environ["ENVIRONMENT_NAME"]
+ENVIRONMENT_COLOR = os.environ["ENVIRONMENT_COLOR"]
+REQUEST_BASE_URL = os.environ["REQUEST_BASE_URL"]
 DATABASES = {
     "default": {
         "ENGINE": "django_prometheus.db.backends.postgresql",
-        "NAME": os.getenv("POSTGRES_DATABASE"),
-        "USER": os.getenv("POSTGRES_USER"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "NAME": os.environ["POSTGRES_DATABASE"],
+        "USER": os.environ["POSTGRES_USER"],
+        "PASSWORD": os.environ["POSTGRES_PASSWORD"],
         "PORT": 5432,
-        "HOST": os.getenv("POSTGRES_HOST"),
+        "HOST": os.environ["POSTGRES_HOST"],
         "OPTIONS": {"sslmode": "require"},
     },
 }
@@ -176,10 +176,10 @@ ENCRYPT_PUBLIC_KEY = os.environ["DB_GPG_PUBLIC_KEY"]
 
 CACHES = {
     "default": {
-        "BACKEND": os.getenv("CACHE_BACKEND"),
-        "LOCATION": os.getenv("REDIS_CACHE_URI"),
+        "BACKEND": os.environ["CACHE_BACKEND"],
+        "LOCATION": os.environ["REDIS_CACHE_URI"],
         "OPTIONS": {
-            "PARSER_CLASS": os.getenv("CACHE_PARSER"),
+            "PARSER_CLASS": os.environ["CACHE_PARSER"],
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
         "KEY_PREFIX": "NHHC-NATIVE",
@@ -219,7 +219,7 @@ LOGIN_URL = "/login"
 LOGOUT_REDIRECT_URL = LOGIN_URL
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-ACCOUNT_EMAIL_SUBJECT_PREFIX = "Nett Hands Employee Portal"
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "NettCare - Nett Hands Home Care - Caregiver Portal "
 
 
 # SECTION - Internationalization
@@ -234,67 +234,88 @@ USE_TZ = False
 
 # SECTION - STORAGE
 # SECTION - StaticFiles VARS
-BUNNY_USERNAME = os.getenv("BUNNY_USERNAME")
-BUNNY_PASSWORD = os.getenv("BUNNY_PASSWORD")
-BUNNY_REGION = os.getenv("BUNNY_REGION")
-BUNNY_HOSTNAME = os.getenv("BUNNY_HOSTNAME")
-BUNNY_BASE_DIR = os.getenv("BUNNY_BASE_DIR")
+BUNNY_USERNAME = os.environ["BUNNY_USERNAME"]
+BUNNY_PASSWORD = os.environ["BUNNY_PASSWORD"]
+BUNNY_REGION = os.environ["BUNNY_REGION"]
+BUNNY_HOSTNAME = os.environ["BUNNY_HOSTNAME"]
+BUNNY_BASE_DIR = os.environ["BUNNY_BASE_DIR"]
 # ! SECTION - StaticFiles VARS
 
-STORAGE_DESTINATION = os.getenv("STORAGE_DESTINATION")
+STORAGE_DESTINATION = os.environ["STORAGE_DESTINATION"]
 FILE_UPLOAD_TEMP_DIR = BASE_DIR / "tmp"
 if STORAGE_DESTINATION == "S3":
     # aws settings
-    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-    AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+    AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]
+    AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
+    AWS_STORAGE_BUCKET_NAME = os.environ["AWS_STORAGE_BUCKET_NAME"]
     AWS_DEFAULT_ACL = "private"
     AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
     AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
     AWS_S3_SIGNATURE_VERSION = "s3v4"
     AWS_QUERYSTRING_EXPIRE = 3600
     AWS_S3_REGION_NAME = "us-east-2"
-    AWS_CLOUDFRONT_KEY_ID = os.getenv("AWS_CLOUDFRONT_KEY_ID")
-    AWS_CLOUDFRONT_KEY = os.getenv("AWS_CLOUDFRONT_PRIVATE_KEY")
+    AWS_CLOUDFRONT_KEY_ID = os.environ["AWS_CLOUDFRONT_KEY_ID"]
+    AWS_CLOUDFRONT_KEY = os.environ["AWS_CLOUDFRONT_PRIVATE_KEY"]
     # s3 static settings
-    STATIC_LOCATION = "staticfiles"
+    STATIC_LOCATION = "staticfiles/"
     STATIC_URL = f"https://cdn.netthandshome.care/{STATIC_LOCATION}/"
     STATIC_ROOT = STATIC_URL
 
     # s3 public media settings
-    PUBLIC_MEDIA_LOCATION = "media"
+    PUBLIC_MEDIA_LOCATION = "media/"
     MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
     # s3 private media settings
-    PRIVATE_MEDIA_LOCATION = "restricted"
-    MEDIA_DIRECTORY = "/restricted/compliance"
+    PRIVATE_MEDIA_LOCATION = "restricted/"
+    MEDIA_DIRECTORY = "/restricted/compliance/"
     PRIVATE_FILE_STORAGE = "nhhc.backends.storage_backends.PrivateMediaStorage"
+    PRIVATE_MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PRIVATE_MEDIA_LOCATION}/"
+    STORAGES = {
+        "default": {"BACKEND": "nhhc.backends.storage_backends.PublicMediaStorage"},
+        "staticfiles": {
+            "BACKEND": "nhhc.backends.storage_backends.StaticStorage",
+        },
+    }
 
     FILER_STORAGES = {
-        "private": {
-            "hhg-oig": {
-                "ENGINE": "nhhc.backends.storage_backends.PrivateMediaStorage",
-                "OPTIONS": {
-                    "location": f"https://{AWS_S3_CUSTOM_DOMAIN}/{PRIVATE_MEDIA_LOCATION}",
-                    "base_url": "/smedia/filer/",
-                },
-                "UPLOAD_TO": "filer.utils.generate_filename.randomized",
+        "public": {
+            "main": {
+                "ENGINE": "nhhc.backends.storage_backends.PublicMediaStorage",
+                # 'OPTIONS': {
+                #     'location': PUBLIC_MEDIA_LOCATION,
+                #     'base_url': MEDIA_URL
+                # },
+                "UPLOAD_TO": "filer.utils.generate_filename.by_date",
                 "UPLOAD_TO_PREFIX": "filer_public",
             },
-        }
+            "thumbnails": {
+                "ENGINE": "nhhc.backends.storage_backends.PublicMediaStorage",
+                # 'OPTIONS': {
+                #     'location': PUBLIC_MEDIA_LOCATION,
+                #     'base_url': MEDIA_URL
+                # },
+            },
+        },
+        "private": {
+            "main": {
+                "ENGINE": "nhhc.backends.storage_backends.PrivateMediaStorage",
+                "OPTIONS": {
+                    #     'location': PRIVATE_MEDIA_LOCATION,
+                    # 'base_url': PRIVATE_MEDIA_URL,
+                },
+                "UPLOAD_TO": "nhhc.utils.upload_handler.process_filename",
+                "UPLOAD_TO_PREFIX": MEDIA_DIRECTORY,
+            },
+            "thumbnails": {
+                "ENGINE": "nhhc.backends.storage_backends.PublicMediaStorage",
+                # 'OPTIONS': {
+                #     'location': os.path.join(PRIVATE_MEDIA_LOCATION,"thumbnails"),
+                #     'base_url': os.path.join(PRIVATE_MEDIA_URL,"thumbnails")
+                # },
+                "UPLOAD_TO": "nhhc.utils.upload_handler.process_filename",
+                "UPLOAD_TO_PREFIX": MEDIA_DIRECTORY,
+            },
+        },
     }
-    # STORAGES = {
-    #     "default":{
-    #             "BACKEND" : "nhhc.backends.storage_backends.PublicMediaStorage"
-
-    #     },
-    # "staticfiles": {
-    #     "BACKEND": "nhhc.backends.storage_backends.StaticStorage",
-    # },
-    # # TODO: Add all ST0RAGES to dict
-    # "private":{
-    #     "BACKEND": "nhhc.backends.storage_backends.PrivateMediaStorage",
-    # }
-    # }
 else:
     STATIC_URL = "/staticfiles/"
     STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
@@ -303,13 +324,16 @@ else:
 
 WHITENOISE_MANIFEST_STRICT = False
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
-
+FILER_ENABLE_LOGGING = True
+FILER_DEBUG = DEBUG
 
 # SECTION - File Management
 FILER_ADD_FILE_VALIDATORS = {
     "text/html": ["filer.validation.deny_html"],
     "image/svg+xml": ["filer.validation.deny"],
 }
+
+
 FILER_UPLOADER_MAX_FILE_SIZE = 2
 FILER_MIME_TYPE_WHITELIST = [
     "text/plain",
@@ -331,6 +355,13 @@ FILER_ADD_FILE_VALIDATORS["cgi"] = ["filer.validation.deny"]
 FILER_ADD_FILE_VALIDATORS["py"] = ["filer.validation.deny"]
 FILER_ADD_FILE_VALIDATORS["xml"] = ["filer.validation.deny"]
 
+THUMBNAIL_PROCESSORS = (
+    "easy_thumbnails.processors.colorspace",
+    "easy_thumbnails.processors.autocrop",
+    #'easy_thumbnails.processors.scale_and_crop',
+    "filer.thumbnail_processors.scale_and_crop_with_subject_location",
+    "easy_thumbnails.processors.filters",
+)
 #! SECTION
 
 # SECTION -  Static files (CSS, JavaScript, Images)
@@ -426,7 +457,7 @@ HIGHLIGHT_MOINITORING = highlight_io.H(
 PRIMARY_LOG_FILE = os.path.join(BASE_DIR, "logs", "primary_ops.log")
 CRITICAL_LOG_FILE = os.path.join(BASE_DIR, "logs", "fatal.log")
 DEBUG_LOG_FILE = os.path.join(BASE_DIR, "logs", "utility.log")
-LOGTAIL_HANDLER = LogtailHandler(source_token=os.getenv("LOGTAIL_API_KEY"))
+LOGTAIL_HANDLER = LogtailHandler(source_token=os.environ["LOGTAIL_API_KEY"])
 
 logger.add(
     HIGHLIGHT_MOINITORING.logging_handler,
@@ -451,9 +482,7 @@ REQUEST_TRAFFIC_MODULES = [
     "request.traffic.Error",
 ]
 # SECTION - Preformence MonitoringSCOUT_MONITOR
-SCOUT_MONITOR = True
-SCOUT_NAME = "nhhc"
-SCOUT_KEY = os.getenv("SCOUT_KEY")
+
 PROMETHEUS_LATENCY_BUCKETS = (
     0.1,
     0.2,

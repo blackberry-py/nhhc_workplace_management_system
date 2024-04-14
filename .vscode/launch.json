@@ -14,19 +14,20 @@
             "python": "${command:python.interpreterPath}",
             "program": "${workspaceFolder}/nhhc/manage.py",
             "args": [
+
                 "runserver"
             ],
             "django": true,
 
             "justMyCode": true,
             "autoReload": {"enable": true},
-            "host": "localhost",
-            "port": 9000,
-            "preLaunchTask": "start venv",
+            "host": "127.0.0.1",
+            "port": 8500,
             "env": {
-                "DOPPLER_ENV":"1"
+                "DOPPLER_ENV":"1",
+
             }
-    
+
         }
     ]
 }

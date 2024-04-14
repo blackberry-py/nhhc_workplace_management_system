@@ -42,16 +42,19 @@ custom_domain = False
 from django.conf import settings
 from storages.backends.s3boto3 import S3Boto3Storage
 from django_bunny.storage import BunnyStorage
+import os
 
-class StaticStorage(S3Boto3Storage):
-    location = "static"
+
+class StaticStorage(BunnyStorage):
+    location = "staticfiles"
     default_acl = "public-read"
 
 
 class PublicMediaStorage(S3Boto3Storage):
-    location = "media"
-    default_acl = "public-read"
+    location = "restricted"
+    default_acl = "private"
     file_overwrite = False
+    base_url = os.environ["PUBLIC_MEDIA_BASE_URL"]
 
 
 class PrivateMediaStorage(S3Boto3Storage):
@@ -59,3 +62,4 @@ class PrivateMediaStorage(S3Boto3Storage):
     default_acl = "private"
     file_overwrite = False
     custom_domain = False
+    base_url = os.environ["PRIVATE_MEDIA_BASE_URL"]

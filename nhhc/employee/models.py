@@ -21,6 +21,7 @@ from loguru import logger
 from phonenumber_field.modelfields import PhoneNumberField
 from nhhc.backends.storage_backends import PrivateMediaStorage
 from nhhc.utils.password_generator import RandomPasswordGenerator
+from filer.fields.file import FilerFileField
 
 now = str(arrow.now().format("YYYY-MM-DD"))
 
@@ -271,9 +272,9 @@ class Employee(AbstractUser):
         null=True,
         blank=True,
     )
-    cpr_verification = models.FileField(
-        upload_to="verifications_cpr",
-        storage=PrivateMediaStorage(),
+    cpr_verification = FilerFileField(
+        related_name="cpr_verification",
+        on_delete=models.DO_NOTHING,
         null=True,
         blank=True,
     )

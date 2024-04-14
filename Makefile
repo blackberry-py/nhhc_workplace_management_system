@@ -38,4 +38,4 @@ pipeline-test: ## Run tests
 run: ## Run the Django server
 	doppler run -- 	$(PYTHON) nhhc/manage.py runserver
 
-start: install migrate run ## Install requirements, apply migrations, then start development server
+start: install migrate run ## Install requirements, apply migrations, then start development server\\\\\\\\\
