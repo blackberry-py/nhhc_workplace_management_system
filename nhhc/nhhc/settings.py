@@ -31,7 +31,6 @@ CSRF_USE_SESSIONS = True
 SESSION_COOKIE_NAME = "nhhc-session"
 SESSION_COOKIE_SECURE = True
 ROBOTS_USE_HOST = False
-
 ADMINRESTRICT_ALLOW_PRIVATE_IP = False
 FIRST_DAY_OF_WEEK = 1
 ALLOWED_HOSTS = [
@@ -43,6 +42,7 @@ ALLOWED_HOSTS = [
     "netthandshome.care",
     "0.0.0.0",
 ]
+SILENCED_SYSTEM_CHECKS = ["auth.W004"]
 ROBOTS_SITEMAP_VIEW_NAME = "cached-sitemap"
 CSRF_FAILURE_VIEW = "web.views.csrf_failure"
 RECAPTCHA_PUBLIC_KEY = os.environ["RECAPTCHA_PUBLIC_KEY"]

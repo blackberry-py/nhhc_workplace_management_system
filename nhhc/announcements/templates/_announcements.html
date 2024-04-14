@@ -1,7 +1,6 @@
 {% load static %}
 {% load humanize %}
 
-
 <div class="container-xxl py-5">
     <div class="container py-5">
         <div class="testimonial-text g-5">
@@ -27,20 +26,20 @@
                                         <span class="badge rounded-pill text-bg-primary text-bg-danger px-3 mb-3">{{announcement.message_type}}</span>
 
                                     {% elif announcement.message_type == 'T' %}
-                                        <span class="badge rounded-pill text-bg-primary text-bg-info  px-3 mb-3">{{announcement.message_type}}</span>
+                                        <span class="badge rounded-pill text-bg-primary text-bg-info  px-3 mb-3">{{ announcement.message_type }}</span>
 
                                     {% elif announcement.message_type == 'X' %}
-                                        <span class="badge rounded-pill text-bg-primary  text-bg-warning  px-3 mb-3">{{announcement.message_type}}</span>
+                                        <span class="badge rounded-pill text-bg-primary  text-bg-warning  px-3 mb-3">{{ announcement.message_type }}</span>
                                     {% else %}
-                                        <span class="badge rounded-pill text-bg-primary      text-bg-primary     px-3 mb-3">{{announcement.message_type}}</span>
+                                        <span class="badge rounded-pill text-bg-primary      text-bg-primary     px-3 mb-3">{{ announcement.message_type }}</span>
                                     {% endif %}
                                     <br/>
-                                    <h1 class="mb-4 announcement-title">{{ announcement.announcement_title}}</h1>
+                                    <h1 class="mb-4 announcement-title">{{ announcement.announcement_title }}</h1>
 
-                                    <p class="fs-4 textimal-text">{{announcement.message}}</p>
+                                    <p class="fs-4 textimal-text">{{ announcement.message }}</p>
                                     <div class="d-flex align-items-center">
                                         <div class="ps-3">
-                                            <h5 class="mb-1 announced-by">{{announcement.posted_by.first_name}}</h5>
+                                            <h5 class="mb-1 announced-by">{{ announcement.posted_by.first_name }}</h5>
 
                                         </div>
                                     </div>

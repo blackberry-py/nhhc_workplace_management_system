@@ -36,6 +36,12 @@
               <span class="nav-link-text">Announcements</span>
             </a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/announcements' %} active {% endif %}" href="{% url 'coming-soon' %}">
+              <i class="ni ni-calendar-grid-58 text-purple"></i>
+              <span class="nav-link-text">Timesheet Exceptions</span>
+            </a>
+          </li>
         </ul>
         <!-- Divider -->
         {% if user.is_staff %}
