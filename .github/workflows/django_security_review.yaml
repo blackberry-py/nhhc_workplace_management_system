@@ -30,6 +30,8 @@ jobs:
           inject-env-vars: true
           doppler-project: nhhc
           doppler-config: stg
+      - name: Add Tmp Dir
+        run: mkdir -p /github/workspace/nhhc/tmp
       - name: Scan Django settings for security issues
         id: check
         uses: victoriadrake/django-security-check@master
