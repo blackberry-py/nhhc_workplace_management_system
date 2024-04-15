@@ -2,8 +2,8 @@
 
 import django.core.validators
 import django_prometheus.models
-from django.db import migrations, models
 from django.contrib.postgres.operations import CryptoExtension
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -31,13 +31,7 @@ class Migration(migrations.Migration):
                 ("num_hours", models.PositiveIntegerField()),
                 (
                     "reason",
-                    models.TextField(
-                        validators=[
-                            django.core.validators.MinLengthValidator(
-                                50, "the field must contain at least 50 characters"
-                            )
-                        ]
-                    ),
+                    models.TextField(validators=[django.core.validators.MinLengthValidator(50, "the field must contain at least 50 characters")]),
                 ),
                 (
                     "status",

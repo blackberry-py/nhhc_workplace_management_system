@@ -15,7 +15,6 @@ from portal.views import (
     ClientInquiriesListView,
     EmploymentApplicationListView,
     marked_reviewed,
-    EmploymentApplicationListView,
 )
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
 
@@ -28,9 +27,7 @@ from nhhc.utils.testing import (
 dummy_data = Faker()
 
 
-baker.generators.add(
-    "phonenumber_field.modelfields.PhoneNumberField", generate_mock_PhoneNumberField
-)
+baker.generators.add("phonenumber_field.modelfields.PhoneNumberField", generate_mock_PhoneNumberField)
 baker.generators.add("localflavor.us.models.USZipCodeField", generate_mock_ZipCodeField)
 baker.generators.add(
     "localflavor.us.models.USSocialSecurityNumberField",
@@ -55,9 +52,7 @@ class ProfileTestCase(TestCase):
     def test_profile_get_method(self):
         self.client.login(username="testuser", password="testpassword")
         response = self.client.get(f"/profile/{self}")
-        self.assertEqual(
-            response.status_code, 200
-        )  # Check if the get request is successful
+        self.assertEqual(response.status_code, 200)  # Check if the get request is successful
 
     def test_profile_form(self):
         self.client.force_login(Employee)
@@ -71,18 +66,14 @@ class ProfileTestCase(TestCase):
             "marital_status": random.choice(["M", "D", "S", "W", "NM"]),
             "emergency_contact_first_name": dummy_data.first_name(),
             "emergency_contact_last_name": dummy_data.last_name(),
-            "emergency_contact_relationship": random.choice(
-                ["spouse", "parent", "sibiling"]
-            ),
+            "emergency_contact_relationship": random.choice(["spouse", "parent", "sibiling"]),
             "emergency_contact_phone": "+17087561321",
             "city": dummy_data.city(),
             "email": dummy_data.profile()["mail"],
             "phone": "+17087561321",
             "state": dummy_data.state_abbr(),
             "zipcode": dummy_data.postcode_in_state(),
-            "ethnicity": random.choice(
-                ["REFUSED", "HISPANIC", "NON-HISPANIC", "UNKNOWN"]
-            ),
+            "ethnicity": random.choice(["REFUSED", "HISPANIC", "NON-HISPANIC", "UNKNOWN"]),
             "family_hca": random.choice(["true", "false"]),
             "username": dummy_data.profile()["username"],
             "date_of_birth": dummy_data.profile()["birthdate"],

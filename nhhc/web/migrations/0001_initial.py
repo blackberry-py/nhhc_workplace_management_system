@@ -33,9 +33,7 @@ class Migration(migrations.Migration):
                 ("email", models.EmailField(max_length=254, null=True)),
                 (
                     "contact_number",
-                    phonenumber_field.modelfields.PhoneNumberField(
-                        max_length=128, region="US"
-                    ),
+                    phonenumber_field.modelfields.PhoneNumberField(max_length=128, region="US"),
                 ),
                 ("home_address1", models.CharField(max_length=800, null=True)),
                 (
@@ -45,15 +43,11 @@ class Migration(migrations.Migration):
                 ("city", models.CharField(blank=True, max_length=255, null=True)),
                 (
                     "zipcode",
-                    localflavor.us.models.USZipCodeField(
-                        blank=True, max_length=10, null=True
-                    ),
+                    localflavor.us.models.USZipCodeField(blank=True, max_length=10, null=True),
                 ),
                 (
                     "state",
-                    localflavor.us.models.USStateField(
-                        blank=True, max_length=2, null=True
-                    ),
+                    localflavor.us.models.USStateField(blank=True, max_length=2, null=True),
                 ),
                 ("insurance_carrier", models.CharField(max_length=255)),
                 (
@@ -109,9 +103,7 @@ class Migration(migrations.Migration):
                 ("last_name", models.CharField(max_length=255)),
                 (
                     "contact_number",
-                    phonenumber_field.modelfields.PhoneNumberField(
-                        max_length=128, region="US"
-                    ),
+                    phonenumber_field.modelfields.PhoneNumberField(max_length=128, region="US"),
                 ),
                 ("email", models.EmailField(max_length=254)),
                 ("home_address1", models.CharField(max_length=800)),

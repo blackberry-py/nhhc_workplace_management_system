@@ -2,9 +2,10 @@
 
 import django.db.models.deletion
 import django_prometheus.models
-import nhhc.backends.storage_backends
 from django.conf import settings
 from django.db import migrations, models
+
+import nhhc.backends.storage_backends
 
 
 class Migration(migrations.Migration):

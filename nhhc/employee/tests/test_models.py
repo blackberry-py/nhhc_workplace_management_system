@@ -1,5 +1,5 @@
-from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 from employee.models import Employee
 
 User = get_user_model()
@@ -26,7 +26,7 @@ class EmployeeModelTests(TestCase):
             last_name="Doe",
         )
         username = Employee.create_unique_username("John", "Doe")
-        self.assertRegex(username, r'doe.john\d\d?')
+        self.assertRegex(username, r"doe.john\d\d?")
 
     def test_create_user(self):
         """

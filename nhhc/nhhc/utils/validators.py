@@ -32,9 +32,7 @@ class UploadHandler:
         pass
 
     @staticmethod
-    def generate_randomized_file_name(
-        initial_file_name: str, uploader: Employee
-    ) -> str:
+    def generate_randomized_file_name(initial_file_name: str, uploader: Employee) -> str:
         """
         Static  method that Generate a randomized file name based on the uploader's information.
 
@@ -46,12 +44,7 @@ class UploadHandler:
             str: A new file name with a unique combination of uploader-specific information and a random UUID.
         """
         uploader_specific_prefix = uploader.first_name.lower()
-        suffix = str(uploader.hire_date) + "".join(
-            random.SystemRandom().choice(
-                string.ascii_uppercase + string.digits + string.ascii_lowercase
-            )
-            for _ in range(12)
-        )
+        suffix = str(uploader.hire_date) + "".join(random.SystemRandom().choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for _ in range(12))
         file_extension = initial_file_name.split(".")[-1]
         return f"{uploader_specific_prefix}{suffix}.{file_extension}"
 
@@ -81,11 +74,7 @@ class UploadHandler:
         if content_type in allowed_mime_type:
             return True
         else:
-            raise FileValidationError(
-                _('File "{}": Upload rejected since file fails MIMETYPE check').format(
-                    file_name
-                )
-            )
+            raise FileValidationError(_('File "{}": Upload rejected since file fails MIMETYPE check').format(file_name))
 
     @staticmethod
     def validate_filecontents(file_name: str, file: typing.IO) -> bool:
@@ -118,8 +107,4 @@ class UploadHandler:
             # Check if the file's contents match any of the disallowed code snippets
             for snippet in disallowed_code_snippets:
                 if re.search(snippet, contents):
-                    raise FileValidationError(
-                        _(
-                            'File "{}": Upload rejected since file fails content check'
-                        ).format(file_name)
-                    )
+                    raise FileValidationError(_('File "{}": Upload rejected since file fails content check').format(file_name))

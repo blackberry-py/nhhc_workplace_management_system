@@ -1,11 +1,11 @@
 import os
 import random
-import string
 import re
+import string
 
+from django.template.defaultfilters import slugify as slugify_django
 from django.utils.encoding import force_str
 from django.utils.timezone import now
-from django.template.defaultfilters import slugify as slugify_django
 
 
 def create_random_filename():

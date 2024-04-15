@@ -42,9 +42,7 @@ from nhhc.utils.password_generator import RandomPasswordGenerator
 now = arrow.now(tz="US/Central")
 
 
-class ClientInterestSubmissions(
-    models.Model, ExportModelOperationsMixin("client_inquiries")
-):
+class ClientInterestSubmissions(models.Model, ExportModelOperationsMixin("client_inquiries")):
     def __str__(self):
         return f"{self.last_name}, {self.first_name} - Submission Date: {arrow.get(self.date_submitted).format('YYYY-MM-DD')}"
 
@@ -95,9 +93,7 @@ class ClientInterestSubmissions(
         verbose_name_plural = "Interested Clients"
 
 
-class EmploymentApplicationModel(
-    models.Model, ExportModelOperationsMixin("applications")
-):
+class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("applications")):
     def __str__(self):
         return f"{self.last_name}, {self.first_name} ({self.id}) - Submission Date: {arrow.get(self.date_submitted).format('YYYY-MM-DD')}"
 
@@ -162,9 +158,7 @@ class EmploymentApplicationModel(
         try:
             new_employee = Employee(
                 is_superuser=False,
-                username=Employee.create_unique_username(
-                    self.first_name, self.last_name
-                ),
+                username=Employee.create_unique_username(self.first_name, self.last_name),
                 is_active=True,
                 first_name=self.first_name,
                 last_name=self.last_name,
@@ -189,14 +183,12 @@ class EmploymentApplicationModel(
                 "plain_text_password": password,
                 "username": new_employee.username,
                 "employee_id": new_employee.pk,
-                "email":  new_employee.email,
+                "email": new_employee.email,
                 "first_name": new_employee.first_name,
-                "last_name": new_employee.last_name
+                "last_name": new_employee.last_name,
             }
         except Exception as e:
-            log_message = (
-                f"Unable to Hire {self.last_name},{self.first_name} - REASON:{e} "
-            )
+            log_message = f"Unable to Hire {self.last_name},{self.first_name} - REASON:{e} "
             logger.error(log_message)
             return RuntimeError(e)
 

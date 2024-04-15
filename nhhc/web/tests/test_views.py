@@ -1,13 +1,11 @@
 from http import HTTPStatus
 
-from django.test import RequestFactory, TestCase, Client, override_settings
+from django.test import Client, RequestFactory, TestCase, override_settings
 from web.views import about, index
 
 
 class TestViews(TestCase):
-    @override_settings(
-        STORAGE_DESTINATION="testing"
-   )
+    @override_settings(STORAGE_DESTINATION="testing")
     def setUp(self):
         self.client = Client()
 
@@ -23,9 +21,7 @@ class TestViews(TestCase):
 
 
 class RobotsTxtTests(TestCase):
-    @override_settings(
-        STORAGE_DESTINATION="testing"
-   )
+    @override_settings(STORAGE_DESTINATION="testing")
     def setUp(self):
         self.client = Client()
 

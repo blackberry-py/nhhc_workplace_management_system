@@ -1,4 +1,5 @@
 import json
+from typing import Dict
 
 from announcements.forms import AnnouncementForm
 from announcements.models import Announcements
@@ -7,7 +8,6 @@ from django.shortcuts import render
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from formset.views import FormView
-from typing import Dict
 
 # Create your views here.
 

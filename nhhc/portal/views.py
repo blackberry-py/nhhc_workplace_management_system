@@ -35,7 +35,7 @@ from django.template import loader
 from django.urls import reverse
 from django.views import View
 from django.views.generic.detail import DetailView, SingleObjectMixin
-from django.views.generic.edit import   UpdateView
+from django.views.generic.edit import UpdateView
 from django.views.generic.list import ListView
 from django_filters.rest_framework import DjangoFilterBackend
 from employee.forms import EmployeeForm
@@ -51,7 +51,6 @@ from rest_framework import generics, mixins, permissions, status
 from rest_framework.response import Response
 from web.forms import ClientInterestForm
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
-from django.forms.models import model_to_dict
 
 now = arrow.now(tz="America/Chicago")
 
@@ -71,15 +70,6 @@ def portal_dashboard(request: HttpRequest) -> HttpResponse:
     """
     context = dict()
     context["segment"] = "index"
-    new_applications = EmploymentApplicationModel.objects.filter(
-        reviewed__in=[False, None]
-    ).order_by("-date_submitted")
-    new_client_requests = ClientInterestSubmissions.objects.filter(
-        reviewed__in=[False, None]
-    ).order_by("-date_submitted")
-    context["announcements"] = []
-    context["new_applications"] = new_applications
-    context["new_client_requests"] = new_client_requests
     html_template = loader.get_template("dashboard.html")
     return HttpResponse(html_template.render(context, request))
 
@@ -87,23 +77,22 @@ def portal_dashboard(request: HttpRequest) -> HttpResponse:
 class ProfileDetailView(DetailView):
     model = Employee
     template_name = "profile.html"
-    
+
     def get_object(self):
         return Employee.objects.get(pk=self.request.user.pk)
-    
+
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         inital = model_to_dict(self.get_object())
-        context["form"] = EmployeeForm(initial= inital)
+        context["form"] = EmployeeForm(initial=inital)
         return context
-    
 
 
 class ProfileFormView(UpdateView, FileUploadMixin):
     form_class = EmployeeForm
     model = Employee
     template_name = "profile.html"
-    
+
     # def post(self, request, *args, **kwargs):
     #     if not request.user.is_authenticated:
     #         return HttpResponseForbidden()
@@ -112,9 +101,10 @@ class ProfileFormView(UpdateView, FileUploadMixin):
 
     def get_object(self):
         return Employee.objects.get(pk=self.request.user.pk)
-    
+
     def get_success_url(self):
         return reverse("profile")
+
     # def get_initial(self) -> dict[str, Any]:
     #     initial = super(ProfileFormView, self).get_initial()
     #     if self.request.user.is_authenticated:
@@ -153,6 +143,7 @@ class ProfileFormView(UpdateView, FileUploadMixin):
     #         initial["onboarded"] = self.request.user.onboarded  # type: ignore
     #     return initial
 
+
 class Profile(View):
     def get(self, request, *args, **kwargs):
         view = ProfileDetailView.as_view()
@@ -161,13 +152,12 @@ class Profile(View):
     def post(self, request, *args, **kwargs):
         view = ProfileFormView.as_view()
         return view(request, *args, **kwargs)
-    
+
+
 # TODO: Implement REST endpoint with DRF
 
 
-class EmploymentApplicationModelAPIListView(
-    mixins.DestroyModelMixin, generics.ListCreateAPIView
-):
+class EmploymentApplicationModelAPIListView(mixins.DestroyModelMixin, generics.ListCreateAPIView):
     queryset = EmploymentApplicationModel.objects.all()
     serializer_class = (EmploymentApplicationModel,)
     permission_classes = [permissions.IsAuthenticated]
@@ -217,12 +207,16 @@ def all_client_inquiries(request: HttpRequest) -> HttpResponse:
     inquiries_json = json.dumps(list(inquiries), cls=DjangoJSONEncoder)
     return HttpResponse(content=inquiries_json, status=status.HTTP_200_OK)
 
+
 class ClientInquiriesAPIListView(generics.ListCreateAPIView):
     queryset = ClientInterestSubmissions.objects.all()
     serializer_class = ClientInquiriesSerializer
-    permission_classes = [permissions.IsAuthenticated,]
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
     filter_backends = [DjangoFilterBackend]
-    
+
+
 # SECTION - Class-Based Views
 class ClientInquiriesListView(ListView):
     """
@@ -237,9 +231,7 @@ class ClientInquiriesListView(ListView):
 
     def get_context_data(self, **kwargs) -> Dict[str, str]:
         context = super().get_context_data(**kwargs)
-        context["unresponsed"] = ClientInterestSubmissions.objects.filter(
-            reviewed=False
-        ).count()
+        context["unresponsed"] = ClientInterestSubmissions.objects.filter(reviewed=False).count()
         context["showSearch"] = True
         context["reviewed"] = ClientInterestSubmissions.objects.filter(
             reviewed=True,
@@ -272,9 +264,7 @@ class EmploymentApplicationListView(ListView):
 
     def get_context_data(self, **kwargs) -> Dict[str, str]:
         context = super().get_context_data(**kwargs)
-        context["unresponsed"] = EmploymentApplicationModel.objects.filter(
-            reviewed=False
-        ).count()
+        context["unresponsed"] = EmploymentApplicationModel.objects.filter(reviewed=False).count()
         context["reviewed"] = EmploymentApplicationModel.objects.filter(
             reviewed=True,
         ).count()

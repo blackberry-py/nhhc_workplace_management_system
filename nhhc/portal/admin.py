@@ -45,9 +45,7 @@ class EmployeeAdmin(admin.ModelAdmin):
             None
         """
         if queryset.exists():
-            updated = queryset.update(
-                is_active=True, termination_date=None, hire_date=now()
-            )
+            updated = queryset.update(is_active=True, termination_date=None, hire_date=now())
             self.message_user(
                 request,
                 ngettext(

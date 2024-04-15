@@ -20,7 +20,7 @@ from nhhc.backends.storage_backends import PrivateMediaStorage
 class Contract(models.Model, ExportModelOperationsMixin("contracts")):
     """
     Model representing a contract.
-    
+
     Attributes:
     - code: CharField with max length of 10 characters, unique
     - name: CharField with max length of 255 characters, not blank and not null
@@ -29,14 +29,14 @@ class Contract(models.Model, ExportModelOperationsMixin("contracts")):
     - contract_year_end: DateField for the end year of the contract, optional
     - active: BooleanField, default is True
     """
-    
+
     code = models.CharField(max_length=10, unique=True)
-    name = models.CharField(max_length=255,  blank=False, null=False)
+    name = models.CharField(max_length=255, blank=False, null=False)
     description = models.TextField(blank=True, null=True)
     contract_year_start = models.DateField(verbose_name="Start Year", blank=True, null=True)
     contract_year_end = models.DateField(verbose_name="End Year", blank=True, null=True)
     active = models.BooleanField(default=True)
-    
+
     def __str__(self):
         """
         Method to return a string representation of the contract.
@@ -52,46 +52,48 @@ class Contract(models.Model, ExportModelOperationsMixin("contracts")):
         - verbose_name: Singular name for the model
         - verbose_name_plural: Plural name for the model
         """
+
         db_table = "contracts"
         ordering = ["-contract_year_start"]
         verbose_name = "State Contract"
         verbose_name_plural = "State Contracts"
 
+
 class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
     """
-    This module defines the Compliance model, which is responsible for storing and managing compliance and auditing data for employees.
+        This module defines the Compliance model, which is responsible for storing and managing compliance and auditing data for employees.
 
-Attributes:
-    - employee: One-to-one relationship with the Employee model, serving as the primary key and related name for the compliance profile of the employee.
-    - aps_check_passed: Boolean field to indicate whether the APS check has been passed.
-    - aps_check_verification: FileField to store the verification document for the APS check, using the PrivateMediaStorage()
- for file storage.
-    - hhs_oig_exclusionary_check_verification: FileField to store the verification document for the HHS OIG exclusionary check, using the PrivateMediaStorage()
- for file storage.
-    - hhs_oig_exclusionary_check_completed: Boolean field to indicate whether the HHS OIG exclusionary check has been completed.
-    - idph_background_check_completed: Boolean field to indicate whether the IDPH background check has been completed.
-    - idph_background_check_verification: FileField to store the verification document for the IDPH background check, using the PrivateMediaStorage()
- for file storage.
-    - initial_idph_background_check_completion_date: DateField to store the initial completion date of the IDPH background check.
-    - current_idph_background_check_completion_date: DateField to store the current completion date of the IDPH background check.
-    - training_exempt: Boolean field to indicate whether the employee is exempt from training.
-    - pre_training_verification: FileField to store the verification document for pre-training, using the PrivateMediaStorage()
- for file storage.
-    - pre_service_completion_date: DateField to store the completion date of pre-service activities.
-    - added_to_TTP_portal: Boolean field to indicate whether the employee has been added to the TTP portal.
-    - contract_code: ForeignKey relationship with the Contract model, allowing for association with a specific contract.
-    - job_title: CharField to store the job title of the employee, with predefined choices from the JOB_TITLE class.
+    Attributes:
+        - employee: One-to-one relationship with the Employee model, serving as the primary key and related name for the compliance profile of the employee.
+        - aps_check_passed: Boolean field to indicate whether the APS check has been passed.
+        - aps_check_verification: FileField to store the verification document for the APS check, using the PrivateMediaStorage()
+     for file storage.
+        - hhs_oig_exclusionary_check_verification: FileField to store the verification document for the HHS OIG exclusionary check, using the PrivateMediaStorage()
+     for file storage.
+        - hhs_oig_exclusionary_check_completed: Boolean field to indicate whether the HHS OIG exclusionary check has been completed.
+        - idph_background_check_completed: Boolean field to indicate whether the IDPH background check has been completed.
+        - idph_background_check_verification: FileField to store the verification document for the IDPH background check, using the PrivateMediaStorage()
+     for file storage.
+        - initial_idph_background_check_completion_date: DateField to store the initial completion date of the IDPH background check.
+        - current_idph_background_check_completion_date: DateField to store the current completion date of the IDPH background check.
+        - training_exempt: Boolean field to indicate whether the employee is exempt from training.
+        - pre_training_verification: FileField to store the verification document for pre-training, using the PrivateMediaStorage()
+     for file storage.
+        - pre_service_completion_date: DateField to store the completion date of pre-service activities.
+        - added_to_TTP_portal: Boolean field to indicate whether the employee has been added to the TTP portal.
+        - contract_code: ForeignKey relationship with the Contract model, allowing for association with a specific contract.
+        - job_title: CharField to store the job title of the employee, with predefined choices from the JOB_TITLE class.
 
-Methods:
-    - __str__: Returns a formatted string representation of the compliance data, including the employee's last name, first name, and job title.
+    Methods:
+        - __str__: Returns a formatted string representation of the compliance data, including the employee's last name, first name, and job title.
 
-Meta:
-    - db_table: Specifies the name of the database table for the Compliance model.
-    - ordering: Specifies the default ordering of records based on the employee field.
-    - verbose_name: Specifies the human-readable name for the model in singular and plural forms.
+    Meta:
+        - db_table: Specifies the name of the database table for the Compliance model.
+        - ordering: Specifies the default ordering of records based on the employee field.
+        - verbose_name: Specifies the human-readable name for the model in singular and plural forms.
 
-Note: This model utilizes the ExportModelOperationsMixin from django_prometheus for exporting model operations to Prometheus.
-"""
+    Note: This model utilizes the ExportModelOperationsMixin from django_prometheus for exporting model operations to Prometheus."""
+
     class JOB_TITLE(models.TextChoices):
         AIDE = "AIDE", _("Homecare Aide")
         COORDINATOR = "CARE_COORDINATOR", _("Care Coordinator")
@@ -111,9 +113,7 @@ Note: This model utilizes the ExportModelOperationsMixin from django_prometheus 
         blank=True,
         null=True,
     )
-    hhs_oig_exclusionary_check_verification = models.FileField(
-        upload_to="hhg-oig", storage=PrivateMediaStorage(), blank=True, null=True
-    )
+    hhs_oig_exclusionary_check_verification = models.FileField(upload_to="hhg-oig", storage=PrivateMediaStorage(), blank=True, null=True)
     hhs_oig_exclusionary_check_completed = models.BooleanField(
         null=True,
         blank=True,
@@ -124,9 +124,7 @@ Note: This model utilizes the ExportModelOperationsMixin from django_prometheus 
         blank=True,
         default=False,
     )
-    idph_background_check_verification = models.FileField(
-        upload_to="idph_bg_check", storage=PrivateMediaStorage(), blank=True, null=True
-    )
+    idph_background_check_verification = models.FileField(upload_to="idph_bg_check", storage=PrivateMediaStorage(), blank=True, null=True)
     initial_idph_background_check_completion_date = models.DateField(
         null=True,
         blank=True,
@@ -144,9 +142,7 @@ Note: This model utilizes the ExportModelOperationsMixin from django_prometheus 
     )
     pre_service_completion_date = models.DateField(null=True, blank=True)
     added_to_TTP_portal = models.BooleanField(null=True, blank=True)
-    contract_code = models.ForeignKey(
-        Contract, on_delete=models.PROTECT, blank=True, null=True
-    )
+    contract_code = models.ForeignKey(Contract, on_delete=models.PROTECT, blank=True, null=True)
     job_title = models.CharField(
         null=True,
         choices=JOB_TITLE.choices,

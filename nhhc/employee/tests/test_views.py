@@ -1,29 +1,27 @@
+import random
 from unittest.mock import patch
 
 from compliance.models import Compliance, Contract
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.exceptions import PermissionDenied
-from django.test import RequestFactory, TestCase, override_settings
-from django.test import Client
+from django.http import HttpRequest, HttpResponse
+from django.test import Client, RequestFactory, TestCase, override_settings
+from django.urls import reverse
 from employee.models import Employee
 from employee.views import employee_details, hire, reject, send_new_user_credentials
+from faker import Faker
+from loguru import logger
 from model_bakery import baker
 from web.models import EmploymentApplicationModel
-import random
-from loguru import logger
+
 from nhhc.utils.testing import (
     generate_mock_PhoneNumberField,
     generate_mock_USSocialSecurityNumberField,
     generate_mock_ZipCodeField,
 )
-from django.http import HttpResponse, HttpRequest
-from django.urls import reverse
-from faker import Faker
 
-baker.generators.add(
-    "phonenumber_field.modelfields.PhoneNumberField", generate_mock_PhoneNumberField
-)
+baker.generators.add("phonenumber_field.modelfields.PhoneNumberField", generate_mock_PhoneNumberField)
 baker.generators.add("localflavor.us.models.USZipCodeField", generate_mock_ZipCodeField)
 baker.generators.add(
     "localflavor.us.models.USSocialSecurityNumberField",
@@ -214,9 +212,7 @@ class TestEmployeeActions(TestCase):
             application_id=random.randint(2, 5655),
         )
         self.contact = baker.make(Contract, code="FAKE")
-        self.user_compliance = baker.make(
-            Compliance, employee=self.user, contract_code=self.contact
-        )
+        self.user_compliance = baker.make(Compliance, employee=self.user, contract_code=self.contact)
 
     def test_reject_employeen_non_admin(self):
         request = self.client.post("/reject/", {"pk": self.rejected_applicant.pk})

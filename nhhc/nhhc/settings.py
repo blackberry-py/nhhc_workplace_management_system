@@ -18,7 +18,6 @@ from highlight_io.integrations.django import DjangoIntegration
 from logtail import LogtailHandler
 from loguru import logger
 
-
 # SECTION - Basic Application Defintion
 OFFLINE = False
 BASE_DIR = Path(__file__).resolve().parent.parent

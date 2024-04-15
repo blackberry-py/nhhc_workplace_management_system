@@ -80,9 +80,7 @@ def generate_mock_USSocialSecurityNumberField() -> str:
         last_four_digits = random.randint(1, 9999)
 
         # Returns the generated SSN in the correct format: "123-45-6789"
-        return (
-            f"{first_three_digits:03d}-{middle_two_digits:02d}-{last_four_digits:04d}"
-        )
+        return f"{first_three_digits:03d}-{middle_two_digits:02d}-{last_four_digits:04d}"
 
 
 def generate_mock_PhoneNumberField() -> str:
@@ -163,6 +161,4 @@ def generate_mock_USSocialSecurityNumberField() -> str:
         last_four_digits = random.randint(1, 9999)
 
         # Returns the generated SSN in the correct format: "123-45-6789"
-        return (
-            f"{first_three_digits:03d}-{middle_two_digits:02d}-{last_four_digits:04d}"
-        )
+        return f"{first_three_digits:03d}-{middle_two_digits:02d}-{last_four_digits:04d}"

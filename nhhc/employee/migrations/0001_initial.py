@@ -2,10 +2,11 @@
 
 import django.utils.timezone
 import localflavor.us.models
-import nhhc.backends.storage_backends
 import phonenumber_field.modelfields
 import sage_encrypt.fields.asymmetric
 from django.db import migrations, models
+
+import nhhc.backends.storage_backends
 
 
 class Migration(migrations.Migration):
@@ -31,9 +32,7 @@ class Migration(migrations.Migration):
                 ("password", models.CharField(max_length=128, verbose_name="password")),
                 (
                     "last_login",
-                    models.DateTimeField(
-                        blank=True, null=True, verbose_name="last login"
-                    ),
+                    models.DateTimeField(blank=True, null=True, verbose_name="last login"),
                 ),
                 (
                     "is_superuser",
@@ -45,21 +44,15 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "first_name",
-                    models.CharField(
-                        blank=True, max_length=150, verbose_name="first name"
-                    ),
+                    models.CharField(blank=True, max_length=150, verbose_name="first name"),
                 ),
                 (
                     "last_name",
-                    models.CharField(
-                        blank=True, max_length=150, verbose_name="last name"
-                    ),
+                    models.CharField(blank=True, max_length=150, verbose_name="last name"),
                 ),
                 (
                     "email",
-                    models.EmailField(
-                        blank=True, max_length=254, verbose_name="email address"
-                    ),
+                    models.EmailField(blank=True, max_length=254, verbose_name="email address"),
                 ),
                 (
                     "is_staff",
@@ -79,9 +72,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "date_joined",
-                    models.DateTimeField(
-                        default=django.utils.timezone.now, verbose_name="date joined"
-                    ),
+                    models.DateTimeField(default=django.utils.timezone.now, verbose_name="date joined"),
                 ),
                 ("username", models.CharField(max_length=150)),
                 (
@@ -142,15 +133,11 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "social_security",
-                    sage_encrypt.fields.asymmetric.EncryptedCharField(
-                        blank=True, null=True, unique=True
-                    ),
+                    sage_encrypt.fields.asymmetric.EncryptedCharField(blank=True, null=True, unique=True),
                 ),
                 (
                     "date_of_birth",
-                    sage_encrypt.fields.asymmetric.EncryptedDateField(
-                        blank=True, null=True
-                    ),
+                    sage_encrypt.fields.asymmetric.EncryptedDateField(blank=True, null=True),
                 ),
                 (
                     "middle_name",
@@ -214,9 +201,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "emergency_contact_phone",
-                    phonenumber_field.modelfields.PhoneNumberField(
-                        blank=True, max_length=128, null=True, region="US"
-                    ),
+                    phonenumber_field.modelfields.PhoneNumberField(blank=True, max_length=128, null=True, region="US"),
                 ),
                 (
                     "city",
@@ -255,9 +240,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "phone",
-                    phonenumber_field.modelfields.PhoneNumberField(
-                        max_length=128, null=True, region=None
-                    ),
+                    phonenumber_field.modelfields.PhoneNumberField(max_length=128, null=True, region=None),
                 ),
                 ("state", localflavor.us.models.USStateField(max_length=2, null=True)),
                 (

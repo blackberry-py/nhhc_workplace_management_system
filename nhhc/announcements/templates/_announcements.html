@@ -10,20 +10,15 @@
                 <div><a href="{% url 'announcements' %}">See More Announcements</a></div>
 
             </div>
-        <!-- </section>End of Testimonial Here -->
-
             <section class="carousel-landmark wow fadeIn" data-wow-delay="0.5s">
                 <div id="carouselExampleCaptions" class="carousel slide testimonial-carousel border-start border-primary">
-          <!-- <section>
-            <div class="control-bar"></div>
-        </section> -->
 
-                    {% for annoncement in announcements %}
+                    {% for annoncement in recent_announcements %}
                         <div class="carousel-inner"><!--The Carousel Container-->
                             <div class="carousel-item"><!--The Carousel item 1-->
                                 <div class="testimonial-item ps-5">
                                     {% if announcement.message_type == 'C' %}
-                                        <span class="badge rounded-pill text-bg-primary text-bg-danger px-3 mb-3">{{announcement.message_type}}</span>
+                                        <span class="badge rounded-pill text-bg-primary text-bg-danger px-3 mb-3">{{ announcement.message_type }}</span>
 
                                     {% elif announcement.message_type == 'T' %}
                                         <span class="badge rounded-pill text-bg-primary text-bg-info  px-3 mb-3">{{ announcement.message_type }}</span>
@@ -46,7 +41,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        </section>
                         <section class="carousel-landmark wow fadeIn" data-wow-delay="0.5s">
                             <div id="carouselNavigation" class="carousel slide testimonial-carousel border-start border-primary">
 
@@ -65,7 +60,7 @@
                         </button>
                     </div>
                 </div>
-            </section><!--End of Carousel Landmark-->
+            </section>
         </div><!--End of row g-5-->
     </div><!-- container py-5 -->
 </div><!--End of Container-xxl py-5 -->

@@ -14,9 +14,7 @@ from nhhc.utils.testing import (
 )
 
 dummy = Faker()
-baker.generators.add(
-    "phonenumber_field.modelfields.PhoneNumberField", generate_mock_PhoneNumberField
-)
+baker.generators.add("phonenumber_field.modelfields.PhoneNumberField", generate_mock_PhoneNumberField)
 baker.generators.add("localflavor.us.models.USZipCodeField", generate_mock_ZipCodeField)
 
 

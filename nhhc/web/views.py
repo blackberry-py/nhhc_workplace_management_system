@@ -13,7 +13,13 @@ from string import Template
 from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseServerError, HttpRequest, FileResponse
+from django.http import (
+    FileResponse,
+    HttpRequest,
+    HttpResponse,
+    HttpResponseNotFound,
+    HttpResponseServerError,
+)
 from django.shortcuts import redirect, render, reverse
 from django.template import RequestContext
 from django.views.decorators.cache import cache_page
@@ -65,10 +71,13 @@ def about(request: HttpRequest) -> HttpResponse:
     """
     return render(request, "about.html", {"title": "About Nett Hands"})
 
+
 @cache_page(CACHE_TTL)
 def favicon(request: HttpRequest) -> HttpResponse:
-    favicon = open('/workspaces/NettHands/nhhc/static/img/favicon.ico', 'rb')
+    favicon = open("/workspaces/NettHands/nhhc/static/img/favicon.ico", "rb")
     return FileResponse(favicon)
+
+
 #!SECTION
 
 # SECTION - Internal Functional View
@@ -93,9 +102,7 @@ def send_external_application_submission_confirmation(
         sender_email = os.getenv("NOTIFICATION_SENDER_EMAIL")
         sender_password = os.getenv("EMAIL_ACCT_PASSWORD")
         recipient_email = form.cleaned_data["email"].lower()
-        subject = (
-            f"Thanks For Your Employment Interest, {form.cleaned_data['first_name']}!"
-        )
+        subject = f"Thanks For Your Employment Interest, {form.cleaned_data['first_name']}!"
         content = application_body
 
         html_message = MIMEText(content, "html")
@@ -113,16 +120,12 @@ def send_external_application_submission_confirmation(
                 html_message.as_string(),
             )
             applicant = form.cleaned_data["last_name"], form.cleaned_data["first_name"]
-            log_message = (
-                f"Application Submitted - {applicant} - {recipient_email} - Successful"
-            )
+            log_message = f"Application Submitted - {applicant} - {recipient_email} - Successful"
             logger.info(log_message)
             return transmission
     except Exception as e:
         applicant = form.cleaned_data["last_name"], form.cleaned_data["first_name"]
-        log_message = (
-            f"Application Submitted - {applicant} - {recipient_email} - FAILED: {e}"
-        )
+        log_message = f"Application Submitted - {applicant} - {recipient_email} - FAILED: {e}"
         logger.error(log_message)
 
 
@@ -237,15 +240,11 @@ def send_external_client_submission_confirmation(form):
                 recipient_email,
                 html_message.as_string(),
             )
-            log_message = (
-                f"Interest Submitted - {applicant} - {recipient_email} - Successful"
-            )
+            log_message = f"Interest Submitted - {applicant} - {recipient_email} - Successful"
             logger.info(log_message)
             return transmission
     except Exception as e:
-        log_message = (
-            f"Interest Submitted - {applicant} - {recipient_email} - FAILED: {e}"
-        )
+        log_message = f"Interest Submitted - {applicant} - {recipient_email} - FAILED: {e}"
         logger.error(log_message)
 
 

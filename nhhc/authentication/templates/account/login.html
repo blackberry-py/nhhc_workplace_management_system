@@ -28,7 +28,7 @@
                   <ul class="form-errors-list">
                     <p class="form-error-header">Please correct the errors below and resubmit...</p>
                     {% for field, errors in form.errors.items %}
-                        {% for error in errors %}
+                      {% for error in errors %}
                         <li class="form-error">{{ error }}</li>
                       {% endfor %}
                       </ul>

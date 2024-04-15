@@ -1,10 +1,11 @@
+{% load unreviewed_requests %}
 <div class="card-stat " style="width: 18rem; height: 18rem;">
     <div class="card card-stats ">
         <div class="card-body">
             <div class="row">
                 <div class="col">
                     <a href="{% url 'applicants-list' %}"><h5 class="card-title text-uppercase text-muted mb-0">Unreviewed Applications</h5></a>
-                    <span class="h2 font-weight-bold mb-0">{{ new_applications|length }}</span>
+                    <span class="h2 font-weight-bold mb-0">{% app_count %}</span>
                 </div>
                 <div class="col-auto">
                     <div class="icon icon-shape bg-success text-white rounded-circle shadow">
@@ -18,13 +19,9 @@
         <div class="card-body">
             <div class="row">
                 <div class="col">
-                    <a href="{% url 'inquiries' %}"><h5 class="card-title text-uppercase text-muted mb-0">Unreviewed Customer Inquiries</h5></a>
+                    <a href="{% url 'inquiries' %}"><h5 class="c%ard-title text-uppercase text-muted mb-0">Unreviewed Customer Inquiries</h5></a>
+                    <span class="h2 font-weight-bold mb-0">{% client_count %}</span>
 
-                    {% if new_client_requests %}
-                        <span class="h2 font-weight-bold mb-0">{{ new_client_requests | length }}</span>
-                    {% else %}
-                        Unreviewed Requests
-                    {% endif %}
                 </div>
                 <div class="col-auto">
                     <div class="icon icon-shape bg-danger text-white rounded-circle shadow">

@@ -48,7 +48,5 @@ urlpatterns = [
     path("hired", csrf_exempt(views.hire), name="hire-employee"),
     re_path(r"^accounts/login/$", views.force_pwd_login),
     path("terminate", csrf_exempt(views.terminate), name="terminate_employee"),
-    path(
-        "api", include(router.urls)
-    ),  # The API URLs are reused by Django Rest Framework
+    path("api", include(router.urls)),  # The API URLs are reused by Django Rest Framework
 ]

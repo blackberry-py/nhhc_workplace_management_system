@@ -11,17 +11,13 @@ from django.db.models.functions import Cast, Substr
 from django.utils.translation import gettext_lazy as _
 from django_prometheus.models import ExportModelOperationsMixin
 from filer.fields.file import FilerFileField
-from localflavor.us.models import (
-    USStateField,
-    USZipCodeField,
-)
-from sage_encrypt.fields.asymmetric import EncryptedCharField, EncryptedDateField
-
+from localflavor.us.models import USStateField, USZipCodeField
 from loguru import logger
 from phonenumber_field.modelfields import PhoneNumberField
+from sage_encrypt.fields.asymmetric import EncryptedCharField, EncryptedDateField
+
 from nhhc.backends.storage_backends import PrivateMediaStorage
 from nhhc.utils.password_generator import RandomPasswordGenerator
-from filer.fields.file import FilerFileField
 
 now = str(arrow.now().format("YYYY-MM-DD"))
 
@@ -57,9 +53,7 @@ class EmployeeManager(BaseUserManager):
         try:
             # Try to create a new user with the given username
             user = get_user_model().objects.get(username=username)
-            max_num = (
-                get_user_model().objects.filter(username__startswith=username).count()
-            )
+            max_num = get_user_model().objects.filter(username__startswith=username).count()
 
             # If no number is currently appended, set the max_num to 0
             if max_num == 1:
@@ -69,9 +63,7 @@ class EmployeeManager(BaseUserManager):
             next_username = username + str(max_num)
 
             # Return the next available username
-            logger.debug(
-                f"Inital Username Unavailable. Next Available Username: {next_username}"
-            )
+            logger.debug(f"Inital Username Unavailable. Next Available Username: {next_username}")
             return next_username
 
         except ObjectDoesNotExist:
@@ -81,25 +73,17 @@ class EmployeeManager(BaseUserManager):
 
     def create_user(self, password, first_name, last_name, **kwargs):
         if not password or not first_name or not last_name:
-            raise ValueError(
-                "We need password \n first name \n and last name to create and account..."
-            )
+            raise ValueError("We need password \n first name \n and last name to create and account...")
         username = self.create_unique_username(first_name, last_name)
         user = self.model(username=username, first_name=first_name, last_name=last_name)
         user.set_password(password)
         user.save()
-        print(
-            f"Successfully Created an account for {first_name} with username {username}"
-        )
+        print(f"Successfully Created an account for {first_name} with username {username}")
         return user
 
-    def create_superuser(
-        self, username, password, email, first_name="New", last_name="Admin", **kwargs
-    ):
+    def create_superuser(self, username, password, email, first_name="New", last_name="Admin", **kwargs):
         if not password or not first_name or not last_name:
-            raise ValueError(
-                "We need username, \n password \n first name \n and last name to create and account..."
-            )
+            raise ValueError("We need username, \n password \n first name \n and last name to create and account...")
         user = self.create_user(
             password=password,
             username=self.create_unique_username(first_name, last_name),
@@ -218,12 +202,8 @@ class Employee(AbstractUser):
     social_security = EncryptedCharField(unique=True, null=True, blank=True)
     date_of_birth = EncryptedDateField(null=True, blank=True)
     middle_name = models.CharField(max_length=255, default="", null=True, blank=True)
-    street_address1 = models.CharField(
-        max_length=255, default="", null=True, blank=True
-    )
-    street_address2 = models.CharField(
-        max_length=255, default="", null=True, blank=True
-    )
+    street_address1 = models.CharField(max_length=255, default="", null=True, blank=True)
+    street_address2 = models.CharField(max_length=255, default="", null=True, blank=True)
     marital_status = models.CharField(
         max_length=255,
         null=True,
@@ -380,9 +360,7 @@ class Employee(AbstractUser):
         try:
             # Try to create a new user with the given username
             user = get_user_model().objects.get(username=username)
-            max_num = (
-                get_user_model().objects.filter(username__startswith=username).count()
-            )
+            max_num = get_user_model().objects.filter(username__startswith=username).count()
 
             # If no number is currently appended, set the max_num to 0
             if max_num == 1:
@@ -392,9 +370,7 @@ class Employee(AbstractUser):
             next_username = username + str(max_num)
 
             # Return the next available username
-            logger.debug(
-                f"Inital Username Unavailable. Next Available Username: {next_username}"
-            )
+            logger.debug(f"Inital Username Unavailable. Next Available Username: {next_username}")
             return next_username
 
         except ObjectDoesNotExist:

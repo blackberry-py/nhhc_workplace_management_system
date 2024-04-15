@@ -1,4 +1,5 @@
 {% load static %}
+{% load unreviewed_requests %}
 <nav class="sidenav navbar navbar-vertical  fixed-left  navbar-expand-xs navbar-light bg-white" id="sidenav-main">
   <div class="scrollbar-inner">
     <!-- Brand -->
@@ -60,13 +61,27 @@
             </li>
             <li class="nav-item">
               <a class="nav-link {% if request.path == '/inquiries' %} active {% endif %}" href="{% url 'inquiries' %}">
-                <i class="ni ni-collection text-purple"></i>
+                <i class="ni ni-collection text-purple"> <span class="badge position-absolute top-0
+                                                                      start-0 translate-middle rounded-pill
+                                                                      bg-danger">
+                  {% client_count %}
+                  <span class="visually-hidden">
+                    Notifications of new responses
+                  </span>
+                </span> </i>
                 <span class="nav-link-text">Service Inquiries</span>
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'applicants-list' %}">
-                <i class="ni ni-badge text-black"></i>
+                <i class="ni ni-badge text-black"> <span class="badge position-absolute top-0
+                                                                start-0 translate-middle rounded-pill
+                                                                bg-danger">
+                  {% app_count %}
+                  <span class="visually-hidden">
+                    Notifications of new responses
+                  </span>
+                </span> </i>
                 <span class="nav-link-text">Employment Applications</span>
               </a>
             </li>

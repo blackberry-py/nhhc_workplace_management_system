@@ -1,10 +1,10 @@
+import arrow
 from django.db import models
+from django.http.request import HttpRequest
 from django.utils.translation import gettext_lazy as _
 from django_prometheus.models import ExportModelOperationsMixin
 from employee.models import Employee
-import arrow
 from loguru import logger
-from django.http.request import HttpRequest
 
 now = arrow.utcnow()
 

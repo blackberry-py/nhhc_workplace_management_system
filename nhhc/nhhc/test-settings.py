@@ -18,7 +18,6 @@ from highlight_io.integrations.django import DjangoIntegration
 from logtail import LogtailHandler
 from loguru import logger
 
-
 # SECTION - Basic Application Defintion
 OFFLINE = False
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -246,9 +245,7 @@ if STORAGE_DESTINATION == "s3":
     STATIC_LOCATION = "staticfiles"
     STATIC_URL = f"https://cdn.netthandshome.care/{STATIC_LOCATION}/"
     STATIC_ROOT = STATIC_URL
-    STATICFILES_STORAGE = (
-        "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
-    )
+    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
     # s3 public media settings
     PUBLIC_MEDIA_LOCATION = "media"
     MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"

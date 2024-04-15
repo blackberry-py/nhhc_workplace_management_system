@@ -15,8 +15,8 @@ To use the functions in this module, import the module and call the desired func
 """
 
 
-from compliance.models import Compliance
 from compliance.forms import ComplianceForm
+from compliance.models import Compliance
 from django.conf import settings
 from django.contrib.auth import login
 from django.core.exceptions import PermissionDenied
@@ -110,9 +110,7 @@ def reject(request: HttpRequest) -> HttpResponse:
         submission = EmploymentApplicationModel.objects.get(id=pk)
         submission.reject_applicant(rejected_by=request.user)  # type: ignore
         submission.save()
-        logger.success(
-            f"Application Rejected for {submission.last_name}. {submission.first_name}"
-        )
+        logger.success(f"Application Rejected for {submission.last_name}. {submission.first_name}")
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
     except Exception as e:
         logger.error(f"JS AJAX Request Failed - Applicant Not Rejected = {e}")
@@ -142,9 +140,7 @@ def hire(request: HttpRequest) -> HttpResponse:
     """
     # Condition Checked: Requesting User is Logged in and An Admin
     if not request.user.is_authenticated or not request.user.is_superuser:
-        logger.warning(
-            f"No Authenticated or Non-Admin Hire Request Recieved - Denying Request"
-        )
+        logger.warning(f"No Authenticated or Non-Admin Hire Request Recieved - Denying Request")
         return HttpResponse(
             status=get_status_code_for_unauthorized_or_forbidden(request),
             content=get_content_for_unauthorized_or_forbidden(request),
@@ -154,9 +150,7 @@ def hire(request: HttpRequest) -> HttpResponse:
         pk = int(request.POST.get("pk"))  # type: ignore
         logger.debug(f"Hire Request Initated for Employee ID: {pk}")
     except (ValueError, TypeError):
-        logger.warning(
-            "Bad Request to Hire Applicant, Invalid or NO Applcation PK Submitted"
-        )
+        logger.warning("Bad Request to Hire Applicant, Invalid or NO Applcation PK Submitted")
         return HttpResponse(
             status=status.HTTP_400_BAD_REQUEST,
             content=bytes(
@@ -168,16 +162,12 @@ def hire(request: HttpRequest) -> HttpResponse:
     # Condition Checked: Provided PK id associated with a vaild ID of an Submitted EmploymentApplicationModel
     try:
         applicant = EmploymentApplicationModel.objects.get(pk=pk)
-        logger.debug(
-            f"Hire Request Resolving to {applicant.last_name}, {applicant.first_name}"
-        )
+        logger.debug(f"Hire Request Resolving to {applicant.last_name}, {applicant.first_name}")
     except EmploymentApplicationModel.DoesNotExist:
         logger.error("Failed to hire applicant. Employment application not found.")
         return HttpResponse(
             status=status.HTTP_404_NOT_FOUND,
-            content=bytes(
-                "Failed to hire applicant. Employment application not found.", "utf-8"
-            ),
+            content=bytes("Failed to hire applicant. Employment application not found.", "utf-8"),
         )
     # Condition Checked: An Corrosponding Employee Model Instance is created via the .hire_applicant method on the EmploymentApplicationModel class
     try:
@@ -193,18 +183,14 @@ def hire(request: HttpRequest) -> HttpResponse:
     try:
         applicant.save()
         send_new_user_credentials(
-            new_user_email=hired_user["email"],  
+            new_user_email=hired_user["email"],
             new_user_first_name=hired_user["first_name"],
             password=hired_user["plain_text_password"],
             username=hired_user["username"],
         )
         content = f"username: {hired_user['username']},  password: {hired_user['plain_text_password']}, employee_id: {hired_user['employee_id']}"
-        logger.success(
-            f"Successfully Converted Appicant to Employee - {hired_user['last_name']}, {hired_user['first_name']}"
-        )
-        return HttpResponse(
-            status=status.HTTP_201_CREATED, content=bytes(content, "utf-8")
-        )
+        logger.success(f"Successfully Converted Appicant to Employee - {hired_user['last_name']}, {hired_user['first_name']}")
+        return HttpResponse(status=status.HTTP_201_CREATED, content=bytes(content, "utf-8"))
     except Exception as e:
         logger.exception(f"Failed to send new user credentials. Error: {e}")
         return HttpResponse(
@@ -225,9 +211,7 @@ def terminate(request: HttpRequest) -> HttpResponse:
     """
     # Condition Checked: Requesting User is Logged in and An Admin
     if not request.user.is_authenticated or not request.user.is_superuser:
-        logger.warning(
-            f"No Authenticated or Non-Admin Termination Request Recieved - Denying Request"
-        )
+        logger.warning(f"No Authenticated or Non-Admin Termination Request Recieved - Denying Request")
         return HttpResponse(
             status=get_status_code_for_unauthorized_or_forbidden(request),
             content=get_content_for_unauthorized_or_forbidden(request),
@@ -237,9 +221,7 @@ def terminate(request: HttpRequest) -> HttpResponse:
         pk = request.POST.get("pk")
         logger.debug(f"Termination Request Initated for Employee ID: {pk}")
     except (ValueError, TypeError):
-        logger.info(
-            "Bad Request to Hire Applicant, Invaild or NO Applcation PK Submitted"
-        )
+        logger.info("Bad Request to Hire Applicant, Invaild or NO Applcation PK Submitted")
         return HttpResponse(
             status=400,
             content="Failed to terminate employee. Invalid or no 'pk' value provided in the request.",
@@ -247,26 +229,18 @@ def terminate(request: HttpRequest) -> HttpResponse:
     # Condition Checked: Provided PK Employee ID associated with an Employee Instance
     try:
         terminated_employee = Employee.objects.get(id=pk)
-        logger.debug(
-            f"Termination Request Resolving to {terminated_employee.last_name}, {terminated_employee.first_name}"
-        )
+        logger.debug(f"Termination Request Resolving to {terminated_employee.last_name}, {terminated_employee.first_name}")
     except Employee.DoesNotExist:
         logger.info(f"Failed to hire applicant. Employment application not found.")
-        return HttpResponse(
-            status=404, content="Failed to terminate employee.. Employee not found."
-        )
+        return HttpResponse(status=404, content="Failed to terminate employee.. Employee not found.")
     # Condition Checked: An Corrosponding Employee Model Instance is created via the .terminate_employment method on the Employee class
     try:
         terminated_employee.terminate_employment()
-        logger.success(
-            f"employment status for {terminated_employee.last_name}, {terminated_employee.first_name} TERMINATED"
-        )
+        logger.success(f"employment status for {terminated_employee.last_name}, {terminated_employee.first_name} TERMINATED")
         return HttpResponse(status=204)
     except Exception as e:
         logger.exception(f"Failed to terminate employee. Error: {e}.")
-        return HttpResponse(
-            status=400, content=f"Failed to terminate employee.. Error: {e}."
-        )
+        return HttpResponse(status=400, content=f"Failed to terminate employee.. Error: {e}.")
 
 
 class DetailedEmployeeView:
