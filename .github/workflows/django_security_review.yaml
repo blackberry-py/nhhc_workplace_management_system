@@ -1,9 +1,9 @@
 name: Django Security Check
 
-on: 
+on:
    push:
    merge_group:
-     
+
 
 env:
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
@@ -31,7 +31,7 @@ jobs:
           doppler-project: nhhc
           doppler-config: stg
       - name: Add Tmp Dir
-        run: mkdir -p /github/workspace/nhhc/tmp
+        run: sudo mkdir -p /github/workspace/nhhc/tmp
       - name: Scan Django settings for security issues
         id: check
         uses: victoriadrake/django-security-check@master
