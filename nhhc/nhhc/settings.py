@@ -23,7 +23,7 @@ from loguru import logger
 OFFLINE = False
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ["SECRET_KEY"]
-DEBUG = True
+DEBUG = os.environ["ENABLE_DEBUGGING"]
 DATETIME_FORMAT = "m/d/yyyy h:mm A"
 ADMINS = [("Terry Brooks", "Terry@BrooksJr.com")]
 CSRF_COOKIE_NAME = "nhhc-csrf"
@@ -242,7 +242,7 @@ BUNNY_BASE_DIR = os.environ["BUNNY_BASE_DIR"]
 # ! SECTION - StaticFiles VARS
 
 STORAGE_DESTINATION = os.environ["STORAGE_DESTINATION"]
-FILE_UPLOAD_TEMP_DIR = BASE_DIR / "tmp"
+FILE_UPLOAD_TEMP_DIR = os.environ["FILE_UPLOAD_TEMP_DIR"]
 if STORAGE_DESTINATION == "S3":
     # aws settings
     AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]

@@ -20,7 +20,7 @@ jobs:
         id: cache-virtualenv
       - uses: syphar/restore-pip-download-cache@v1
         if: steps.cache-virtualenv.outputs.cache-hit != 'true'
-      - run: pip install -r requirements.txt
+      - run: pip install -r requirements_pipeline.txt
         if: steps.cache-virtualenv.outputs.cache-hit != 'true'
   linter:
         needs: setup-virtualenv

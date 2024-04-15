@@ -24,13 +24,3 @@ repos:
     hooks:
       - id: djhtml
       - id: djcss
-  - repo: https://github.com/PyCQA/prospector
-    rev: 1.10.0
-    hooks:
-    -   id: prospector
-    additional_dependencies:
-        - ".[with-mypy,with-bandit]"
-        - args: [
-        '--with-tool=mypy',
-        '--with-tool=bandit',
-      ]
