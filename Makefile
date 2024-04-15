@@ -32,7 +32,7 @@ test: ## Run tests
 
 .PHONY: test
 pipeline-test: ## Run tests
-	${VIRTUAL_ENV}/python nhhc/manage.py test web employee portal  --verbosity=2  --keepdb    --force-color
+	${VIRTUAL_ENV}/bin/python nhhc/manage.py test web employee portal  --verbosity=2  --keepdb    --force-color
 
 .PHONY: run
 run: ## Run the Django server
