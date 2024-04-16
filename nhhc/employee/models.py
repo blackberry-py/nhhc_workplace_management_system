@@ -246,12 +246,13 @@ class Employee(AbstractUser):
     emergency_contact_phone = PhoneNumberField(region="US", null=True, blank=True)
     city = models.CharField(max_length=255, default="", null=True, blank=True)
 
-    qualifications_verification = models.FileField(
-        upload_to="verifications_resumes",
-        storage=PrivateMediaStorage(),
+    qualifications_verification = FilerFileField(
+        related_name="resume",
+        on_delete=models.DO_NOTHING,
         null=True,
         blank=True,
     )
+
     cpr_verification = FilerFileField(
         related_name="cpr_verification",
         on_delete=models.DO_NOTHING,

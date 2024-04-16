@@ -1,7 +1,7 @@
 from compliance.models import Contract
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import HTML, Column, Layout, Reset, Row, Submit
+from crispy_forms.layout import HTML, Column, Field, Layout, Reset, Row, Submit
 from django.forms import ModelChoiceField, ModelForm, fields, forms
 from django.forms.widgets import DateInput
 from django.urls import reverse
@@ -13,26 +13,6 @@ from formset.widgets import UploadedFileInput
 
 class EmployeeForm(ModelForm):
     """Form definition for Employee Model."""
-
-    # contract_code = ModelChoiceField(queryset=Contract.objects.all())
-    # qualifications_verification = fields.FileField(
-    #     label="resume_qualifications",
-    #     widget=UploadedFileInput(attrs={
-    #         'max-size': 1024 * 1024,
-    #     }),
-    #     help_text="Please do not upload files larger than 1MB",
-    #     required=False
-    # )
-    cpr_verification = fields.FileField(
-        label="cpr_verification",
-        widget=UploadedFileInput(
-            attrs={
-                "max-size": 1024 * 1024,
-            }
-        ),
-        help_text="Please do not upload files larger than 1MB",
-        required=False,
-    )
 
     class Meta:
         """Meta definition for EmployeeForm."""
@@ -94,12 +74,12 @@ class EmployeeForm(ModelForm):
         self.helper.layout = Layout(
             HTML(
                 """
-        <h6 class="small-heading muted-text mb-4">User Information</strong></h6>
+        <h3 class="small-heading muted-text mb-4">Employee Information</strong></h3>
         <div class="pl-lg-4">
         """,
             ),
             Row(
-                Column("username", css_class="form-group col-6 mb-0", disabled=True),
+                Column(Field("username", css_class="", readonly=True), css_class="form-group col-6 mb-0"),
                 Column(
                     "email",
                     css_class="form-group col-6 mb-0  editable",
@@ -152,7 +132,7 @@ class EmployeeForm(ModelForm):
             HTML("""<hr class="my-4 />"""),
             HTML(
                 """
-        <h6 class="small-heading muted-text mb-4">Contact Information</strong></h6>
+        <h3 class="small-heading muted-text mb-4">Contact Information</strong></h3>
         <div class="pl-lg-4">
 
         """,
@@ -210,7 +190,7 @@ class EmployeeForm(ModelForm):
             HTML("""<hr class="my-4 />"""),
             HTML(
                 """
-        <h6 class="small-heading muted-text mb-4">Emergency Contact</strong></h6>
+        <h3 class="small-heading muted-text mb-4">Emergency Contact</strong></h3>
         <div class="pl-lg-4">
 
         """,
@@ -241,7 +221,7 @@ class EmployeeForm(ModelForm):
             HTML("""<hr class="my-4 />"""),
             HTML(
                 """
-        <h6 class="small-heading muted-text mb-4">Supporting Documentation</strong></h6>
+        <h3 class="small-heading muted-text mb-4">Supporting Documentation</strong></h3>
         <div class="pl-lg-4">
 
         """,
