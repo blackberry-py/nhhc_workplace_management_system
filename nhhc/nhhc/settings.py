@@ -32,15 +32,7 @@ SESSION_COOKIE_SECURE = True
 ROBOTS_USE_HOST = False
 ADMINRESTRICT_ALLOW_PRIVATE_IP = False
 FIRST_DAY_OF_WEEK = 1
-ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
-    "216.24.57.1",
-    "nett-hands.onrender.com",
-    "www.netthandshome.care",
-    "netthandshome.care",
-    "0.0.0.0",
-]
+ALLOWED_HOSTS = list(os.environ["ALLOWED_HOSTS"].split(","))
 SILENCED_SYSTEM_CHECKS = ["auth.W004"]
 ROBOTS_SITEMAP_VIEW_NAME = "cached-sitemap"
 CSRF_FAILURE_VIEW = "web.views.csrf_failure"

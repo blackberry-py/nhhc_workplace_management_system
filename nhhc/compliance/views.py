@@ -1,8 +1,14 @@
 import os
+from typing import Any
 
-from compliance.forms import ContractForm
+from compliance.forms import ComplianceForm, ContractForm
+from compliance.models import Compliance
 from django.shortcuts import render
-from django.views.generic.edit import FormView
+from django.views import View
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import FormView, UpdateView
+from formset.upload import FileUploadMixin
+from django.forms.models import model_to_dict
 
 # Create your views here.
 
@@ -14,6 +20,42 @@ def create_contract(request):
 class CreateContractFormView(FormView):
     template_name = "new_contract.html"
     form_class = ContractForm
+
+
+class ComplianceProfileDetailView(DetailView):
+    model = Compliance
+    template_name = "compliance_forms.html"
+
+    def get_object(self):
+        return Compliance.objects.get(employee=self.request.user)
+
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        initial = model_to_dict(self.get_object())
+        context["form"] = ComplianceForm(initial=initial)
+        return context
+
+
+class ComplianceProfileFormView(UpdateView, FileUploadMixin):
+    form_class = ComplianceForm
+    model = Compliance
+    template_name = "compliance_forms.html"
+
+    def get_object(self):
+        return Compliance.objects.get(employee == self.request.user)
+
+    def get_success_url(self):
+        return reverse("compliance-profile")
+
+
+class ComplianceProfile(View):
+    def get(self, request, *args, **kwargs):
+        view = ComplianceProfileDetailView.as_view()
+        return view(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        view = ComplianceProfileFormView.as_view()
+        return view(request, *args, **kwargs)
 
 
 def generate_report(requst):

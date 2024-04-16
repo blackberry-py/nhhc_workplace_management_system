@@ -1,14 +1,12 @@
+from typing import Dict, Optional, Union
+
+from django import template
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-from django import template
-from django.utils.html import escape
-from django.utils.safestring import mark_safe
-from django.utils.html import format_html
 from django.db.models.query import QuerySet
-from django.utils.html import format_html
-from typing import Union, Optional, Dict
-from web.models import EmploymentApplicationModel, ClientInterestSubmissions
-from django.utils.safestring import SafeText
+from django.utils.html import escape, format_html
+from django.utils.safestring import SafeText, mark_safe
+from web.models import ClientInterestSubmissions, EmploymentApplicationModel
 
 register = template.Library()
 

@@ -1,0 +1,18 @@
+{% extends 'layouts/_profile.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+{% block title %} Profile - Compliance {% endblock title %}
+{% block profile_section %}Compliance & Supporting Documents{% endblock profile_section %}
+
+{% block profile_content %}
+
+              {# djlint:on #}
+
+    {% csrf_token %}
+
+    {% crispy form %}
+
+
+{% endblock profile_content %}

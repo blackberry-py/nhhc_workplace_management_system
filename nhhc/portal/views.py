@@ -21,6 +21,7 @@ import os
 from typing import Any, Dict, Union
 
 import arrow
+from compliance.forms import ComplianceForm
 from compliance.models import Compliance
 from django import template
 from django.conf import settings
@@ -52,8 +53,6 @@ from rest_framework.response import Response
 from web.forms import ClientInterestForm
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
 
-now = arrow.now(tz="America/Chicago")
-
 
 @login_required(login_url="/login/")
 def portal_dashboard(request: HttpRequest) -> HttpResponse:
@@ -76,72 +75,28 @@ def portal_dashboard(request: HttpRequest) -> HttpResponse:
 
 class ProfileDetailView(DetailView):
     model = Employee
-    template_name = "profile.html"
+    template_name = "profile_main.html"
 
     def get_object(self):
         return Employee.objects.get(pk=self.request.user.pk)
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        inital = model_to_dict(self.get_object())
-        context["form"] = EmployeeForm(initial=inital)
+        initial = model_to_dict(self.get_object())
+        context["form"] = EmployeeForm(initial=initial)
         return context
 
 
 class ProfileFormView(UpdateView, FileUploadMixin):
     form_class = EmployeeForm
     model = Employee
-    template_name = "profile.html"
-
-    # def post(self, request, *args, **kwargs):
-    #     if not request.user.is_authenticated:
-    #         return HttpResponseForbidden()
-    #     self.object = self.get_object()
-    #     return super().post(request, *args, **kwargs)
+    template_name = "profile_main.html"
 
     def get_object(self):
         return Employee.objects.get(pk=self.request.user.pk)
 
     def get_success_url(self):
         return reverse("profile")
-
-    # def get_initial(self) -> dict[str, Any]:
-    #     initial = super(ProfileFormView, self).get_initial()
-    #     if self.request.user.is_authenticated:
-    #         initial["username"] = self.request.user.username  # type: ignore
-    #         initial["first_name"] = self.request.user.first_name  # type: ignore
-    #         initial["last_name"] = self.request.user.last_name  # type: ignore
-    #         initial["middle_name"] = self.request.user.middle_name  # type: ignore
-    #         initial["social_security"] = self.request.user.social_security  # type: ignore
-    #         initial["date_of_birth"] = self.request.user.date_of_birth  # type: ignore
-    #         initial["street_address1"] = self.request.user.street_address1  # type: ignore
-    #         initial["street_address2"] = self.request.user.street_address2  # type: ignore
-    #         initial["marital_status"] = self.request.user.marital_status  # type: ignore
-    #         initial[  # type: ignore
-    #             "emergency_contact_first_name"
-    #         ] = self.request.user.emergency_contact_first_name  # type: ignore
-    #         initial["ethnicity"] = self.request.user.ethnicity  # type: ignore
-    #         initial[
-    #             "emergency_contact_last_name"
-    #         ] = self.request.user.emergency_contact_last_name  # type: ignore
-    #         initial["race"] = self.request.user.race  # type: ignore
-    #         initial[
-    #             "emergency_contact_relationship"
-    #         ] = self.request.user.emergency_contact_relationship  # type: ignore
-    #         initial[
-    #             "qualifications_verification"
-    #         ] = self.request.user.qualifications_verification  # type: ignore
-    #         initial["cpr_verification"] = self.request.user.cpr_verification  # type: ignore
-    #         initial["family_hca"] = self.request.user.family_hca  # type: ignore
-    #         initial["phone"] = self.request.user.phone  # type: ignore
-    #         initial["state"] = self.request.user.state  # type: ignore
-    #         initial["zipcode"] = self.request.user.zipcode  # type: ignore
-    #         initial["hire_date"] = self.request.user.hire_date  # type: ignore
-    #         initial["termination_date"] = self.request.user.termination_date  # type: ignore
-    #         initial["qualifications"] = self.request.user.qualifications  # type: ignore
-    #         initial["in_compliance"] = self.request.user.in_compliance  # type: ignore
-    #         initial["onboarded"] = self.request.user.onboarded  # type: ignore
-    #     return initial
 
 
 class Profile(View):

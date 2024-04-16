@@ -107,13 +107,13 @@ class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
         related_name="compliance_profile_of",
     )
     aps_check_passed = models.BooleanField(null=True, blank=True)
-    aps_check_verification = models.FileField(
-        upload_to="aps_check_verification",
-        storage=PrivateMediaStorage(),
+    aps_check_verification = FilerFileField(
+        on_delete=models.DO_NOTHING,
+        related_name="aps_check_verification",
         blank=True,
         null=True,
     )
-    hhs_oig_exclusionary_check_verification = models.FileField(upload_to="hhg-oig", storage=PrivateMediaStorage(), blank=True, null=True)
+    hhs_oig_exclusionary_check_verification = FilerFileField(related_name="hhg_oig", on_delete=models.DO_NOTHING, blank=True, null=True)
     hhs_oig_exclusionary_check_completed = models.BooleanField(
         null=True,
         blank=True,
@@ -124,7 +124,7 @@ class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
         blank=True,
         default=False,
     )
-    idph_background_check_verification = models.FileField(upload_to="idph_bg_check", storage=PrivateMediaStorage(), blank=True, null=True)
+    idph_background_check_verification = FilerFileField(related_name="idph_bg_check", on_delete=models.DO_NOTHING, blank=True, null=True)
     initial_idph_background_check_completion_date = models.DateField(
         null=True,
         blank=True,
@@ -134,9 +134,9 @@ class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
         blank=True,
     )
     training_exempt = models.BooleanField(null=True, blank=True, default=False)
-    pre_training_verification = models.FileField(
-        upload_to="pretraining_verification",
-        storage=PrivateMediaStorage(),
+    pre_training_verification = FilerFileField(
+        related_name="pretraining_verification",
+        on_delete=models.DO_NOTHING,
         blank=True,
         null=True,
     )

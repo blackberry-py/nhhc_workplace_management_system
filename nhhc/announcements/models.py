@@ -6,7 +6,7 @@ from django_prometheus.models import ExportModelOperationsMixin
 from employee.models import Employee
 from loguru import logger
 
-now = arrow.utcnow()
+now = str(arrow.now().format("YYYY-MM-DD"))
 
 
 # Create your models here.
