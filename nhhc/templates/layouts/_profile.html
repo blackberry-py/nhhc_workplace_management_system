@@ -83,12 +83,7 @@
                 <hr class="my-4" />
             {% endif %}
             <ul class="nav nav-tabs">
-              <li class="nav-item">
-                <a id="profile-tab" class="nav-link" aria-current="page" href="{% url 'profile' %}">Profile</a>
-              </li>
-              <li class="nav-item">
-                <a id="compliance-tab" class="nav-link" href="{% url 'compliance-profile' %}">Compliance</a>
-              </li>
+              {% block tab %} {% endblock tab %}
             </ul>
 
             {% block profile_content %}

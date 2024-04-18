@@ -6,7 +6,7 @@ authors = ["Terry Brooks, Jr. <Terry.Arthur@BrooksJr.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.11,<3.12"
 Django = ">=3.2.19"
 python-dotenv = "^1.0.0"
 psycopg2-binary = "^2.9.6"
@@ -58,7 +58,7 @@ prospector = {version = "^1.10.3", extras = ["with_everything"]}
 
 
 [tool.poetry.group.main.dependencies]
-python = "^3.11"
+python = ">=3.11,<3.12"
 Django = ">=3.2.19"
 python-dotenv = "^1.0.0"
 psycopg2-binary = "^2.9.6"

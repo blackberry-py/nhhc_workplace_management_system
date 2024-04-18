@@ -243,43 +243,6 @@ def terminate(request: HttpRequest) -> HttpResponse:
         return HttpResponse(status=400, content=f"Failed to terminate employee.. Error: {e}.")
 
 
-class DetailedEmployeeView:
-    pass
-
-
-def employee_details(request, pk):
-    if request.user.is_staff:
-        context = dict()
-        context["data"] = Employee.objects.get(id=pk)
-        context["compliance"] = Compliance.objects.get(employee=pk)
-        user = context["data"]
-        compliance = context["compliance"]
-
-        if request.method == "POST":
-            user = Employee.objects.get(id=pk)
-            compliance = Compliance.objects.get(employee=pk)
-            form = EmployeeForm(
-                request.POST,
-                request.FILES,
-                instance=Employee.objects.get(id=pk),
-            )
-            if form.has_changed:
-                if form.is_valid:
-                    form.save()
-                    return redirect(reverse("profile"))
-
-        elif request.method == "GET":
-            context["compliance"] = Compliance.objects.get(employee=pk)
-            context["form"] = EmployeeForm(instance=Employee.objects.get(id=pk))
-            return render(
-                request=request,
-                template_name="employee-detail.html",
-                context=context,
-            )
-    else:
-        raise PermissionDenied()
-
-
 def force_pwd_login(request, *args, **kwargs):
     response = login(request, *args, **kwargs)
     if response.status_code == 302:

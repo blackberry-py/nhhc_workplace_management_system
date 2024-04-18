@@ -228,10 +228,10 @@ class TestEmployeeActions(TestCase):
 
     # FIXME: FIND WAY TO TEST MAIL SENDING
     # def test_employee_details_permission_denied(self):
-    #     request = self.client.get(f"/employee/{self.user.pk}")
+    #     request = self.client.get(f"/employee/{self.user.employee_id}")
     #         request.user = self.staff_user
     #         with self.assertRaises(PermissionDenied):
-    #             employee_details(request, self.user.pk)
+    #             employee_details(request, self.user.employee_id)
 
     # FIXME: Resolve Test
     # def test_employee_details_staff_user(self):

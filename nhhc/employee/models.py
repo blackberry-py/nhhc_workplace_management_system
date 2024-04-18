@@ -183,6 +183,7 @@ class Employee(AbstractUser):
         SWEDISH = "SWEDISH", _("Swedish")
         VIETNAMESE = "VIETNAMESE", _("Vietnamese")
 
+    employee_id = models.BigAutoField(primary_key=True)
     username = models.CharField(max_length=150, unique=False)
     gender = models.CharField(
         max_length=255,

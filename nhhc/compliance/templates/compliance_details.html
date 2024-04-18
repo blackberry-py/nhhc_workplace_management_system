@@ -1,0 +1,82 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} {{ type }} Employee Compliance - {{request.user.last_name}}, {{request.user.first_name}} {% endblock title %}
+{% load crispy_forms_tags %}
+{% load anonymize %}
+{% load humanize %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+  <div class="col-xl-8 order-xl-1">
+    <div class="card">
+      <div class="card-header">
+        <div class="row align-items-center">
+          <div class="col-8">
+            <h3 class="mb-0">Employee Compliance Details - {{request.user.last_name}}, {{request.user.first_name}}
+            </h3>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-12 mb-0">
+
+            <h1>Compliance & Supporting Documents</h1>
+          </div>
+        </div>
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a id="profile-tab" class="nav-link" aria-current="page" href="{% url 'profile' %}">Profile</a>
+          </li>
+          <li class="nav-item">
+            <a id="compliance-tab" class="nav-link active" href="{% url 'compliance-profile' %}">Compliance</a>
+          </li>
+        </ul>
+
+        <div class="row">
+          <div class="col-6">
+            <h3><strong>Fingerprinting Completed?:</strong></h3>
+            <p>{{ employee.hhs_oig_exclusionary_check_completed }}</p>
+          </div>
+          <div class="col-6">
+            <h3><strong>Fingerprinting Results:</strong></h3>
+            {% if employee.hhs_oig_exclusionary_check_completed %}
+              <a href={{ employee.qualifications_verification.url }} target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
+            {% else %}
+              <p>No File Available</p>
+            {% endif %}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <h3><strong>APS Work Eligibility Checked?:</strong></h3><br/>
+            <p>{{ employee.aps_check_passed }}</p>
+          </div>
+          <div class="col-6">
+            <h3><strong>APS Work Eligibility Verification:</strong></h3>
+            {% if employee.aps_check_verification %}
+              <a href={{ employee.aps_check_verification.url }} target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
+            {% else %}
+              <p>No File Available</p>
+            {% endif %}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <h3><strong>IDPH Background Check?:</strong></h3><br/>
+            <p>{{ employee.idph_background_check_completed }}</p>
+          </div>
+          <div class="col-6">
+            <h3><strong>IDPH Recent Background Check:</strong></h3>
+            {% if employee.idph_background_check_verification %}
+              <a href={{ employee.idph_background_check_verification.url }} target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
+            {% else %}
+              <p>No File Available</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

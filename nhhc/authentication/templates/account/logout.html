@@ -29,9 +29,10 @@
                                     {% endif %}
                                 {% endslot %}
                                 {% slot actions %}
-                                    <button type="submit" value="Sign Out" class="btn btn-danger">Confirm Log Out</button>
+                                    <button type="submit" value="Sign Out" class="btn btn-danger mb-4">Confirm Log Out</button>
                                 {% endslot %}
                             {% endelement %}
+                            <a href={% url 'dashboard' %}  class="btn btn-primary"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
                         </div>
                     </div>
                 </div>

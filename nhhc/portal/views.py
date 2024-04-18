@@ -78,7 +78,7 @@ class ProfileDetailView(DetailView):
     template_name = "profile_main.html"
 
     def get_object(self):
-        return Employee.objects.get(pk=self.request.user.pk)
+        return Employee.objects.get(pk=self.request.user.employee_id)
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -93,7 +93,7 @@ class ProfileFormView(UpdateView, FileUploadMixin):
     template_name = "profile_main.html"
 
     def get_object(self):
-        return Employee.objects.get(pk=self.request.user.pk)
+        return Employee.objects.get(pk=self.request.user.employee_id)
 
     def get_success_url(self):
         return reverse("profile")

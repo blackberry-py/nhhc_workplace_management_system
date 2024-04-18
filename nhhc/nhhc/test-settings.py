@@ -69,7 +69,6 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = (
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 INSTALLED_APPS = [
-    "kolo",
     "whitenoise.runserver_nostatic",
     "allauth",
     "allauth.account",
@@ -121,7 +120,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.cache.UpdateCacheMiddleware",
     "django_prometheus.middleware.PrometheusBeforeMiddleware",
-    "kolo.middleware.KoloMiddleware",
+    # "kolo.middleware.KoloMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",

@@ -14,7 +14,7 @@ class UserProfile(models.Model):
     last_password_change = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
-        return f"User Profile of {self.user.last_name}, {self.user.first_name} ({self.user.pk})"
+        return f"User Profile of {self.user.last_name}, {self.user.first_name} ({self.user.employee_id})"
 
 
 def create_user_profile_signal(sender: Callable, instance, created, **kwargs) -> None:

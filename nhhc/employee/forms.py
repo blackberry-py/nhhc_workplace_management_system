@@ -18,34 +18,36 @@ class EmployeeForm(ModelForm):
         """Meta definition for EmployeeForm."""
 
         model = Employee
-        fields = (
-            "gender",
-            "social_security",
-            "middle_name",
-            "street_address1",
-            "street_address2",
-            "last_name",
-            "first_name",
-            "marital_status",
-            "emergency_contact_first_name",
-            "emergency_contact_last_name",
-            "emergency_contact_relationship",
-            "emergency_contact_phone",
-            "city",
-            "email",
-            "phone",
-            "state",
-            "zipcode",
-            "ethnicity",
-            "family_hca",
-            "language",
-            "cpr_verification",
-            "qualifications",
-            "race",
-            "qualifications_verification",
-            "username",
-            "date_of_birth",
-        )
+        # fields = (
+        #     "employee_id",
+        #     "gender",
+        #     "social_security",
+        #     "middle_name",
+        #     "street_address1",
+        #     "street_address2",
+        #     "last_name",
+        #     "first_name",
+        #     "marital_status",
+        #     "emergency_contact_first_name",
+        #     "emergency_contact_last_name",
+        #     "emergency_contact_relationship",
+        #     "emergency_contact_phone",
+        #     "city",
+        #     "email",
+        #     "phone",
+        #     "state",
+        #     "zipcode",
+        #     "ethnicity",
+        #     "family_hca",
+        #     "language",
+        #     "cpr_verification",
+        #     "qualifications",
+        #     "race",
+        #     "qualifications_verification",
+        #     "username",
+        #     "date_of_birth",
+        # )
+        fields = "__all__"
         labels = {
             "language": _(
                 "Language Preference",
@@ -56,9 +58,7 @@ class EmployeeForm(ModelForm):
             ),
             "qualifications_verification": _("Upload Degree, GED or Diploma"),
             "cpr_verification": _("CPR Card"),
-            "hhs_oig_exclusionary_check_verification": _(
-                "Upload Fingerprinting Results",
-            ),
+            "hhs_oig_exclusionary_check_verification": _("Upload Fingerprinting Results"),
         }
 
     def __init__(self, *args, **kwargs):
@@ -79,10 +79,23 @@ class EmployeeForm(ModelForm):
         """,
             ),
             Row(
-                Column(Field("username", css_class="", readonly=True), css_class="form-group col-6 mb-0"),
+                Column(Field("username", css_class="", readonly=True), css_class="form-group col-4 mb-0"),
+                Column(
+                    HTML(
+                        """<div class="row">
+                 <div class="form-group col-4 mb-0">
+                 <label class="form-label">Employee ID Number</label>
+                 </div>
+                 <div class="col-6">
+                 <h5 class="textinput form-control" readonly>{{ employee.employee_id }}</h5>
+                 </div>
+                 </div> """
+                    ),
+                    css_class="form-group col-4 mb-0",
+                ),
                 Column(
                     "email",
-                    css_class="form-group col-6 mb-0  editable",
+                    css_class="form-group col-4 mb-0  editable",
                 ),
                 css_class="form-row ",
             ),
@@ -100,7 +113,7 @@ class EmployeeForm(ModelForm):
                 Column(
                     "last_name",
                     readonly=True,
-                    css_class="form-group col-md-44 mb-0  editable",
+                    css_class="form-group col-md-4 mb-0  editable",
                 ),
                 css_class="form-row",
             ),

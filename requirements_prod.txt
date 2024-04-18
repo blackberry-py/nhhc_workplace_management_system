@@ -164,11 +164,10 @@ tqdm==4.66.2
 trove-classifiers==2024.4.10
 types-python-dateutil==2.9.0.20240316
 typing-extensions==4.11.0
-tzdata==2024.1   and sys_platform == "win32"
+tzdata==2024.1
 urllib3==2.2.1
 vulture==2.11
 webencodings==0.5.1
 whitenoise==6.6.0
-win32-setctime==1.1.0   and sys_platform == "win32"
-wrapt==1.16.0
+win32-setctime==1.1.0
 zipp==3.18.1

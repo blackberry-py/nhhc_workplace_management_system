@@ -5,9 +5,17 @@
 
 {% block title %} Profile - General {% endblock title %}
 {% block profile_section %} Employee Profile {% endblock profile_section %}
+{% block tab %}
+  <li class="nav-item">
+    <a id="profile-tab" class="nav-link active" aria-current="page" href="{% url 'profile' %}">Profile</a>
+  </li>
+  <li class="nav-item">
+    <a id="compliance-tab" class="nav-link" href="{% url 'compliance-profile' %}">Compliance</a>
+  </li>
+{% endblock tab %}
 {% block profile_content %}
 
-    {% csrf_token %}
-    {% crispy form %}
+  {% csrf_token %}
+  {% crispy form %}
 
 {% endblock profile_content %}

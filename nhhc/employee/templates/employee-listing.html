@@ -95,7 +95,7 @@
                           {{ employee.hire_date }}
                         </td>
                         <td>
-                          <a class="btn btn-secondary" href="{% url 'employee' pk=employee.id %}">Employee Details</a>
+                          <a class="btn btn-secondary" href="{% url 'employee' pk=employee.employee_id %}">Employee Details</a>
                         </td>
                       </tr>
                     {% elif not employee.is_active %}
@@ -122,7 +122,7 @@
                           {{ employee.hire_date }}
                         </td>
                         <td>
-                          <a class="btn btn-secondary" href="{% url 'employee' pk=employee.id %}">Employee Details</a>
+                          <a class="btn btn-secondary" href="{% url 'employee' pk=employee.employee_id %}">Employee Details</a>
                         </td>
                       </tr>
                     {% endif %}

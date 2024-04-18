@@ -18,12 +18,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
 from loguru import logger
 from web.sitemaps import StaticViewSitemap
+from django.conf import settings
 
 sitemaps = {"static": StaticViewSitemap}
 from django.http import HttpResponse
+from django.http import HttpRequest
 
 urlpatterns = [
-    path("__debug__/", include("debug_toolbar.urls")),
     path("control-center/", admin.site.urls),
     re_path(r"^compliance/", include("filer.urls")),
     re_path(r"^", include("filer.server.urls")),
@@ -47,12 +48,37 @@ urlpatterns = [
     ),
     re_path(r"^robots\.txt", include("robots.urls")),
     re_path("", include("django_prometheus.urls")),
-    # path("404/", web.views.handler404),
-    # path("500/", web.views.handler500)
 ]
+# if settings.DEBUG is False:
+#      urlpatterns  = urlpatterns + [ path("__debug__/", include("debug_toolbar.urls")),
+# ]
 HEALTH_CHECK = {
     "DISK_USAGE_MAX": 90,  # percent
     "MEMORY_MIN": 100,  # in MB
 }
-handler404 = web.views.handler404
-handler500 = web.views.handler500
+
+
+def bad_request_handler(request: HttpRequest, exception=None):
+    logger.warning(f"BAD REQUEST: {exception}")
+    return render(request, "400.html", status=400)
+
+
+def permission_denied_handler(request: HttpRequest, exception=None):
+    logger.error(f"FORBIDDEN ERROR: {exception}")
+    return render(request, "403_csrf.html", status=403)
+
+
+def page_not_found_handler(request: HttpRequest, exception=None):
+    logger.warning(f"PAGE NOT FOUND ERROR: {exception}")
+    return render(request, "404.html", status=404)
+
+
+def server_error_handler(request: HttpRequest, exception=None):
+    logger.error(f"SERVER ERROR: {exception}")
+    return render(request, "500.html", status=500)
+
+
+handler400 = bad_request_handler
+handler403 = permission_denied_handler
+handler404 = page_not_found_handler
+handler500 = server_error_handler

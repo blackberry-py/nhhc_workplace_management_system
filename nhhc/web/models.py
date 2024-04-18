@@ -182,7 +182,7 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
                 "user": new_employee,
                 "plain_text_password": password,
                 "username": new_employee.username,
-                "employee_id": new_employee.pk,
+                "employee_id": new_employee.employee_id,
                 "email": new_employee.email,
                 "first_name": new_employee.first_name,
                 "last_name": new_employee.last_name,

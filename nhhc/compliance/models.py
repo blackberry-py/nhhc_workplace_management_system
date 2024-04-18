@@ -152,10 +152,10 @@ class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
     )
 
     def __str__(self) -> str:
-        return f"Compliance Profile of {self.employee.last_name}, {self.employee.first_name} ({self.employee.pk})"
+        return f"Compliance Profile of {self.employee.last_name}, {self.employee.first_name} ({self.employee.employee_id})"
 
     def is_eligible_to_work(self) -> bool:
-        employee_profile = Employee.objects.get(pk=self.employee.pk)
+        employee_profile = Employee.objects.get(pk=self.employee.employee_id)
         # TODO: Implement Miniminally Needed Documentation Check Logic to Determined Ready to Start
         raise NotImplementedError("Logic to Determine This Forth Coming")
 

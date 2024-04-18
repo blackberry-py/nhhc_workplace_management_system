@@ -9,6 +9,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView, UpdateView
 from formset.upload import FileUploadMixin
 from django.forms.models import model_to_dict
+from employee.models import Employee
 
 # Create your views here.
 
@@ -24,28 +25,34 @@ class CreateContractFormView(FormView):
 
 class ComplianceProfileDetailView(DetailView):
     model = Compliance
-    template_name = "compliance_forms.html"
+    template_name = "compliance_details.html"
+    context_object_name = "employee"
 
     def get_object(self):
         return Compliance.objects.get(employee=self.request.user)
 
-    def get_context_data(self, **kwargs) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        initial = model_to_dict(self.get_object())
-        context["form"] = ComplianceForm(initial=initial)
-        return context
+    # def get_context_data(self, **kwargs) -> dict[str, Any]:
+    #     context = super().get_context_data(**kwargs)
+    #     initial = model_to_dict(self.get_object())
+    #     context["form"] = ComplianceForm(initial=initial)
+    #     return context
 
 
 class ComplianceProfileFormView(UpdateView, FileUploadMixin):
     form_class = ComplianceForm
     model = Compliance
     template_name = "compliance_forms.html"
+    context_object_name = "employee"
 
-    def get_object(self):
-        return Compliance.objects.get(employee == self.request.user)
+    # def get_slug_field(self):
+    #     return self.employee_id
 
-    def get_success_url(self):
-        return reverse("compliance-profile")
+    # def get_object(self, pk):
+    #     employee = Employee.objects.get(employee_id=pk)
+    #     return Compliance.objects.get(employee = employee)
+
+    # def get_success_url(self):
+    #     return reverse("compliance-profile")
 
 
 class ComplianceProfile(View):

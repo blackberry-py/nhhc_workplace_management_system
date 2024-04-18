@@ -41,7 +41,7 @@ RECAPTCHA_PRIVATE_KEY = os.environ["RECAPTCHA_PRIVATE_KEY"]
 RESTRICT_ADMIN_BY_IPS = True
 ALLOWED_ADMIN_IPS = list(os.environ["ALLOWED_IPS"].split(","))
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-SITE_ID = 1
+SITE_ID = os.environ["SITE_ID"]
 ROBOTS_CACHE_TIMEOUT = 60 * 60 * 24
 SECURE_SSL_REDIRECT = not DEBUG
 ENVIRONMENT_FLOAT = True
@@ -61,7 +61,6 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = (
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 INSTALLED_APPS = [
-    "kolo",
     "whitenoise.runserver_nostatic",
     "allauth",
     "allauth.account",
@@ -76,7 +75,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
     ## Installed 3rd Apps
-    "coverage",
     "crispy_forms",
     "crispy_bootstrap5",
     "storages",
@@ -88,7 +86,6 @@ INSTALLED_APPS = [
     "request",
     "formset",
     "django_filters",
-    "debug_toolbar",
     "localflavor",
     "captcha",
     "corsheaders",
@@ -112,17 +109,20 @@ INSTALLED_APPS = [
     "compliance",
 ]
 
+# if DEBUG is False:
+#     INSTALLED_APPS= ["kolo","debug_toolbar","coverage" ]  + INSTALLED_APPS
+
 MIDDLEWARE = [
     "django.middleware.cache.UpdateCacheMiddleware",
     "django_prometheus.middleware.PrometheusBeforeMiddleware",
-    "kolo.middleware.KoloMiddleware",
+    # "kolo.middleware.KoloMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     # "nhhc.middleware.password_change.PasswordChangeMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    # "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "request.middleware.RequestMiddleware",
@@ -167,11 +167,11 @@ ENCRYPT_PUBLIC_KEY = os.environ["DB_GPG_PUBLIC_KEY"]
 
 CACHES = {
     "default": {
-        "BACKEND": os.environ["CACHE_BACKEND"],
+        "BACKEND": os.environ["CACHE_ENGINE"],
         "LOCATION": os.environ["REDIS_CACHE_URI"],
         "OPTIONS": {
             "PARSER_CLASS": os.environ["CACHE_PARSER"],
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CLIENT_CLASS": os.environ["CACHE_BACKEND"],
         },
         "KEY_PREFIX": "NHHC-NATIVE",
     }
@@ -218,7 +218,7 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = "America/Chicago"
 USE_I18N = True
 USE_L10N = True
-USE_TZ = False
+USE_TZ = True
 
 
 # !SECTION

@@ -5,7 +5,6 @@
 {% load anonymize %}
 {% load humanize %}
 {% load widget_tweaks %}
-<link rel="stylesheet" href="{% static 'css/custom-portal-styles.css' %}" type="text/css"/>
 
 
 {% block content %}
@@ -23,18 +22,6 @@
           </div>
         </div>
       </div>
-      {% if form.errors %}
-        <div id="form-errors">
-          <ul class="form-errors-list">
-            <p class="form-error-header">Please correct the errors below and resubmit...</p>
-            {% for field, errors in form.errors.items %}
-              `              {% for error in errors %}
-                <li class="form-error">{{ error }}</li>
-              {% endfor %}
-              </ul>
-            {% endfor %}
-          </div>
-      {% endif %}
       <div class="card-body">
         <div class="row">
           <div class="col-12 mb-0">
@@ -42,7 +29,14 @@
             <h1>Personal Information</h1>
           </div>
         </div>
-
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a id="profile-tab" class="nav-link active" aria-current="page" href="{% url 'employee' pk=employee.employee_id %}">Profile</a>
+          </li>
+          <li class="nav-item">
+            <a id="compliance-tab" class="nav-link" href="{% url 'staff_update_compliance'  pk=employee.employee_id %}">Compliance</a>
+          </li>
+        </ul>
         <div class="row">
           <div class="col-4">
             <h3><strong>First Name:<br/> </strong></h3>
@@ -175,7 +169,7 @@
             <div class="col-4">
               <h3><strong>GED/High School Diploma:</strong></h3>
               {% if employee.qualifications_verification %}
-                <a href={{ employee.qualifications_verification.url }} target="_blank"><p>{{ employee.qualifications_verification.name }}</p></a>
+                <a href={{ employee.qualifications_verification.url }} target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
               {% else %}
                 <p>No File Available</p>
               {% endif %}
@@ -191,26 +185,7 @@
               {% endif %}
             </div>
           </div>
-          <div class="row">
-            <div class="col-6">
-              <label for="job_title" class="form-check-label">Agency Job Tile</label>
-              {% render_field compliance_form.job_title  class="form-control" %}
-            </div>
-            <div class="col-6">
-              <label for="contract_code" class="form-check-label">Contract Code</label>
-              {% render_field compliance_form.contract_code  class="form-control" %}
-            </div>
-          </div>
-          <hr class="my-4" />
-          <div class="row">
-            <h2>Regulatory and Compliance</h2>
-          </div>
-          <div class="row">'
-            <div class="col-4">
-              <label for="aps_check_passed" class="f  orm-check-label">APS Background Check Passed?</label>
-              {% render_field compliance_form.aps_check_passed  class="form-control" %}
-            </div>
-          </div>
+
           <div class="w-full text-center">
             {% if request.user.is_superuser %}
               <button id="terminate-employee-btn" onclick="confirmTermination({{ employee.id }})" class="btn btn-danger" >Terminate Employment</button>
@@ -221,8 +196,3 @@
       </div>
 
 {% endblock content %}
-
-<!-- Specific JS goes HERE -->
-{% block javascripts %}
-  if()
-{% endblock javascripts %}

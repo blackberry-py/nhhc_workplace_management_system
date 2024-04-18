@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/python:3.12-bullseye
+FROM mcr.microsoft.com/devcontainers/python:3.11-bullseye
 
 ARG USERNAME=vscode
 RUN usermod --login ${USERNAME} --move-home --home /home/${USERNAME} vscode && \
