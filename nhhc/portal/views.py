@@ -15,42 +15,29 @@ Classes:
 - EmploymentApplicationDetailView: Renders details of a specific employment application.
 """
 
-import csv
 import json
-import os
-from typing import Any, Dict, Union
+from typing import Any, Dict
 
-import arrow
-from compliance.forms import ComplianceForm
-from compliance.models import Compliance
-from django import template
-from django.conf import settings
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import render
 from django.template import loader
 from django.urls import reverse
 from django.views import View
-from django.views.generic.detail import DetailView, SingleObjectMixin
+from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView
 from django.views.generic.list import ListView
 from django_filters.rest_framework import DjangoFilterBackend
 from employee.forms import EmployeeForm
 from employee.models import Employee
 from formset.upload import FileUploadMixin
-from formset.views import FormView
 from loguru import logger
-from portal.serializers import (
-    ClientInquiriesSerializer,
-    EmploymentApplicationSerializer,
-)
+from portal.serializers import ClientInquiriesSerializer
 from rest_framework import generics, mixins, permissions, status
 from rest_framework.response import Response
-from web.forms import ClientInterestForm
 from web.models import ClientInterestSubmissions, EmploymentApplicationModel
 
 
@@ -77,8 +64,9 @@ class ProfileDetailView(DetailView):
     model = Employee
     template_name = "profile_main.html"
 
-    def get_object(self):
-        return Employee.objects.get(pk=self.request.user.employee_id)
+    def get_object(self, queryset=None):
+        queryset = Employee.objects.get(pk=self.request.user.employee_id)
+        return queryset
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -92,8 +80,9 @@ class ProfileFormView(UpdateView, FileUploadMixin):
     model = Employee
     template_name = "profile_main.html"
 
-    def get_object(self):
-        return Employee.objects.get(pk=self.request.user.employee_id)
+    def get_object(self, queryset=None):
+        queryset = Employee.objects.get(pk=self.request.user.employee_id)
+        return queryset
 
     def get_success_url(self):
         return reverse("profile")

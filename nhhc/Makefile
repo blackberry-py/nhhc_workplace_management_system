@@ -6,6 +6,7 @@ VENV := /workspaces/NettHands/.venv
 
 PYTHON := $(VENV)/bin/python
 SHELL := /bin/bash
+CURRENTDATE=`date +"%Y-%m-%d-%T"`
 
 .PHONY: help
 help: ## Show this help
@@ -30,6 +31,8 @@ migrate: ## Make and run migrations
 	doppler run -t $(DOPPLER_TOKEN) -- 	$(PYTHON) manage.py makemigrations
 	doppler run -t $(DOPPLER_TOKEN) -- 	$(PYTHON) manage.py migrate
 
+lint:
+	doppler run -t $(DOPPLER_TOKEN) -- prospector --profile-path /workspaces/NettHands/.prospector > prospector_results_${CURRENTDATE}.json
 
 db-shell: ## Access the Postgres Docker database interactively with psql. Pass in DBNAME=<name>.
 	docker exec -it container_name psql -d $(DBNAME)

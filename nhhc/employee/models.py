@@ -99,19 +99,77 @@ class EmployeeManager(BaseUserManager):
 
 
 class Employee(AbstractUser):
+    """
+    Represents an employee in the organization and is the Core User Model
+
+    Attributes:
+        employee_id (int): The unique identifier for the employee.
+        username (str): The username of the employee.
+        gender (str): The gender of the employee.
+        language (str): The language spoken by the employee.
+        social_security (str): The encrypted social security number of the employee.
+        date_of_birth (date): The date of birth of the employee.
+        marital_status (str): The marital status of the employee.
+        ...
+
+    Methods:
+        __str__(self) -> str: Returns a string representation of the employee.
+        terminate_employment(self) -> None: Terminates the employment of the employee.
+        is_profile_complete(self) -> bool: Checks if the employee's profile is complete.
+        create_unique_username(first_name: str, last_name: str) -> str: Creates a unique username for the employee.
+
+    Meta:
+        db_table (str): The database table name for the Employee model.
+        ordering (list): The default ordering of Employee instances.
+        verbose_name (str): The singular name for the Employee model.
+        verbose_name_plural (str): The plural name for the Employee model.
+        unique_together (list): The unique constraints for the Employee model.
+        get_latest_by (str): The field used for retrieving the latest Employee instance.
+
+    """
+
     objects = EmployeeManager()
 
     class GENDER(models.TextChoices):
+        """
+        Enum values representing different gender options.
+
+        Attributes:
+            MALE: Represents the Male gender.
+            FEMALE: Represents the Female gender.
+            NON_GENDERED: Represents a Non-Gendered option.(Default)
+            BINARY: Represents the Binary gender option.
+        """
+
         MALE = "M", _("Male")
         FEMALE = "F", _("Female")
         NON_GENDERED = "X", _("Non-Gendered")
         BINARY = "B", _("Binary")
 
-    class PATIENT_WORKER_RELATIONSHIP(models.TextChoices):
+    class PatientWorkerRelationship(models.TextChoices):
+        """
+        Enum Values define the relationship between a patient and a worker.
+
+        Attributes:
+            RELATED: Represents the case where the worker is related to the patient.
+            NOT_RELATED: Represents the case where the worker is not related to the patient.(Default)
+        """
+
         RELATED = "true", _("Yes, I am Related to my patient")
         NOT_RELATED = "false", _("No, I am NOT Related to my patient")
 
-    class MARITAL_STATUS(models.TextChoices):
+    class MaritalStatus(models.TextChoices):
+        """
+        Enum values representing marital status choices.
+
+        Attributes:
+            MARRIED: Represents the status of being married.
+            DIVORCED: Represents the status of being divorced.
+            SEPARATED: Represents the status of being separated.
+            WIDOWED: Represents the status of being widowed.
+            NEVER_MARRIED: Represents the status of never being married.
+        """
+
         MARRIED = "M", _("Married")
         DIVORCED = "D", _("Divorced")
         SEPARATED = "S", _("Separated")
@@ -119,6 +177,16 @@ class Employee(AbstractUser):
         NEVER_MARRIED = "NM", _("Never Married")
 
     class DEPARTMENT(models.TextChoices):
+        """
+        Enum Values to define choices for department types.
+
+        Attributes:
+        - PATIENT_CARE: Represents the department for patient care.
+        - ADMIN: Represents the administration department.
+        - BILLING: Represents the billing department.
+        - OTHER: Represents other types of departments.
+        """
+
         PATIENT_CARE = "PC", _("Patient Care")
         ADMIN = "A", _("Administration")
         BILLING = "B", _("Billing")
@@ -209,8 +277,8 @@ class Employee(AbstractUser):
         max_length=255,
         null=True,
         blank=True,
-        choices=MARITAL_STATUS.choices,
-        default=MARITAL_STATUS.NEVER_MARRIED,
+        choices=MaritalStatus.choices,
+        default=MaritalStatus.NEVER_MARRIED,
     )
     emergency_contact_first_name = models.CharField(
         max_length=255,
@@ -265,8 +333,8 @@ class Employee(AbstractUser):
         max_length=255,
         blank=True,
         null=True,
-        choices=PATIENT_WORKER_RELATIONSHIP.choices,
-        default=PATIENT_WORKER_RELATIONSHIP.NOT_RELATED,
+        choices=PatientWorkerRelationship.choices,
+        default=PatientWorkerRelationship.NOT_RELATED,
     )
 
     phone = PhoneNumberField(null=True)

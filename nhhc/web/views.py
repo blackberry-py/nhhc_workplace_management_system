@@ -2,36 +2,28 @@
 Module: web_views.py
 Description: This module contains views for rendering web pages, processing form data, and sending email notifications.
 """
-import json
 import os
-import pprint
 import smtplib
 from email.message import EmailMessage
 from email.mime.text import MIMEText
 from string import Template
 
 from django.conf import settings
-from django.contrib import messages
-from django.core.mail import send_mail
 from django.http import (
     FileResponse,
     HttpRequest,
     HttpResponse,
-    HttpResponseNotFound,
-    HttpResponseServerError,
 )
-from django.shortcuts import redirect, render, reverse
-from django.template import RequestContext
+from django.shortcuts import redirect, render
 from django.views.decorators.cache import cache_page
-from dotenv import load_dotenv
 from ipware import get_client_ip
-from logtail import LogtailHandler
 from loguru import logger
 from web.forms import ClientInterestForm, EmploymentApplicationForm
-from web.utils import application_body, client_body
+from nhhc.utils.email_templates import APPLICATION_BODY, CLIENT_BODY
+from typing import Union
 
-load_dotenv()
-CACHE_TTL = settings.CACHE_TTL
+
+CACHE_TTL: int = settings.CACHE_TTL
 
 # SECTION - Page Rendering Views
 
@@ -61,10 +53,10 @@ def index(request: HttpRequest) -> HttpResponse:
 
 @cache_page(CACHE_TTL)
 def about(request: HttpRequest) -> HttpResponse:
-    """Primary Render Function that Renders the about sub-page template located in contact.html.
+    """A function based template view thatmk Renders the about sub-page template located in contact.html.
 
     Args:
-        request (HttpRequestObject): Request Object Passed at time of calling.
+        request (HttpRequest): Request Object Passed at time of calling.
 
     Returns:
         Renders Contact Subpage
@@ -74,8 +66,17 @@ def about(request: HttpRequest) -> HttpResponse:
 
 @cache_page(CACHE_TTL)
 def favicon(request: HttpRequest) -> HttpResponse:
-    favicon = open("/workspaces/NettHands/nhhc/static/img/favicon.ico", "rb")
-    return FileResponse(favicon)
+    """
+    This function returns the favicon file as a response.
+
+    Parameters:
+    - request: HttpRequest object
+
+    Returns:
+    - HttpResponse object
+    """
+    favicon_file = open("/workspaces/NettHands/nhhc/static/img/favicon.ico", "rb")
+    return FileResponse(request=request, filename=favicon_file)
 
 
 #!SECTION
@@ -83,9 +84,7 @@ def favicon(request: HttpRequest) -> HttpResponse:
 # SECTION - Internal Functional View
 
 
-def send_external_application_submission_confirmation(
-    form: ClientInterestForm | EmploymentApplicationForm,
-) -> None:
+def send_external_application_submission_confirmation(form: Union[ClientInterestForm, EmploymentApplicationForm]) -> None:
     """
     Class method to send email notification of the submissions of client interest and employment application forms
 
@@ -99,16 +98,16 @@ def send_external_application_submission_confirmation(
         Exception: If the email transmission fails.
     """
     try:
-        sender_email = os.getenv("NOTIFICATION_SENDER_EMAIL")
-        sender_password = os.getenv("EMAIL_ACCT_PASSWORD")
-        recipient_email = form.cleaned_data["email"].lower()
-        subject = f"Thanks For Your Employment Interest, {form.cleaned_data['first_name']}!"
-        content = application_body
+        sender_email: str = os.getenv("NOTIFICATION_SENDER_EMAIL")
+        sender_password: str = os.getenv("EMAIL_ACCT_PASSWORD")
+        recipient_email: str = form.cleaned_data["email"].lower()
+        subject: str = f"Thanks For Your Employment Interest, {form.cleaned_data['first_name']}!"
+        content: str = APPLICATION_BODY
 
-        html_message = MIMEText(content, "html")
-        html_message["Subject"] = subject
-        html_message["From"] = sender_email
-        html_message["To"] = recipient_email
+        html_message: MIMEText = MIMEText(content, "html")
+        html_message["Subject"]: str = subject
+        html_message["From"]: str = sender_email
+        html_message["To"]: str = recipient_email
         with smtplib.SMTP_SSL(
             os.getenv("EMAIL_SERVER"),
             os.getenv("EMAIL_SSL_PORT"),
@@ -203,7 +202,7 @@ def send_internal_application_submission_confirmation(
             os.getenv("EMAIL_ACCT_PASSWORD"),
         )
         message.set_content(content)
-        transmission = server_ssl.send_message(message)
+        server_ssl.send_message(message)
         server_ssl.quit()
         applicant = form.cleaned_data["last_name"], form.cleaned_data["first_name"]
         logger.info(f"Internal Application Notice Sent -  {applicant} - Success")
@@ -224,7 +223,7 @@ def send_external_client_submission_confirmation(form):
         sender_password = os.getenv("EMAIL_ACCT_PASSWORD")
         recipient_email = form.cleaned_data["email"].lower()
         subject = f"We Got Your Client Interest {form.cleaned_data['first_name']}!"
-        content = client_body
+        content = CLIENT_BODY
 
         html_message = MIMEText(content, "html")
         html_message["Subject"] = subject
@@ -249,15 +248,13 @@ def send_external_client_submission_confirmation(form):
 
 
 def send_internal_client_submission_confirmation(form):
-    applicant = form.cleaned_data["last_name"], form.cleaned_data["first_name"]
     """Internal Non-Rendering View Function to send email notification of the submissions of client interest and employment application forms
     Args:
         form: Form Instance
     """
+    applicant = form.cleaned_data["last_name"], form.cleaned_data["first_name"]
     try:
-        sender_email = list(os.getenv("NOTIFICATION_SENDER_EMAIL"))
         recipient_email = os.getenv("NOTIFICATION_CLIENT_SUBMISSION_EMAIL")
-        sender_password = os.getenv("EMAIL_ACCT_PASSWORD")
         subject = f"New Client Interest - {form.cleaned_data['last_name']}, {form.cleaned_data['first_name']}"
         message = EmailMessage()
         message["Subject"] = subject
@@ -293,7 +290,7 @@ def send_internal_client_submission_confirmation(form):
             os.getenv("EMAIL_ACCT_PASSWORD"),
         )
         message.set_content(content)
-        transmission = server_ssl.send_message(message)
+        server_ssl.send_message(message)
         server_ssl.quit()
         logger.info(f"Internal Interest Notice Sent -  {applicant} - Success")
     except Exception as e:
@@ -377,25 +374,3 @@ def submitted(request):
 
 
 #!SECTION
-
-
-def handler404(request, exception=HttpResponseNotFound, template_name="404.html"):
-    context = dict()
-    context["title"] = "404 - Page not found"
-    return render(request, "404.html", context, status=404)
-
-
-def handler500(request, exception=HttpResponseServerError, template_name="500.html"):
-    context = dict()
-    context["title"] = "500 - Internal Error"
-    return render(request, "500.html", status=500)
-
-
-def csrf_failure(request, reason=""):
-    """Default view for CSRF failures."""
-    return render(
-        request,
-        "403_csrf.html",
-        {"reason": reason, "title": "Forbidden"},
-        status=403,
-    )

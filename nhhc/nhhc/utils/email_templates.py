@@ -1,9 +1,23 @@
 """
-Module: web.utils
+Module: nhhc.utils.email_templates
 
-This module contains the style declarations for the application's email templates. It includes CSS styles for various elements such as body, links, images, and text blocks. These styles are used to ensure consistent formatting and layout across different email clients and devices.
+This module contains the style declarations for the application's email templates.
+It includes CSS styles for various elements such as body, links, images, and text blocks.
+These styles are used to ensure consistent formatting and layout across different email clients and devices.
+
+Partials:
+	_APPLICATION_STYLE_DECLARATIONS:str
+    	A string containing the CSS styles for the application's email template.
+    _CLIENT_STYLE_DECLARATIONS:str
+		A string containing the CSS styles for the customer facing email template.
+
+Templatees:
+	CLIENT_BODY:str
+		A f-string containing the HTML of the  client facing email
+    APPLICATION_BODY:str
+		A f-string containing the HTML of the  application submission email
 """
-application_style_declarations = """
+_APPLICATION_STYLE_DECLARATIONS: str = """
         * {
                 box-sizing: border-box;
             }
@@ -70,7 +84,7 @@ application_style_declarations = """
                 }
 
     """
-application_body = f"""
+APPLICATION_BODY: str = f"""
     <!DOCTYPE html>
 
     <html lang="en" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml">
@@ -80,7 +94,7 @@ application_body = f"""
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/><!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch><o:AllowPNG/></o:OfficeDocumentSettings></xml><![endif]--><!--[if !mso]><!-->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900" rel="stylesheet" type="text/css"/><!--<![endif]-->
     <style>
-    {application_style_declarations}
+    {_APPLICATION_STYLE_DECLARATIONS}
     </style>
     </head>
     <body style="margin: 0; background-color: #0f0332; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
@@ -286,7 +300,7 @@ application_body = f"""
     </html>
     """
 
-client_style_declarations = """
+_CLIENT_STYLE_DECLARATIONS: str = """
 
 * {
 			box-sizing: border-box;
@@ -365,17 +379,16 @@ client_style_declarations = """
 		}
         """
 
-client_body = f"""
+CLIENT_BODY: str = f"""
     <!DOCTYPE html>
 <html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
-
 <head>
 	<title></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"><!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch><o:AllowPNG/></o:OfficeDocumentSettings></xml><![endif]--><!--[if !mso]><!-->
 	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900" rel="stylesheet" type="text/css"><!--<![endif]-->
 	<style>
-    {client_style_declarations}
+    {_CLIENT_STYLE_DECLARATIONS}
 	</style>
 </head>
 

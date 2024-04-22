@@ -17,5 +17,15 @@
 
   {% csrf_token %}
   {% crispy form %}
+  <script>
+    function fix_phone(e){
+      const formField = e.target.value
+      formField.value = `+1${inputValue}`
+    }
+    var tele_numbers = document.getElementsByClassName("tele-number")
+    tele_numbers.forEach(function(elem) {
+      elem.addEventListener("change", fix_phone)
+    });
 
+  </script>
 {% endblock profile_content %}

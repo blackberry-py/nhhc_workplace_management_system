@@ -144,3 +144,6 @@ nhhc/staticfiles/*
 .devcontainer/devcontainer.env
 .devcontainer/devcontainer.json
 .devcontainer/devcontainer.json
+nhhc/prospector_results_*
+nhhc/mediafiles/*
+nhhc/prospector.json

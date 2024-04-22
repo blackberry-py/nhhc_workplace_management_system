@@ -15,23 +15,16 @@ To use the functions in this module, import the module and call the desired func
 """
 
 
-from compliance.forms import ComplianceForm
-from compliance.models import Compliance
-from django.conf import settings
 from django.contrib.auth import login
-from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, render
-from django.template import loader
-from django.urls import reverse
+from django.shortcuts import redirect
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django_filters.rest_framework import DjangoFilterBackend
-from employee.forms import EmployeeForm
 from employee.models import Employee
 from loguru import logger
 from rest_framework import status
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from web.models import EmploymentApplicationModel
 
@@ -46,6 +39,17 @@ from nhhc.utils.helpers import (
 
 # SECTION - Templates
 class EmployeeRoster(ListView):
+    """
+    A class-based template view that displays a list of employees in a paginated format.
+
+    Attributes:
+    - model: The model used for retrieving the list of employees.
+    - queryset: The query set used to fetch all employees ordered by last name.
+    - template_name: The HTML template used for rendering the employee listing.
+    - context_object_name: The name used to refer to the list of employees in the template.
+    - paginate_by: The number of employees to display per page.
+    """
+
     model = Employee
     queryset = Employee.objects.all().order_by("last_name")
     template_name = "employee-listing.html"
@@ -54,6 +58,17 @@ class EmployeeRoster(ListView):
 
 
 class EmployeeDetail(DetailView):
+    """
+    A class-based template view that displays detailed information about an employee.
+
+    Inherits from Django's DetailView class.
+
+    Attributes:
+    - model: The model that this view will interact with (Employee).
+    - template_name: The name of the template used to render the view ("employee-detail.html").
+    - context_object_name: The name of the variable containing the object in the template ("employee").
+    """
+
     model = Employee
     template_name = "employee-detail.html"
     context_object_name = "employee"
@@ -65,6 +80,17 @@ class EmployeeDetail(DetailView):
 
 
 class EmployeeRosterAPIView(ListCreateAPIView):
+    """
+    REST API endpoint for managing the list and creation of Employee objects.
+
+    Attributes:
+    queryset (QuerySet): A queryset of all Employee objects.
+    serializer_class (tuple): A tuple containing the serializer class for Employee objects.
+    permission_classes (list): A list of permission classes required for accessing this view.
+    filter_backends (list): A list of filter backends used for filtering Employee objects.
+    filterset_fields (list): A list of fields that can be used for filtering Employee objects.
+    """
+
     queryset = Employee.objects.all()
     serializer_class = (EmploymentApplicationModel,)
     permission_classes = [IsAuthenticated]
@@ -140,7 +166,7 @@ def hire(request: HttpRequest) -> HttpResponse:
     """
     # Condition Checked: Requesting User is Logged in and An Admin
     if not request.user.is_authenticated or not request.user.is_superuser:
-        logger.warning(f"No Authenticated or Non-Admin Hire Request Recieved - Denying Request")
+        logger.warning("No Authenticated or Non-Admin Hire Request Recieved - Denying Request")
         return HttpResponse(
             status=get_status_code_for_unauthorized_or_forbidden(request),
             content=get_content_for_unauthorized_or_forbidden(request),
@@ -211,7 +237,7 @@ def terminate(request: HttpRequest) -> HttpResponse:
     """
     # Condition Checked: Requesting User is Logged in and An Admin
     if not request.user.is_authenticated or not request.user.is_superuser:
-        logger.warning(f"No Authenticated or Non-Admin Termination Request Recieved - Denying Request")
+        logger.warning("No Authenticated or Non-Admin Termination Request Recieved - Denying Request")
         return HttpResponse(
             status=get_status_code_for_unauthorized_or_forbidden(request),
             content=get_content_for_unauthorized_or_forbidden(request),
@@ -231,7 +257,7 @@ def terminate(request: HttpRequest) -> HttpResponse:
         terminated_employee = Employee.objects.get(id=pk)
         logger.debug(f"Termination Request Resolving to {terminated_employee.last_name}, {terminated_employee.first_name}")
     except Employee.DoesNotExist:
-        logger.info(f"Failed to hire applicant. Employment application not found.")
+        logger.info("Failed to hire applicant. Employment application not found.")
         return HttpResponse(status=404, content="Failed to terminate employee.. Employee not found.")
     # Condition Checked: An Corrosponding Employee Model Instance is created via the .terminate_employment method on the Employee class
     try:

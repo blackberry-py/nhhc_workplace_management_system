@@ -6,4 +6,4 @@ class PortalConfig(AppConfig):
     name = "portal"
 
     def ready(self):
-        import nhhc.signals
+        import nhhc.signals  # no-qa

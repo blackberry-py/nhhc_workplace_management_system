@@ -12,8 +12,7 @@ Attributes:
 from django.contrib.auth.decorators import login_required
 from django.urls import path, re_path
 from django.views.decorators.csrf import csrf_exempt
-
-from . import views
+from portal import views
 
 urlpatterns = [
     path("dashboard", views.portal_dashboard, name="dashboard"),

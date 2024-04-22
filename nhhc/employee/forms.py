@@ -185,7 +185,7 @@ class EmployeeForm(ModelForm):
                 Column(
                     "phone",
                     readonly=True,
-                    css_class="form-group col-lg-4 mb-0 editable ",
+                    css_class="form-group col-lg-4 mb-0 editable tele-number",
                 ),
                 Column(
                     "social_security",
@@ -222,7 +222,7 @@ class EmployeeForm(ModelForm):
                 Column(
                     "emergency_contact_phone",
                     readonly=True,
-                    css_class="form-group col-lg-4 mb-0 editable ",
+                    css_class="form-group col-lg-4 mb-0 editable  tele-number ",
                 ),
                 Column(
                     "emergency_contact_relationship",

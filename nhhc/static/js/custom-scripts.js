@@ -1,11 +1,4 @@
 
-// SECTIION - Client Submission Filtering & Pagination
-const $submissions = $(".client-submission")
-const $page = document.querySelector('.page');
-const $pagination = document.querySelector('.pagination');
-const $paginationList = document.querySelector('.pagination__list');
-const $submissionSearch = document.getElementById('searchbar');
-const itemTotal = 10;
 
 // Preloaded Logic
 

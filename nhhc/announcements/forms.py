@@ -1,12 +1,40 @@
+"""
+Module: annoucements.forms
+
+This module defines the AnnouncementForm class, which is a form used to create new announcements in the system.
+
+The AnnouncementForm class is a subclass of the Django ModelForm class and is associated with the Announcements model. It includes fields for the message, announcement title, and message type.
+
+Attributes:
+    model (Announcements): The model associated with the form.
+    fields (tuple): The fields to be included in the form.
+
+Methods:
+    __init__: Initializes the form with the necessary attributes and layout using the FormHelper class from crispy_forms.
+
+
+This module provides a convenient way to create and customize announcement forms in Django applications.
+"""
+
 from announcements.models import Announcements
-from crispy_forms.bootstrap import FormActions, InlineRadios, Modal
+from crispy_forms.bootstrap import FormActions, Modal
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Button, Column, Layout, Reset, Row, Submit
+from crispy_forms.layout import Button, Column, Row, Submit
 from django import forms
 
 
 class AnnouncementForm(forms.ModelForm):
+    """
+    This class represents a form for creating new announcements.
+
+    Attributes:
+        model (Announcements): The model associated with the form.
+        fields (tuple): The fields to be included in the form.
+    """
+
     class Meta:
+        """ """
+
         model = Announcements
         fields = ("message", "announcement_title", "message_type")
 
@@ -42,7 +70,7 @@ class AnnouncementForm(forms.ModelForm):
                 ),
                 Row(
                     FormActions(
-                        Button(
+                        Submit(
                             "submit",
                             "Post Announcement",
                             onClick="confirmAnnouncementPost",

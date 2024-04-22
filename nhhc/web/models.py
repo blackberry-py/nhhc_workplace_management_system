@@ -17,18 +17,11 @@ Note: The module also includes choices for services, mobility, and prior experie
 
 """
 
-import datetime
-import json
-import random
-import string
+
 from typing import Dict
 
-import arrow
-from compliance.models import Compliance
+from arrow import Arrow, now
 from django.contrib.auth.hashers import make_password
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
-from django.core.validators import MaxValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_prometheus.models import ExportModelOperationsMixin
@@ -39,14 +32,56 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 from nhhc.utils.password_generator import RandomPasswordGenerator
 
-now = arrow.now(tz="US/Central")
+now: Arrow = now(tz="US/Central")
 
 
 class ClientInterestSubmissions(models.Model, ExportModelOperationsMixin("client_inquiries")):
+    """
+    Model representing client interest submissions.
+
+    Attributes:
+        first_name (str): The first name of the client.
+        last_name (str): The last name of the client.
+        email (str): The email address of the client.
+        contact_number (PhoneNumberField): The contact number of the client.
+        home_address1 (str): The first line of the client's home address.
+        home_address2 (str): The second line of the client's home address.
+        city (str): The city of the client's address.
+        zipcode (USZipCodeField): The zipcode of the client's address.
+        state (USStateField): The state of the client's address.
+        insurance_carrier (str): The insurance carrier of the client.
+        desired_service (str): The desired service chosen by the client.
+        date_submitted (DateTimeField): The date when the submission was made.
+        reviewed (bool): Indicates if the submission has been reviewed.
+        reviewed_by (ForeignKey): The employee who reviewed the submission.
+
+    Methods:
+        __str__(): Returns a formatted string representation of the client submission.
+        marked_reviewed(user_id: Employee) -> None: Marks the submission as reviewed by the specified user.
+
+    Meta:
+        db_table (str): The database table name for the model.
+        ordering (list): The default ordering of records.
+        verbose_name (str): The singular name for the model.
+        verbose_name_plural (str): The plural name for the model.
+    """
+
     def __str__(self):
         return f"{self.last_name}, {self.first_name} - Submission Date: {arrow.get(self.date_submitted).format('YYYY-MM-DD')}"
 
     class SERVICES(models.TextChoices):
+        """
+        Enum Values the different types of services.
+
+        Attributes:
+            - INTERMITTENT: Intermittent Home Care
+            - NONMEDICAL: Non-Medical Home Care
+            - MEDICAL_SW: Medical Social Work
+            - OCCUP_THERAPY: Occupational Therapy
+            - PHYS_THERAPY: Physical Therapy
+            - OTHER: Other
+        """
+
         INTERMITTENT = "I", _("Intermittent Home Care")
         NONMEDICAL = "NM", _("Non-Medical Home Care")
         MEDICAL_SW = "MSW", _("Medical Social Work")
@@ -86,18 +121,73 @@ class ClientInterestSubmissions(models.Model, ExportModelOperationsMixin("client
         self.reviewed = True
         self.reviewed_by = user_id
 
-    class Meta:
-        db_table = "interest_clients"
-        ordering = ["last_name", "first_name", "date_submitted"]
-        verbose_name = "Interested Client"
-        verbose_name_plural = "Interested Clients"
+
+class Meta:
+    """
+    This class defines metadata options for the InterestClient model.
+    """
+
+    db_table = "interest_clients"
+    ordering = ["last_name", "first_name", "date_submitted"]
+    verbose_name = "Interested Client"
+    verbose_name_plural = "Interested Clients"
 
 
 class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("applications")):
+    """
+    Model representing an employment application.
+
+    Attributes:
+        first_name (str): The first name of the applicant.
+        last_name (str): The last name of the applicant.
+        contact_number (PhoneNumberField): The contact number of the applicant.
+        email (EmailField): The email address of the applicant.
+        home_address1 (str): The first line of the applicant's home address.
+        home_address2 (str, optional): The second line of the applicant's home address.
+        city (str): The city of the applicant's address.
+        state (USStateField): The state of the applicant's address.
+        zipcode (USZipCodeField): The ZIP code of the applicant's address.
+        mobility (str): The mode of transportation chosen by the applicant.
+        prior_experience (str): The level of prior experience of the applicant.
+        ipdh_registered (bool): Indicates if the applicant is registered with IPDH.
+        availability_monday (bool, optional): Indicates availability on Monday.
+        availability_tuesday (bool, optional): Indicates availability on Tuesday.
+        availability_wednesday (bool, optional): Indicates availability on Wednesday.
+        availability_thursday (bool, optional): Indicates availability on Thursday.
+        availability_friday (bool, optional): Indicates availability on Friday.
+        availability_saturday (bool, optional): Indicates availability on Saturday.
+        availability_sunday (bool, optional): Indicates availability on Sunday.
+        reviewed (bool, optional): Indicates if the application has been reviewed.
+        hired (bool, optional): Indicates if the applicant has been hired.
+        reviewed_by (Employee, optional): The employee who reviewed the application.
+        date_submitted (DateTimeField): The date and time when the application was submitted.
+        employee_id (BigIntegerField, optional): The ID of the employee.
+
+    Methods:
+        hire_applicant(hired_by: Employee) -> Dict[str, str]: Hire a new employee.
+        reject_applicant(rejected_by: Employee) -> None: Reject an applicant.
+
+    Meta:
+        db_table (str): The name of the database table.
+        ordering (list): The default ordering of records.
+        verbose_name (str): The singular name for the model.
+        verbose_name_plural (str): The plural name for the model.
+    """
+
     def __str__(self):
-        return f"{self.last_name}, {self.first_name} ({self.id}) - Submission Date: {arrow.get(self.date_submitted).format('YYYY-MM-DD')}"
+        return f"{self.last_name}, {self.first_name} ({self.pk}) - Submission Date: {arrow.get(self.date_submitted).format('YYYY-MM-DD')}"
 
     class MOBILITTY(models.TextChoices):
+        """
+        Enum values3 for modes of transportation.
+
+        Attributes:
+            CAR: I Have Consistent Access To A Car
+            PUBLIC: I Use Public Transportation
+            RIDE_SHARE: I Use Rideshare (Uber/Lyft) or a Reliable Pickup/Dropoff Provider
+            OTHER: Other
+        """
+
         CAR = "C", _("I Have Consistent Access To A Car")
         PUBLIC = "P", _("I Use Public Transportation")
         RIDE_SHARE = "RS", _(
@@ -106,6 +196,15 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
         OTHER = "NA", _("Other")
 
     class PRIOREXPERIENCE(models.TextChoices):
+        """
+        Enum Values for values of prior experience.
+
+         Attributes:
+             SENIOR: Represents 12+ months of experience.
+             JUNIOR: Represents 3+ months of experience.
+             NEW: Represents no prior experience.
+        """
+
         SENIOR = "S", _("12+ Months")
         JUNIOR = "J", _("3+ Months")
         NEW = "N", _("No Prior Experience")
@@ -206,6 +305,10 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
         self.reviewed_by = rejected_by
 
     class Meta:
+        """
+        This class defines metadata options for the EmploymentApplicationModel model.
+        """
+
         db_table = "employment_interests"
         ordering = ["last_name", "first_name", "date_submitted"]
         verbose_name = "Prospective Employee"

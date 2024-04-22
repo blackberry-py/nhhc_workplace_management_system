@@ -30,7 +30,7 @@
 <!-- Highlight.io APM Trace and Session Monitoring -->
 <script>
     H.init('jdkmrpog', {
-        environment: 'development',
+        environment: 'production3',
         version: 'v:1',
         tracingOrigins: true,
         networkRecording: {
@@ -54,8 +54,4 @@
 <script src="{% static 'js/argon.js' %}" defer></script>
 <script src="{% static 'js/pagination.js' %}" defer></script>
 <script type="module" src="{% static 'js/main.js' %}" ></script>
-<script src="{% static 'js/custom-scripts.js' %}" ></script>
-
-
-
-
+{% comment %} <script src="{% static 'js/custom-scripts.js' %}" ></script> {% endcomment %}
