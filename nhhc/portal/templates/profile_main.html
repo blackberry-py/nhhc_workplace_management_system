@@ -22,8 +22,8 @@
       const formField = e.target.value
       formField.value = `+1${inputValue}`
     }
-    var tele_numbers = document.getElementsByClassName("tele-number")
-    tele_numbers.forEach(function(elem) {
+    var tele_numbers = $(".tele-number")
+    tele_numbers.each(function(elem) {
       elem.addEventListener("change", fix_phone)
     });
 

@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }, 3000); // Replace with your actual data loading logic and time
 
   function hideLoader() {
-      $("#load`qq`````````````````````````````````````````````````````  er-3").fadeOut(1800)
+      $("#loader-3").fadeOut(1800)
      // const loader = document.getElementById("loader-3");
      // loader.style.display = "none";
   }

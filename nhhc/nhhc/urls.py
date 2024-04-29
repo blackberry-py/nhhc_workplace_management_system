@@ -77,14 +77,14 @@ def page_not_found_handler(request: HttpRequest, exception=None) -> HttpResponse
 
 def server_error_handler(request: HttpRequest, exception=None) -> HttpResponse:
     """
-    Handle requests that result in servererros by logging the exception and rendering a 500.html template.
+        Handle requests that result in servererros by logging the exception and rendering a 500.html template.
 
-    Args:
-        request (HttpRequest): The HTTP request object.
-        exception (Exception, optional): The exception that caused the bad request. Defaults to None.
-
-    Returns:
-        HttpResponse: A response with status code 400 and the 400.html template rendered.
+        Args:
+            request (HttpRequest): The HTTP request object.
+            exception (Exception, optional): The exception that caused the bad request. Defaults to None.
+    S
+        Returns:
+            HttpResponse: A response with status code 400 and the 400.html template rendered.
     """
     logger.error(f"SERVER ERROR: {exception}")
     return render(request, "500.html", status=500)
@@ -100,23 +100,18 @@ urlpatterns: List[Union[RoutePattern, RegexPattern]] = [
     path("control-center/", admin.site.urls),
     re_path(r"^compliance/", include("filer.urls")),
     re_path(r"^", include("filer.server.urls")),
+    path("", include(portal.urls)),
     path("", include(web.urls)),
     path("", include("allauth.urls")),
     re_path(
-        r"^status/DNzaNdlwIbqjWCq4vMTAgGe81VxXFd1QPGt-mglUDuA/",
+        r"^status/",
         include("health_check.urls"),
     ),
-    path("", include(portal.urls)),
     path("", include(employee.urls)),
     path("", include(compliance.urls)),
     path("api-auth/", include("rest_framework.urls")),
     path("", include(announcements.urls)),
-    re_path(
-        r"^sitemap.xml$",
-        cache_page(60)(sitemaps),
-        {"sitemaps": sitemaps},
-        name="cached-sitemap",
-    ),
-    re_path(r"^robots\.txt", include("robots.urls")),
+    re_path(r"^sitemap.xml$\/?", cache_page(60)(sitemaps), {"sitemaps": sitemaps}, name="cached-sitemap"),
+    re_path(r"^robots\.txt\/?", include("robots.urls")),
     re_path("", include("django_prometheus.urls")),
 ]

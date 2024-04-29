@@ -6,7 +6,7 @@ from employee.models import Employee
 from faker import Faker
 from loguru import logger
 from model_bakery import baker
-from web.models import ClientInterestSubmissions, EmploymentApplicationModel
+from web.models import ClientInterestSubmission, EmploymentApplicationModel
 
 from nhhc.utils.testing import (
     generate_mock_PhoneNumberField,
@@ -24,7 +24,7 @@ class TestClientInterestSubmissions(TestCase):
 
     def test__str__(self):
         string_of_class = baker.make(
-            ClientInterestSubmissions,
+            ClientInterestSubmission,
             last_name="Brooks",
             first_name="Test",
             date_submitted=str(arrow.now(tz="local").format("YYYY-MM-DD hh:mm:ss")),
@@ -35,7 +35,7 @@ class TestClientInterestSubmissions(TestCase):
         )
 
     def test_marked_reviewed(self):
-        reviewed_submission = baker.make(ClientInterestSubmissions)
+        reviewed_submission = baker.make(ClientInterestSubmission)
         reviewer = baker.make(Employee)
         reviewed_submission.marked_reviewed(user_id=reviewer)
         assert reviewed_submission.reviewed == True

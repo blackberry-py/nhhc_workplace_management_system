@@ -1,7 +1,6 @@
 VENV := /workspaces/NettHands/.venv
-# # BIN := /usr/local/bin
-# BIN := /
-# PYTHON := $(BIN)/python3.12
+# BIN := /usr/local/bin
+PYTHON := $(BIN)/python3.12
 # SHELL := /bin/bash
 
 PYTHON := $(VENV)/bin/python
@@ -18,10 +17,10 @@ venv: ## Make a new virtual environment
 
 .PHONY: install
 install: ## Make venv and install requirements
-	$(BIN)/pip install --upgrade -r requirements.txt
+	doppler run  -t $(DOPPLER_TOKEN) -- pip install --upgrade -r ../requirements.txt
 
 freeze: ## Pin current dependencies
-	$(BIN)/pip freeze > requirements.txt
+	$(BIN)/pip freeze > ../requirements.txt
 
 .PHONY: collect
 collect:
@@ -32,7 +31,7 @@ migrate: ## Make and run migrations
 	doppler run -t $(DOPPLER_TOKEN) -- 	$(PYTHON) manage.py migrate
 
 lint:
-	doppler run -t $(DOPPLER_TOKEN) -- prospector --profile-path /workspaces/NettHands/.prospector > prospector_results_${CURRENTDATE}.json
+	doppler run -t $(DOPPLER_TOKEN) -- prospector  -w  pylint pyroma mypy dodgy mccabe bandit profile-validator > prospector_results_${CURRENTDATE}.json
 
 db-shell: ## Access the Postgres Docker database interactively with psql. Pass in DBNAME=<name>.
 	docker exec -it container_name psql -d $(DBNAME)
@@ -47,14 +46,14 @@ pipeline-test: ## Run tests
 
 .PHONY: run
 run: ## Run the Django server
-	doppler run -- 	$(PYTHON) manage.py runserver 8080
+	doppler run -t $(DOPPLER_TOKEN) -- 	$(PYTHON) manage.py runserver 8080
 
 .PHONY: admin
 admin:
-	doppler run  --  $(PYTHON) manage.py createsuperuser --no-input
+	doppler run -t $(DOPPLER_TOKEN) --  $(PYTHON) manage.py createsuperuser --no-input
 
 .PHONY: start
 start:
-	doppler run  --  gunicorn --workers=2  --threads=2 nhhc.wsgi:application -b :8080
+	doppler run -t $(DOPPLER_TOKEN)  --  gunicorn --workers=2  --threads=2 nhhc.wsgi:application -b :8080
 
 deploy: install migrate start ## Install requirements, apply migrations, then start development server\\\\\\\\\

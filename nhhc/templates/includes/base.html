@@ -61,14 +61,14 @@
                             <div class="navbar-brand">
 
                                 {% if title == "Home" %}
-                                    <a href="{% url 'index' %}"><img src="{% static '/img/logo-dark.png' %}" alt="LOGO"></a>
+                                    <a href="{% url 'homepage' %}"><img src="{% static '/img/logo-dark.png' %}" alt="LOGO"></a>
                                     </div>
                                     </div>
                                     <div class="col-lg-10">
                                         <div class="header__nav__option">
                                             <nav class="header__nav__menu mobile-menu">
                                                 <ul>
-                                                    <li class="active"><a href="{% url 'index' %}">Home</a></li>
+                                                    <li class="active"><a href="{% url 'homepage' %}">Home</a></li>
                                                     <li><a href="{% url 'about' %}">About Nett Hands</a></li>
                                                     <li><a href="#impact">Our Impact</a></li>
                                                     <li><a href="#services">Services</a>
@@ -83,14 +83,14 @@
                                                 </ul>
                                             </nav>
                                 {% else %}
-                                    <a href="{% url 'index' %}"><img src="{% static '/img/logo-light.png' %}" alt=""></a>
+                                    <a href="{% url 'homepage' %}"><img src="{% static '/img/logo-light.png' %}" alt=""></a>
                                     </div>
                                     </div>
                                     <div class="col-lg-10">
                                         <div class="header__nav__option">
                                             <nav class="header__nav__menu mobile-menu">
                                                 <ul>
-                                                    <li class="active"><a href="{% url 'index' %}"><span class="back-to-home">Back to Home</span></a></li>
+                                                    <li class="active"><a href="{% url 'homepage' %}"><span class="back-to-home">Back to Home</span></a></li>
                                                 </ul>
 
                                 {% endif %}
@@ -173,7 +173,7 @@
                                 <h5>Quick Links</h5>
                                 <ul>
                                     <li><a href="{% url 'application' %}">Employment Application</a></li>
-                                    <li><a href="{% url 'client-interest' %}">Client Interest Form</a></li>
+                                    <li><a href="{% url 'client_interest' %}">Client Interest Form</a></li>
                                     <li class="disabled"><a href="{% url 'account_login' %}">Employee Portal</a></li>
                                 </ul>
                                 <br>

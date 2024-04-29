@@ -4,20 +4,15 @@ Module: compliance.models
 """
 
 
-from typing import Union
-
-from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django_extensions.db.models import TimeStampedModel
 from django_prometheus.models import ExportModelOperationsMixin
 from employee.models import Employee
 from filer.fields.file import FilerFileField
-from loguru import logger
-
-from nhhc.backends.storage_backends import PrivateMediaStorage
 
 
-class Contract(models.Model, ExportModelOperationsMixin("contracts")):
+class Contract(TimeStampedModel, models.Model, ExportModelOperationsMixin("contracts")):
     """
     Model representing a contract.
 
@@ -31,7 +26,7 @@ class Contract(models.Model, ExportModelOperationsMixin("contracts")):
     """
 
     code = models.CharField(max_length=10, unique=True)
-    name = models.CharField(max_length=255, blank=False, null=False)
+    name = models.CharField(max_length=10485760, blank=False, null=False)
     description = models.TextField(blank=True, null=True)
     contract_year_start = models.DateField(verbose_name="Start Year", blank=True, null=True)
     contract_year_end = models.DateField(verbose_name="End Year", blank=True, null=True)
@@ -59,7 +54,7 @@ class Contract(models.Model, ExportModelOperationsMixin("contracts")):
         verbose_name_plural = "State Contracts"
 
 
-class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
+class Compliance(TimeStampedModel, models.Model, ExportModelOperationsMixin("compliance")):
     """
         This module defines the Compliance model, which is responsible for storing and managing compliance and auditing data for employees.
 
@@ -113,6 +108,7 @@ class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
         blank=True,
         null=True,
     )
+
     hhs_oig_exclusionary_check_verification = FilerFileField(related_name="hhg_oig", on_delete=models.DO_NOTHING, blank=True, null=True)
     hhs_oig_exclusionary_check_completed = models.BooleanField(
         null=True,
@@ -140,6 +136,7 @@ class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
         blank=True,
         null=True,
     )
+
     pre_service_completion_date = models.DateField(null=True, blank=True)
     added_to_TTP_portal = models.BooleanField(null=True, blank=True)
     contract_code = models.ForeignKey(Contract, on_delete=models.PROTECT, blank=True, null=True)
@@ -147,7 +144,7 @@ class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
         null=True,
         choices=JOB_TITLE.choices,
         default=JOB_TITLE.AIDE,
-        max_length=255,
+        max_length=10485760,
         blank=True,
     )
 
@@ -160,6 +157,10 @@ class Compliance(models.Model, ExportModelOperationsMixin("compliance")):
         raise NotImplementedError("Logic to Determine This Forth Coming")
 
     class Meta:
+        """
+        This class defines metadata options for the Compliance model.
+        """
+
         db_table = "audit_compliance"
         ordering = ["employee"]
         verbose_name = "Compliance-Auditing Data"

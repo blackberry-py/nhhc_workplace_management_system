@@ -21,13 +21,38 @@ import arrow
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django_extensions.db.fields import CreationDateTimeField, ModificationDateTimeField
 from django_prometheus.models import ExportModelOperationsMixin
 
 now = arrow.now(tz="America/Chicago")
 
 
-class Exception(models.Model, ExportModelOperationsMixin("exceptions")):
+class PayrollException(models.Model, ExportModelOperationsMixin("exceptions")):
+    """
+    A model to represent exceptions in the payroll system.
+
+    Attributes:
+    - date (DateField): The date of the exception.
+    - start_time (TimeField): The start time of the exception.
+    - end_time (TimeField): The end time of the exception.
+    - num_hours (PositiveIntegerField): The number of hours for the exception.
+    - reason (TextField): The reason for the exception, must be at least 50 characters long.
+    - status (CharField): The status of the exception, with choices of 'P' for Pending, 'A' for Approved, and 'R' for Rejected.
+    - date_submitted (CreationDateTimeField): The date and time the exception was submitted.
+    - last_modified (ModificationDateTimeField): The date and time the exception was last modified.
+
+    Meta:
+    - db_table: "payroll_exceptions"
+    - ordering: ["-date"]
+    - verbose_name: "Payroll Exception"
+    - verbose_name_plural: "Payroll Exceptions"
+    """
+
     class STATUS(models.TextChoices):
+        """
+        Enum Values for Status Class
+        """
+
         PENDING = "P", _("Pending - Awaiting Supervisor Review")
         APPROVED = "A", _("Approved - Time Amended")
         REJECTED = "R", _("Rejected")
@@ -46,8 +71,14 @@ class Exception(models.Model, ExportModelOperationsMixin("exceptions")):
         choices=STATUS.choices,
         default=STATUS.PENDING,
     )
+    date_submitted = CreationDateTimeField()
+    last_modified = ModificationDateTimeField()
 
     class Meta:
+        """
+        This class defines metadata options for the Exception model.
+        """
+
         db_table = "payroll_exceptions"
         ordering = ["-date"]
         verbose_name = "Payroll Exception"

@@ -78,8 +78,18 @@ function fillInAddress() {
 
 window.initAutocomplete = initAutocomplete;
 
+const slug = url => new URL(url).pathname.match(/[^\/]+/g)
 
-inputs = document.getElementById("employment-application").querySelectorAll('input[type="text"]');
+if (slug == "client-interest"){
+  console.debug(`${slug} Listening For address on CLIENT FORM `)
+  inputs = document.getElementById("client_interest_form").querySelectorAll('input[type="text"]');
+} else if (slug == "employment-application") {
+  console.debug(`${slug} Listening For address on app FORM `)
+
+  inputs = document.getElementById("employment-application").querySelectorAll('input[type="text"]');
+} else {
+  console.error(`Issue with Google Address Complete ${slug}`)
+}
 
 inputs.forEach(neutralizeFieldValidationColorsOnLoad)
 

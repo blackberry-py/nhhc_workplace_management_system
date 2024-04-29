@@ -60,27 +60,46 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
     """
 
     class STATUS(models.TextChoices):
+        """
+        Enum Values for the status field.
+
+        Attributes:
+            ACTIVE: Represents an active status.
+            DRAFT: Represents a draft status.
+            ARCHIVE: Represents an archived status.
+        """
+
         ACTIVE = "A", _(message="Active")
         DRAFT = "D", _(message="Draft")
         ARCHIVE = "X", _(message="Archived")
 
     class IMPORTANCE(models.TextChoices):
+        """
+        Enum Values for the type of announcement field.
+
+        Attributes:
+            SAFETY: Represents an High - SAFETY related Type.
+            TRAINING: Represents a Medium  - Training Type.
+            COMPLIANCE: Represents an Regulatory Type.
+            GENERAL: Represents an General Type.
+        """
+
         SAFETY = "C", _(message="Safety")
         TRAINING = "T", _(message="Training")
         COMPLIANCE = "X", _(message="Compliance")
         GENERAL = "G", _(message="General")
 
     message = models.TextField()
-    announcement_title = models.CharField(max_length=255, default="")
+    announcement_title = models.CharField(max_length=10485760, default="")
     posted_by = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, blank=True)
     date_posted = models.DateTimeField(auto_now=True)
     message_type = models.CharField(
-        max_length=255,
+        max_length=10485760,
         choices=IMPORTANCE.choices,
         default=IMPORTANCE.GENERAL,
     )
     status = models.CharField(
-        max_length=255,
+        max_length=10485760,
         choices=STATUS.choices,
         default=STATUS.DRAFT,
     )
@@ -105,7 +124,7 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
             logger.success(f"Succesfully posted {self.pk}")
         except Exception as e:
             if self.pk is None:
-                logger.error(f"ERROR: Unable to post - ID is unavaliable - Post JSON ()")
+                logger.error(f"ERROR: Unable to post - ID is unavaliable - Post Contents: (message:{self.message}, Error: {e})")
             logger.error(f"ERROR: Unable to post {self.pk} - {e}")
 
     def archive(self) -> None:

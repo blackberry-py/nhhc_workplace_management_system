@@ -1,9 +1,9 @@
 """
-Module: Web.Models
+Module: nhcc.web.models
 
 This module contains the models needed for the front-end for client interest submissions and employment applications.
 
-ClientInterestSubmissions:
+ClientInterestSubmission:
 - Represents the model for client interest submissions.
 - Fields include first_name, last_name, email, contact_number, zipcode, insurance_carrier, desired_service, date_submitted, reviewed, reviewed_by.
 
@@ -24,18 +24,20 @@ from arrow import Arrow, now
 from django.contrib.auth.hashers import make_password
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django_extensions.db.fields import CreationDateTimeField, ModificationDateTimeField
 from django_prometheus.models import ExportModelOperationsMixin
 from employee.models import Employee
 from localflavor.us.models import USStateField, USZipCodeField
 from loguru import logger
 from phonenumber_field.modelfields import PhoneNumberField
+from sage_encrypt.fields.asymmetric import EncryptedCharField, EncryptedEmailField
 
 from nhhc.utils.password_generator import RandomPasswordGenerator
 
 now: Arrow = now(tz="US/Central")
 
 
-class ClientInterestSubmissions(models.Model, ExportModelOperationsMixin("client_inquiries")):
+class ClientInterestSubmission(models.Model, ExportModelOperationsMixin("client_inquiries")):
     """
     Model representing client interest submissions.
 
@@ -67,7 +69,7 @@ class ClientInterestSubmissions(models.Model, ExportModelOperationsMixin("client
     """
 
     def __str__(self):
-        return f"{self.last_name}, {self.first_name} - Submission Date: {arrow.get(self.date_submitted).format('YYYY-MM-DD')}"
+        return f"{self.last_name}, {self.first_name} - Submission Date: {Arrow.get(self.date_submitted).format('YYYY-MM-DD')}"
 
     class SERVICES(models.TextChoices):
         """
@@ -89,19 +91,20 @@ class ClientInterestSubmissions(models.Model, ExportModelOperationsMixin("client
         PHYS_THERAPY = "PT", _("Physical Therapy")
         OTHER = "NA", _("Other")
 
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    email = models.EmailField(null=True)
+    first_name = EncryptedCharField(max_length=10485760)
+    last_name = EncryptedCharField(max_length=10485760)
+    email = EncryptedEmailField(null=True)
     contact_number = PhoneNumberField(region="US")
-    home_address1 = models.CharField(max_length=800, null=True)
-    home_address2 = models.CharField(max_length=50, null=True, blank=True)
-    city = models.CharField(max_length=255, null=True, blank=True)
+    home_address1 = EncryptedCharField(max_length=800, null=True)
+    home_address2 = EncryptedCharField(max_length=50, null=True, blank=True)
+    city = EncryptedCharField(max_length=10485760, null=True, blank=True)
     zipcode = USZipCodeField(null=True, blank=True)
     state = USStateField(max_length=2, null=True, blank=True)
-    insurance_carrier = models.CharField(max_length=255)
-    desired_service = models.CharField(max_length=255, choices=SERVICES.choices)
-    date_submitted = models.DateTimeField(auto_now_add=True)
+    insurance_carrier = EncryptedCharField(max_length=10485760)
+    desired_service = EncryptedCharField(max_length=10485760, choices=SERVICES.choices)
+    date_submitted = CreationDateTimeField(auto_now_add=True)
     reviewed = models.BooleanField(default=False)
+    last_modified = ModificationDateTimeField()
     reviewed_by = models.ForeignKey(
         Employee,
         on_delete=models.PROTECT,
@@ -121,16 +124,15 @@ class ClientInterestSubmissions(models.Model, ExportModelOperationsMixin("client
         self.reviewed = True
         self.reviewed_by = user_id
 
+    class Meta:
+        """
+        This class defines metadata options for the InterestClient model.
+        """
 
-class Meta:
-    """
-    This class defines metadata options for the InterestClient model.
-    """
-
-    db_table = "interest_clients"
-    ordering = ["last_name", "first_name", "date_submitted"]
-    verbose_name = "Interested Client"
-    verbose_name_plural = "Interested Clients"
+        db_table = "interest_clients"
+        ordering = ["last_name", "first_name", "date_submitted"]
+        verbose_name = "Interested Client"
+        verbose_name_plural = "Interested Clients"
 
 
 class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("applications")):
@@ -175,7 +177,7 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
     """
 
     def __str__(self):
-        return f"{self.last_name}, {self.first_name} ({self.pk}) - Submission Date: {arrow.get(self.date_submitted).format('YYYY-MM-DD')}"
+        return f"{self.last_name}, {self.first_name} ({self.pk}) - Submission Date: {Arrow.get(self.date_submitted).format('YYYY-MM-DD')}"
 
     class MOBILITTY(models.TextChoices):
         """
@@ -209,19 +211,19 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
         JUNIOR = "J", _("3+ Months")
         NEW = "N", _("No Prior Experience")
 
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
+    first_name = EncryptedCharField(max_length=10485760)
+    last_name = EncryptedCharField(max_length=10485760)
     contact_number = PhoneNumberField(region="US")
-    email = models.EmailField(max_length=254)
-    home_address1 = models.CharField(max_length=800)
-    home_address2 = models.CharField(max_length=50, null=True, blank=True)
-    city = models.CharField(
-        max_length=255,
+    email = EncryptedEmailField(max_length=10485760)
+    home_address1 = EncryptedCharField(max_length=10485760)
+    home_address2 = EncryptedCharField(max_length=10485760, null=True, blank=True)
+    city = EncryptedCharField(
+        max_length=10485760,
     )
-    state = USStateField(max_length=2)
+    state = USStateField(max_length=10485760)
     zipcode = USZipCodeField()
-    mobility = models.CharField(max_length=255, choices=MOBILITTY.choices)
-    prior_experience = models.CharField(max_length=255, choices=PRIOREXPERIENCE.choices)
+    mobility = models.CharField(max_length=10485760, choices=MOBILITTY.choices)
+    prior_experience = models.CharField(max_length=10485760, choices=PRIOREXPERIENCE.choices)
     ipdh_registered = models.BooleanField(default=False)
     availability_monday = models.BooleanField(null=True, blank=True)
     availability_tuesday = models.BooleanField(null=True, blank=True)
@@ -238,7 +240,8 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
         null=True,
         blank=True,
     )
-    date_submitted = models.DateTimeField(auto_now_add=True)
+    date_submitted = CreationDateTimeField()
+    last_modified = ModificationDateTimeField()
     employee_id = models.BigIntegerField(blank=True, null=True)
 
     def hire_applicant(self, hired_by: Employee) -> Dict[str, str]:
@@ -272,8 +275,6 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
             password = RandomPasswordGenerator.generate()
             new_employee.password = make_password(password)
             new_employee.save()
-            # compliance_profile = Compliance.objects.create(employee=new_employee)
-            # compliance_profile.save()
             self.hired = True
             self.reviewed = True
             self.reviewed_by = hired_by

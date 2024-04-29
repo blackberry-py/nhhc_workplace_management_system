@@ -1,32 +1,25 @@
 import arrow
-from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser, BaseUserManager, User
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.validators import MaxValueValidator, MinLengthValidator
-from django.db import IntegrityError, models, transaction
-from django.db.models import Max
-from django.db.models.functions import Cast, Substr
+from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django_extensions.db.models import CreationDateTimeField, ModificationDateTimeField
 from django_prometheus.models import ExportModelOperationsMixin
 from filer.fields.file import FilerFileField
 from localflavor.us.models import USStateField, USZipCodeField
 from loguru import logger
 from phonenumber_field.modelfields import PhoneNumberField
-from sage_encrypt.fields.asymmetric import EncryptedCharField, EncryptedDateField
+from sage_encrypt.fields.asymmetric import (
+    EncryptedCharField,
+    EncryptedDateField,
+    EncryptedEmailField,
+)
 
-from nhhc.backends.storage_backends import PrivateMediaStorage
-from nhhc.utils.password_generator import RandomPasswordGenerator
-
-now = str(arrow.now().format("YYYY-MM-DD"))
+NOW = str(arrow.now().format("YYYY-MM-DD"))
 
 
-class EmployeeManager(BaseUserManager):
-    """
-    Custom user manager
-    """
-
+class EmployeeMethodUtility:
     @staticmethod
     def create_unique_username(first_name: str, last_name: str) -> str:
         """
@@ -42,8 +35,6 @@ class EmployeeManager(BaseUserManager):
         Raises:
             IntegrityError: If the username is already taken and no available unique username can be generated.
 
-        Example:
-            create_unique_username("John", "Doe")
         """
         last_name = last_name.lower()
         first_name = first_name.lower()
@@ -52,7 +43,7 @@ class EmployeeManager(BaseUserManager):
 
         try:
             # Try to create a new user with the given username
-            user = get_user_model().objects.get(username=username)
+            user = get_user_model().objects.get(username=username)  # pylint: disable=unused-argument
             max_num = get_user_model().objects.filter(username__startswith=username).count()
 
             # If no number is currently appended, set the max_num to 0
@@ -68,10 +59,30 @@ class EmployeeManager(BaseUserManager):
 
         except ObjectDoesNotExist:
             # If no IntegrityError is raised, return the original username
-            logger.debug(f"Inital Username Available")
+            logger.debug("Inital Username Available")
             return username
 
-    def create_user(self, password, first_name, last_name, **kwargs):
+
+class EmployeeManager(EmployeeMethodUtility, BaseUserManager, ExportModelOperationsMixin("employee-manager")):
+    """
+    Custom user manager
+    """
+
+    def create_user(self, password: str, first_name: str, last_name: str, **kwargs) -> User:  # pylint: disable=unused-argument
+        """
+        Create a new user account with the provided first name, last name, and password.
+
+        Parameters:
+        - password (str): The password for the new user account.
+        - first_name (str): The first name of the user.
+        - last_name (str): The last name of the user.
+
+        Returns:
+        - user (Employee): The newly created user object.
+
+        Raises:
+        - ValueError: If any of the required parameters (password, first_name, last_name) are missing.
+        """
         if not password or not first_name or not last_name:
             raise ValueError("We need password \n first name \n and last name to create and account...")
         username = self.create_unique_username(first_name, last_name)
@@ -81,7 +92,25 @@ class EmployeeManager(BaseUserManager):
         print(f"Successfully Created an account for {first_name} with username {username}")
         return user
 
-    def create_superuser(self, username, password, email, first_name="New", last_name="Admin", **kwargs):
+    def create_superuser(self, username: str, password: str, email: str, first_name: str = "New", last_name: str = "Admin", **kwargs) -> User:  # pylint: disable=unused-argument
+        """
+        Create a superuser account with the provided username, password, email, first name, and last name.
+
+        Args:
+            username (str): The username for the superuser account.
+            password (str): The password for the superuser account.
+            email (str): The email address for the superuser account.
+            first_name (str, optional): The first name of the superuser. Defaults to "New".
+            last_name (str, optional): The last name of the superuser. Defaults to "Admin".
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            user (Employees): The created superuser object.
+
+        Raises:
+            ValueError: If username, password, first name, or last name are missing.
+
+        """
         if not password or not first_name or not last_name:
             raise ValueError("We need username, \n password \n first name \n and last name to create and account...")
         user = self.create_user(
@@ -98,7 +127,8 @@ class EmployeeManager(BaseUserManager):
         return user
 
 
-class Employee(AbstractUser):
+class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("employee")):
+
     """
     Represents an employee in the organization and is the Core User Model
 
@@ -253,8 +283,8 @@ class Employee(AbstractUser):
 
     employee_id = models.BigAutoField(primary_key=True)
     username = models.CharField(max_length=150, unique=False)
-    gender = models.CharField(
-        max_length=255,
+    gender = EncryptedCharField(
+        max_length=10485760,
         choices=GENDER.choices,
         default=GENDER.NON_GENDERED,
         null=True,
@@ -262,59 +292,72 @@ class Employee(AbstractUser):
     )
 
     language = models.CharField(
-        max_length=255,
+        max_length=10485760,
         choices=LANGUAGE.choices,
         blank=True,
         null=True,
         default=LANGUAGE.ENGLISH,
     )
+    email = EncryptedEmailField(unique=True, null=True, blank=True)
     social_security = EncryptedCharField(unique=True, null=True, blank=True)
     date_of_birth = EncryptedDateField(null=True, blank=True)
-    middle_name = models.CharField(max_length=255, default="", null=True, blank=True)
-    street_address1 = models.CharField(max_length=255, default="", null=True, blank=True)
-    street_address2 = models.CharField(max_length=255, default="", null=True, blank=True)
+    first_name = EncryptedCharField(max_length=10485760, null=True, blank=True)
+    middle_name = EncryptedCharField(max_length=10485760, null=True, blank=True)
+    last_name = EncryptedCharField(max_length=10485760, null=True, blank=True)
+    street_address1 = EncryptedCharField(max_length=10485760, null=True, blank=True)
+    street_address2 = EncryptedCharField(max_length=10485760, null=True, blank=True)
     marital_status = models.CharField(
-        max_length=255,
+        max_length=10485760,
         null=True,
         blank=True,
         choices=MaritalStatus.choices,
         default=MaritalStatus.NEVER_MARRIED,
     )
     emergency_contact_first_name = models.CharField(
-        max_length=255,
-        default="",
+        max_length=10485760,
         null=True,
         blank=True,
     )
     ethnicity = models.CharField(
-        max_length=255,
+        max_length=10485760,
         blank=True,
         choices=ETHNICITY.choices,
         default=ETHNICITY.UNKNOWN,
         null=True,
     )
-    emergency_contact_last_name = models.CharField(
-        max_length=255,
-        default="",
+    emergency_contact_last_name = EncryptedCharField(
+        max_length=10485760,
         null=True,
         blank=True,
     )
     race = models.CharField(
-        max_length=255,
+        max_length=10485760,
         blank=True,
         choices=RACE.choices,
         default=RACE.UNKNOWN,
         null=True,
     )
-    emergency_contact_relationship = models.CharField(
-        max_length=255,
-        default="",
+    emergency_contact_relationship = EncryptedCharField(
+        max_length=10485760,
         null=True,
         blank=True,
     )
     emergency_contact_phone = PhoneNumberField(region="US", null=True, blank=True)
-    city = models.CharField(max_length=255, default="", null=True, blank=True)
-
+    city = EncryptedCharField(max_length=10485760, null=True, blank=True)
+    idoa_agency_policies_attestation = FilerFileField(
+        on_delete=models.DO_NOTHING,
+        related_name="idoa_agency_policies",
+        blank=True,
+        null=True,
+    )
+    dhs_i9 = FilerFileField(related_name="i9", on_delete=models.DO_NOTHING, blank=True, null=True)
+    marketing_recruiting_limitations_attestation = FilerFileField(related_name="marketing_recruiting_limitations", on_delete=models.DO_NOTHING, blank=True, null=True)
+    do_not_drive_agreement_attestation = FilerFileField(related_name="do_not_drive_agreement", on_delete=models.DO_NOTHING, blank=True, null=True)
+    job_duties_attestation = FilerFileField(related_name="job_duties", on_delete=models.DO_NOTHING, blank=True, null=True)
+    hca_policy_attestation = FilerFileField(related_name="hca_policy", on_delete=models.DO_NOTHING, blank=True, null=True)
+    irs_w4_attestation = FilerFileField(related_name="irs_w4", on_delete=models.DO_NOTHING, blank=True, null=True)
+    state_w4_attestation = FilerFileField(related_name="state_w4", on_delete=models.DO_NOTHING, blank=True, null=True)
+    idph_background_check_authorization = FilerFileField(related_name="idph_bg_check_auth", on_delete=models.DO_NOTHING, blank=True, null=True)
     qualifications_verification = FilerFileField(
         related_name="resume",
         on_delete=models.DO_NOTHING,
@@ -330,7 +373,7 @@ class Employee(AbstractUser):
     )
 
     family_hca = models.CharField(
-        max_length=255,
+        max_length=10485760,
         blank=True,
         null=True,
         choices=PatientWorkerRelationship.choices,
@@ -342,116 +385,36 @@ class Employee(AbstractUser):
     ethnicity = models.CharField(
         null=True,
         choices=ETHNICITY.choices,
-        max_length=255,
+        max_length=10485760,
         blank=True,
     )
+
     zipcode = USZipCodeField(null=True)
     application_id = models.BigIntegerField(default=0, unique=True)
-    hire_date = models.DateField(auto_now=True)
+    hire_date = CreationDateTimeField()
     termination_date = models.DateField(null=True, blank=True)
     qualifications = models.CharField(
         null=True,
         choices=QUALIFICATIONS.choices,
         default=QUALIFICATIONS.HS_GED,
-        max_length=255,
+        max_length=10485760,
         blank=True,
     )
-    in_compliance = models.BooleanField(default=False, null=True)
-    onboarded = models.DateField(null=True, blank=True)
+    last_modifed = ModificationDateTimeField(null=True, blank=True)
 
     def __str__(self) -> str:
         return f"(Employee Id:{self.pk}), Name: {self.last_name}, {self.first_name} | Username: {self.username}"
 
     def terminate_employment(self) -> None:
-        self.termination_date = now
-        self.username = self.username + "X"
+        self.termination_date = NOW
+        self.username = self.username + "_TERMINATED"
+        self.email = self.email + "_TERMINATED"
         self.is_active = False
-
         self.save()
-
-    def is_profile_complete(self) -> bool:
-        """
-        This method checks if all required fields for onboarding are filled out and marks the user as onboarded if so.
-        Args:
-            self: The instance of the class.
-
-        Returns:
-            bool: True if all mandatory profile fields, False otherwise.
-
-        """
-        valid_fields = 0
-        fields_to_be_validated = [
-            self.social_security,
-            self.gender,
-            self.city,
-            self.phone,
-            self.state,
-            self.street_address,
-            self.zipcode,
-            self.emergency_contact_relationship,
-            self.emergency_contact_last_name,
-            self.emergency_contact_first_name,
-            self.marital_status,
-            self.qualifications_verification,
-            self.qualifications,
-        ]
-        for field in fields_to_be_validated:
-            if field is not None or field != " ":
-                valid_fields += 1
-
-        if valid_fields == 10:
-            self.onboarded = now
-            self.save()
-            return True
-        else:
-            return False
-
-    @staticmethod
-    def create_unique_username(first_name: str, last_name: str) -> str:
-        """
-        Create a unique username by adding a number to the end of the username if it's already taken.
-
-        Args:
-            first_name (str): The first name of the user.
-            last_name (str): The last name of the user.
-
-        Returns:
-            str: The unique username for the user.
-
-        Raises:
-            IntegrityError: If the username is already taken and no available unique username can be generated.
-
-        """
-        last_name = last_name.lower()
-        first_name = first_name.lower()
-        username = f"{last_name}.{first_name}"
-        logger.debug(f"Inital Username: {username}")
-
-        try:
-            # Try to create a new user with the given username
-            user = get_user_model().objects.get(username=username)
-            max_num = get_user_model().objects.filter(username__startswith=username).count()
-
-            # If no number is currently appended, set the max_num to 0
-            if max_num == 1:
-                max_num = 0
-
-            # Append the next number to the username and try to create a new user again
-            next_username = username + str(max_num)
-
-            # Return the next available username
-            logger.debug(f"Inital Username Unavailable. Next Available Username: {next_username}")
-            return next_username
-
-        except ObjectDoesNotExist:
-            # If no IntegrityError is raised, return the original username
-            logger.debug(f"Inital Username Available")
-            return username
 
     class Meta:
         db_table = "employee"
         ordering = ["last_name", "first_name", "-hire_date"]
         verbose_name = "Agency Employee"
         verbose_name_plural = "Agency Employees"
-        unique_together = ["username", "email"]
-        get_latest_by = "-date_joined"
+        get_latest_by = "-hire_date"

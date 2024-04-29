@@ -5,7 +5,12 @@
 {% block custom_js %}
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
 
-    <script src={% static 'js/address_autocomplete.js' %}></script>
+    <script src={% static 'js/address_autocomplete.js' %} defer> </script>
+    <style>
+        .frontend-form {
+            width: 33.33%;
+        }
+    </style>
 
 {% endblock custom_js %}
 {% block main %}
@@ -16,7 +21,7 @@
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <div class="breadcrumb__text">
-                        <h2>Employment Application</h2>
+                        <h2>Employment Interest Application</h2>
                     </div>
                     {% if form_errors %}
                         <div id="form-errors">
@@ -46,11 +51,14 @@
     <!-- Breadcrumb End -->
 
 
-    <!-- Call To Action Section Begin -->
+    <!-- Employment Applicant Start -->
     <section id="interest-form" class="contact spad mx-auto">
+        <form class="frontend-form" id="employment-application"/>
 
         {% csrf_token %}
         {% crispy form %}
+    </form>
+    <!-- Employment Applicant End -->
 
     </section>
 

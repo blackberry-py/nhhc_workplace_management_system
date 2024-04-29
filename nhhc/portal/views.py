@@ -38,7 +38,7 @@ from loguru import logger
 from portal.serializers import ClientInquiriesSerializer
 from rest_framework import generics, mixins, permissions, status
 from rest_framework.response import Response
-from web.models import ClientInterestSubmissions, EmploymentApplicationModel
+from web.models import ClientInterestSubmission, EmploymentApplicationModel
 
 
 @login_required(login_url="/login/")
@@ -147,13 +147,13 @@ def all_client_inquiries(request: HttpRequest) -> HttpResponse:
     Returns:
     - HttpResponse: JSON response containing all client inquiries
     """
-    inquiries = ClientInterestSubmissions.objects.all().values()
+    inquiries = ClientInterestSubmission.objects.all().values()
     inquiries_json = json.dumps(list(inquiries), cls=DjangoJSONEncoder)
     return HttpResponse(content=inquiries_json, status=status.HTTP_200_OK)
 
 
 class ClientInquiriesAPIListView(generics.ListCreateAPIView):
-    queryset = ClientInterestSubmissions.objects.all()
+    queryset = ClientInterestSubmission.objects.all()
     serializer_class = ClientInquiriesSerializer
     permission_classes = [
         permissions.IsAuthenticated,
@@ -168,19 +168,19 @@ class ClientInquiriesListView(ListView):
     """
 
     template_name = "service-inquiries.html"
-    model = ClientInterestSubmissions
-    queryset = ClientInterestSubmissions.objects.all().order_by("-date_submitted")
+    model = ClientInterestSubmission
+    queryset = ClientInterestSubmission.objects.all().order_by("-date_submitted")
     context_object_name = "submissions"
     paginate_by = 25
 
     def get_context_data(self, **kwargs) -> Dict[str, str]:
         context = super().get_context_data(**kwargs)
-        context["unresponsed"] = ClientInterestSubmissions.objects.filter(reviewed=False).count()
+        context["unresponsed"] = ClientInterestSubmission.objects.filter(reviewed=False).count()
         context["showSearch"] = True
-        context["reviewed"] = ClientInterestSubmissions.objects.filter(
+        context["reviewed"] = ClientInterestSubmission.objects.filter(
             reviewed=True,
         ).count()
-        context["all_submissions"] = ClientInterestSubmissions.objects.all().count()
+        context["all_submissions"] = ClientInterestSubmission.objects.all().count()
         return context
 
 
@@ -190,7 +190,7 @@ class ClientInquiriesDetailView(DetailView):
     """
 
     template_name = "submission-details.html"
-    model = ClientInterestSubmissions
+    model = ClientInterestSubmission
     context_object_name = "submission"
     pk_url_kwarg = "pk"
 
@@ -258,7 +258,7 @@ def marked_reviewed(request):
         body_unicode = request.body.decode("utf-8")
         body = json.loads(body_unicode)
         pk = body["pk"]
-        submission = ClientInterestSubmissions.objects.get(id=pk)
+        submission = ClientInterestSubmission.objects.get(id=pk)
         submission.marked_reviewed(request.user)
         submission.save()
         logger.info(f"{submission.id} marked as reviewed")

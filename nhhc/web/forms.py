@@ -20,7 +20,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Column, Field, Layout, Row, Submit
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from web.models import ClientInterestSubmissions, EmploymentApplicationModel
+from web.models import ClientInterestSubmission, EmploymentApplicationModel
 
 
 class ClientInterestForm(forms.ModelForm):
@@ -31,7 +31,7 @@ class ClientInterestForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):  # pragma: no cover
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.attrs = {"autocomplete": "off"}
+        self.helper.attrs = {"autocomplete": "off", "form_id": "employment-application"}
         self.fields["captcha"].label = False
 
         self.helper.layout = Layout(
@@ -70,7 +70,7 @@ class ClientInterestForm(forms.ModelForm):
     class Meta:
         """Meta definition for ClientInterestSubmissionform."""
 
-        model = ClientInterestSubmissions
+        model = ClientInterestSubmission
         fields = (
             "first_name",
             "last_name",

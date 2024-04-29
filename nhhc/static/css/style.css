@@ -2452,3 +2452,7 @@ ul.form-errors-list{
   font-size: 18px;
   font-weight: bolder;
 }
+
+.frontend-form {
+  width: 33.33%;
+}

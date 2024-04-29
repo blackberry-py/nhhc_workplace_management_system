@@ -2,8 +2,15 @@
 {% load static %}
 {% load crispy_forms_tags %}
 {% block custom_js %}
-    <script src={% static 'js/address_autocomplete.js' %}></script>
+    <script src={% static 'js/address_autocomplete.js' %} defer></script>
 {% endblock custom_js %}
+
+<style>
+    .frontend-form {
+        width: 33.33%;
+    }
+</style>
+
 {% block main %}
 
     <!-- Breadcrumb Begin -->
@@ -36,14 +43,15 @@
 
     <!-- Call To Action Section Begin -->
     <section id="interest-form" class="contact spad mx-auto">
+        <form id="client_interest_form" class="frontend-form"/>
         {% csrf_token %}
         {% crispy form %}
-
+    </form>
     </section>
 
 {% endblock main %}
-[{% block customscripts %}
+{% block customscripts %}
     <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDwRtpvIRYnt2dt8cSMzdxjVE1tfxcO4Ww&callback=initAutocomplete&libraries=places&v=weekly" defer>
-    </script>
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDwRtpvIRYnt2dt8cSMzdxjVE1tfxcO4Ww&callback=initAutocomplete&libraries=places&v=weekly" defer
+        </script>
 {% endblock customscripts %}

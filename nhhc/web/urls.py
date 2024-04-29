@@ -8,10 +8,10 @@ from django.views.decorators.csrf import csrf_exempt
 from web import views
 
 urlpatterns = [
-    path("", csrf_exempt(views.index), name="index"),
-    path("about/", views.about, name="about"),
-    path("client-interest/", views.client_interest, name="client-interest"),
-    path("employment-application/", views.employee_interest, name="application"),
+    path("", views.HomePageView.as_view(), name="homepage"),
+    path("about/", views.AboutUsView.as_view(), name="about"),
+    path("client-interest/", views.ClientInterestFormView.as_view(), name="client_interest"),
+    path("employment-application/", views.EmploymentApplicationFormView.as_view(), name="application"),
     path("submission-confirmation/", views.submitted, name="submitted"),
-    re_path(r"^favicon/$", views.favicon, name="favicon"),
+    re_path(r"^favicon.ico\/?/$", views.favicon, name="favicon"),
 ]

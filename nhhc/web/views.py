@@ -7,61 +7,53 @@ import smtplib
 from email.message import EmailMessage
 from email.mime.text import MIMEText
 from string import Template
+from typing import Union
 
 from django.conf import settings
-from django.http import (
-    FileResponse,
-    HttpRequest,
-    HttpResponse,
-)
+from django.http import FileResponse, HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
+from django.templatetags.static import static
+from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+from django.views.generic.edit import FormView
 from ipware import get_client_ip
 from loguru import logger
 from web.forms import ClientInterestForm, EmploymentApplicationForm
-from nhhc.utils.email_templates import APPLICATION_BODY, CLIENT_BODY
-from typing import Union
+from web.models import ClientInterestSubmission, EmploymentApplicationModel
 
+from nhhc.utils.email_templates import APPLICATION_BODY, CLIENT_BODY
+from nhhc.utils.helpers import CachedTemplateView
 
 CACHE_TTL: int = settings.CACHE_TTL
 
+
 # SECTION - Page Rendering Views
+class HomePageView(CachedTemplateView):
+    template_name = "index.html"
+    extra_context = {"title": "Home"}
+    http_method_names = ["get", "head", "trace"]
 
 
-@cache_page(CACHE_TTL)
-def index(request: HttpRequest) -> HttpResponse:
-    """Primary Render Function that Renders the Homepage template located in index.html.
-
-    Args:
-        request (HttpRequestObject): Request Object Passed at time of calling.
-
-    Returns:
-        Renders Homepage
-    """
-    client_ip, is_routable = get_client_ip(request)
-    if client_ip is None:
-        logger.warning("Unable to get the client's IP address")
-    else:
-        logger.debug(client_ip)
-        if is_routable:
-            logger.info("The client's IP address is publicly routable on the Internet")
-        else:
-            logger.warning("The client's IP address is private")
-
-    return render(request, "index.html", {"title": "Home"})
+class AboutUsView(CachedTemplateView):
+    template_name = "about.html"
+    extra_context = {"title": "About Nett Hands"}
+    http_method_names = ["get", "head", "trace"]
 
 
-@cache_page(CACHE_TTL)
-def about(request: HttpRequest) -> HttpResponse:
-    """A function based template view thatmk Renders the about sub-page template located in contact.html.
+class ClientInterestFormView(FormView):
+    form_class = ClientInterestForm
+    model = ClientInterestSubmission
+    template_name = "client-interest.html"
+    success_url = "/submitted"
+    extra_context = {"title": "Client Services Request"}
 
-    Args:
-        request (HttpRequest): Request Object Passed at time of calling.
 
-    Returns:
-        Renders Contact Subpage
-    """
-    return render(request, "about.html", {"title": "About Nett Hands"})
+class EmploymentApplicationFormView(FormView):
+    form_class = EmploymentApplicationForm
+    model = EmploymentApplicationModel
+    template_name = "employee-interest.html"
+    success_url = "/submitted"
+    extra_context = {"title": "Employment Application"}
 
 
 @cache_page(CACHE_TTL)
@@ -75,8 +67,8 @@ def favicon(request: HttpRequest) -> HttpResponse:
     Returns:
     - HttpResponse object
     """
-    favicon_file = open("/workspaces/NettHands/nhhc/static/img/favicon.ico", "rb")
-    return FileResponse(request=request, filename=favicon_file)
+    favicon_file = static("img/favicon.ico")
+    return FileResponse(filename=favicon_file)
 
 
 #!SECTION

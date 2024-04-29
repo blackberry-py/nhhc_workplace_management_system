@@ -3,6 +3,8 @@ import os
 from django.conf import settings
 from django.core.mail import send_mail
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.views.decorators.cache import cache_page
+from django.views.generic import TemplateView
 from loguru import logger
 from rest_framework import status
 
@@ -68,3 +70,9 @@ def send_new_user_credentials(new_user_email: str, new_user_first_name: str, pas
             status=status.HTTP_400_BAD_REQUEST,
             content=bytes('{"status": "FAIL", "error": e}', "utf-8"),
         )
+
+
+class CachedTemplateView(TemplateView):
+    @classmethod
+    def as_view(cls, **initkwargs):  # @NoSelf
+        return cache_page(settings.CACHE_TTL)(super(CachedTemplateView, cls).as_view(**initkwargs))

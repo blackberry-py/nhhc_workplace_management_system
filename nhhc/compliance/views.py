@@ -79,16 +79,6 @@ class ComplianceProfileFormView(UpdateView, FileUploadMixin):
     context_object_name = "employee"
 
 
-# class ComplianceProfile(View):
-#     def get(self, request, *args, **kwargs):
-#         view = ComplianceProfileDetailView.as_view()
-#         return view(request, *args, **kwargs)
-
-#     def post(self, request, *args, **kwargs):
-#         view = ComplianceProfileFormView.as_view()
-#         return view(request, *args, **kwargs)
-
-
 # TODO: Implement Reporting
 def generate_report(requst):
     raise NotImplementedError

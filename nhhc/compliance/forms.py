@@ -1,15 +1,15 @@
 from datetime import datetime
 
 from compliance.models import Compliance, Contract
-from crispy_forms.bootstrap import FormActions, Modal
+from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Column, Layout, Reset, Row, Submit
 from django import forms
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 
 class ContractForm(forms.ModelForm):
+
     """Form definition for Contract Model."""
 
     def is_active_contract(contract_year_start, contract_year_ends):

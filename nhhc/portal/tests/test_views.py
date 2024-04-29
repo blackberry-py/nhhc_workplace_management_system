@@ -16,7 +16,7 @@ from portal.views import (
     EmploymentApplicationListView,
     marked_reviewed,
 )
-from web.models import ClientInterestSubmissions, EmploymentApplicationModel
+from web.models import ClientInterestSubmission, EmploymentApplicationModel
 
 from nhhc.utils.testing import (
     generate_mock_PhoneNumberField,
@@ -98,14 +98,14 @@ class ClientInquiriesTestCase(TestCase):
     )
     def setUp(self):
         self.submission1 = baker.make(
-            ClientInterestSubmissions,
+            ClientInterestSubmission,
             first_name="John",
             last_name="Doe",
             email="johndoe@example.com",
             reviewed=False,
         )
         self.submission2 = baker.make(
-            ClientInterestSubmissions,
+            ClientInterestSubmission,
             email="janesmith@example.com",
             reviewed=True,
         )
@@ -129,7 +129,7 @@ class ClientInquiriesTestCase(TestCase):
 class SubmissionDetailTestCase(TestCase):
     @override_settings(STORAGE_DESTINATION="testing")
     def setUp(self):
-        self.submission = ClientInterestSubmissions.objects.create(
+        self.submission = ClientInterestSubmission.objects.create(
             first_name="John",
             last_name="Doe",
             email="johndoe@example.com",
@@ -154,7 +154,7 @@ class SubmissionDetailTestCase(TestCase):
 
 class MarkedReviewedTestCase(TestCase):
     def setUp(self):
-        self.submission = baker.make(ClientInterestSubmissions)
+        self.submission = baker.make(ClientInterestSubmission)
         self.client = Client()
         self.user = baker.make(
             Employee,
@@ -195,7 +195,7 @@ class MarkedReviewedTestCase(TestCase):
         mock_request.user = MagicMock()
         mock_logger.error = MagicMock()
 
-        with patch("home.views.ClientInterestSubmissions.objects.get") as mock_get:
+        with patch("home.views.ClientInterestSubmission.objects.get") as mock_get:
             mock_get.side_effect = Exception("Some error")
 
             response = marked_reviewed(mock_request)

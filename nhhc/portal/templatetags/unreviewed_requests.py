@@ -15,7 +15,7 @@ Functions:
 from typing import Dict
 
 from django import template
-from web.models import ClientInterestSubmissions, EmploymentApplicationModel
+from web.models import ClientInterestSubmission, EmploymentApplicationModel
 
 register = template.Library()
 
@@ -40,5 +40,5 @@ def render_unreviewed_client_requests() -> Dict[str, int]:
     Returns:
     Dict[str, int]: A dictionary containing the count of unreviewed client requests.
     """
-    client_requests = ClientInterestSubmissions.objects.filter(reviewed__in=[False, None]).count()
+    client_requests = ClientInterestSubmission.objects.filter(reviewed__in=[False, None]).count()
     return {"client_count": int(client_requests)}

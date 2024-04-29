@@ -1,10 +1,10 @@
 from rest_framework.serializers import ModelSerializer, Serializer
-from web.models import ClientInterestSubmissions, EmploymentApplicationModel
+from web.models import ClientInterestSubmission, EmploymentApplicationModel
 
 
 class ClientInquiriesSerializer(ModelSerializer):
     """
-    Serializer for the ClientInterestSubmissions model.
+    Serializer for the ClientInterestSubmission model.
 
     This serializer is used to serialize and deserialize instances of the EmploymentApplicationModel.
 
@@ -14,7 +14,7 @@ class ClientInquiriesSerializer(ModelSerializer):
     """
 
     class Meta:
-        model = ClientInterestSubmissions
+        model = ClientInterestSubmission
         fields = "__all__"
 
 

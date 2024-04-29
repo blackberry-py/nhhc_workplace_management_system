@@ -1,52 +1,29 @@
-from compliance.models import Contract
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Column, Field, Layout, Reset, Row, Submit
-from django.forms import ModelChoiceField, ModelForm, fields, forms
+from django.forms import ModelForm
 from django.forms.widgets import DateInput
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from employee.models import Employee
-from formset.views import FormView
-from formset.widgets import UploadedFileInput
 
 
 class EmployeeForm(ModelForm):
-    """Form definition for Employee Model."""
+    """
+    Form definition for Employee Model.
+
+    This form is used to collect and display information about employees. It includes fields for employee details, contact information, emergency contacts, and supporting documentation.
+
+    Attributes:
+        model (Employee): The Employee model that this form is based on.
+        fields (str): The fields to include in the form.
+        labels (dict): Custom labels for specific fields in the form.
+    """
 
     class Meta:
         """Meta definition for EmployeeForm."""
 
         model = Employee
-        # fields = (
-        #     "employee_id",
-        #     "gender",
-        #     "social_security",
-        #     "middle_name",
-        #     "street_address1",
-        #     "street_address2",
-        #     "last_name",
-        #     "first_name",
-        #     "marital_status",
-        #     "emergency_contact_first_name",
-        #     "emergency_contact_last_name",
-        #     "emergency_contact_relationship",
-        #     "emergency_contact_phone",
-        #     "city",
-        #     "email",
-        #     "phone",
-        #     "state",
-        #     "zipcode",
-        #     "ethnicity",
-        #     "family_hca",
-        #     "language",
-        #     "cpr_verification",
-        #     "qualifications",
-        #     "race",
-        #     "qualifications_verification",
-        #     "username",
-        #     "date_of_birth",
-        # )
         fields = "__all__"
         labels = {
             "language": _(
@@ -58,7 +35,15 @@ class EmployeeForm(ModelForm):
             ),
             "qualifications_verification": _("Upload Degree, GED or Diploma"),
             "cpr_verification": _("CPR Card"),
-            "hhs_oig_exclusionary_check_verification": _("Upload Fingerprinting Results"),
+            "idoa_agency_policies_attestation": _("Signed IL Dept of Publi Health & Agency Policy"),
+            "idph_background_check_authorization": _("Signed Background Check Authorization"),
+            "marketing_recruiting_limitations_attestation": _("Signed Marketing and Recruiting Limitation Policy"),
+            "do_not_drive_agreement_attestation": _("Signed Do Not Drive Agreement"),
+            "job_duties_attestation": _("Signed Job Duties"),
+            "dhs_i9": _("Signed Dept of Homeland Security - I9 Form"),
+            "hca_policy_attestation": _("Signed HCA Policy"),
+            "irs_w4_attestation": _("Signed Federal W4 Form"),
+            "state_w4_attestation": _("Signed State W4 Form"),
         }
 
     def __init__(self, *args, **kwargs):
@@ -67,7 +52,6 @@ class EmployeeForm(ModelForm):
         self.helper.form_action = reverse("profile")
         self.helper.form_id = "profile"
         self.helper.form_method = "post"
-        self.helper.form
         self.fields["date_of_birth"].widget = DateInput(
             attrs={"type": "date", "class": "form-control"},
         )
@@ -146,7 +130,6 @@ class EmployeeForm(ModelForm):
             HTML(
                 """
         <h3 class="small-heading muted-text mb-4">Contact Information</strong></h3>
-        <div class="pl-lg-4">
 
         """,
             ),
@@ -204,7 +187,6 @@ class EmployeeForm(ModelForm):
             HTML(
                 """
         <h3 class="small-heading muted-text mb-4">Emergency Contact</strong></h3>
-        <div class="pl-lg-4">
 
         """,
             ),
@@ -231,18 +213,17 @@ class EmployeeForm(ModelForm):
                 ),
                 css_class="form-row",
             ),
-            HTML("""<hr class="my-4 />"""),
+            HTML("""<hr class="uk-divider-icon" />"""),
             HTML(
                 """
         <h3 class="small-heading muted-text mb-4">Supporting Documentation</strong></h3>
-        <div class="pl-lg-4">
 
         """,
             ),
             Row(
                 Column(
                     "cpr_verification",
-                    readonly=True,
+                    help_text="Please Upload Photo of an Unexpired CPR Card",
                     css_class="form-group col-lg-4 mb-0 editable ",
                 ),
                 Column(
@@ -250,7 +231,54 @@ class EmployeeForm(ModelForm):
                     help_text="Please upload a copy of the document selected in the User Information field - Highest Level of Education/Home Healthcare Qualification",
                     css_class="form-group col-lg-4 mb-0 editable ",
                 ),
+                Column(
+                    "do_not_drive_agreement_attestation",
+                    helptext="<Please Provide a Copy of the",
+                    css_class="form-group col-lg-4 mb-0 editable ",
+                ),
                 css_class="form-row",
+            ),
+            Row(
+                Column(
+                    "hca_policy_attestation",
+                    helptext="Please ....",
+                    css_class="form-group col-lg-4 mb-0 editable ",
+                ),
+                Column(
+                    "idph_background_check_authorization",
+                    help_text="Please upload a copy of the document selected in the User Information field - Highest Level of Education/Home Healthcare Qualification",
+                    css_class="form-group col-lg-4 mb-0 editable ",
+                ),
+                Column(
+                    "job_duties_attestation",
+                    help_text="Please upload a copy of signed job duties",
+                    css_class="form-group col-lg-4 mb-0 editable ",
+                ),
+                css_class="form-row",
+            ),
+            HTML(
+                """
+        <h3 class="small-heading muted-text mb-4">Payroll and Tax Information</strong></h3>
+
+        """,
+            ),
+            Row(
+                Column(
+                    "irs_w4_attestation",
+                    helptext="Please ....",
+                    css_class="form-group col-lg-4 mb-0 editable ",
+                ),
+                Column(
+                    "state_w4_attestation",
+                    help_text="Please upload a copy of the document selected in the User Information field - Highest Level of Education/Home Healthcare Qualification",
+                    css_class="form-group col-lg-4 mb-0 editable ",
+                ),
+                css_class="form-row",
+            ),
+            HTML(
+                """
+                             <hr class="uk-divider-icon" />
+                             """,
             ),
             Row(
                 FormActions(

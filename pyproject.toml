@@ -56,6 +56,11 @@ django-bunny = "^1.1.6"
 django-pgcrypto-fields = "^2.6.0"
 django-sage-encrypt = "^0.4.4"
 prospector = {version = "^1.10.3", extras = ["with_everything"]}
+django-extensions = "^3.2.3"
+django-weasyprint = "^2.3.0"
+weasyprint = "^61.2"
+reportlab = "^4.2.0"
+
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.6.0"
@@ -84,9 +89,9 @@ isort = "^5.13.2"
 
 
 
+
 [tool.poetry.dependencies]
-highlight-io = {extras = ["django"], version = "^0.7.0"}
-resend = "^0.8.0"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
@@ -120,7 +125,17 @@ skip_empty = true
 [tool.djlint]
 ignore="H021 H006"
 
-[tool.pyright]
+[tool.pylint.messages_control]
+max-line-length = 300
+
+disable = [
+    "missing-module-docstring",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "too-few-public-methods",
+    "line-too-long",
+    "trailing-whitespace",
+]
 
 [tool.pytest.ini_options]
 # -- recommended but optional:
