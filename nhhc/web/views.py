@@ -10,8 +10,8 @@ from string import Template
 from typing import Union
 
 from django.conf import settings
-from django.http import FileResponse, HttpRequest, HttpResponse
-from django.shortcuts import redirect, render
+from django.http import FileResponse, HttpRequest, HttpResponse,HttpResponseRedirect
+from django.shortcuts import redirect, render, reverse 
 from django.templatetags.static import static
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -52,8 +52,21 @@ class EmploymentApplicationFormView(FormView):
     form_class = EmploymentApplicationForm
     model = EmploymentApplicationModel
     template_name = "employee-interest.html"
-    success_url = "/submitted"
+    success_url = reversed("submitted")
     extra_context = {"title": "Employment Application"}
+
+    4
+
+    def form_valid(self, form: EmploymentApplicationForm) -> HttpResponseRedirect:
+        """If the form is valid, redirect to the supplied URL."""
+        if form.is_valid():
+            logger.debug('Form Is Valid')
+            form.save()
+            return HttpResponseRedirect(self.success_url)
+        else:
+            logger.error('Form Is Invalid')
+            return HttpResponseRedirect(reverse('employment-application', {"errors": form.errors}))
+
 
 
 @cache_page(CACHE_TTL)

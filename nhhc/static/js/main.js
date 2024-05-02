@@ -418,5 +418,10 @@ $(document).ready(function () {
         });
     }
 
+/*-----------------------
+     Form Auto Copy Phone Number to SMS Contact 
+     _______________________*/
+
+     
 }(jQuery));;
 console.log("Main JS");

@@ -78,8 +78,7 @@ function fillInAddress() {
 
 window.initAutocomplete = initAutocomplete;
 
-const slug = url => new URL(url).pathname.match(/[^\/]+/g)
-
+const slug = location.pathname.split('/').slice(1);
 if (slug == "client-interest"){
   console.debug(`${slug} Listening For address on CLIENT FORM `)
   inputs = document.getElementById("client_interest_form").querySelectorAll('input[type="text"]');
@@ -91,6 +90,5 @@ if (slug == "client-interest"){
   console.error(`Issue with Google Address Complete ${slug}`)
 }
 
-inputs.forEach(neutralizeFieldValidationColorsOnLoad)
 
 console.log('Address Auto Complete JS')

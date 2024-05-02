@@ -61,6 +61,7 @@ SITE_ID = int(os.environ["SITE_ID"])
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 INSTALLED_APPS = [
+    "kolo",
     "whitenoise.runserver_nostatic",
     "allauth",
     "allauth.account",
@@ -113,10 +114,10 @@ INSTALLED_APPS = [
 # if DEBUG is False:
 #     INSTALLED_APPS= ["kolo","debug_toolbar","coverage" ]  + INSTALLED_APPS
 
-MIDDLEWARE = [
+MIDDLEWARE = [    
+    "kolo.middleware.KoloMiddleware",
     "django.middleware.cache.UpdateCacheMiddleware",
     "django_prometheus.middleware.PrometheusBeforeMiddleware",
-    # "kolo.middleware.KoloMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",

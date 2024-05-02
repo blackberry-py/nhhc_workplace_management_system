@@ -18,14 +18,24 @@
   {% csrf_token %}
   {% crispy form %}
   <script>
-    function fix_phone(e){
-      const formField = e.target.value
-      formField.value = `+1${inputValue}`
-    }
-    var tele_numbers = $(".tele-number")
-    tele_numbers.each(function(elem) {
-      elem.addEventListener("change", fix_phone)
-    });
+    (function ($) {
+
+      function fix_phone(e){
+        const formField = e.target.value
+        formField.value = `+1${inputValue}`
+      }
+      var tele_numbers = $(".tele-number")
+      tele_numbers.each(function(elem) {
+        elem.addEventListener("change", fix_phone)
+
+        function samecontact(e) {
+          if (e.this.value == true){
+            $('$id_sms_contact_number').value = $("id_phone")
+          }
+
+
+        });
+      }(jQuery));;
 
   </script>
 {% endblock profile_content %}

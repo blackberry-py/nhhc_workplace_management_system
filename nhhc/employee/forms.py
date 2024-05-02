@@ -1,7 +1,7 @@
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Column, Field, Layout, Reset, Row, Submit
-from django.forms import ModelForm
+from django.forms import ModelForm, forms, BooleanField, CheckboxInput
 from django.forms.widgets import DateInput
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -9,6 +9,8 @@ from employee.models import Employee
 
 
 class EmployeeForm(ModelForm):
+    phone_sms_identical = BooleanField(required=False, widget=CheckboxInput, label="Same as Contact")
+    sms_contact_agreement = BooleanField(required=True, widget=CheckboxInput, label="I AGREE")
     """
     Form definition for Employee Model.
 
@@ -44,6 +46,10 @@ class EmployeeForm(ModelForm):
             "hca_policy_attestation": _("Signed HCA Policy"),
             "irs_w4_attestation": _("Signed Federal W4 Form"),
             "state_w4_attestation": _("Signed State W4 Form"),
+            "sms_contact_agreement": _("I AGREE"),
+            "phone_sms_identical": _("Same as Contact "),
+            "phone": _("Primary Contact Number"),
+            "sms_contact_number": _("Number for Text (SMS) Messaging")
         }
 
     def __init__(self, *args, **kwargs):
@@ -125,11 +131,9 @@ class EmployeeForm(ModelForm):
                 Column("date_of_birth", css_class="form-group col-md-4 mb-0"),
                 css_class="form-row",
             ),
-            HTML("""</div> """),
             HTML("""<hr class="my-4 />"""),
-            HTML(
-                """
-        <h3 class="small-heading muted-text mb-4">Contact Information</strong></h3>
+            HTML("""
+     <h3 class="small-heading muted-text mb-4">Contact Information</h3>
 
         """,
             ),
@@ -173,7 +177,7 @@ class EmployeeForm(ModelForm):
                 Column(
                     "social_security",
                     readonly=True,
-                    css_class="form-group col-lg-4 mb-0 editable ",
+                       css_class="form-group col-lg-4 mb-0 editable ",
                 ),
                 Column(
                     "gender",
@@ -182,7 +186,25 @@ class EmployeeForm(ModelForm):
                 ),
                 css_class="form-row",
             ),
-            HTML("""</div> """),
+            Row(
+                    HTML(
+                        """</div>
+                 <div class="text-center sms-opt-in">                  <h4>SMS Contact Agreement</h4>
+"""),
+                  HTML("""
+
+<p> The CareNett  provide access to important information and services related to your role with Nett Hands Home Care.  While there is no direct cost to the public imposed by Nett Hands Home Care to utilize the any of the CareNett (including text notification deliveries), STANDARD DATA FEES AND TEXT MESSAGING RATES MAY APPLY BASED ON YOUR PLAN WITH YOUR MOBILE PHONE CARRIER.  As mobile access and text message delivery is subject to your mobile carrier network availability, such access and delivery is not guaranteed.  YOU MAY OPT OUT OF SMS DELIVERY AT ANY TIME VIA THIS PORTAL" 
+</p>"""),              
+                 HTML("""
+                 <p>Your access to, and use of, the mobile communication tools and text messaging services (collectively, the “CareNett") is subject to our website Terms of Use and all applicable laws and regulations. <strong> By clicking “I Agree” or otherwise accessing and using CareNett, you accept, without limitation or qualification, the Terms of Use.</strong></p>
+                 """),  
+                
+Column("sms_contact_agreement", css_class="form-group mx-auto col-12 mb-0 "),
+
+                Row(
+                Column("phone_sms_identical", css_class="form-group col-lg-2 mb-0 "),
+                Column("sms_contact_number", css_class="form-group col-lg-10 mb-0 "),
+            ),
             HTML("""<hr class="my-4 />"""),
             HTML(
                 """
@@ -292,4 +314,5 @@ class EmployeeForm(ModelForm):
                 ),
                 css_class="form-row",
             ),
+        )
         )

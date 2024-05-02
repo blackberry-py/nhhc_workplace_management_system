@@ -90,6 +90,10 @@ isort = "^5.13.2"
 
 
 
+
+[tool.poetry.group.derv.dependencies]
+kolo = "^2.23.0"
+
 [tool.poetry.dependencies]
 
 [build-system]
@@ -140,3 +144,6 @@ disable = [
 [tool.pytest.ini_options]
 # -- recommended but optional:
 python_files = ["test_*.py", "*_test.py", "testing/python/*.py"]
+
+[tool.kolo]
+use_rust = false

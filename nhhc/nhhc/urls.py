@@ -4,6 +4,7 @@ The `urlpatterns` list routes URLs to views.
 """
 from typing import Callable, Dict, List, Union
 
+import authentication.urls
 import announcements.urls
 import compliance.urls
 import employee.urls
@@ -98,6 +99,7 @@ handler500: Callable = server_error_handler
 
 urlpatterns: List[Union[RoutePattern, RegexPattern]] = [
     path("control-center/", admin.site.urls),
+    path("", include(authentication.urls)),
     re_path(r"^compliance/", include("filer.urls")),
     re_path(r"^", include("filer.server.urls")),
     path("", include(portal.urls)),

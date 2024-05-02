@@ -48,6 +48,10 @@ pipeline-test: ## Run tests
 run: ## Run the Django server
 	doppler run -t $(DOPPLER_TOKEN) -- 	$(PYTHON) manage.py runserver 8080
 
+.PHONY: debug
+debug: ## Run the Django server
+	doppler run -t $(DOPPLER_TOKEN) -- 	kolo run manage.py runserver --noreload --nothreading
+
 .PHONY: admin
 admin:
 	doppler run -t $(DOPPLER_TOKEN) --  $(PYTHON) manage.py createsuperuser --no-input

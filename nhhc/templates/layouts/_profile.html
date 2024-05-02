@@ -42,7 +42,7 @@
               <p>{{ request.user.hire_date }}</p>
               <h3>Most Recent Background Check:</h3>
               <p>{{ compliance.current_idph_background_check_completion_date | default:"<strong><p class='text-danger'>Pending</p></strong>"  }}</p>
-              <h3>Initial Background Check::</h3>
+              <h3>Initial Background Check:</h3>
               <p>{{ compliance.initial_idph_background_check_completion_date | default:"<strong><p class='text-danger'>Pending</p></strong>"  }}</p>
               <h3>Training Exempt:</h3>
               {% if compliance.training_exempt is True %}<p>Exempt</p>{% elif compliance.training_exempt is None %}<strong><p class='text-danger'>Pending</p></strong> {% else %} <p>NOT Exempt</p> {% endif %}

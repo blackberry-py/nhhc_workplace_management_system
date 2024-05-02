@@ -313,7 +313,7 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
         choices=MaritalStatus.choices,
         default=MaritalStatus.NEVER_MARRIED,
     )
-    emergency_contact_first_name = models.CharField(
+    emergency_contact_first_name = EncryptedCharField(
         max_length=10485760,
         null=True,
         blank=True,
@@ -388,7 +388,8 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
         max_length=10485760,
         blank=True,
     )
-
+    sms_contact_agreement = models.BooleanField(null=True, help_text="Please Confirm that You Agree to the SMS Communication ")
+    sms_contact_number = PhoneNumberField(null=True)
     zipcode = USZipCodeField(null=True)
     application_id = models.BigIntegerField(default=0, unique=True)
     hire_date = CreationDateTimeField()
@@ -400,7 +401,7 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
         max_length=10485760,
         blank=True,
     )
-    last_modifed = ModificationDateTimeField(null=True, blank=True)
+    last_modifed = ModificationDateTimeField()
 
     def __str__(self) -> str:
         return f"(Employee Id:{self.pk}), Name: {self.last_name}, {self.first_name} | Username: {self.username}"
