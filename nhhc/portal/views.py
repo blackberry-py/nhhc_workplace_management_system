@@ -39,7 +39,7 @@ from portal.serializers import ClientInquiriesSerializer
 from rest_framework import generics, mixins, permissions, status
 from rest_framework.response import Response
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 @login_required(login_url="/login/")
 def portal_dashboard(request: HttpRequest) -> HttpResponse:
@@ -60,7 +60,7 @@ def portal_dashboard(request: HttpRequest) -> HttpResponse:
     return HttpResponse(html_template.render(context, request))
 
 
-class ProfileDetailView(DetailView):
+class ProfileDetailView(LoginRequiredMixin, DetailView):
     model = Employee
     template_name = "profile_main.html"
 
@@ -75,7 +75,7 @@ class ProfileDetailView(DetailView):
         return context
 
 
-class ProfileFormView(UpdateView, FileUploadMixin):
+class ProfileFormView(LoginRequiredMixin, UpdateView, FileUploadMixin):
     form_class = EmployeeForm
     model = Employee
     template_name = "profile_main.html"
@@ -88,7 +88,7 @@ class ProfileFormView(UpdateView, FileUploadMixin):
         return reverse("profile")
 
 
-class Profile(View):
+class Profile(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         view = ProfileDetailView.as_view()
         return view(request, *args, **kwargs)
@@ -101,7 +101,7 @@ class Profile(View):
 # TODO: Implement REST endpoint with DRF
 
 
-class EmploymentApplicationModelAPIListView(mixins.DestroyModelMixin, generics.ListCreateAPIView):
+class EmploymentApplicationModelAPIListView(LoginRequiredMixin, mixins.DestroyModelMixin, generics.ListCreateAPIView):
     queryset = EmploymentApplicationModel.objects.all()
     serializer_class = (EmploymentApplicationModel,)
     permission_classes = [permissions.IsAuthenticated]
@@ -162,7 +162,7 @@ class ClientInquiriesAPIListView(generics.ListCreateAPIView):
 
 
 # SECTION - Class-Based Views
-class ClientInquiriesListView(ListView):
+class ClientInquiriesListView(LoginRequiredMixin, ListView):
     """
     Renders a list of client inquiries.
     """
@@ -184,7 +184,7 @@ class ClientInquiriesListView(ListView):
         return context
 
 
-class ClientInquiriesDetailView(DetailView):
+class ClientInquiriesDetailView(LoginRequiredMixin, DetailView):
     """
     Renders details of a specific client inquiry.
     """
@@ -195,7 +195,7 @@ class ClientInquiriesDetailView(DetailView):
     pk_url_kwarg = "pk"
 
 
-class EmploymentApplicationListView(ListView):
+class EmploymentApplicationListView(LoginRequiredMixin, ListView):
     """
     Renders a list of submitted employment applications.
     """
@@ -216,7 +216,7 @@ class EmploymentApplicationListView(ListView):
         return context
 
 
-class EmploymentApplicationDetailView(DetailView):
+class EmploymentApplicationDetailView(LoginRequiredMixin, DetailView):
     """
     Renders details of a specific employment application.
     """

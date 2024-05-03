@@ -42,9 +42,9 @@ test: ## Run tests
 
 .PHONY: test
 pipeline-test: ## Run tests
-	${VIRTUAL_ENV}/bin/python manage.py test web employee portal  --verbosity=2  --keepdb    --force-color
+	${VIRTUAL_ENV}/bin/python manage.py test web employee portal  --verbosity=2  --keepdb   --force-color
 
-.PHONY: run
+.PHONY: run3
 run: ## Run the Django server
 	doppler run -t $(DOPPLER_TOKEN) -- 	$(PYTHON) manage.py runserver 8080
 

@@ -19,7 +19,7 @@ from django.urls.resolvers import RegexPattern, RoutePattern
 from django.views.decorators.cache import cache_page
 from loguru import logger
 from web.sitemaps import StaticViewSitemap
-
+from django.contrib.auth.decorators import login_required 
 # SECTION - Sitemap
 sitemaps: Dict[str, Sitemap] = {"static": StaticViewSitemap}
 # SECTION
@@ -98,9 +98,10 @@ handler500: Callable = server_error_handler
 # SECTION
 
 urlpatterns: List[Union[RoutePattern, RegexPattern]] = [
-    path("control-center/", admin.site.urls),
+    path("__debug__/", include("debug_toolbar.urls")),
+    path("control-center/", admin.site.urls,name="admin"),
     path("", include(authentication.urls)),
-    re_path(r"^compliance/", include("filer.urls")),
+    re_path(r"^compliance/", login_required(include("filer.urls"))),
     re_path(r"^", include("filer.server.urls")),
     path("", include(portal.urls)),
     path("", include(web.urls)),
