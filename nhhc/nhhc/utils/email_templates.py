@@ -11,7 +11,7 @@ Partials:
     _CLIENT_STYLE_DECLARATIONS:str
 		A string containing the CSS styles for the customer facing email template.
 
-Templatees:
+Templates:
 	CLIENT_BODY:str
 		A f-string containing the HTML of the  client facing email
     APPLICATION_BODY:str
@@ -205,7 +205,7 @@ APPLICATION_BODY: str = f"""
     <tr>
     <td class="pad">
     <div style="color:#101112;direction:ltr;font-family:Verdana, Geneva, sans-serif;font-size:16px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:left;mso-line-height-alt:19.2px;">
-    <p style="margin: 0;"><strong><span style="color: #ffffff;">Applicant,</span></strong></p>
+    <p style="margin: 0;"><strong><span style="color: #ffffff;">Applicant2,</span></strong></p>
     </div>
     </td>
     </tr>
@@ -214,11 +214,14 @@ APPLICATION_BODY: str = f"""
     <tr>
     <td class="pad">
     <div style="color:#101112;direction:ltr;font-family:'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;font-size:16px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:left;mso-line-height-alt:19.2px;">
-    <p style="margin: 0; margin-bottom: 16px;"><span style="color: #ffffff;">Thanks for taking the time to apply as a Home Health Caregiver with Nett Hands Home Care! </span></p>
-    <p style="margin: 0; margin-bottom: 16px;"><span style="color: #ffffff;">This role is the lifeblood of our organization, and we take recruitment very seriously.<br/><br/>We're currently in the process of taking applications for this position. </span></p>
-    <p style="margin: 0;"><span style="color: #ffffff;">If you are selected to continue to the interview process, our human resources department will be in contact within 24 to 48 business hours.<br/><br/>Thank you,</span></p>
+    <p style="margin: 0; margin-bottom: 16px;"><span style="color: #ffffff;">
+We greatly appreciate your interest in joining Nett Hands Home Care as a Home Health Caregiver! 
+ </span></p>
+    <p style="margin: 0; margin-bottom: 16px;"><span style="color: #ffffff;">Your application signifies a crucial step in our recruitment process, which we approach with utmost seriousness.<br/><br/Currently, we are actively reviewing applications for this pivotal role within our organization. </span></p>
+    <p style="margin: 0;"><span style="color: #ffffff;">If your application progresses to the interview stage, expect to hear from our human resources department within 24 to 48 business hours.<br/><br/>Thank you for considering Nett Hands Home Care for your career endeavors.</span></p>
     </div>
     </td>
+    
     </tr>
     </table>
     <div class="spacer_block block-3" style="height:25px;line-height:25px;font-size:1px;"> </div>
@@ -226,7 +229,7 @@ APPLICATION_BODY: str = f"""
     <tr>
     <td class="pad">
     <div style="color:#101112;direction:ltr;font-family:'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;font-size:32px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:left;mso-line-height-alt:38.4px;">
-    <p style="margin: 0;"><span style="color: #ffffff;">Nett Hands Home Care Recruiting</span></p>
+    <p style="margin: 0;"><span style="color: #ffffff;">Warmest Regards, <br> Nett Hands Home Care Recruiting</span></p>
     </div>
     </td>
     </tr>
@@ -300,6 +303,19 @@ APPLICATION_BODY: str = f"""
     </html>
     """
 
+PLAIN_TEXT_APPLICATION_BODY = """
+Dear Applicant,
+
+We greatly appreciate your interest in joining Nett Hands Home Care as a Home Health Caregiver! Your application signifies a crucial step in our recruitment process, which we approach with utmost seriousness.
+
+Currently, we are actively reviewing applications for this pivotal role within our organization. If your application progresses to the interview stage, expect to hear from our human resources department within 24 to 48 business hours.
+
+Thank you for considering Nett Hands Home Care for your career endeavors.
+
+Warm regards,
+
+Nett Hands Home Care Recruiting
+"""
 _CLIENT_STYLE_DECLARATIONS: str = """
 
 * {
@@ -511,7 +527,7 @@ CLIENT_BODY: str = f"""
 														<tr>
 															<td class="pad">
 																<div style="color:#101112;direction:ltr;font-family:Verdana, Geneva, sans-serif;font-size:16px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:left;mso-line-height-alt:19.2px;">
-																	<p style="margin: 0;"><strong><span style="color: #ffffff;">Future Nett Hands Home Care Patient,</span></strong></p>
+																	<p style="margin: 0;"><strong><span style="color: #ffffff;"> Dear Future Patient of Nett Hands Home Care</span></strong></p>
 																</div>
 															</td>
 														</tr>
@@ -520,11 +536,11 @@ CLIENT_BODY: str = f"""
 														<tr>
 															<td class="pad">
 																<div style="color:#101112;direction:ltr;font-family:'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;font-size:16px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:19.2px;">
-																	<p style="margin: 0; margin-bottom: 16px;"><strong><span style="color: #ffffff;">We are so excited that you are considering joining our Nett Hands Home Care family! </span></strong></p>
+																	<p style="margin: 0; margin-bottom: 16px;"><strong><span style="color: #ffffff;">We are thrilled by your interest in becoming a part of our Nett Hands Home Care family! The care and  well-being  of our patients is our top priority, and you can rest assured that we are committed to delivering exceptional care to you or your loved ones. </span></strong></p>
 																	<p style="margin: 0; margin-bottom: 16px;">&nbsp;</p>
 																	<p style="margin: 0; margin-bottom: 16px;"><span style="color: #ffffff;">We truly care about our patients and their well-being, so you can trust that we will provide the best possible care for you or your loved ones.&nbsp;</span></p>
 																	<p style="margin: 0; margin-bottom: 16px;">&nbsp;</p>
-																	<p style="margin: 0; margin-bottom: 16px;"><span style="color: #ffffff;">We are grateful for the confidence you have in us and we look forward to getting to know you better. A member of our care coordination team will be in touch within the next 24 to 48 business hours. If you need urgent assistance, please don't hesitate to contact our office at <strong>(708) 991-7105.</strong></span></p>
+																	<p style="margin: 0; margin-bottom: 16px;"><span style="color: #ffffff;">our confidence in us means the world, and we are eager to establish a meaningful connection with you. Expect to hear from a member of our care coordination team within the next 24 to 48 business hours. Should you require urgent assistance, please feel free to reach out to our office at <strong><a href="tel:17089917105" >(708) 991-7105</a></strong>.</span></p>
 																	<p style="margin: 0; margin-bottom: 16px;">&nbsp;</p>
 																	<p style="margin: 0;"><span style="color: #ffffff;">Thanks so much!</span></p>
 																</div>
@@ -536,7 +552,7 @@ CLIENT_BODY: str = f"""
 														<tr>
 															<td class="pad">
 																<div style="color:#101112;direction:ltr;font-family:'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;font-size:32px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:left;mso-line-height-alt:38.4px;">
-																	<p style="margin: 0;"><span style="color: #ffffff;">Nett Hands Home Care Recruiting</span></p>
+																	<p style="margin: 0;"><span style="color: #ffffff;">Nett Hands Home Care Care Coordination</span></p>
 																</div>
 															</td>
 														</tr>
@@ -610,3 +626,14 @@ CLIENT_BODY: str = f"""
 
 </html>
     """
+PLAIN_TEXT_CLIENT_BODY = """
+Dear Future Patient of Nett Hands Home Care,
+
+We are thrilled by your interest in becoming a part of our Nett Hands Home Care family! The care and  well-being  of our patients is our top priority, and you can rest assured that we are committed to delivering exceptional care to you or your loved ones.
+
+Your confidence in us means the world, and we are eager to establish a meaningful connection with you. Expect to hear from a member of our care coordination team within the next 24 to 48 business hours. Should you require urgent assistance, please feel free to reach out to our office at (708) 991-7105.
+
+Thank you sincerely,
+
+Nett Hands Home Care Recruiting
+"""

@@ -76,3 +76,43 @@ class CachedTemplateView(TemplateView):
     @classmethod
     def as_view(cls, **initkwargs):  # @NoSelf
         return cache_page(settings.CACHE_TTL)(super(CachedTemplateView, cls).as_view(**initkwargs))
+
+# Decorator to Exponetiually Retry Certain Failures. 
+def exponentially_retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
+    """Retry calling the decorated function using an exponential backoff.
+
+    http://www.saltycrane.com/blog/2009/11/trying-out-retry-decorator-python/
+    original from: http://wiki.python.org/moin/PythonDecoratorLibrary#Retry
+
+    Args:
+        ExceptionToCheck(Exception): the exception to check. may be a tuple of exceptions to check
+        tries(int): number of times to try (not retry) before giving up
+        delay(int): initial delay between retries in seconds
+        backoff(int): backoff multiplier e.g. value of 2 will double the delay
+        logger(logger instance): logger to use. If None, print
+    Returns:
+        None
+    """
+    def deco_retry(f):
+
+        @wraps(f)
+        def f_retry(*args, **kwargs):
+            mtries, mdelay = tries, delay
+            while mtries > 1:
+                try:
+                    return f(*args, **kwargs)
+                except ExceptionToCheck:
+                    msg = "%s, Retrying in %d seconds..." % (str(ExceptionToCheck), mdelay)
+                    if logger:
+                        #logger.exception(msg) # would print stack trace
+                        logger.warning(msg)
+                    else:
+                        print(msg)
+                    time.sleep(mdelay)
+                    mtries -= 1
+                    mdelay *= backoff
+            return f(*args, **kwargs)
+
+        return f_retry  # true decorator
+
+    return deco_retry  

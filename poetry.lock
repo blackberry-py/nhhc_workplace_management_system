@@ -1054,6 +1054,19 @@ pillow-heif = {version = "*", optional = true, markers = "extra == \"heif\""}
 heif = ["pillow-heif"]
 
 [[package]]
+name = "django-filer-pdf"
+version = "0.0.1"
+description = "A django-filer plugin for PDF file support."
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-filer-pdf-0.0.1.tar.gz", hash = "sha256:41e08d4d584b987b8dbac3d072ebc4cbf53c144571df7383bdd1df051318414c"},
+]
+
+[package.dependencies]
+django-filer = ">0.9a2"
+
+[[package]]
 name = "django-filter"
 version = "23.5"
 description = "Django-filter is a reusable Django application for allowing users to filter querysets dynamically."
@@ -5253,4 +5266,4 @@ test = ["pytest"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "57a01aa34174608c4ad8c986dd2f8a4efefccc51039da07b18db11dbc2203592"
+content-hash = "4fee440f42d6fa45bf1159fe5fc7ad27812d7e921561a4881fa78d3f4a93ffbb"

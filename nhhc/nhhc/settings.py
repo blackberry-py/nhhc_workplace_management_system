@@ -20,7 +20,7 @@ logger.remove()  # Remove all handlers added so far, including the default one.
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ["SECRET_KEY"]
 DEBUG = bool(os.environ["ENABLE_DEBUGGING"])
-DATETIME_FORMAT = "m/d/yyyy h:mm A"
+DATETIME_FORMAT:str  = "m/d/yyyy h:mm A"
 ADMINS = [("Terry Brooks", "Terry@BrooksJr.com")]
 CSRF_COOKIE_NAME = "nhhc-csrf"
 CSRF_USE_SESSIONS = True
@@ -92,6 +92,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "easy_thumbnails",
     "filer",
+    "filer_pdf",
     "robots",
     # "IpWhitelister",
     "health_check",  # required

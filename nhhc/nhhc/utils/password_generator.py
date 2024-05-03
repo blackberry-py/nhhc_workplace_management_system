@@ -30,7 +30,7 @@ class RandomPasswordGenerator:
         """
         # Define the character sets to be used for password generation
         # Use all lowerzcase, uppercase, and punctuation characters
-        chars = string.ascii_lowercase + string.ascii_uppercase + string.punctuation
+        chars = string.ascii_lowercase + string.ascii_uppercase
 
         # Generate a random password length between min_length and max_length
         password_length = random.randint(RandomPasswordGenerator.min_length, RandomPasswordGenerator.max_length)
