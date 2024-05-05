@@ -3,42 +3,53 @@
 {% block title %} Announcements {% endblock title %}
 {% block content %}
 
-  <div class="header bg-purple pb-6">
-    <div class="container-fluid">
-      <div class="header-body">
-        <div class="row align-items-center py-4">
-          <div class="col-lg-6 col-7">
-            <h6 class="h2 text-white d-inline-block mb-0">Announcements</h6>
-            <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
-            </nav>
-          </div>
+<style>
+  .popOver {
+    z-index: 1100;
+  }
+</style>
+<div class="header bg-purple pb-6">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+        <div class="col-lg-6 col-7">
+          <h6 class="h2 text-white d-inline-block mb-0">Announcements</h6>
+          <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
 
+          </nav>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Page content -->
+<div class="container-fluid mt--6">
+  <div class="row mb-6">
+    <div class="col">
+      <div class="card">
+        <!-- Card header -->
+        <div class="card-header border-0">
+          <h3 class="mb-0">Announcements</h3>
+          <!-- Search Bar -->
+          {% if request.user.is_staff %}
+          <div class="popOver col-lg-3 text-right">
+            <button data-toggle="modal" id="btn-create-annoucement" data-target="#new-annoucement-modal" class="btn btn-lg btn-neutral">Create New Announcement</button>
+          </div>
+        {% endif %}
         </div>
       </div>
     </div>
   </div>
-
-  <!-- Page content -->
-  <div class="container-fluid mt--6">
-    <div class="row">
-      <div class="col">
-        <div class="card">
-          <!-- Card header -->
-          <div class="card-header border-0">
-            <h3 class="mb-0">Announcements</h3>
-
-          </div>
           <!-- Light table -->
-          {% if request.user.is_superuser %}
-            <div class="col-lg-3 text-right">
-              <button data-toggle="modal" data-target="#new-annoucement-modal" class="btn btn-lg btn-neutral">New Announcement</button>
-            </div>
-          {% endif %}
-          <ul class="nav nav-tabs">
+          <div class="row">
+          <div class="col-12">
+          <ul class=" nav nav-tabs">
             <li class="tab nav-item">
               <a class="nav-link tab active" id="all" aria-current="page" href="#">{{ all_submission }} Total Announcements</a>
             </li>
-            {% if request.user.is_superuser %}
+            {% if request.user.is_staff %}
               <li class="nav-item">
                 <a class="nav-link tab" id="deleted" href="#">{{ deleted }} Archived Announcements </a>
               </li>
@@ -50,6 +61,8 @@
               </li>
             {% endif %}
           </ul>
+        </div>
+          </div>
 
           <div class="table-responsive">
             <table class="table align-items-center table-flush table-hover">
@@ -74,14 +87,14 @@
                   <td>
                     {{ anouncement.get_status_display }}
                   </td>
-                  <td class="budget">
+                  <td class="posted-by">
                     {{ anouncement.posted_by.first_name }} {{ anouncement.posted_by.last_name }}
                   </td>
                   <td>
                     {{ anouncement.get_message_type_display }}
                   </td>
 
-                  <td class="text-break">
+                  <td class="message">
                     {{ anouncement.message }}
                   </td>
 
@@ -111,12 +124,21 @@
             {% endif %}
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-
+ {% include "include/_modal.html" %}
 
 {% endblock content %}
 
 <!-- Specific JS goes HERE -->
-{% block javascripts %}{% endblock javascripts %}
+
+{% block javascripts %}
+<script defer>
+  $(document).ready(function () {
+
+    $('#btn-create-annoucement').on('click', function() {
+      console.log('Create Button cliciked') 
+      jQuery('#btn-create-annoucement').modal('toggle')
+      jQuery('#btn-create-annoucement').modal('show')
+  }
+    )})
+</script>
+{% endblock javascripts %}

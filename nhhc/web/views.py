@@ -13,17 +13,14 @@ from django.conf import settings
 from django.http import FileResponse, HttpRequest, HttpResponse,HttpResponseRedirect
 from django.shortcuts import redirect, render, reverse 
 from django.templatetags.static import static
-from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.generic.edit import FormView
-from ipware import get_client_ip
 from loguru import logger
 from web.forms import ClientInterestForm, EmploymentApplicationForm
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
-
 from nhhc.utils.email_templates import APPLICATION_BODY, CLIENT_BODY
 from nhhc.utils.helpers import CachedTemplateView
-
+from nhhc.utils.mailer import PostOffice
 CACHE_TTL: int = settings.CACHE_TTL
 
 
@@ -55,14 +52,12 @@ class EmploymentApplicationFormView(FormView):
     success_url = reversed("submitted")
     extra_context = {"title": "Employment Application"}
 
-    4
-
     def form_valid(self, form: EmploymentApplicationForm) -> HttpResponseRedirect:
         """If the form is valid, redirect to the supplied URL."""
         if form.is_valid():
             logger.debug('Form Is Valid')
-            form.save()
-            return HttpResponseRedirect(self.success_url)
+            form.save() 
+            return HttpResponseRedirect(reverse('submitted'))
         else:
             logger.error('Form Is Invalid')
             return HttpResponseRedirect(reverse('employment-application', {"errors": form.errors}))
@@ -358,7 +353,7 @@ def employee_interest(request):
         if form.is_valid():
             form.save()
             send_internal_application_submission_confirmation(form)
-            send_external_application_submission_confirmation(form)
+            PostOffice.send_external_application_submission_confirmation(form)
             return redirect("submitted", permanent=True)
         elif not form.is_valid():
             context["form"] = form

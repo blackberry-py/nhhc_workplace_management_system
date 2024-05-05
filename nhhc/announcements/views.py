@@ -7,7 +7,9 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
+from django.views.generic.edit import FormMixin
 from formset.views import FormView
+from django.views import View
 
 # Create your views here.
 
@@ -18,38 +20,27 @@ def app_status(request: HttpRequest) -> HttpResponse:
     pass
 
 
-class AnnoucementsListView(ListView):
+class AnnoucementsListView(FormMixin, ListView):
     model = Announcements
     queryset = Announcements.objects.all().order_by("-date_posted")
     template_name = "annoucements.html"
-    context_object_name = "anouncement"
+    context_object_name = "announcement"
+    success_url = "/announcements"
+    form_class = AnnouncementForm
     paginate_by = 25
+    extra_context = {
+        "modal_title": "Create New Annoucement"
+    }
 
-    def get_context_data(self, **kwargs) -> Dict[str, str]:
-        context = super().get_context_data(**kwargs)
-        context["form"] = AnnouncementForm()
-        return context
+  
 
 
 class AnnouncementFormView(FormView):
     form_class = AnnouncementForm
     model = Announcements
     template_name = "new_.html"
-    success_url = "/profile"
+    success_url = "/announcements"
 
-
-def announcements(request: HttpRequest) -> HttpResponse:
-    context = dict()
-    if request.user.is_staff:
-        announcements = Announcements.objects.all().order_by("-date_posted")
-    else:
-        announcements = Announcements.objects.filter(status="A").order_by.order_by(
-            "-date_posted",
-        )
-    context["announcements"] = announcements
-    context["showSearch"] = True
-    context["form"] = AnnouncementForm()
-    return render(request, "annoucements.html", context)
 
 
 def save_announcement(request: HttpRequest) -> HttpResponse:

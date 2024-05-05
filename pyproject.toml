@@ -95,8 +95,9 @@ isort = "^5.13.2"
 kolo = "^2.23.0"
 
 [tool.poetry.dependencies]
-django-ses = "^4.0.0"
 django-filer-pdf = "^0.0.1"
+python-gnupg = "^0.5.2"
+django-anymail = {extras = ["amazon-ses"], version = "^10.3"}
 
 [build-system]
 requires = ["poetry-core"]

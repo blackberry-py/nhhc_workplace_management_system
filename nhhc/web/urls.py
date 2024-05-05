@@ -11,7 +11,7 @@ urlpatterns = [
     path("", views.HomePageView.as_view(), name="homepage"),
     path("about/", views.AboutUsView.as_view(), name="about"),
     path("client-interest/", views.client_interest, name="client_interest"),
-    path("employment-application/", views.employee_interest, name="application"),
+    path("employment-application/", views.EmploymentApplicationFormView.as_view(), name="application"),
     path("submission-confirmation/", views.submitted, name="submitted"),
     re_path(r"^favicon.ico\/?/$", views.favicon, name="favicon"),
 ]

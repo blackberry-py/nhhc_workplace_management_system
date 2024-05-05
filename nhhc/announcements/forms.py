@@ -17,9 +17,9 @@ This module provides a convenient way to create and customize announcement forms
 """
 
 from announcements.models import Announcements
-from crispy_forms.bootstrap import FormActions, Modal
+from crispy_forms.bootstrap import FormActions, Modal, InlineRadios
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Button, Column, Row, Submit
+from crispy_forms.layout import Button, Column, Row, Submit, Layout
 from django import forms
 
 
@@ -46,7 +46,6 @@ class AnnouncementForm(forms.ModelForm):
         self.helper.form_id = "announcement-form"
         self.helper.form_method = "post"
         self.helper.layout = Layout(
-            Modal(
                 Row(
                     Column(
                         "announcement_title",
@@ -82,10 +81,6 @@ class AnnouncementForm(forms.ModelForm):
                             css_class="btn btn-danger",
                             onClick="confirmAnnouncementDraft",
                         ),
-                    )
+                    ), css_class="modal-footer"
                 ),
-                css_id="new-annoucement-modal",
-                title="Create New Announcement",
-                title_class="w-100 text-center",
-            ),
         )

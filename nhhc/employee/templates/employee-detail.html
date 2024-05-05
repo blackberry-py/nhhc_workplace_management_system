@@ -187,7 +187,7 @@
           </div>
 
           <div class="w-full text-center">
-            {% if request.user.is_superuser %}
+            {% if request.user.is_staff %}
               <button id="terminate-employee-btn" onclick="confirmTermination({{ employee.id }})" class="btn btn-danger" >Terminate Employment</button>
             {% endif %}
             <a  class="btn btn-secondary" href="{% url 'roster' %}">Back to Employee Roster</a>

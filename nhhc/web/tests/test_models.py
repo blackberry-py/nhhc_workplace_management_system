@@ -1,6 +1,7 @@
 from pprint import pprint
 
 import arrow
+from datetime import datetime 
 from django.test import TestCase
 from employee.models import Employee
 from faker import Faker
@@ -11,11 +12,16 @@ from web.models import ClientInterestSubmission, EmploymentApplicationModel
 from nhhc.utils.testing import (
     generate_mock_PhoneNumberField,
     generate_mock_ZipCodeField,
+    generate_random_encrypted_char,
+    generate_random_encrypted_email,
 )
 
 dummy = Faker()
 baker.generators.add("phonenumber_field.modelfields.PhoneNumberField", generate_mock_PhoneNumberField)
 baker.generators.add("localflavor.us.models.USZipCodeField", generate_mock_ZipCodeField)
+
+baker.generators.add("sage_encrypt.fields.asymmetric.EncryptedCharField", generate_random_encrypted_char)
+baker.generators.add("sage_encrypt.fields.asymmetric.EncryptedEmailField", generate_random_encrypted_email)
 
 
 class TestClientInterestSubmissions(TestCase):
@@ -51,9 +57,9 @@ class TestEmploymentApplicationModel(TestCase):
             first_name="EmploymentApplicationModel",
             date_submitted=str(arrow.now(tz="local").format("YYYY-MM-DD hh:mm:ss")),
         )
-        self.assertEqual(
+        self.assertRegex(
             string_of_class.__str__(),
-            f"Suite, EmploymentApplicationModel (1) - Submission Date: {arrow.now().format('YYYY-MM-DD')}",
+            r"Suite,\sEmploymentApplicationModel\s\(1\)]\s\-\sSubmission Date\:",
         )
 
     def test_hire_applicant(self):

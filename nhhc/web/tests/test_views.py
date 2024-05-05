@@ -1,27 +1,27 @@
 from http import HTTPStatus
-
+from django.urls import reverse
 from django.test import Client, RequestFactory, TestCase, override_settings
-from web.views import about, index
-
+from web.views import AboutUsView, HomePageView
 
 class TestViews(TestCase):
-    @override_settings(STORAGE_DESTINATION="testing")
     def setUp(self):
-        self.client = Client()
+       self.home_request = RequestFactory().get(reverse('homepage'))
+       self.homeview = HomePageView()
+       self.homeview.setup(self.home_request)
+       self.about_request = RequestFactory().get(reverse('about'))
+       self.aboutview = AboutUsView()
+       self.aboutview.setup(self.about_request)
+       
 
-    # def test_index_happy_path(self):
-    #     # Create a request object
-    #     response = self.client.get("/")
-    #     self.assertEqual(response.status_code, 200)
+    def test_get_homepage(self):
+        response = HomePageView.as_view()(self.about_request)
+        self.assertEqual(response.status_code, 200)
 
-    # def test_about_happy_path(self):
-    #     # Create a request object
-    #     response = self.client.get("/about")
-    #     self.assertEqual(response.status_code, 200)
-
+    def test_get_about_page(self):
+        response = AboutUsView.as_view()(self.about_request)
+        self.assertEqual(response.status_code, 200)
 
 class RobotsTxtTests(TestCase):
-    @override_settings(STORAGE_DESTINATION="testing")
     def setUp(self):
         self.client = Client()
 

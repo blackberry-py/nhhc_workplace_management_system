@@ -30,7 +30,7 @@ class CustomLoginView(LoginView):
                 return resolve('password/change/', {"first_login": True})
             elif arrow.get(user_profile.last_password_change).shift(months=+3)  >= arrow.now():
                 logger.debug('90+ Day Password Detected - Redirecting to Change')
-                return resolve('password/change/w3', {"90_day_change": True})
+                return resolve('password/change/', {"90_day_change": True})
             else:
                 return super().success_url
         except Exception as e: 

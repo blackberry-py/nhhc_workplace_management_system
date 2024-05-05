@@ -19,7 +19,7 @@ Note: The module also includes choices for services, mobility, and prior experie
 
 
 from typing import Dict
-
+from datetime import datetime
 from arrow import Arrow, now
 from django.contrib.auth.hashers import make_password
 from django.db import models
@@ -177,7 +177,7 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
     """
 
     def __str__(self):
-        return f"{self.last_name}, {self.first_name} ({self.pk}) - Submission Date: {Arrow.get(self.date_submitted).format('YYYY-MM-DD')}"
+        return f"{self.last_name}, {self.first_name} ({self.pk}) - Submission Date: {datetime.date(self.date_submitted).strftime('%Y-%m-%d')}"
 
     class MOBILITTY(models.TextChoices):
         """

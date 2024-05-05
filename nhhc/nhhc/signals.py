@@ -18,8 +18,18 @@ from compliance.models import Compliance
 from django.db.models import signals
 from employee.models import Employee
 from loguru import logger
+from web.models import EmploymentApplicationModel
+from nhhc.utils.mailer import PostOffice
+from django.forms.models import model_to_dict
+# SECTION - Communication Related Signals
 
+def email_application_confirmation_external(sender: Callable, instance, created, **kwargs) -> None:
+    if created:
+        applicant=model_to_dict(EmploymentApplicationModel.objects.get(pk=instance.pk))
+        logger.info(f"Confirmation Email Sending Triggetred - Beginning Emailto {applicant['email']}")
+        PostOffice.send_external_application_submission_confirmation(applicant)
 
+# SECTION - User Management Signals
 def create_ancillary_profiles_signal(sender: Callable, instance, created, **kwargs) -> None:
     """
     This function is a signal handler that creates ancillary profiles (User Profile and Compliance) for a user when a new user instance is created.
@@ -102,4 +112,9 @@ signals.post_save.connect(
     create_ancillary_profiles_signal,
     sender=Employee,
     dispatch_uid=f"employee.models + {str(uuid4())}",
+)
+signals.post_save.connect(
+    email_application_confirmation_external,
+    sender=EmploymentApplicationModel,
+    dispatch_uid=f"applicantion + {str(uuid4())}",
 )

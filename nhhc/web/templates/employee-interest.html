@@ -53,7 +53,7 @@
 
     <!-- Employment Applicant Start -->
     <section id="interest-form" class="contact spad mx-auto">
-        <form class="frontend-form" id="employment-application"/>
+        <form class="frontend-form" id="employment-application" method="POST"/>
 
         {% csrf_token %}
         {% crispy form %}

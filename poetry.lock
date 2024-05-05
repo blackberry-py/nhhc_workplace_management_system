@@ -935,6 +935,28 @@ mfa = ["qrcode (>=7.0.0)"]
 saml = ["python3-saml (>=1.15.0,<2.0.0)"]
 
 [[package]]
+name = "django-anymail"
+version = "10.3"
+description = "Django email backends and webhooks for Amazon SES, Brevo (Sendinblue),     MailerSend, Mailgun, Mailjet, Mandrill, Postal, Postmark, Resend,     SendGrid, SparkPost and Unisender Go"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "django_anymail-10.3-py3-none-any.whl", hash = "sha256:1e72f059e96930d3675d35fe4c61f82b138ae4a7fcb0337be39dcb4823f94a4f"},
+    {file = "django_anymail-10.3.tar.gz", hash = "sha256:35d8ec20b06000af3c1638492e32f416fd1a584f0a572cded03f1bc570169ed0"},
+]
+
+[package.dependencies]
+boto3 = {version = "*", optional = true, markers = "extra == \"amazon-ses\""}
+django = ">=2.0"
+requests = ">=2.4.3"
+urllib3 = ">=1.25.0"
+
+[package.extras]
+amazon-ses = ["boto3"]
+postal = ["cryptography"]
+resend = ["svix"]
+
+[[package]]
 name = "django-appconf"
 version = "1.0.6"
 description = "A helper class for handling configuration defaults of packaged apps gracefully."
@@ -1052,19 +1074,6 @@ pillow-heif = {version = "*", optional = true, markers = "extra == \"heif\""}
 
 [package.extras]
 heif = ["pillow-heif"]
-
-[[package]]
-name = "django-filer-pdf"
-version = "0.0.1"
-description = "A django-filer plugin for PDF file support."
-optional = false
-python-versions = "*"
-files = [
-    {file = "django-filer-pdf-0.0.1.tar.gz", hash = "sha256:41e08d4d584b987b8dbac3d072ebc4cbf53c144571df7383bdd1df051318414c"},
-]
-
-[package.dependencies]
-django-filer = ">0.9a2"
 
 [[package]]
 name = "django-filter"
@@ -5266,4 +5275,4 @@ test = ["pytest"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "4fee440f42d6fa45bf1159fe5fc7ad27812d7e921561a4881fa78d3f4a93ffbb"
+content-hash = "8e0ef35eac2ca5b4b6385011495482df50c434639fcc77c5927c817403f88616"

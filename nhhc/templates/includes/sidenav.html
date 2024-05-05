@@ -38,7 +38,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if request.path == '/announcements' %} active {% endif %}" href="{% url 'coming-soon' %}">
+            <a class="nav-link {% if request.path == '/exceptions' %} active {% endif %}" href="{% url 'coming-soon' %}">
               <i class="ni ni-calendar-grid-58 text-purple"></i>
               <span class="nav-link-text">Timesheet Exceptions</span>
             </a>
@@ -93,16 +93,12 @@
             </li>
         {% else %}
         {% endif %}
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'account_logout' %}">
-            <i class="ni ni-curved-next text-yellow"></i>
-            <span class="nav-link-text">Log Off</span>
-          </a>
-        </li>
+    
       </ul>
       <div class="d-flex justify-content-center flex-column">
         <iframe src="https://status.netthandshome.care/badge?theme=dark" width="250" height="30" frameborder="0" scrolling="no"></iframe>
       </div>
     </div>
+  </div>
   </div>
 </nav>

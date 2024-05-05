@@ -43,13 +43,34 @@ ENVIRONMENT_FLOAT = True
 ENVIRONMENT_NAME = os.environ["ENVIRONMENT_NAME"]
 ENVIRONMENT_COLOR = os.environ["ENVIRONMENT_COLOR"]
 REQUEST_BASE_URL = os.environ["REQUEST_BASE_URL"]
-RESEND_EMAIL_API_KEY = os.environ["RESEND_API_KEY"]
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# SECTION - Email Communication 
+if not DEBUG:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+else:
+    EMAIL_BACKEND = "anymail.backends.amazon_ses.EmailBackend"
 EMAIL_HOST = os.environ["EMAIL_SERVER"]
 EMAIL_USE_TLS = True
 EMAIL_PORT = os.environ["EMAIL_TSL_PORT"]
 EMAIL_HOST_USER = os.environ["EMAIL"]
 EMAIL_HOST_PASSWORD = os.environ["EMAIL_ACCT_PASSWORD"]
+AWS_SES_SECRET_ACCESS_KEY = os.environ['AWS_SES_SECRET_ACCESS_KEY']
+
+ANYMAIL = {
+
+    "AMAZON_SES_CLIENT_PARAMS": {
+        # example: override normal Boto credentials specifically for Anymail
+        "aws_access_key_id": os.environ['AWS_SES_ACCESS_KEY_ID'],
+        "aws_secret_access_key": os.environ['AWS_SES_SECRET_ACCESS_KEY'],
+        "region_name": "us-east-1",
+        # override other default options
+        "config": {
+            "connect_timeout": 30,
+            "read_timeout": 30,
+        }
+}
+}
+#!
+
 APPEND_SLASH = True
 CRISPY_ALLOWED_TEMPLATE_PACKS = (
     "bootstrap",
@@ -92,13 +113,14 @@ INSTALLED_APPS = [
     "corsheaders",
     "easy_thumbnails",
     "filer",
-    "filer_pdf",
+    # "filer_pdf",
     "robots",
     # "IpWhitelister",
     "health_check",  # required
     "health_check.db",  # stock Django health checkers
     "health_check.cache",
     "sage_encrypt",
+     "anymail",
     "health_check.storage",
     "health_check.contrib.migrations",
     "debug_toolbar",
@@ -465,8 +487,7 @@ logger.add(
     backtrace=True,
     serialize=True,
 )
-logger.add(sys.stdout, format=LOG_FORMAT, colorize=True, diagnose=True, catch=True, backtrace=True, level="DEBUG")
-logger.add(DEBUG_LOG_FILE, format=LOG_FORMAT, colorize=True, diagnose=True, catch=True, backtrace=True, level="DEBUG")
+# logger.add(DEBUG_LOG_FILE, format=LOG_FORMAT, colorize=True, diagnose=True, catch=True, backtrace=True, level="DEBUG")
 logger.add(PRIMARY_LOG_FILE, colorize=True, format=LOG_FORMAT, diagnose=False, catch=True, backtrace=False, level="INFO")
 logger.add(LOGTAIL_HANDLER, colorize=True, format=LOG_FORMAT, diagnose=False, catch=True, backtrace=False, level="DEBUG")
 REQUEST_LOG_USER = True
