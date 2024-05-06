@@ -50,7 +50,7 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
     Methods:
     - post(request: HttpRequest) -> None: Method to post an announcement instance.
     - archive() -> None: Method to delete an announcement instance.
-    - repost() -> None: Method to repost an announcement instance.
+    - update() -> None: Method to update an announcement instance.
 
     Meta:
     - db_table: "announcements"
@@ -141,9 +141,9 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
         except Exception as e:
             logger.error(f"ERROR: Unable to delete {self.pk} - {e}")
 
-    def repost(self) -> None:
+    def update(self,announcement_title,message, message_type, status ) -> None:
         """
-        Reposts an annoucemen t post by updating the date_posted, status, and saving the changes.
+        Updates all attributes of Anonucement Instance  and saves the changes.
 
         Args
         - self: the current instance of the post
@@ -154,8 +154,11 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
         Logs a success message if the repost is successful, otherwise logs an error message.
         """
         try:
+            self.message = message
+            self.announcement_title = announcement_title
+            self.message_type = message_type
             self.date_posted = NOW
-            self.status = self.STATUS.ACTIVE
+            self.status = status
             self.save()
             logger.success(f"Succesfully reposted {self.pk}")
         except Exception as e:

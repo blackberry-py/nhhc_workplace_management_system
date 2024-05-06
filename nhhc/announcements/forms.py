@@ -17,10 +17,104 @@ This module provides a convenient way to create and customize announcement forms
 """
 
 from announcements.models import Announcements
-from crispy_forms.bootstrap import FormActions, Modal, InlineRadios
+from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Button, Column, Row, Submit, Layout
+from crispy_forms.layout import Button, Column, Row, Submit, Layout, HTML
 from django import forms
+from tinymce.widgets import TinyMCE
+
+
+class AnnouncementDetailsForm(forms.ModelForm):
+    """
+    A form for displaying and updating announcement details.
+
+    This form allows users to view and edit the details of an announcement, burt also view the metadata such as posting date, posted by, 
+
+    Attributes:
+        model (Model): The model associated with the form (Announcements).
+        fields (str): The fields to include in the form (all fields).
+        widgets (dict): Custom widgets for specific form fields.
+    """
+    model = Announcements
+    fields = "__all__"
+    widgets = {
+        'message': TinyMCE(content_language="en"),
+        'message_type': forms.RadioSelect
+    }
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_action = "/"
+        self.helper.form_id = "announcement-form"
+        self.helper.form_method = "post"
+        self.helper.layout = Layout(
+                
+                        Row(
+                    HTML("""
+                <div class="form-group col-4 mb-0">
+            <label class="form-label">Post Status</label>
+            <h5 class="textinput form-control" readonly>{{ announcement.status }}</h5>
+            </div>
+                            """),
+                Column(
+                    "announcement_title",
+                    css_class="form-group col-lg-6 mb-0 editable ",
+                    css_id="announcement_title",
+                ),
+                Column(
+                    "message_type",
+                    css_class="form-group col-lg-4 mb-0 editable ",
+                    css_id="message_type",
+                ),
+                css_class="form-row ",
+            ),
+                Row(
+                Column(
+                    "message",
+                    css_class="form-group col-12 mb-0 editable form-text-area",
+                    css_id="message",
+                ),
+                css_class="form-row ",
+            ),
+            HTML("""
+<hr class="uk-divider-icon"/>
+                    <h4> Post Detakils</h4>
+                    """
+                    ), 
+                Row(
+                        HTML("""
+                <div class="form-group col-6 mb-0">
+            <label class="form-label">Posted By</label>
+            <h5 class="textinput form-control" readonly>{{ announcement.posted_by.username }}</h5>
+            </div>
+                            """),
+                                                    HTML("""
+                <div class="form-group col-6 mb-0">
+            <label class="form-label">Posted on</label>
+            <h5 class="textinput form-control" readonly>{{ announcement.posted_by.date_posted | date 'd, m, y hh:mm }}</h5>
+            </div>
+                            """),
+
+                css_class="form-row ",
+            ),
+            Row(
+                        FormActions(
+                    Submit(
+                        "submit",
+                        "Update Announcement",
+                        onClick="confirmAnnouncementPost",
+                    ),
+                    Button("cancel", "Cancel", css_class="btn btn-dark uk-modal-close"),
+                                Button(
+                        "submit",
+                        "Archive Annoucement",
+                        css_class="btn btn-danger",
+                        onClick="confirmAnnouncementArchive",
+                    ),
+                ), css_class="uk-text-right uk-modal-footer"
+            ),
+            )
 
 
 class AnnouncementForm(forms.ModelForm):
@@ -37,6 +131,10 @@ class AnnouncementForm(forms.ModelForm):
 
         model = Announcements
         fields = ("message", "announcement_title", "message_type")
+        widgets = {
+            'message': TinyMCE(content_language="en"),
+            'message_type': forms.RadioSelect
+        }
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user", None)
@@ -53,7 +151,7 @@ class AnnouncementForm(forms.ModelForm):
                         css_id="announcement_title",
                     ),
                     Column(
-                        InlineRadios("message_type"),
+                        "message_type",
                         css_class="form-group col-lg-4 mb-0 editable ",
                         css_id="message_type",
                     ),
@@ -74,13 +172,13 @@ class AnnouncementForm(forms.ModelForm):
                             "Post Announcement",
                             onClick="confirmAnnouncementPost",
                         ),
-                        Button("cancel", "Cancel", css_class="btn btn-danger"),
+                        Button("cancel", "Cancel", css_class="btn btn-danger uk-modal-close"),
                         Button(
                             "submit",
                             "Save Draft",
                             css_class="btn btn-danger",
                             onClick="confirmAnnouncementDraft",
                         ),
-                    ), css_class="modal-footer"
+                    ), css_class="uk-text-right uk-modal-footer"
                 ),
         )

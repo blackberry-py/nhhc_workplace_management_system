@@ -2,12 +2,17 @@
 {% load static %}
 {% block title %} Announcements {% endblock title %}
 {% block content %}
+<link href="{% static 'tinymce/css/prism.css' %}" rel="stylesheet">
 
 <style>
   .popOver {
     z-index: 1100;
   }
+  .hide-me {
+    display: none;
+  }
 </style>
+
 <div class="header bg-purple pb-6">
   <div class="container-fluid">
     <div class="header-body">
@@ -35,7 +40,7 @@
           <!-- Search Bar -->
           {% if request.user.is_staff %}
           <div class="popOver col-lg-3 text-right">
-            <button data-toggle="modal" id="btn-create-annoucement" data-target="#new-annoucement-modal" class="btn btn-lg btn-neutral">Create New Announcement</button>
+            <button uk-toggle="target: #new-annoucement-modal" id="btn-create-annoucement" data-target="#new-annoucement-modal" class="btn btn-lg btn-neutral">Create New Announcement</button>
           </div>
         {% endif %}
         </div>
@@ -126,19 +131,18 @@
         </div>
  {% include "include/_modal.html" %}
 
+ <script src="{% static 'tinymce/js/prism.js' %}"></script>
+
+
 {% endblock content %}
 
 <!-- Specific JS goes HERE -->
 
 {% block javascripts %}
 <script defer>
-  $(document).ready(function () {
-
-    $('#btn-create-annoucement').on('click', function() {
-      console.log('Create Button cliciked') 
-      jQuery('#btn-create-annoucement').modal('toggle')
-      jQuery('#btn-create-annoucement').modal('show')
+  function toggleCreateBtn(){
+  $('#btn-create-annoucement').toggleClass('hide-me')
   }
-    )})
+$('#new-annoucement-modal').on('show', toggleCreateBtn).on('hidden', toggleCreateBtn)
 </script>
 {% endblock javascripts %}

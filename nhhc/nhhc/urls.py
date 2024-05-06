@@ -111,6 +111,7 @@ urlpatterns: List[Union[RoutePattern, RegexPattern]] = [
         include("health_check.urls"),
     ),
     path("", include(employee.urls)),
+    path('tinymce/', include('tinymce.urls')),
     path("", include(compliance.urls)),
     path("api-auth/", include("rest_framework.urls")),
     path("", include(announcements.urls)),

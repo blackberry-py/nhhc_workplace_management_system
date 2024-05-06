@@ -1,15 +1,17 @@
 import json
 from typing import Dict
 
-from announcements.forms import AnnouncementForm
+from announcements.forms import AnnouncementForm, AnnouncementDetailsForm
 from announcements.models import Announcements
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import FormMixin
 from formset.views import FormView
 from django.views import View
+from django.urls import reverse
+from django.views.generic.edit import UpdateView
+from django.forms.models import model_to_dict
 
 # Create your views here.
 
@@ -32,6 +34,16 @@ class AnnoucementsListView(FormMixin, ListView):
         "modal_title": "Create New Annoucement"
     }
 
+class AnnoucementsUpdateView(UpdateView):
+    form_class = AnnouncementDetailsForm
+    model = Announcements
+    template_name = "annoucements-details.html"
+
+    def get_success_url(self) -> str:
+        obj = model_to_dict(self.get_object())
+        obj_id = obj["id"]
+        return reverse('announcement_detail', pk = obj_id)
+    
   
 
 

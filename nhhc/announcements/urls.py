@@ -9,4 +9,5 @@ urlpatterns = [
         views.save_announcement,
         name="create-announcement",
     ),
+    path("announcement/<int:pk>/", views.AnnoucementsUpdateView.as_view(), name="announcement_detail")
 ]

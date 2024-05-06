@@ -79,8 +79,25 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = (
     "bootstrap4",
 )
 SITE_ID = int(os.environ["SITE_ID"])
-
+TINYMCE_JS_URL = 'https://cdn.tiny.cloud/1/no-api-key/tinymce/7/tinymce.min.js'
+TINYMCE_COMPRESSOR = False
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+TINYMCE_SPELLCHECKER = True 
+TINYMCE_DEFAULT_CONFIG = {
+    "theme": "silver",
+    "height": 300,
+    "menubar": True,
+    "plugins": "advlist,autolink,lists,link,image,charmap,print,preview,anchor,"
+    "searchreplace,visualblocks,code,fullscreen,spellchecker, insertdatetime,media,table,paste,"
+    "code,help,wordcount",
+    "toolbar": "undo redo | formatselect | "
+    "bold italic backcolor | alignleft aligncenter "
+    "alignright alignjustify | bullist numlist outdent indent | "
+    "removeformat | help",
+    "language" : "en",
+      "resize": False
+
+}
 INSTALLED_APPS = [
     "kolo",
     "whitenoise.runserver_nostatic",
@@ -112,6 +129,7 @@ INSTALLED_APPS = [
     "captcha",
     "corsheaders",
     "easy_thumbnails",
+    "tinymce", 
     "filer",
     # "filer_pdf",
     "robots",
