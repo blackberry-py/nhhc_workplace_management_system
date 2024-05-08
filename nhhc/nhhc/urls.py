@@ -19,15 +19,20 @@ from django.urls.resolvers import RegexPattern, RoutePattern
 from django.views.decorators.cache import cache_page
 from loguru import logger
 from web.sitemaps import StaticViewSitemap
-from django.contrib.auth.decorators import login_required 
+from django.contrib.auth.decorators import login_required
+
 # SECTION - Sitemap
 sitemaps: Dict[str, Sitemap] = {"static": StaticViewSitemap}
-# SECTION
+#!SECTION
+
+# SECTION - Health Check
 
 HEALTH_CHECK: Dict[str, int] = {
     "DISK_USAGE_MAX": 90,  # percent
     "MEMORY_MIN": 100,  # in MB
 }
+
+#!SECTION
 
 
 # SECTION - Sitewide Errort Handlers
@@ -95,12 +100,14 @@ handler400: Callable = bad_request_handler
 handler403: Callable = permission_denied_handler
 handler404: Callable = page_not_found_handler
 handler500: Callable = server_error_handler
-# SECTION
+#!SECTION
+
+# SECTION - Master URL Route Patterns
 
 urlpatterns: List[Union[RoutePattern, RegexPattern]] = [
     path("__debug__/", include("debug_toolbar.urls")),
-    path("control-center/", admin.site.urls,name="admin"),
-    path("", include(authentication.urls)),
+    path("control-center/", admin.site.urls, name="admin"),
+    # path("", include(authentication.urls)),
     re_path(r"^compliance/", login_required(include("filer.urls"))),
     re_path(r"^", include("filer.server.urls")),
     path("", include(portal.urls)),
@@ -111,7 +118,7 @@ urlpatterns: List[Union[RoutePattern, RegexPattern]] = [
         include("health_check.urls"),
     ),
     path("", include(employee.urls)),
-    path('tinymce/', include('tinymce.urls')),
+    path("tinymce/", include("tinymce.urls")),
     path("", include(compliance.urls)),
     path("api-auth/", include("rest_framework.urls")),
     path("", include(announcements.urls)),
@@ -119,3 +126,4 @@ urlpatterns: List[Union[RoutePattern, RegexPattern]] = [
     re_path(r"^robots\.txt\/?", include("robots.urls")),
     re_path("", include("django_prometheus.urls")),
 ]
+#!SECTION

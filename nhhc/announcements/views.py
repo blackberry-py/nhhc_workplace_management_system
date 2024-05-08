@@ -10,9 +10,10 @@ from django.views.generic.edit import FormMixin
 from formset.views import FormView
 from django.views import View
 from django.urls import reverse
-from django.views.generic.edit import UpdateView
+from django.views.generic.edit import UpdateView, FormMixin
 from django.forms.models import model_to_dict
-
+from django.views.decorators.http import require_POST
+from loguru import logger
 # Create your views here.
 
 
@@ -22,29 +23,29 @@ def app_status(request: HttpRequest) -> HttpResponse:
     pass
 
 
+
 class AnnoucementsListView(FormMixin, ListView):
     model = Announcements
-    queryset = Announcements.objects.all().order_by("-date_posted")
+    queryset = Announcements.objects.select_related("posted_by").all().order_by("-date_posted")
     template_name = "annoucements.html"
-    context_object_name = "announcement"
+    context_object_name = "announcements"
     success_url = "/announcements"
     form_class = AnnouncementForm
     paginate_by = 25
-    extra_context = {
-        "modal_title": "Create New Annoucement"
-    }
+    extra_context = {"modal_title": "Create New Annoucement"}
 
-class AnnoucementsUpdateView(UpdateView):
+
+class AnnoucementsUpdateView( UpdateView):
     form_class = AnnouncementDetailsForm
     model = Announcements
     template_name = "annoucements-details.html"
+    context_object_name = "announcement"
+    extra_context = { }
 
     def get_success_url(self) -> str:
         obj = model_to_dict(self.get_object())
         obj_id = obj["id"]
-        return reverse('announcement_detail', pk = obj_id)
-    
-  
+        return reverse("announcement_detail", pk=obj_id)
 
 
 class AnnouncementFormView(FormView):
@@ -54,21 +55,21 @@ class AnnouncementFormView(FormView):
     success_url = "/announcements"
 
 
-
+@require_POST
 def save_announcement(request: HttpRequest) -> HttpResponse:
     new_announcement = Announcements(request.POST)
-    new_announcement.save()
+    new_announcement.create_draft()
     return HttpResponse(status=201)
 
 
+@require_POST
 def post_announcement(request: HttpRequest, pk: int) -> HttpResponse:
     body_unicode = request.data.decode("utf-8")
     body = json.loads(body_unicode)
     pk = body["pk"]
     if pk is None:
         new_announcement = Announcements(request.POST)
-        new_announcement.status = "A"
-        new_announcement.save()
+        new_announcement.post()
         return HttpResponse(status=201)
 
     else:
@@ -78,10 +79,20 @@ def post_announcement(request: HttpRequest, pk: int) -> HttpResponse:
         return HttpResponse(status=204)
 
 
+@require_POST
 def delete_announcement(request: HttpRequest) -> HttpResponse:
-    body_unicode = request.data.decode("utf-8")
-    body = json.loads(body_unicode)
-    pk = body["pk"]
-    new_announcement = Announcements.objects.get(id=pk)
-    new_announcement.status = "X"
-    return HttpResponse(status=204)
+        pk = int(request.POST.get("pk"))
+        logger.debug(pk)
+        if pk is not None:
+            archived_announcement = Announcements.objects.get(id=pk)
+            archived_announcement.archive()
+            return HttpResponse(status=204)
+        else: 
+            logger.error('No Annoiucement FOunbd')
+            return HttpResponse(status=404)
+    # elif "announcement_title" in request.POST.keys():
+    #     form = AnnouncementDetailsForm(request.POST)
+    #     if form.is_valid():
+    #         archived_announcement = Announcements.objects.get(pk=form.cleaned_data.get('id'))
+    #         archived_announcement.archive()
+    #         return HttpResponse(status=204)

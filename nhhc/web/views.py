@@ -10,8 +10,8 @@ from string import Template
 from typing import Union
 
 from django.conf import settings
-from django.http import FileResponse, HttpRequest, HttpResponse,HttpResponseRedirect
-from django.shortcuts import redirect, render, reverse 
+from django.http import FileResponse, HttpRequest, HttpResponse, HttpResponseRedirect
+from django.shortcuts import redirect, render, reverse
 from django.templatetags.static import static
 from django.views.decorators.cache import cache_page
 from django.views.generic.edit import FormView
@@ -21,6 +21,7 @@ from web.models import ClientInterestSubmission, EmploymentApplicationModel
 from nhhc.utils.email_templates import APPLICATION_BODY, CLIENT_BODY
 from nhhc.utils.helpers import CachedTemplateView
 from nhhc.utils.mailer import PostOffice
+
 CACHE_TTL: int = settings.CACHE_TTL
 
 
@@ -55,13 +56,12 @@ class EmploymentApplicationFormView(FormView):
     def form_valid(self, form: EmploymentApplicationForm) -> HttpResponseRedirect:
         """If the form is valid, redirect to the supplied URL."""
         if form.is_valid():
-            logger.debug('Form Is Valid')
-            form.save() 
-            return HttpResponseRedirect(reverse('submitted'))
+            logger.debug("Form Is Valid")
+            form.save()
+            return HttpResponseRedirect(reverse("submitted"))
         else:
-            logger.error('Form Is Invalid')
-            return HttpResponseRedirect(reverse('employment-application', {"errors": form.errors}))
-
+            logger.error("Form Is Invalid")
+            return HttpResponseRedirect(reverse("employment-application", {"errors": form.errors}))
 
 
 @cache_page(CACHE_TTL)

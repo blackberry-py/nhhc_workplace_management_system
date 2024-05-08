@@ -11,6 +11,10 @@
   .hide-me {
     display: none;
   }
+  td {
+    word-wrap: break-word;
+  }
+
 </style>
 
 <div class="header bg-purple pb-6">
@@ -83,11 +87,11 @@
               <tbody class="list">
                 {% for anouncement in announcements %}
                   {% if anouncement.status == 'D' %}
-                    <tr class="client-submission draft">
+                    <tr class="announcement draft">
                   {% elif anouncement.status == 'A' %}
-                    <tr class="client-submission active">
+                    <tr class="announcement active">
                   {% elif anouncement.status == 'X' %}
-                    <tr class="client-submission deleted">
+                    <tr class="announcement deleted">
                   {% endif %}
                   <td>
                     {{ anouncement.get_status_display }}
@@ -100,11 +104,10 @@
                   </td>
 
                   <td class="message">
-                    {{ anouncement.message }}
+                    {{ anouncement.message | truncatewords:10 }}
                   </td>
-
                   <td>
-                    <a class="btn btn-secondary" href="{{ url }}">Edit</a>
+                    <a class="btn btn-secondary" href="{% url 'announcement_detail' pk=anouncement.id %}">Edit</a>
                   </td>
                   </tr>
                 {% endfor %}
@@ -135,7 +138,7 @@
 
 
 {% endblock content %}
-
+ 
 <!-- Specific JS goes HERE -->
 
 {% block javascripts %}
@@ -144,5 +147,39 @@
   $('#btn-create-annoucement').toggleClass('hide-me')
   }
 $('#new-annoucement-modal').on('show', toggleCreateBtn).on('hidden', toggleCreateBtn)
+
+
+function confirmSaveAsADraft  (title, message, message_type) {
+  let data = {
+      title: title,
+      message: message,
+      message_type: message_type,
+  };
+  data = JSON.stringify(data);
+  Swal.fire({
+      title: "Confirm Save as A Draft",
+      html: '<p>You are about to save this annoucement as <strong>Draft</strong>.\n It will <strong>Not Be Seen</strong> by anyone who is not a CareNett Admin User. </p> ',
+      showCancelButton: true,
+      icon: "warning",
+      input: "text",
+      confirmButtonText: "Save Draft",
+      showLoaderOnConfirm: true,
+      preConfirm: (input) => {
+          try {
+              $.ajax({
+                  url: "announcement/draft/",
+                  data: data,
+                  type: "POST",
+                  success: ntfy(title = "Saved!", message = "New Announcement Draft Saved", type = "success"),
+              });
+          } catch (error) {
+              Swal.showValidationMessage(`Request failed: ${error}`);
+
+          }
+
+      }, allowOutsideClick: () => !Swal.isLoading(),
+
+  })
+}
 </script>
 {% endblock javascripts %}

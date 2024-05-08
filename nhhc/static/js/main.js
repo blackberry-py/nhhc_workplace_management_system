@@ -248,7 +248,7 @@ $(document).ready(function () {
 //     };
 //     console.log(`Hiring Applicant with primary key ${pk}`);
 
-//     var request = $.post("/rejected", data)
+//     var request = $.post("/applicant/reject/", data)
 //         .done((response) => {
 //             if (response.success) {
 //                 console.log(response);
@@ -275,65 +275,154 @@ $(document).ready(function () {
 // }
 (function ($) {
 
-    function saveAnnouncementDraft(title, message, message_type) {
+    function confirmSaveAsADraft(title, message, message_type) {
         let data = {
             title: title,
             message: message,
             message_type: message_type,
         };
         data = JSON.stringify(data);
-        $.ajax({
-            url: "/create-announcement-draft",
-            data: data,
-            type: "POST",
-            success: ntfy(title = "Saved!", message = "New Announcement Draft Saved", type = "success"),
-        });
-    }
-
-
-    function postAnnouncement(title, message, message_type) {
-        let data = {
-            title: title,
-            message: message,
-            message_type: message_type,
-        };
-        data = JSON.stringify(data);
-        $.ajax({
-            url: "/create-announcement-draft",
-            data: data,
-            type: "POST",
-            success: ntfy("Draft Created"),
-        });
-    }
-    // !SECTION
-
-    /*-------------------------
-    // SECTION - Modal Ajax Notification - Sweet Alert2 Library
-
-    -----------------------------*/
-
-    function confirmTermination(pk) {
-        let sentData = {
-            pk: pk,
-        };
-        console.log(`Sending Termination Request with Employee ID ${pk}`);
-
         Swal.fire({
-            title: "Confirm Termination",
-            html: '<p>You are about to terminate employment for this employee.\n It will lock them out of their account and archive their compliance profile.</p> <p><strong>Note: </strong>Archived profiles will still have the documents available, but cannot be modified.</p>  <br/> <p><strong>Please type "terminate" to confirm employment termination</strong></p> ',
+            title: "Confirm Save as A Draft",
+            html: '<p>You are about to save this annoucement as <strong>Draft</strong>.\n It will <strong>Not Be Seen</strong> by anyone who is not a CareNett Admin User. </p> ',
             showCancelButton: true,
             icon: "warning",
             input: "text",
-            confirmButtonText: "Terminate",
+            confirmButtonText: "Save Draft",
             showLoaderOnConfirm: true,
             preConfirm: (input) => {
-                if (input === "terminate") {
+                try {
+                    $.ajax({
+                        url: "/create-announcement-draft",
+                        data: data,
+                        type: "POST",
+                        success: ntfy(title = "Saved!", message = "New Announcement Draft Saved", type = "success"),
+                    });
+                } catch (error) {
+                    Swal.showValidationMessage(`Request failed: ${error}`);
+
+                }
+
+
+            }, allowOutsideClick: () => !Swal.isLoading(),
+
+        })
+    }
+
+        function postAnnouncement(title, message, message_type) {
+            let data = {
+                title: title,
+                message: message,
+                message_type: message_type,
+            };
+            data = JSON.stringify(data);
+            $.ajax({
+                url: "/create-announcement-draft",
+                data: data,
+                type: "POST",
+                success: ntfy("Draft Created"),
+            });
+        }
+        // !SECTION
+
+        /*-------------------------
+        // SECTION - Modal Ajax Notification - Sweet Alert2 Library
+    
+        -----------------------------*/
+
+        function confirmTermination(pk) {
+            let sentData = {
+                pk: pk,
+            };
+            console.log(`Sending Termination Request with Employee ID ${pk}`);
+
+            Swal.fire({
+                title: "Confirm Termination",
+                html: '<p>You are about to terminate employment for this employee.\n It will lock them out of their account and archive their compliance profile.</p> <p><strong>Note: </strong>Archived profiles will still have the documents available, but cannot be modified.</p>  <br/> <p><strong>Please type "terminate" to confirm employment termination</strong></p> ',
+                showCancelButton: true,
+                icon: "warning",
+                input: "text",
+                confirmButtonText: "Terminate",
+                showLoaderOnConfirm: true,
+                preConfirm: (input) => {
+                    if (input === "terminate") {
+                        try {
+                            var request = $.post("/employee/terminate/", sentData, (data, status) => {
+                                Swal.fire({
+                                    title: "Employment Terminated!",
+                                    icon: "success",
+                                    text: `Employee Terminated. They have been notified via email.`,
+                                    didClose: () => {
+                                        window.location.reload();
+                                    },
+                                });
+                            });
+                        } catch (error) {
+                            Swal.showValidationMessage(`Request failed: ${error}`);
+                        }
+                    } else {
+                        Swal.showValidationMessage(
+                            'Please type "terminate" exactly to confirm'
+                        );
+                    }
+                },
+                allowOutsideClick: () => !Swal.isLoading(),
+            });
+        }
+
+        function confirmHire(pk) {
+            let sentData = {
+                pk: pk,
+            };
+            console.log(`Hiring Applicant with primary key ${pk}`);
+
+            Swal.fire({
+                title: "Confirm Hire",
+                html: "You are about to start employment and create and employment profile.",
+                showCancelButton: true,
+                icon: "warning",
+                confirmButtonText: "Hire",
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
                     try {
-                        var request = $.post("/terminate", sentData, (data, status) => {
+                        var request = $.post("/applicant/hire/", sentData, (data, status) => {
                             Swal.fire({
-                                title: "Employment Terminated!",
+                                title: "Success!",
                                 icon: "success",
-                                text: `Employee Terminated. They have been notified via email.`,
+                                html: `<h1>Employee Hired.</h1>\n ${data}`,
+                                didClose: () => {
+                                    window.location.href(`/employee/${data.employee_id}`);
+                                },
+                            });
+                        });
+                    } catch (error) {
+                        Swal.showValidationMessage(`Request failed: ${error}`);
+                    }
+                },
+                allowOutsideClick: () => !Swal.isLoading(),
+            });
+        }
+
+        function confirmRejection(pk) {
+            let sentData = {
+                pk: pk,
+            };
+            console.log(`Rejecting Applicant with primary key ${pk}`);
+
+            Swal.fire({
+                title: "Confirm Rejection",
+                text: "You are about to reject this applicant. This will send a email of notifying the applicant",
+                showCancelButton: true,
+                icon: "warning",
+                confirmButtonText: "Reject",
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
+                    try {
+                        var request = $.post("/applicant/reject/", sentData, (data, status) => {
+                            Swal.fire({
+                                title: "Applicant Rejected",
+                                icon: "info",
+                                text: `Applicant rejected. \n They have been  notified by email`,
                                 didClose: () => {
                                     window.location.reload();
                                 },
@@ -342,86 +431,15 @@ $(document).ready(function () {
                     } catch (error) {
                         Swal.showValidationMessage(`Request failed: ${error}`);
                     }
-                } else {
-                    Swal.showValidationMessage(
-                        'Please type "terminate" exactly to confirm'
-                    );
-                }
-            },
-            allowOutsideClick: () => !Swal.isLoading(),
-        });
-    }
+                },
+                allowOutsideClick: () => !Swal.isLoading(),
+            });
+        }
 
-    function confirmHire(pk) {
-        let sentData = {
-            pk: pk,
-        };
-        console.log(`Hiring Applicant with primary key ${pk}`);
+        /*-----------------------
+             Form Auto Copy Phone Number to SMS Contact 
+             _______________________*/
 
-        Swal.fire({
-            title: "Confirm Hire",
-            html: "You are about to start employment and create and employment profile.",
-            showCancelButton: true,
-            icon: "warning",
-            confirmButtonText: "Hire",
-            showLoaderOnConfirm: true,
-            preConfirm: () => {
-                try {
-                    var request = $.post("/hired", sentData, (data, status) => {
-                        Swal.fire({
-                            title: "Success!",
-                            icon: "success",
-                            html: `<h1>Employee Hired.</h1>\n ${data}`,
-                            didClose: () => {
-                                window.location.href(`/employee/${data.employee_id}`);
-                            },
-                        });
-                    });
-                } catch (error) {
-                    Swal.showValidationMessage(`Request failed: ${error}`);
-                }
-            },
-            allowOutsideClick: () => !Swal.isLoading(),
-        });
-    }
 
-    function confirmRejection(pk) {
-        let sentData = {
-            pk: pk,
-        };
-        console.log(`Rejecting Applicant with primary key ${pk}`);
-
-        Swal.fire({
-            title: "Confirm Rejection",
-            text: "You are about to reject this applicant. This will send a email of notifying the applicant",
-            showCancelButton: true,
-            icon: "warning",
-            confirmButtonText: "Reject",
-            showLoaderOnConfirm: true,
-            preConfirm: () => {
-                try {
-                    var request = $.post("/rejected", sentData, (data, status) => {
-                        Swal.fire({
-                            title: "Applicant Rejected",
-                            icon: "info",
-                            text: `Applicant rejected. \n They have been  notified by email`,
-                            didClose: () => {
-                                window.location.reload();
-                            },
-                        });
-                    });
-                } catch (error) {
-                    Swal.showValidationMessage(`Request failed: ${error}`);
-                }
-            },
-            allowOutsideClick: () => !Swal.isLoading(),
-        });
-    }
-
-/*-----------------------
-     Form Auto Copy Phone Number to SMS Contact 
-     _______________________*/
-
-     
-}(jQuery));;
-console.log("Main JS");
+    } (jQuery));;
+    console.log("Main JS");

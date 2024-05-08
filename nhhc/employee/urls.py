@@ -43,10 +43,10 @@ urlpatterns = [
         login_required(views.EmployeeDetail.as_view()),
         name="employee",
     ),
-    path("rejected", csrf_exempt(views.reject), name="reject-application"),
+    path("applicant/reject/", csrf_exempt(views.reject), name="reject-application"),
     path("roster/", login_required(views.EmployeeRoster.as_view()), name="roster"),
-    path("hired", csrf_exempt(views.hire), name="hire-employee"),
-    re_path(r"^accounts/login/$", views.force_pwd_login),
-    path("terminate", csrf_exempt(views.terminate), name="terminate_employee"),
-    path("api", include(router.urls)),  # The API URLs are reused by Django Rest Framework
+    path("applicant/hire/", csrf_exempt(views.hire), name="hire-employee"),
+    # re_path(r"^accounts/login/$", views.force_pwd_login),
+    path("employee/terminate/", csrf_exempt(views.terminate), name="terminate_employee"),
+    path("api", include(router.urls)),
 ]

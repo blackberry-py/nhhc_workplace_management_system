@@ -282,7 +282,7 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
         VIETNAMESE = "VIETNAMESE", _("Vietnamese")
 
     employee_id = models.BigAutoField(primary_key=True)
-    username = models.CharField(max_length=150, unique=False)
+    username = models.CharField(max_length=150, unique=False, db_index=True)
     gender = EncryptedCharField(
         max_length=10485760,
         choices=GENDER.choices,

@@ -1,6 +1,6 @@
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import HTML, Column, Field, Layout, Reset, Row, Submit
+from crispy_forms.layout import HTML, Column, Field, Layout, Reset, Row, Submit, Button
 from django.forms import ModelForm, forms, BooleanField, CheckboxInput
 from django.forms.widgets import DateInput
 from django.urls import reverse
@@ -49,7 +49,7 @@ class EmployeeForm(ModelForm):
             "sms_contact_agreement": _("I AGREE"),
             "phone_sms_identical": _("Same as Contact "),
             "phone": _("Primary Contact Number"),
-            "sms_contact_number": _("Number for Text (SMS) Messaging")
+            "sms_contact_number": _("Number for Text (SMS) Messaging"),
         }
 
     def __init__(self, *args, **kwargs):
@@ -132,7 +132,8 @@ class EmployeeForm(ModelForm):
                 css_class="form-row",
             ),
             HTML("""<hr class="my-4 />"""),
-            HTML("""
+            HTML(
+                """
      <h3 class="small-heading muted-text mb-4">Contact Information</h3>
 
         """,
@@ -177,7 +178,7 @@ class EmployeeForm(ModelForm):
                 Column(
                     "social_security",
                     readonly=True,
-                       css_class="form-group col-lg-4 mb-0 editable ",
+                    css_class="form-group col-lg-4 mb-0 editable ",
                 ),
                 Column(
                     "gender",
@@ -187,132 +188,136 @@ class EmployeeForm(ModelForm):
                 css_class="form-row",
             ),
             Row(
-                    HTML(
-                        """</div>
+                HTML(
+                    """</div>
                  <div class="text-center sms-opt-in">                  <h4>SMS Contact Agreement</h4>
-"""),
-                  HTML("""
+"""
+                ),
+                HTML(
+                    """
 
 <p> The CareNett  provide access to important information and services related to your role with Nett Hands Home Care.  While there is no direct cost to the public imposed by Nett Hands Home Care to utilize the any of the CareNett (including text notification deliveries), STANDARD DATA FEES AND TEXT MESSAGING RATES MAY APPLY BASED ON YOUR PLAN WITH YOUR MOBILE PHONE CARRIER.  As mobile access and text message delivery is subject to your mobile carrier network availability, such access and delivery is not guaranteed.  YOU MAY OPT OUT OF SMS DELIVERY AT ANY TIME VIA THIS PORTAL" 
-</p>"""),              
-                 HTML("""
+</p>"""
+                ),
+                HTML(
+                    """
                  <p>Your access to, and use of, the mobile communication tools and text messaging services (collectively, the “CareNett") is subject to our website Terms of Use and all applicable laws and regulations. <strong> By clicking “I Agree” or otherwise accessing and using CareNett, you accept, without limitation or qualification, the Terms of Use.</strong></p>
-                 """),  
-                
-Column("sms_contact_agreement", css_class="form-group mx-auto col-12 mb-0 "),
-
+                 """
+                ),
+                Column("sms_contact_agreement", css_class="form-group mx-auto col-12 mb-0 "),
                 Row(
-                Column("phone_sms_identical", css_class="form-group col-lg-2 mb-0 "),
-                Column("sms_contact_number", css_class="form-group col-lg-10 mb-0 "),
-            ),
-            HTML("""<hr class="my-4 />"""),
-            HTML(
-                """
+                    Column("phone_sms_identical", css_class="form-group col-lg-2 mb-0 "),
+                    Column("sms_contact_number", css_class="form-group col-lg-10 mb-0 "),
+                ),
+                HTML("""<hr class="my-4 />"""),
+                HTML(
+                    """
         <h3 class="small-heading muted-text mb-4">Emergency Contact</strong></h3>
 
         """,
-            ),
-            Row(
-                Column(
-                    "emergency_contact_first_name",
-                    readonly=True,
-                    css_class="form-group col-lg-4 mb-0 editable ",
                 ),
-                Column(
-                    "emergency_contact_last_name",
-                    readonly=True,
-                    css_class="form-group col-lg-4 mb-0 editable ",
+                Row(
+                    Column(
+                        "emergency_contact_first_name",
+                        readonly=True,
+                        css_class="form-group col-lg-4 mb-0 editable ",
+                    ),
+                    Column(
+                        "emergency_contact_last_name",
+                        readonly=True,
+                        css_class="form-group col-lg-4 mb-0 editable ",
+                    ),
+                    Column(
+                        "emergency_contact_phone",
+                        readonly=True,
+                        css_class="form-group col-lg-4 mb-0 editable  tele-number ",
+                    ),
+                    Column(
+                        "emergency_contact_relationship",
+                        readonly=True,
+                        css_class="form-group col-lg-12 mb-0 editable ",
+                    ),
+                    css_class="form-row",
                 ),
-                Column(
-                    "emergency_contact_phone",
-                    readonly=True,
-                    css_class="form-group col-lg-4 mb-0 editable  tele-number ",
-                ),
-                Column(
-                    "emergency_contact_relationship",
-                    readonly=True,
-                    css_class="form-group col-lg-12 mb-0 editable ",
-                ),
-                css_class="form-row",
-            ),
-            HTML("""<hr class="uk-divider-icon" />"""),
-            HTML(
-                """
+                HTML("""<hr class="uk-divider-icon" />"""),
+                HTML(
+                    """
         <h3 class="small-heading muted-text mb-4">Supporting Documentation</strong></h3>
-
-        """,
-            ),
-            Row(
-                Column(
-                    "cpr_verification",
-                    help_text="Please Upload Photo of an Unexpired CPR Card",
-                    css_class="form-group col-lg-4 mb-0 editable ",
+        <p>If you are a new hire, need to update, or been told you are missing any of these documents. Click button below to access the Document Signing Portal and  the forms digitally</p>
+        """
                 ),
-                Column(
-                    "qualifications_verification",
-                    help_text="Please upload a copy of the document selected in the User Information field - Highest Level of Education/Home Healthcare Qualification",
-                    css_class="form-group col-lg-4 mb-0 editable ",
+                HTML(""" <a href="{% url 'doc_sign' %}"  class="btn btn-lrg btn-warning">Access the Document Signing Portal</a>"""),
+                Row(
+                    Column(
+                        "cpr_verification",
+                        help_text="Please Upload Photo of an Unexpired CPR Card",
+                        css_class="form-group col-lg-4 mb-0 editable ",
+                    ),
+                    Column(
+                        "qualifications_verification",
+                        help_text="Please upload a copy of the document selected in the User Information field - Highest Level of Education/Home Healthcare Qualification",
+                        css_class="form-group col-lg-4 mb-0 editable ",
+                    ),
+                    Column(
+                        "do_not_drive_agreement_attestation",
+                        helptext="<Please Provide a Copy of the",
+                        css_class="form-group col-lg-4 mb-0 editable ",
+                    ),
+                    css_class="form-row",
                 ),
-                Column(
-                    "do_not_drive_agreement_attestation",
-                    helptext="<Please Provide a Copy of the",
-                    css_class="form-group col-lg-4 mb-0 editable ",
+                Row(
+                    Column(
+                        "hca_policy_attestation",
+                        helptext="Please ....",
+                        css_class="form-group col-lg-4 mb-0 editable ",
+                    ),
+                    Column(
+                        "idph_background_check_authorization",
+                        help_text="Please upload a copy of the document selected in the User Information field - Highest Level of Education/Home Healthcare Qualification",
+                        css_class="form-group col-lg-4 mb-0 editable ",
+                    ),
+                    Column(
+                        "job_duties_attestation",
+                        help_text="Please upload a copy of signed job duties",
+                        css_class="form-group col-lg-4 mb-0 editable ",
+                    ),
+                    css_class="form-row",
                 ),
-                css_class="form-row",
-            ),
-            Row(
-                Column(
-                    "hca_policy_attestation",
-                    helptext="Please ....",
-                    css_class="form-group col-lg-4 mb-0 editable ",
-                ),
-                Column(
-                    "idph_background_check_authorization",
-                    help_text="Please upload a copy of the document selected in the User Information field - Highest Level of Education/Home Healthcare Qualification",
-                    css_class="form-group col-lg-4 mb-0 editable ",
-                ),
-                Column(
-                    "job_duties_attestation",
-                    help_text="Please upload a copy of signed job duties",
-                    css_class="form-group col-lg-4 mb-0 editable ",
-                ),
-                css_class="form-row",
-            ),
-            HTML(
-                """
+                HTML(
+                    """
         <h3 class="small-heading muted-text mb-4">Payroll and Tax Information</strong></h3>
 
         """,
-            ),
-            Row(
-                Column(
-                    "irs_w4_attestation",
-                    helptext="Please ....",
-                    css_class="form-group col-lg-4 mb-0 editable ",
                 ),
-                Column(
-                    "state_w4_attestation",
-                    help_text="Please upload a copy of the document selected in the User Information field - Highest Level of Education/Home Healthcare Qualification",
-                    css_class="form-group col-lg-4 mb-0 editable ",
+                Row(
+                    Column(
+                        "irs_w4_attestation",
+                        helptext="Please ....",
+                        css_class="form-group col-lg-4 mb-0 editable ",
+                    ),
+                    Column(
+                        "state_w4_attestation",
+                        help_text="Please upload a copy of the document selected in the User Information field - Highest Level of Education/Home Healthcare Qualification",
+                        css_class="form-group col-lg-4 mb-0 editable ",
+                    ),
+                    css_class="form-row",
                 ),
-                css_class="form-row",
-            ),
-            HTML(
-                """
+                HTML(
+                    """
                              <hr class="uk-divider-icon" />
                              """,
-            ),
-            Row(
-                FormActions(
-                    Submit("save", "Save changes", id="edit-button"),
-                    Reset(
-                        "cancel",
-                        "Cancel",
-                        css_class="btn btn-danger",
-                        id="cancel-edits-btn",
-                    ),
                 ),
-                css_class="form-row",
+                Row(
+                    FormActions(
+                        Submit("save", "Save changes", id="edit-button"),
+                        Reset(
+                            "cancel",
+                            "Cancel",
+                            css_class="btn btn-danger",
+                            id="cancel-edits-btn",
+                        ),
+                    ),
+                    css_class="form-row",
+                ),
             ),
-        )
         )

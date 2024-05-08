@@ -98,11 +98,7 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
         choices=IMPORTANCE.choices,
         default=IMPORTANCE.GENERAL,
     )
-    status = models.CharField(
-        max_length=10485760,
-        choices=STATUS.choices,
-        default=STATUS.DRAFT,
-    )
+    status = models.CharField(max_length=10485760, choices=STATUS.choices, default=STATUS.DRAFT, db_index=True)
 
     def post(self, request: HttpRequest) -> None:
         """
@@ -127,6 +123,30 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
                 logger.error(f"ERROR: Unable to post - ID is unavaliable - Post Contents: (message:{self.message}, Error: {e})")
             logger.error(f"ERROR: Unable to post {self.pk} - {e}")
 
+    def create_draft(self, request: HttpRequest) -> None:
+        """
+        Method to create a draft version of an annoucement instance.
+
+        Args:
+        - request: HttpRequest object containing the request data
+
+        Returns:
+        - None
+
+        This method sets the 'posted_by' attribute to the user id from the request,
+        sets the 'status' attribute to 'DRAFT', saves the object, and logs the success or error message.
+        """
+        try:
+            self.posted_by = request.user.employee_id
+            self.status = "D"
+            self.save()
+            logger.success(f"Succesfully posted {self.pk}")
+        except Exception as e:
+            if self.pk is None:
+                logger.error(f"ERROR: Unable to Create Draft  - ID is unavaliable - Post Contents: (message:{self.message}, Error: {e})")
+            logger.error(f"ERROR: Unable to Create Draft  {self.pk} - {e}")
+
+
     def archive(self) -> None:
         """
         Method to delete an annoucement instance.
@@ -141,7 +161,7 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
         except Exception as e:
             logger.error(f"ERROR: Unable to delete {self.pk} - {e}")
 
-    def update(self,announcement_title,message, message_type, status ) -> None:
+    def update(self, announcement_title, message, message_type, status) -> None:
         """
         Updates all attributes of Anonucement Instance  and saves the changes.
 

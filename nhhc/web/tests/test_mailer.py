@@ -8,10 +8,30 @@ from nhhc.utils.testing import generate_random_encrypted_char, generate_random_e
 baker.generators.add("sage_encrypt.fields.asymmetric.EncryptedCharField", generate_random_encrypted_char)
 baker.generators.add("sage_encrypt.fields.asymmetric.EncryptedEmailField", generate_random_encrypted_email)
 
+
 class TestPostOffice(TestCase):
     def test_send_external_application_submission_confirmation_happy_path(self) -> None:
-        inital_values = {"first_name":"Test", "last_name":"Case", "contact_number":"+14439835591", "email":"Terry@BrooksJr.com", "home_address1":"16643 S. Kedzie", "city":"Baltimore", "state":"MD", ":":60411, "mobility":"C","prior_experience":"J", "ipdh_registered":False, "availability_monday":False, "availability_tuesday":True, "availability_wednesday":False, "availability_thursday":False, "availability_friday":True, "availability_saturday":True, "availability_sunday":False }
-        form = EmploymentApplicationForm(initial=inital_values)  
+        inital_values = {
+            "first_name": "Test",
+            "last_name": "Case",
+            "contact_number": "+14439835591",
+            "email": "Terry@BrooksJr.com",
+            "home_address1": "16643 S. Kedzie",
+            "city": "Baltimore",
+            "state": "MD",
+            ":": 60411,
+            "mobility": "C",
+            "prior_experience": "J",
+            "ipdh_registered": False,
+            "availability_monday": False,
+            "availability_tuesday": True,
+            "availability_wednesday": False,
+            "availability_thursday": False,
+            "availability_friday": True,
+            "availability_saturday": True,
+            "availability_sunday": False,
+        }
+        form = EmploymentApplicationForm(initial=inital_values)
         if form.is_valid():
             form.save()
             PostOffice.send_external_application_submission_confirmation(form)
@@ -22,5 +42,3 @@ class TestPostOffice(TestCase):
         self.assertEqual(len(mail.outbox), 1)
 
         # Verify that the subject of the first message is correct.
-
-

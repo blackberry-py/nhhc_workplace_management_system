@@ -20,19 +20,29 @@ logger.remove()  # Remove all handlers added so far, including the default one.
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ["SECRET_KEY"]
 DEBUG = bool(os.environ["ENABLE_DEBUGGING"])
-DATETIME_FORMAT:str  = "m/d/yyyy h:mm A"
+DATETIME_FORMAT: str = "m/d/yyyy h:mm A"
 ADMINS = [("Terry Brooks", "Terry@BrooksJr.com")]
+WSGI_APPLICATION = "nhhc.wsgi.application"
+
+# SECTION - CORS and CSFR Settings
 CSRF_COOKIE_NAME = "nhhc-csrf"
+CSRF_FAILURE_VIEW = "nhhc.urls.permission_denied_handler"
+CORS_ALLOW_HEADERS = list(os.environ["CORS_ALLOW_HEADERS"].split(","))
+CSRF_TRUSTED_ORIGINS = list(os.environ["CSRF_TRUSTED_ORGINS"].split(","))
+# CORS_ALLOWED_ORIGIN_REGEXES = list(os.environ["CORS_ALLOWED_ORIGINS"].split(","))
+CSRF_HEADER_NAME = "X_CSRFToken"
 CSRF_USE_SESSIONS = True
+REFERRER_POLICY = "origin"
 SESSION_COOKIE_NAME = "nhhc-session"
 SESSION_COOKIE_SECURE = True
+# !SECTION 
+
 ROBOTS_USE_HOST = False
 ADMINRESTRICT_ALLOW_PRIVATE_IP = False
 FIRST_DAY_OF_WEEK = 1
 ALLOWED_HOSTS = list(os.environ["ALLOWED_HOSTS"].split(","))
 SILENCED_SYSTEM_CHECKS = ["auth.W004"]
 ROBOTS_SITEMAP_VIEW_NAME = "cached-sitemap"
-CSRF_FAILURE_VIEW = "nhhc.urls.permission_denied_handler"
 RECAPTCHA_PUBLIC_KEY = os.environ["RECAPTCHA_PUBLIC_KEY"]
 RECAPTCHA_PRIVATE_KEY = os.environ["RECAPTCHA_PRIVATE_KEY"]
 RESTRICT_ADMIN_BY_IPS = True
@@ -43,7 +53,7 @@ ENVIRONMENT_FLOAT = True
 ENVIRONMENT_NAME = os.environ["ENVIRONMENT_NAME"]
 ENVIRONMENT_COLOR = os.environ["ENVIRONMENT_COLOR"]
 REQUEST_BASE_URL = os.environ["REQUEST_BASE_URL"]
-# SECTION - Email Communication 
+# SECTION - Email Communication
 if not DEBUG:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 else:
@@ -53,23 +63,22 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = os.environ["EMAIL_TSL_PORT"]
 EMAIL_HOST_USER = os.environ["EMAIL"]
 EMAIL_HOST_PASSWORD = os.environ["EMAIL_ACCT_PASSWORD"]
-AWS_SES_SECRET_ACCESS_KEY = os.environ['AWS_SES_SECRET_ACCESS_KEY']
+AWS_SES_SECRET_ACCESS_KEY = os.environ["AWS_SES_SECRET_ACCESS_KEY"]
 
 ANYMAIL = {
-
     "AMAZON_SES_CLIENT_PARAMS": {
         # example: override normal Boto credentials specifically for Anymail
-        "aws_access_key_id": os.environ['AWS_SES_ACCESS_KEY_ID'],
-        "aws_secret_access_key": os.environ['AWS_SES_SECRET_ACCESS_KEY'],
+        "aws_access_key_id": os.environ["AWS_SES_ACCESS_KEY_ID"],
+        "aws_secret_access_key": os.environ["AWS_SES_SECRET_ACCESS_KEY"],
         "region_name": "us-east-1",
         # override other default options
         "config": {
             "connect_timeout": 30,
             "read_timeout": 30,
-        }
+        },
+    }
 }
-}
-#!
+# !SECTION
 
 APPEND_SLASH = True
 CRISPY_ALLOWED_TEMPLATE_PACKS = (
@@ -79,24 +88,35 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = (
     "bootstrap4",
 )
 SITE_ID = int(os.environ["SITE_ID"])
-TINYMCE_JS_URL = 'https://cdn.tiny.cloud/1/no-api-key/tinymce/7/tinymce.min.js'
-TINYMCE_COMPRESSOR = False
+TINYMCE_JS_URL = f'https://cdn.tiny.cloud/1/{os.environ["TINYMCE_API_KEY"]}/tinymce/7/tinymce.min.js'
+TINYMCE_COMPRESSOR = True
 CRISPY_TEMPLATE_PACK = "bootstrap5"
-TINYMCE_SPELLCHECKER = True 
-TINYMCE_DEFAULT_CONFIG = {
-    "theme": "silver",
-    "height": 300,
-    "menubar": True,
-    "plugins": "advlist,autolink,lists,link,image,charmap,print,preview,anchor,"
-    "searchreplace,visualblocks,code,fullscreen,spellchecker, insertdatetime,media,table,paste,"
-    "code,help,wordcount",
-    "toolbar": "undo redo | formatselect | "
-    "bold italic backcolor | alignleft aligncenter "
-    "alignright alignjustify | bullist numlist outdent indent | "
-    "removeformat | help",
-    "language" : "en",
-      "resize": False
+TINYMCE_SPELLCHECKER = True
+# TINYMCE_DEFAULT_CONFIG = {
+#     "theme": "silver",
+#     "height": 300,
+#     "menubar": True,
+#     "plugins": "advlist,autolink,lists,link,image,charmap,print,preview,anchor,"
+#     "searchreplace,visualblocks,code,fullscreen,spellchecker, insertdatetime,media,table,paste,"
+#     "code,help,wordcount",
+#     "toolbar": "undo redo | formatselect | "
+#     "bold italic backcolor | alignleft aligncenter "
+#     "alignright alignjustify | bullist numlist outdent indent | "
+#     "removeformat | help",
+#     "language" : "en",
+#       "resize": False
 
+# }
+TINYMCE_DEFAULT_CONFIG = {
+    "menubar": "file edit view insert format tools table help",
+    "plugins": "advlist autolink lists link image charmap print preview anchor searchreplace visualblocks code " "fullscreen insertdatetime media table paste code help wordcount spellchecker",
+    "toolbar": "undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft "
+    "aligncenter alignright alignjustify | outdent indent |  numlist bullist checklist | forecolor "
+    "backcolor casechange permanentpen formatpainter removeformat | pagebreak | charmap emoticons | "
+    "fullscreen  preview save  | insertfile image media pageembed template link anchor codesample | "
+    "| showcomments addcomment code",
+    "custom_undo_redo_levels": 10,
+    "language": "en",  # To force a specific language instead of the Django current language.
 }
 INSTALLED_APPS = [
     "kolo",
@@ -129,7 +149,7 @@ INSTALLED_APPS = [
     "captcha",
     "corsheaders",
     "easy_thumbnails",
-    "tinymce", 
+    "tinymce",
     "filer",
     # "filer_pdf",
     "robots",
@@ -137,8 +157,11 @@ INSTALLED_APPS = [
     "health_check",  # required
     "health_check.db",  # stock Django health checkers
     "health_check.cache",
+    'health_check.contrib.s3boto3_storage', 
+        'health_check.contrib.redis',               # requires Redis broker
+
     "sage_encrypt",
-     "anymail",
+    "anymail",
     "health_check.storage",
     "health_check.contrib.migrations",
     "debug_toolbar",
@@ -156,11 +179,12 @@ INSTALLED_APPS = [
 # if DEBUG is False:
 #     INSTALLED_APPS= ["kolo","debug_toolbar","coverage" ]  + INSTALLED_APPS
 
-MIDDLEWARE = [    
+MIDDLEWARE = [
     "kolo.middleware.KoloMiddleware",
     "django.middleware.cache.UpdateCacheMiddleware",
     "django_prometheus.middleware.PrometheusBeforeMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "django_referrer_policy.middleware.ReferrerPolicyMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -171,6 +195,7 @@ MIDDLEWARE = [
     "request.middleware.RequestMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # "nhhc.middleware.password_change.PasswordChangeMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "django_prometheus.middleware.PrometheusAfterMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -179,7 +204,6 @@ MIDDLEWARE = [
 AUTH_USER_MODEL = "employee.Employee"
 ROOT_URLCONF = "nhhc.urls"
 INTERNAL_IPS = ["127.0.0.1"]
-WSGI_APPLICATION = "nhhc.wsgi.application"
 
 
 # SECTION - Database and Caching
@@ -207,6 +231,9 @@ ENCRYPT_PUBLIC_KEY = os.environ["DB_GPG_PUBLIC_KEY"]
 # !SECTION
 
 # Section - Caching
+REDIS_URL =  os.environ["REDIS_CACHE_URI_TOKEN"]
+HEALTHCHECK_CACHE_KEY = "healthcheck_key"
+
 CACHES = {
     "default": {
         "BACKEND": os.environ["CACHE_ENGINE"],

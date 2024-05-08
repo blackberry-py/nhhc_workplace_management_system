@@ -1,0 +1,18 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<script src="https://cdn.docuseal.co/js/form.js"></script>
+<a href="{% url 'profile' %}"><i class="fa-solid fa-circle-arrow-left"></i>Exit Portal </a>
+<docuseal-form 
+data-src="https://docuseal.co/d/4QyLowYa6sgoBm"
+data-email="{{ employee.email }}">
+</docuseal-form>
+
+
+<script>
+    window.docusealForm.addEventListener('completed', (e) => {e.detail
+    window.location={% url 'profile' %}})
+  </script>
+{% endblock content %} 

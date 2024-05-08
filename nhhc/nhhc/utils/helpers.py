@@ -77,7 +77,8 @@ class CachedTemplateView(TemplateView):
     def as_view(cls, **initkwargs):  # @NoSelf
         return cache_page(settings.CACHE_TTL)(super(CachedTemplateView, cls).as_view(**initkwargs))
 
-# Decorator to Exponetiually Retry Certain Failures. 
+
+# Decorator to Exponetiually Retry Certain Failures.
 def exponentially_retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
     """Retry calling the decorated function using an exponential backoff.
 
@@ -93,8 +94,8 @@ def exponentially_retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=No
     Returns:
         None
     """
-    def deco_retry(f):
 
+    def deco_retry(f):
         @wraps(f)
         def f_retry(*args, **kwargs):
             mtries, mdelay = tries, delay
@@ -104,7 +105,7 @@ def exponentially_retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=No
                 except ExceptionToCheck:
                     msg = "%s, Retrying in %d seconds..." % (str(ExceptionToCheck), mdelay)
                     if logger:
-                        #logger.exception(msg) # would print stack trace
+                        # logger.exception(msg) # would print stack trace
                         logger.warning(msg)
                     else:
                         print(msg)
@@ -115,4 +116,4 @@ def exponentially_retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=No
 
         return f_retry  # true decorator
 
-    return deco_retry  
+    return deco_retry

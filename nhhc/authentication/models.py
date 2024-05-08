@@ -14,6 +14,5 @@ class UserProfile(TimeStampedModel, models.Model):
     force_password_change = models.BooleanField(default=True)
     last_password_change = models.DateTimeField(null=True, blank=True)
 
-
     def __str__(self) -> str:
         return f"User Profile of {self.user.last_name}, {self.user.first_name} ({self.user.employee_id})"

@@ -103,7 +103,7 @@ class ClientInterestSubmission(models.Model, ExportModelOperationsMixin("client_
     insurance_carrier = EncryptedCharField(max_length=10485760)
     desired_service = EncryptedCharField(max_length=10485760, choices=SERVICES.choices)
     date_submitted = CreationDateTimeField(auto_now_add=True)
-    reviewed = models.BooleanField(default=False)
+    reviewed = models.BooleanField(null=True, blank=True, default=False, db_index=True)
     last_modified = ModificationDateTimeField()
     reviewed_by = models.ForeignKey(
         Employee,
@@ -232,7 +232,7 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
     availability_friday = models.BooleanField(null=True, blank=True)
     availability_saturday = models.BooleanField(null=True, blank=True)
     availability_sunday = models.BooleanField(null=True, blank=True)
-    reviewed = models.BooleanField(null=True, blank=True, default=False)
+    reviewed = models.BooleanField(null=True, blank=True, default=False, db_index=True)
     hired = models.BooleanField(null=True, blank=True)
     reviewed_by = models.ForeignKey(
         Employee,

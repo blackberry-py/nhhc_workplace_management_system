@@ -5,4 +5,5 @@ from django.views.decorators.csrf import csrf_exempt
 urlpatterns = [
     re_path(r"^compliance/$", views.ComplianceProfileDetailView.as_view(), name="compliance-profile"),
     path("staff_compliance/<int:pk>", views.ComplianceProfileFormView.as_view(), name="staff_update_compliance"),
+    path("document_signing", views.DocusealCompliaceDocsSigning.as_view(), name = "doc_sign"),
 ]

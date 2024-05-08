@@ -100,6 +100,7 @@ python-gnupg = "^0.5.2"
 django-anymail = {extras = ["amazon-ses"], version = "^10.3"}
 django-tinymce = "^4.0.0"
 pyenchant = "^3.2.2"
+django-referrer-policy = "^1.0"
 
 [build-system]
 requires = ["poetry-core"]

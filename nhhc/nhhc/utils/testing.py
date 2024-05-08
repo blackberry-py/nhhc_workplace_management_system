@@ -2,11 +2,13 @@ import random
 import gnupg
 from django.conf import settings
 from faker import Faker
-import io 
+import io
 from loguru import logger
 import string
-import random 
+import random
+
 MockData = Faker()
+
 
 def generate_mock_PhoneNumberField() -> str:
     """
@@ -182,17 +184,17 @@ def generate_random_encrypted_email():
         logger.error("Error: No keys imported. Make sure the public key file is correct.")
         raise ValueError()
 
-    recipient_key_id = import_result.results[0]['fingerprint']
+    recipient_key_id = import_result.results[0]["fingerprint"]
 
-    ciphertext = gpg.encrypt(raw_email, recipients=[recipient_key_id],
-    always_trust=True)
+    ciphertext = gpg.encrypt(raw_email, recipients=[recipient_key_id], always_trust=True)
 
     if ciphertext.ok:
         return ciphertext.data
     else:
         logger.error("Error: Encryption failed.")
-        raise RuntimeError('Value Not Encrypted')
-    
+        raise RuntimeError("Value Not Encrypted")
+
+
 def generate_random_encrypted_char():
     """Generates a random encrypted email address."""
 
@@ -207,13 +209,12 @@ def generate_random_encrypted_char():
         logger.error("Error: No keys imported. Make sure the public key file is correct.")
         raise ValueError()
 
-    recipient_key_id = import_result.results[0]['fingerprint']
+    recipient_key_id = import_result.results[0]["fingerprint"]
 
-    ciphertext = gpg.encrypt(raw_char, recipients=[recipient_key_id],
-    always_trust=True)
+    ciphertext = gpg.encrypt(raw_char, recipients=[recipient_key_id], always_trust=True)
 
     if ciphertext.ok:
         return ciphertext.data
     else:
         logger.error("Error: Encryption failed.")
-        raise RuntimeError('Value Not Encrypted')
+        raise RuntimeError("Value Not Encrypted")

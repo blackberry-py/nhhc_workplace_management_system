@@ -21,13 +21,16 @@ from loguru import logger
 from web.models import EmploymentApplicationModel
 from nhhc.utils.mailer import PostOffice
 from django.forms.models import model_to_dict
+
 # SECTION - Communication Related Signals
+
 
 def email_application_confirmation_external(sender: Callable, instance, created, **kwargs) -> None:
     if created:
-        applicant=model_to_dict(EmploymentApplicationModel.objects.get(pk=instance.pk))
+        applicant = model_to_dict(EmploymentApplicationModel.objects.get(pk=instance.pk))
         logger.info(f"Confirmation Email Sending Triggetred - Beginning Emailto {applicant['email']}")
         PostOffice.send_external_application_submission_confirmation(applicant)
+
 
 # SECTION - User Management Signals
 def create_ancillary_profiles_signal(sender: Callable, instance, created, **kwargs) -> None:

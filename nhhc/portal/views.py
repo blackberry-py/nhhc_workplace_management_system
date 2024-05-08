@@ -41,6 +41,7 @@ from rest_framework.response import Response
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+
 @login_required(login_url="/login/")
 def portal_dashboard(request: HttpRequest) -> HttpResponse:
     """

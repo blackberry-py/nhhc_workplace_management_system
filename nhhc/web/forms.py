@@ -160,22 +160,21 @@ class EmploymentApplicationForm(forms.ModelForm):
             Field("captcha", placeholder="Enter captcha"),
             Submit("submit", "Submit Application"),
         )
+
     def clean(self):
         super().clean()
-        availability_saturday = self.cleaned_data.get('availability_saturday')
-        availability_friday = self.cleaned_data.get('availability_friday')
-        availability_thursday = self.cleaned_data.get('availability_thursday')
-        availability_wednesday = self.cleaned_data.get('availability_wednesday')
-        availability_tuesday = self.cleaned_data.get('availability_tuesday')
-        availability_sunday = self.cleaned_data.get('availability_sunday')
-        availability_monday = self.cleaned_data.get('availability_monday')
+        availability_saturday = self.cleaned_data.get("availability_saturday")
+        availability_friday = self.cleaned_data.get("availability_friday")
+        availability_thursday = self.cleaned_data.get("availability_thursday")
+        availability_wednesday = self.cleaned_data.get("availability_wednesday")
+        availability_tuesday = self.cleaned_data.get("availability_tuesday")
+        availability_sunday = self.cleaned_data.get("availability_sunday")
+        availability_monday = self.cleaned_data.get("availability_monday")
 
-        seven_day_availability = [availability_sunday,availability_friday, availability_monday,availability_tuesday, availability_wednesday, availability_thursday, availability_saturday   ]
+        seven_day_availability = [availability_sunday, availability_friday, availability_monday, availability_tuesday, availability_wednesday, availability_thursday, availability_saturday]
 
         if True not in seven_day_availability:
             raise forms.ValidationError(_("You Must be Available at least 1 day a week. Please review the Work Availability Section"), code="invalid")
-
-    
 
     class Meta:
         """Meta definition for EmploymentApplicationModelForm."""

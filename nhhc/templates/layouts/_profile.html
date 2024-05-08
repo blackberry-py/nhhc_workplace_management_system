@@ -94,10 +94,7 @@
       </div>
     </div>
   </div>
-{% endblock content %}
-
-<!-- Specific JS goes HERE -->
-{% block javascripts %}
+<script defer>
   function switchTab(){
   console.log('Checking Location')
   let slug = new URL(window.location).pathname.match(/[^\/]+/g)
@@ -114,4 +111,8 @@
   }
   }
   $('document').load(switchTab)
-{% endblock javascripts %}
+</script>
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+

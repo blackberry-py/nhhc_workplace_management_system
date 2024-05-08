@@ -13,7 +13,7 @@
       <div class="card-header">
         <div class="row align-items-center">
           <div class="col-8">
-            <h3 class="mb-0">Annoucement Details - {{ annoucement.title }}
+            <h3 class="mb-0">Annoucement Details - {{ announcement.announcement_title }}
             </h3>
           </div>
         </div>
@@ -21,10 +21,60 @@
       <div class="card-body">
         <div class="row">
           <div class="col-12 mb-0">
-            {% cripy form %}
+            <form action=" ">
+            {% crispy form %}
+            </form>
           </div>
         </div>
       </div>
     </div>
 </div>
+{% csrf_token %}
+
+<script type="text/javascript" defer>     
+  
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+  
+ // Updated ES6 Syntax for the confirmPostArchival function
+function confirmPostArchival(pk) {
+  let data = {
+      pk:pk,
+  };
+  data = JSON.stringify(data);
+  Swal.fire({
+      title: "Confirm Announcement Archival",
+      html: '<p>You are about to archive this announcement.\n It will <strong>Not Be Seen</strong> by anyone after this action is completed. \n Please confirm request.</p> ',
+      showCancelButton: true,
+      icon: "warning",
+      confirmButtonText: "Archive Announcement",
+      showLoaderOnConfirm: true,
+      preConfirm: (input) => {
+          try {
+              $.ajax({
+                  url: "/announcement/archive/",
+                  headers: { "X-CSRFToken": csrftoken }, 
+                  data,
+                  type: "POST",
+                  success: () => {
+                      Swal.fire({
+                          title: "Announcement Archived",
+                          icon: "info",
+                          text: `Announcement Successfully Archived.`,
+                      });
+                      window.location.reload();
+                  }
+              });
+          } catch (error) {
+              Swal.showValidationMessage(`Request failed: ${error}`);
+          }
+      },
+      allowOutsideClick: () => !Swal.isLoading(),
+  });
+}
+
+(function($){ 
+$('$button-id-submit').on('click', confirmPostArchival)
+})(jQuery);
+</script>
 {% endblock content %}
