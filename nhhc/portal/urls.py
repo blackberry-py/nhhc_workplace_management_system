@@ -34,7 +34,7 @@ urlpatterns = [
     ),
     path(
         "api/inquiries",
-        csrf_exempt(views.ClientInquiriesAPIListView.as_view()),
+    views.ClientInquiriesAPIListView.as_view(),
         name="all_client_inquiries_api",
     ),
     path(
@@ -44,7 +44,7 @@ urlpatterns = [
     ),
     path(
         "api/applicants",
-        login_required(views.EmploymentApplicationModelAPIListView.as_view()),
+        views.EmploymentApplicationModelAPIListView.as_view(),
         name="applicants_api",
     ),
     path(

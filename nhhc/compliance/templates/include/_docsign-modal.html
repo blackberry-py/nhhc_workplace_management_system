@@ -1,0 +1,125 @@
+
+
+ {% load static %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+<div  id="doc-sign-modal" uk-modal bg-close="false">
+    <div class="uk-modal-dialog"  uk-overflow-auto>
+        <button class="uk-modal-close-outside" type="button" uk-close></button>
+    <div class="uk-modal-body">
+      <div class="text-center">
+        <h2 class="uk-modal-title">Nett Hands HR Digital Signature Portal</h2>
+        <sub class=".text-muted">Use the Escape Key to Close Window</sub>
+      </div>
+        <div class="table-responsive">
+            <table class="table align-items-center table-flush table-hover">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col" class="sort" data-sort="name">Document</th>
+
+                  <th scope="col" class="sort" data-sort="budget">Status</th>
+                  <th scope="col" class="sort" data-sort="reviewed">Sign</th>
+              </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                  IDOA Policy
+                  </td>
+
+                <td>
+                {% if request.user.idoa_agency_policies_attestation is None %}
+                <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
+                {% else %}
+                <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
+                {% endif %}
+                </td>
+                <td>
+                    {% if request.user.idoa_agency_policies_attestation is None %}
+                    <a href="{% url 'idoa_sign' %}" class="btn btn-primary">Sign</a>
+                    {% else %}
+                    <a href="{% url 'idoa_sign' %}" class="btn btn-primary">Re-Sign</a>
+                    {% endif %}
+                </td>
+              </tr>
+              <tr>
+                  <td>
+                  HCA to as Family Member Policy
+                  </td>
+                  <td>
+                  {% if request.user.hca_policy_attestation is None %}
+                  <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
+                  {% else %}
+                  <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
+                  {% endif %}
+                  </td>
+                  <td>
+                      {% if request.user.hca_policy_attestation is None %}
+                      <a href="{% url 'hca_sign' %}" class="btn btn-primary">Sign</a>
+                      {% else %}
+                      <a href="{% url 'hca_sign' %}" class="btn btn-primary">Re-Sign</a>
+                      {% endif %}
+                  </td>
+                </tr>
+                <tr>
+                      <td>
+                        Home Healthcare Aide(HCA) Job Description
+                      </td>
+                      <td>
+                      {% if request.user.hca_policy_attestation is None %}
+                      <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
+                      {% else %}
+                      <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
+                      {% endif %}
+                      </td>
+                      <td>
+                          {% if request.user.hca_policy_attestation is None %}
+                          <a href="{% url 'jobdesc_sign' %}" class="btn btn-primary">Sign</a>
+                          {% else %}
+                          <a href="{% url 'jobdesc_sign' %}" class="btn btn-primary">Re-Sign</a>
+                          {% endif %}
+                      </td>
+                    </tr>
+                    <tr>
+                          <td>
+I-9 Wotk Authorization                           </td>
+                          <td>
+                          {% if request.user.dhs_i9 is None %}
+                          <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
+                          {% else %}
+                          <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
+                          {% endif %}
+                          </td>
+                          <td>
+                              {% if request.user.dhs_i9 is None %}
+                              <a href="{% url 'i9_sign' %}" class="btn btn-primary">Sign</a>
+                              {% else %}
+                              <a href="{% url 'i9_sign' %}" class="btn btn-primary">Re-Sign</a>
+                              {% endif %}
+                          </td>
+                        </tr>
+                        <tr>
+                         <td>
+    Do Not Drive Policy                           </td>
+                              <td>
+                              {% if request.user.do_not_drive_agreement_attestation is None %}
+                              <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
+                              {% else %}
+                              <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
+                              {% endif %}
+                              </td>
+                              <td>
+                                  {% if request.user.do_not_drive_agreement_attestation is None %}
+                                  <a href="{% url 'dnd_sign' %}" class="btn btn-primary">Sign</a>
+                                  {% else %}
+                                  <a href="{% url 'dnd_sign' %}" class="btn btn-primary">Re-Sign</a>
+                                  {% endif %}
+                              </td>
+                            </tr>
+              </tbody>
+            </table>
+    </div>
+   </div>
+</div>
+</div>

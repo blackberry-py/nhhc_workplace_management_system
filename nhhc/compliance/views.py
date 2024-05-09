@@ -44,17 +44,7 @@ class CreateContractFormView(FormView):
     template_name = "new_contract.html"
     form_class = ContractForm
 
-class DocusealCompliaceDocsSigning(TemplateView):
-    """
-    A view for displaying and signing compliance documents using Docuseal.
 
-    Attributes:
-    - template_name (str): The name of the template to be rendered.
-
-    Methods:
-    - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
-    """
-    template_name = "docuseal.html"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
@@ -107,7 +97,97 @@ class ComplianceProfileFormView(UpdateView, FileUploadMixin):
     model = Compliance
     template_name = "compliance_forms.html"
     context_object_name = "employee"
+    
+    
+class DocusealCompliaceDocsSigning_IDOA(TemplateView):
+    """
+    A view for displaying and signing compliance documents using Docuseal.
 
+    Attributes:
+    - template_name (str): The name of the template to be rendered.
+
+    Methods:
+    - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+    """
+    template_name = "docuseal.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
+        context['doc_url'] = "https://docuseal.co/d/r5UbQeVsQgkwUp"
+        return context
+    
+class DocusealCompliaceDocsSigning_HCA(TemplateView):
+    """
+    A view for displaying and signing compliance documents using Docuseal.
+
+    Attributes:
+    - template_name (str): The name of the template to be rendered.
+
+    Methods:
+    - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+    """
+    template_name = "docuseal.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
+        context['doc_url'] = "https://docuseal.co/d/3KA4PP4CEjpy4r"
+        return context
+    
+class DocusealCompliaceDocsSigning_DoNotDrive(TemplateView):
+    """
+    A view for displaying and signing compliance documents using Docuseal.
+
+    Attributes:
+    - template_name (str): The name of the template to be rendered.
+
+    Methods:
+    - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+    """
+    template_name = "docuseal.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
+        context['doc_url'] = "https://docuseal.co/d/v1FPgz9xgBJVgH"
+        return context
+class DocusealCompliaceDocsSigning_JobDesc(TemplateView):
+    """
+    A view for displaying and signing compliance documents using Docuseal.
+
+    Attributes:
+    - template_name (str): The name of the template to be rendered.
+
+    Methods:
+    - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+    """
+    template_name = "docuseal.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
+        context['doc_url'] = "https://docuseal.co/d/KQUEkomQZr1ddD"
+        return context
+    
+
+class DocusealCompliaceDocsSigning_i9(TemplateView):
+    """
+    A view for displaying and signing compliance documents using Docuseal.
+
+    Attributes:
+    - template_name (str): The name of the template to be rendered.
+
+    Methods:
+    - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+    """
+    template_name = "docuseal.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
+        context['doc_url'] = "https://docuseal.co/d/ovQk6ACHqajQvC"
+        return context
 
 # TODO: Implement Reporting
 def generate_report(requst):

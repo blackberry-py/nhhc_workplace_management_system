@@ -35,7 +35,7 @@ class EmployeeForm(ModelForm):
             "qualifications": _(
                 "Highest Level of Education/Home Healthcare Qualification",
             ),
-            "qualifications_verification": _("Upload Degree, GED or Diploma"),
+            "qualifications_verification": _("Upload Resume"),
             "cpr_verification": _("CPR Card"),
             "idoa_agency_policies_attestation": _("Signed IL Dept of Publi Health & Agency Policy"),
             "idph_background_check_authorization": _("Signed Background Check Authorization"),
@@ -240,14 +240,12 @@ class EmployeeForm(ModelForm):
                     css_class="form-row",
                 ),
                 HTML("""<hr class="uk-divider-icon" />"""),
-                HTML(
-                    """
+              HTML( """
         <h3 class="small-heading muted-text mb-4">Supporting Documentation</strong></h3>
-        <p>If you are a new hire, need to update, or been told you are missing any of these documents. Click button below to access the Document Signing Portal and  the forms digitally</p>
+        <p>If you are a new hire, need to update, or been told you are missing any of these documents. <a href="#doc-sign-modal" uk-toggle>Click Here to sign them digitally</p></a>
         """
                 ),
-                HTML(""" <a href="{% url 'doc_sign' %}"  class="btn btn-lrg btn-warning">Access the Document Signing Portal</a>"""),
-                Row(
+               Row(
                     Column(
                         "cpr_verification",
                         help_text="Please Upload Photo of an Unexpired CPR Card",
@@ -319,5 +317,5 @@ class EmployeeForm(ModelForm):
                     ),
                     css_class="form-row",
                 ),
-            ),
+            )
         )

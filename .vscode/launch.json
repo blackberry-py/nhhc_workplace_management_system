@@ -22,7 +22,7 @@
             "justMyCode": true,
             "autoReload": {"enable": true},
             "host": "127.0.0.1",
-            "port": 8500,
+            "port": 8000,
             "env": {
                 "DOPPLER_ENV":"1",
 

@@ -147,3 +147,4 @@ nhhc/staticfiles/*
 nhhc/prospector_results_*
 nhhc/mediafiles/*
 nhhc/prospector.json
+/workspaces/NettHands/mypy-html.css

@@ -60,4 +60,6 @@ jobs:
           - uses: syphar/restore-virtualenv@v1
             id: cache-virtualenv
 
-          - run: make pipeline-test
+          - run: |
+              cd nhhc
+              make pipeline-test
