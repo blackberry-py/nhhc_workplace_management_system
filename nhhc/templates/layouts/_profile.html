@@ -76,7 +76,7 @@
               <ul class="messages">
                 {% for field, errors in form.errors.items %}
                   {% for error in errors %}
-                    <li class="red">{{ error }}</li>
+                    <li>{{ field }}:<span class="text-danger">{{ error }}</span></li>
                   {% endfor %}
                   </ul>
                 {% endfor %}
@@ -94,25 +94,24 @@
       </div>
     </div>
   </div>
-<script defer>
-  function switchTab(){
-  console.log('Checking Location')
-  let slug = new URL(window.location).pathname.match(/[^\/]+/g)
-  console.debug(slug)
-  if ( slug[0] == "profile"){
-  console.debug(`Changing Location to Profile`)
-  $('#profile-tab').addClass("active")
-  $('#compliance-tab').removeClass("active")
-  }
-  else if( slug[0] == "compliance") {
-  console.debug(`Changing Location to Compliance`)
-  $('#profile-tab').removeClass("active")
-  $('#compliance-tab').addClass("active")
-  }
-  }
-  $('document').load(switchTab)
-</script>
+  <script defer>
+    function switchTab(){
+      console.log('Checking Location')
+      let slug = new URL(window.location).pathname.match(/[^\/]+/g)
+      console.debug(slug)
+      if ( slug[0] == "profile"){
+        console.debug(`Changing Location to Profile`)
+        $('#profile-tab').addClass("active")
+        $('#compliance-tab').removeClass("active")
+      }
+      else if( slug[0] == "compliance") {
+        console.debug(`Changing Location to Compliance`)
+        $('#profile-tab').removeClass("active")
+        $('#compliance-tab').addClass("active")
+      }
+    }
+    $('document').load(switchTab)
+  </script>
 {% endblock content %}
 
 <!-- Specific JS goes HERE -->
-

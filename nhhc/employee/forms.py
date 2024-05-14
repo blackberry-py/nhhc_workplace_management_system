@@ -11,6 +11,7 @@ from employee.models import Employee
 class EmployeeForm(ModelForm):
     phone_sms_identical = BooleanField(required=False, widget=CheckboxInput, label="Same as Contact")
     sms_contact_agreement = BooleanField(required=True, widget=CheckboxInput, label="I AGREE")
+
     """
     Form definition for Employee Model.
 
@@ -58,9 +59,12 @@ class EmployeeForm(ModelForm):
         self.helper.form_action = reverse("profile")
         self.helper.form_id = "profile"
         self.helper.form_method = "post"
-        self.fields["date_of_birth"].widget = DateInput(
-            attrs={"type": "date", "class": "form-control"},
+        self.fields["date_of_birth"].widget = (
+            DateInput(
+                attrs={"type": "date", "class": "form-control"},
+            ),
         )
+        self.fields["password"].required = (False,)
         self.helper.layout = Layout(
             HTML(
                 """
@@ -196,7 +200,7 @@ class EmployeeForm(ModelForm):
                 HTML(
                     """
 
-<p> The CareNett  provide access to important information and services related to your role with Nett Hands Home Care.  While there is no direct cost to the public imposed by Nett Hands Home Care to utilize the any of the CareNett (including text notification deliveries), STANDARD DATA FEES AND TEXT MESSAGING RATES MAY APPLY BASED ON YOUR PLAN WITH YOUR MOBILE PHONE CARRIER.  As mobile access and text message delivery is subject to your mobile carrier network availability, such access and delivery is not guaranteed.  YOU MAY OPT OUT OF SMS DELIVERY AT ANY TIME VIA THIS PORTAL" 
+<p> The CareNett  provide access to important information and services related to your role with Nett Hands Home Care.  While there is no direct cost to the public imposed by Nett Hands Home Care to utilize the any of the CareNett (including text notification deliveries), STANDARD DATA FEES AND TEXT MESSAGING RATES MAY APPLY BASED ON YOUR PLAN WITH YOUR MOBILE PHONE CARRIER.  As mobile access and text message delivery is subject to your mobile carrier network availability, such access and delivery is not guaranteed.  YOU MAY OPT OUT OF SMS DELIVERY AT ANY TIME VIA THIS PORTAL"
 </p>"""
                 ),
                 HTML(
@@ -240,12 +244,13 @@ class EmployeeForm(ModelForm):
                     css_class="form-row",
                 ),
                 HTML("""<hr class="uk-divider-icon" />"""),
-              HTML( """
+                HTML(
+                    """
         <h3 class="small-heading muted-text mb-4">Supporting Documentation</strong></h3>
         <p>If you are a new hire, need to update, or been told you are missing any of these documents. <a href="#doc-sign-modal" uk-toggle>Click Here to sign them digitally</p></a>
         """
                 ),
-               Row(
+                Row(
                     Column(
                         "cpr_verification",
                         help_text="Please Upload Photo of an Unexpired CPR Card",
@@ -254,7 +259,7 @@ class EmployeeForm(ModelForm):
                     Column(
                         "qualifications_verification",
                         help_text="Please upload a copy of the document selected in the User Information field - Highest Level of Education/Home Healthcare Qualification",
-                        css_class="form-group col-lg-4 mb-0 editable ",
+                        css_class="``form-group`` col-lg-4 mb-0 editable ",
                     ),
                     Column(
                         "do_not_drive_agreement_attestation",
@@ -317,5 +322,12 @@ class EmployeeForm(ModelForm):
                     ),
                     css_class="form-row",
                 ),
-            )
+            ),
         )
+
+    # def clean(self):
+    #         self.cleaned_data = super().clean()
+    #         password = self.cleaned_data['password']
+    #         if not password and password =='':
+    #             del self.cleaned_data['password']
+    #             return self.cleaned_data

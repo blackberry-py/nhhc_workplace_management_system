@@ -5,7 +5,7 @@
 {% load anonymize %}
 {% load humanize %}
 {% load widget_tweaks %}
-
+\
 {% block content %}
   {% if employee.termination_date is not None %}
     <div id="terminated-notice" class="w-100 p-3 text-center sticky-top "><strong>Notice:</strong>This Profile is for a Terminated Employee</div>
@@ -16,7 +16,6 @@
         <div class="row align-items-center">
           <div class="col-8">
             <h3 class="mb-0">Employee Details - {{ employee.last_name }}, {{ employee.first_name }}
-              <a href="{% url 'applicant-details' pk=employee.application_id %}"><em><sub>Link to Employment Application</sub></a></em>
             </h3>
           </div>
         </div>
@@ -33,7 +32,7 @@
             <a id="profile-tab" class="nav-link active" aria-current="page" href="{% url 'employee' pk=employee.employee_id %}">Profile</a>
           </li>
           <li class="nav-item">
-            <a id="compliance-tab" class="nav-link" href="{% url 'staff_update_compliance'  pk=employee.employee_id %}">Compliance</a>
+            <a id="compliance-tab" class="nav-link" href="{% url 'staff_update_compliance' pk=employee.employee_id %}">Compliance</a>
           </li>
         </ul>
         <div class="row">
@@ -46,7 +45,7 @@
             <p>{{ employee.middle_name }}</p>
           </div>
           <div class="col-4">
-            <h3><strong>Last Name:</strong></h3><br/>
+            <h3><strong>Last Name:</strong></h3>
             <p>{{ employee.last_name }}</p>
           </div>
         </div>
@@ -132,66 +131,156 @@
         </div>
         <hr class="my-4" />
         <div class="row">
-          <form>
-            {% csrf_token %}
-            {% comment %} {% crispy compliance_form %} {% endcomment %}
-            <h2>Position Details</h2>
+          <h2>Position Details</h2>
+        </div>
+        <div class="row">
+          <div class="col-4">
+            <h3><strong>Position:</strong></h3>
+            <p>{{ compliance.get_job_title_display }}</p>
           </div>
-          <div class="row">
-
+          <div class="col-4">
+            <h3><strong>Hire Date:</strong></h3>
+            <p>{{ employee.hire_date }}</p>
+          </div>
+          <div class="col-4">
+            <h3><strong>Length of Employment:</strong></h3>
+            {% if employee.termination_date is None %}
+              <p>{{ employee.hire_date | timesince  }}</p><em class="text-muted"><sub>- Current - </sub></em>
+            {% else %}
+              <p>{{ employee.hire_date | timesince: employee.termination_date   }}</p><em class="text-danger"><sub>- Final - </sub></em>
+            {% endif %}
+          </div>
+          {% if employee.termination_date is not None %}
             <div class="col-4">
-              <h3><strong>Hire Date:</strong></h3>
-              <p>{{ employee.hire_date }}</p>
+              <h3><strong>Termination Date:</strong></h3>
+              <p>{{ employee.termination_date }}</p>
             </div>
-
-            <div class="col-4">
-              <h3><strong>Length of Employment:</strong></h3>
-              {% if employee.termination_date is None %}
-                <p>{{ employee.hire_date|naturalday }}</p>
-            {% comment %} {% else %} {% endcomment %}
-            {% comment %} FIXME: Correct te Calculkation of Length if Employment Possible Tag {% endcomment %}
-            {% comment %} {{employee.termination_date - employee.hire_date}} {% endcomment %}
-              {% endif %}
-            </div>
-            {% if employee.termination_date is not None %}
-              <div class="col-4">
-                <h3><strong>Termination Date:</strong></h3>
-                <p>{{ employee.termination_date }}</p>
+          {% endif %}
+        </div>
+        <div class="row">
+          <div class="col-4">
+            <h3><strong>Related to Client:</strong></h3>
+            <p>{{ employee.family_hca }}</p>
+          </div>
+          <div class="col-4">
+            <h3><strong>GED/High School Diploma:</strong></h3>
+            {% if employee.qualifications_verification %}
+              <a href="{{ employee.qualifications_verification.url }}" target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
+            {% else %}
+              <p>No File Available</p>
+            {% endif %}
+          </div>
+          <div class="col-4">
+            <h3><strong>CPR Verification:</strong></h3>
+            {% if employee.cpr_verification %}
+              <div class="center">
+                <a href="{{ employee.cpr_verification.url }}" target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
               </div>
+            {% else %}
+              <p>No File Available</p>
             {% endif %}
-          </div>
-          <div class="row">
-            <div class="col-4">
-              <h3><strong>Related to Client:</strong></h3>
-              <p>{{ employee.family_hca }}</p>
-            </div>
-            <div class="col-4">
-              <h3><strong>GED/High School Diploma:</strong></h3>
-              {% if employee.qualifications_verification %}
-                <a href={{ employee.qualifications_verification.url }} target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
-              {% else %}
-                <p>No File Available</p>
-              {% endif %}
-            </div>
-            <div class="col-4">
-              <h3><strong>CPR Verification:</strong></h3>
-              {% if employee.cpr_verification %}
-                <div class="center">
-                  <a href={{ employee.cpr_verification.url }} target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
-                </div>
-              {% else %}
-                <p>No File Available</p>
-              {% endif %}
-            </div>
-          </div>
-
-          <div class="w-full text-center">
-            {% if request.user.is_staff %}
-              <button id="terminate-employee-btn" onclick="confirmTermination({{ employee.id }})" class="btn btn-danger" >Terminate Employment</button>
-            {% endif %}
-            <a  class="btn btn-secondary" href="{% url 'roster' %}">Back to Employee Roster</a>
           </div>
         </div>
-      </div>
 
+        <div class="w-full text-center">
+          {% if request.user.is_superuser %}
+            {% if employee.is_superuser %}
+              <button id="demote-employee-btn" onclick="confirmDemoteToUser({{ employee.id }})" class="btn btn-warning" >Revoke Administrtative Privileges </button>
+
+            {% else %}
+              <button id="promote-employee-btn" onclick="confirmPromoteToAdmin({{ employee.id }})" class="btn btn-warning" >Grant Administrtative Privileges </button>
+            {% endif %}
+          {% endif %}
+          <button id="terminate-employee-btn" class="btn btn-danger" >Terminate Employment</button>
+
+          <a  class="btn btn-secondary" href="{% url 'roster' %}">Back to Employee Roster</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <form class="d-none">
+    {% csrf_token %}
+  </form>
+  <script defer type="text/javascript">
+
+    function confirmTermination(pk) {
+      let sentData = {
+        pk: pk,
+        password: $('#swal2-input').val(),
+        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+      };
+
+      Swal.fire({
+        title: "Confirm Termination",
+        showCancelButton: true,
+        icon: "warning",
+        confirmButtonText: "Terminate",
+        html: `<p>Terry You are about to terminate employment for this employee.\n It will lock them out of their account and archive their compliance profile.</p> <p><strong>Note: </strong>Archived profiles will still have the documents available, but cannot be modified.</p>  <br/><br/><p>Please enter your CareNett password to confirm.</p>  <label for="terminate-password-confirmation" class="sr-only">Password</label> <br/><input  class="form-control" type='password' placeholder='Enter CareNett Password' id='terminate-password-confirmation' name='terminate-password-confirmation' />`,
+
+        preConfirm: (input) => {
+          console.log(`Sending Termination Request with Employee ID ${pk}`);
+          try {
+            var request = $.post("/employee/terminate/", sentData, (data, status) => {
+              Swal.fire({
+                title: "Employment Terminated!",
+                icon: "success",
+                text: `Employee Terminated. They have been notified via email.`,
+                didClose: () => {
+                  window.location.reload();
+                },
+              });
+            });
+          } catch (error) {
+            Swal.showValidationMessage(`Request failed: ${error}`);
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      });
+    }
+    $("#terminate-employee-btn").on('click', () -> {
+      confirmTermination({{ employee.id }})
+    } )
+    function confirmPromoteToAdmin(pk) {
+      let sentData = {
+        pk: pk,
+        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+      };
+      console.log(`Send=ing Promotion Request with Employee ID ${pk}`);
+
+      Swal.fire({
+        title: "Confirm Privileges Grant",
+        text: '<p>You are about to issue enhanced CareNett Privileges for this employee.\n <strong>It will allow them to execute and access the administative functions</p></strong><br/><br/><p>Please enter your CareNett password to confirm.</p>',
+        showCancelButton: true,
+        icon: "warning",
+        input: "password",
+        confirmButtonText: "Grant",
+        showLoaderOnConfirm: true,
+        preConfirm: (input) => {
+          if (input === "terminate") {
+            try {
+              var request = $.post("/employee/terminate/", sentData, (data, status) => {
+                Swal.fire({
+                  title: "Employment Terminated!",
+                  icon: "success",
+                  text: `Employee Terminated. They have been notified via email.`,
+                  didClose: () => {
+                    window.location.reload();
+                  },
+                });
+              });
+            } catch (error) {
+              Swal.showValidationMessage(`Request failed: ${error}`);
+            }
+          } else {
+            Swal.showValidationMessage(
+              'Please type enter CareNett Password'
+            );
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      });
+    }
+
+  </script>
 {% endblock content %}

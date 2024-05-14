@@ -31,6 +31,8 @@ from django.utils.translation import gettext_lazy as _
 from django_prometheus.models import ExportModelOperationsMixin
 from employee.models import Employee
 from loguru import logger
+from django.core.cache import cache
+from nhhc.utils.managers import CachedQuerySet
 
 NOW: str = str(arrow.now().format("YYYY-MM-DD"))
 
@@ -89,6 +91,7 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
         COMPLIANCE = "X", _(message="Compliance")
         GENERAL = "G", _(message="General")
 
+    objects = CachedQuerySet.as_manager()
     message = models.TextField()
     announcement_title = models.CharField(max_length=10485760, default="")
     posted_by = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, blank=True)
@@ -145,7 +148,6 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
             if self.pk is None:
                 logger.error(f"ERROR: Unable to Create Draft  - ID is unavaliable - Post Contents: (message:{self.message}, Error: {e})")
             logger.error(f"ERROR: Unable to Create Draft  {self.pk} - {e}")
-
 
     def archive(self) -> None:
         """

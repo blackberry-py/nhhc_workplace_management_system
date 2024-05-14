@@ -16,6 +16,8 @@ ARG DOPPLER_ENV
 ARG DOPPLER_PROJECT
 ARG DOPPLER_CONFIG
 
+RUN groupadd --system celery
+RUN useradd
 RUN groupadd --system nhhc
 RUN useradd --home-dir /src/app/  --base-dir /src/app/ -g nhhc nhhc_app
 COPY --chown=nhhc_app:nhhc ./requirements.txt ./requirements.txt

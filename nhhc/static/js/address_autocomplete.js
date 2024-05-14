@@ -85,7 +85,7 @@ if (slug == "client-interest"){
 } else if (slug == "employment-application") {
   console.debug(`${slug} Listening For address on app FORM `)
 
-  inputs = document.getElementById("employment-application").querySelectorAll('input[type="text"]');
+  inputs = document.getElementById("employment-application,").querySelectorAll('input[type="text"]');
 } else {
   console.error(`Issue with Google Address Complete ${slug}`)
 }

@@ -1,25 +1,100 @@
 from http import HTTPStatus
 from django.urls import reverse
-from django.test import Client, RequestFactory, TestCase, override_settings
-from web.views import AboutUsView, HomePageView
+from django.test import Client, RequestFactory, TestCase
+from web.views import ClientInterestFormView, EmploymentApplicationFormView, favicon
+from faker import Faker
+import json
+
+test_data = Faker()
 
 
 class TestViews(TestCase):
     def setUp(self):
-        self.home_request = RequestFactory().get(reverse("homepage"))
-        self.homeview = HomePageView()
-        self.homeview.setup(self.home_request)
-        self.about_request = RequestFactory().get(reverse("about"))
-        self.aboutview = AboutUsView()
-        self.aboutview.setup(self.about_request)
+        self.factory = RequestFactory()
+        self.client = Client()
 
-    def test_get_homepage(self):
-        response = HomePageView.as_view()(self.about_request)
-        self.assertEqual(response.status_code, 200)
+    def test_client_interest_form_view_get(self):
+        request = self.factory.get("/client-interest/")
+        response = ClientInterestFormView.as_view()(request)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_get_about_page(self):
-        response = AboutUsView.as_view()(self.about_request)
-        self.assertEqual(response.status_code, 200)
+    def test_employment_application_form_view_get(self):
+        request = self.factory.get("/employment-application/")
+        response = EmploymentApplicationFormView.as_view()(request)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    def test_favicon_view_get(self):
+        request = self.factory.get("/favicon.ico")
+        response = favicon(request)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    def test_client_interest_form_view_post_invalid(self):
+        request = self.factory.post(
+            "/client-interest/",
+            data={
+                "last_name": "test",
+                "first_name": "client",
+                "contact_number": "+17087996100",
+                "email": "Dev@gmail.com",
+                "home_address1": "1 North World Trade Tower",
+                "home_address2": "15th Floor",
+                "city": "Manhattan",
+                "state": "NY",
+                "zipcode": "21217",
+                "insurance_carrier": "TEST INSURANCE",
+                "desired_service": False,
+            },
+        )
+        response = ClientInterestFormView.as_view()(request)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    # def test_employment_application_form_view_post_invalid(self):
+    #     request = self.factory.post('/employment-application/', data={})
+    #     response = EmploymentApplicationFormView.as_view()(request)
+    #     self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    def test_client_interest_form_view_post_valid(self):
+        data = {
+            "last_name": "test",
+            "first_name": "client",
+            "contact_number": "+17087996100",
+            "email": "Dev@gmail.com",
+            "home_address1": "1 North World Trade Tower",
+            "home_address2": "15th Floor",
+            "city": "Manhattan",
+            "state": "NY",
+            "zipcode": "21217",
+            "insurance_carrier": "TEST INSURANCE",
+            "desired_service": "OT",
+        }
+        request = self.factory.post("/client-interest/", data=data)
+        response = ClientInterestFormView.as_view()(request)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    def test_employment_application_form_view_post_valid(self):
+        data = {
+            "last_name": "test",
+            "first_name": "new_employee",
+            "contact_number": "+17087996100",
+            "email": "Dev@gmail.com",
+            "home_address1": "1 North World Trade Tower",
+            "home_address2": "15th Floor",
+            "city": "Manhattan",
+            "state": "NY",
+            "zipcode": "21217",
+            "mobility": "C",
+            "prior_experience": "J",
+            "ipdh_registered": "True",
+            "availability_monday": True,
+            "availability_tuesday": False,
+            "availability_wednesday": True,
+            "availability_thursday": True,
+            "availability_friday": True,
+            "availability_saturday": False,
+        }
+        request = self.factory.post("/employment-application/", data=data)
+        response = EmploymentApplicationFormView.as_view()(request)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
 
 
 class RobotsTxtTests(TestCase):

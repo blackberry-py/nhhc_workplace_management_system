@@ -184,29 +184,35 @@ Hero Slider
                 },
             });
     })
+
+// const tabs = document.querySelectorAll('.tab')
+// const allArray = Array.from(all)
+
+// tabs.forEach(tab => {
+//   tab.addEventListener('click', () => {
+//     tabs.forEach(tab => tab.classList.remove('active'))
+//     tab.classList.add('active')
+
+//     const tabId = tab.id
+
+//     allArray.forEach(div => {
+//       div.classList.remove('show', 'remove')
+
+//       if (tabId === 'all') {
+//         div.classList.add('show')
+//       } else if (tabId === 'draft' &&!div.classList.contains('draft')) {
+//         div.classList.add('remove')
+//       } else if (tabId === 'active' &&!div.classList.contains('active')) {
+//         div.classList.add('remove')
+//       } else if (tabId === 'deleted' &&!div.classList.contains('deleted')) {
+//         div.classList.add('remove')
+//       }
+//     })
+//   })
+// })
+
 }(jQuery));;
 
-$(document).ready(function () {
-    function hideAll() {
-        $submissions.each((field) => {
-            field.hidden = true;
-        });
-    }
-});
-
-
-$(document).ready(function () {
-    const tabs = $(".tab").click(function () {
-        if (this.id == "all") {
-            $(".client-submission").fadeIn(450);
-        } else {
-            this.classList.add("active");
-            tabs.not(this).removeClass("active");
-            const el = $("." + this.id).fadeIn(450);
-            $(".client-submission").not(el).hide();
-        }
-    });
-});
 
 
 // SECTION - JQUERY AJAX Post Request to update
@@ -273,173 +279,178 @@ $(document).ready(function () {
 //             );
 //         });
 // }
-(function ($) {
+// (function ($) {
 
-    function confirmSaveAsADraft(title, message, message_type) {
-        let data = {
-            title: title,
-            message: message,
-            message_type: message_type,
-        };
-        data = JSON.stringify(data);
-        Swal.fire({
-            title: "Confirm Save as A Draft",
-            html: '<p>You are about to save this annoucement as <strong>Draft</strong>.\n It will <strong>Not Be Seen</strong> by anyone who is not a CareNett Admin User. </p> ',
-            showCancelButton: true,
-            icon: "warning",
-            input: "text",
-            confirmButtonText: "Save Draft",
-            showLoaderOnConfirm: true,
-            preConfirm: (input) => {
-                try {
-                    $.ajax({
-                        url: "/create-announcement-draft",
-                        data: data,
-                        type: "POST",
-                        success: ntfy(title = "Saved!", message = "New Announcement Draft Saved", type = "success"),
-                    });
-                } catch (error) {
-                    Swal.showValidationMessage(`Request failed: ${error}`);
+    // function confirmSaveAsADraft(title, message, message_type) {
+    //     let data = {
+    //         csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+    //         title: title,
+    //         message: message,
+    //         message_type: message_type,
+    //     };
+    //     data = JSON.stringify(data);
+    //     Swal.fire({
+    //         title: "Confirm Save as A Draft",
+    //         html: '<p>You are about to save this annoucement as <strong>Draft</strong>.\n It will <strong>Not Be Seen</strong> by anyone who is not a CareNett Admin User. </p> ',
+    //         showCancelButton: true,
+    //         icon: "warning",
+    //         input: "text",
+    //         confirmButtonText: "Save Draft",
+    //         showLoaderOnConfirm: true,
+    //         preConfirm: (input) => {
+    //             try {
+    //                 $.ajax({
+    //                     url: "/create-announcement-draft",
+    //                     data: data,
+    //                     type: "POST",
+    //                     success: ntfy(title = "Saved!", message = "New Announcement Draft Saved", type = "success"),
+    //                 });
+    //             } catch (error) {
+    //                 Swal.showValidationMessage(`Request failed: ${error}`);
 
-                }
+    //             }
 
 
-            }, allowOutsideClick: () => !Swal.isLoading(),
+    //         }, allowOutsideClick: () => !Swal.isLoading(),
 
-        })
-    }
+    //     })
+    // }
 
-        function postAnnouncement(title, message, message_type) {
-            let data = {
-                title: title,
-                message: message,
-                message_type: message_type,
-            };
-            data = JSON.stringify(data);
-            $.ajax({
-                url: "/create-announcement-draft",
-                data: data,
-                type: "POST",
-                success: ntfy("Draft Created"),
-            });
-        }
+        // function postAnnouncement(title, message, message_type) {
+        //     let data = {
+        //         csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+        //         title: title,
+        //         message: message,
+        //         message_type: message_type,
+        //     };
+        //     data = JSON.stringify(data);
+        //     $.ajax({
+        //         url: "/create-announcement-draft",
+        //         data: data,
+        //         type: "POST",
+        //         success: ntfy("Draft Created"),
+        //     });
+        // }
         // !SECTION
 
         /*-------------------------
         // SECTION - Modal Ajax Notification - Sweet Alert2 Library
-    
+
         -----------------------------*/
 
-        function confirmTermination(pk) {
-            let sentData = {
-                pk: pk,
-            };
-            console.log(`Sending Termination Request with Employee ID ${pk}`);
+        // function confirmTermination(pk) {
+        //     let sentData = {
+        //         csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+        //         pk: pk,
+        //     };
+        //     console.log(`Sending Termination Request with Employee ID ${pk}`);
 
-            Swal.fire({
-                title: "Confirm Termination",
-                html: '<p>You are about to terminate employment for this employee.\n It will lock them out of their account and archive their compliance profile.</p> <p><strong>Note: </strong>Archived profiles will still have the documents available, but cannot be modified.</p>  <br/> <p><strong>Please type "terminate" to confirm employment termination</strong></p> ',
-                showCancelButton: true,
-                icon: "warning",
-                input: "text",
-                confirmButtonText: "Terminate",
-                showLoaderOnConfirm: true,
-                preConfirm: (input) => {
-                    if (input === "terminate") {
-                        try {
-                            var request = $.post("/employee/terminate/", sentData, (data, status) => {
-                                Swal.fire({
-                                    title: "Employment Terminated!",
-                                    icon: "success",
-                                    text: `Employee Terminated. They have been notified via email.`,
-                                    didClose: () => {
-                                        window.location.reload();
-                                    },
-                                });
-                            });
-                        } catch (error) {
-                            Swal.showValidationMessage(`Request failed: ${error}`);
-                        }
-                    } else {
-                        Swal.showValidationMessage(
-                            'Please type "terminate" exactly to confirm'
-                        );
-                    }
-                },
-                allowOutsideClick: () => !Swal.isLoading(),
-            });
-        }
+        //     Swal.fire({
+        //         title: "Confirm Termination",
+        //         html: '<p>You are about to terminate employment for this employee.\n It will lock them out of their account and archive their compliance profile.</p> <p><strong>Note: </strong>Archived profiles will still have the documents available, but cannot be modified.</p>  <br/> <p><strong>Please type "terminate" to confirm employment termination</strong></p> ',
+        //         showCancelButton: true,
+        //         icon: "warning",
+        //         input: "text",
+        //         confirmButtonText: "Terminate",
+        //         showLoaderOnConfirm: true,
+        //         preConfirm: (input) => {
+        //             if (input === "terminate") {
+        //                 try {
+        //                     var request = $.post("/employee/terminate/", sentData, (data, status) => {
+        //                         Swal.fire({
+        //                             title: "Employment Terminated!",
+        //                             icon: "success",
+        //                             text: `Employee Terminated. They have been notified via email.`,
+        //                             didClose: () => {
+        //                                 window.location.reload();
+        //                             },
+        //                         });
+        //                     });
+        //                 } catch (error) {
+        //                     Swal.showValidationMessage(`Request failed: ${error}`);
+        //                 }
+        //             } else {
+        //                 Swal.showValidationMessage(
+        //                     'Please type "terminate" exactly to confirm'
+        //                 );
+        //             }
+        //         },
+        //         allowOutsideClick: () => !Swal.isLoading(),
+        //     });
+        // }
 
-        function confirmHire(pk) {
-            let sentData = {
-                pk: pk,
-            };
-            console.log(`Hiring Applicant with primary key ${pk}`);
+        // function confirmHire(pk) {
+        //     let sentData = {
+        //         csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+        //         pk: pk,
+        //     };
+        //     console.log(`Hiring Applicant with primary key ${pk}`);
 
-            Swal.fire({
-                title: "Confirm Hire",
-                html: "You are about to start employment and create and employment profile.",
-                showCancelButton: true,
-                icon: "warning",
-                confirmButtonText: "Hire",
-                showLoaderOnConfirm: true,
-                preConfirm: () => {
-                    try {
-                        var request = $.post("/applicant/hire/", sentData, (data, status) => {
-                            Swal.fire({
-                                title: "Success!",
-                                icon: "success",
-                                html: `<h1>Employee Hired.</h1>\n ${data}`,
-                                didClose: () => {
-                                    window.location.href(`/employee/${data.employee_id}`);
-                                },
-                            });
-                        });
-                    } catch (error) {
-                        Swal.showValidationMessage(`Request failed: ${error}`);
-                    }
-                },
-                allowOutsideClick: () => !Swal.isLoading(),
-            });
-        }
+        //     Swal.fire({
+        //         title: "Confirm Hire",
+        //         html: "You are about to start employment and create and employment profile.",
+        //         showCancelButton: true,
+        //         icon: "warning",
+        //         confirmButtonText: "Hire",
+        //         showLoaderOnConfirm: true,
+        //         preConfirm: () => {
+        //             try {
+        //                 var request = $.post("/applicant/hire/", sentData, (data, status) => {
+        //                     Swal.fire({
+        //                         title: "Success!",
+        //                         icon: "success",
+        //                         html: `<h1>Employee Hired.</h1>\n ${data}`,
+        //                         didClose: () => {
+        //                             window.location.href(`/employee/${data.employee_id}`);
+        //                         },
+        //                     });
+        //                 });
+        //             } catch (error) {
+        //                 Swal.showValidationMessage(`Request failed: ${error}`);
+        //             }
+        //         },
+        //         allowOutsideClick: () => !Swal.isLoading(),
+        //     });
+        // }
 
-        function confirmRejection(pk) {
-            let sentData = {
-                pk: pk,
-            };
-            console.log(`Rejecting Applicant with primary key ${pk}`);
+        // function confirmRejection(pk) {
+        //     let sentData = {
+        //         csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+        //         pk: pk,
+        //     };
+        //     console.log(`Rejecting Applicant with primary key ${pk}`);
 
-            Swal.fire({
-                title: "Confirm Rejection",
-                text: "You are about to reject this applicant. This will send a email of notifying the applicant",
-                showCancelButton: true,
-                icon: "warning",
-                confirmButtonText: "Reject",
-                showLoaderOnConfirm: true,
-                preConfirm: () => {
-                    try {
-                        var request = $.post("/applicant/reject/", sentData, (data, status) => {
-                            Swal.fire({
-                                title: "Applicant Rejected",
-                                icon: "info",
-                                text: `Applicant rejected. \n They have been  notified by email`,
-                                didClose: () => {
-                                    window.location.reload();
-                                },
-                            });
-                        });
-                    } catch (error) {
-                        Swal.showValidationMessage(`Request failed: ${error}`);
-                    }
-                },
-                allowOutsideClick: () => !Swal.isLoading(),
-            });
-        }
+        //     Swal.fire({
+        //         title: "Confirm Rejection",
+        //         text: "You are about to reject this applicant. This will send a email of notifying the applicant",
+        //         showCancelButton: true,
+        //         icon: "warning",
+        //         confirmButtonText: "Reject",
+        //         showLoaderOnConfirm: true,
+        //         preConfirm: () => {
+        //             try {
+        //                 var request = $.post("/applicant/reject/", sentData, (data, status) => {
+        //                     Swal.fire({
+        //                         title: "Applicant Rejected",
+        //                         icon: "info",
+        //                         text: `Applicant rejected. \n They have been  notified by email`,
+        //                         didClose: () => {
+        //                             window.location.reload();
+        //                         },
+        //                     });
+        //                 });
+        //             } catch (error) {
+        //                 Swal.showValidationMessage(`Request failed: ${error}`);
+        //             }
+        //         },
+        //         allowOutsideClick: () => !Swal.isLoading(),
+        //     });
+        // }
 
         /*-----------------------
-             Form Auto Copy Phone Number to SMS Contact 
+             Form Auto Copy Phone Number to SMS Contact
              _______________________*/
 
 
-    } (jQuery));;
+    // } (jQuery));;
     console.log("Main JS");

@@ -10,7 +10,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.png' %}">
 
     <title>
-      NettCare - Caregiver Portal- {% block title %} {% endblock title %}
+      {% block title %} {% endblock title %} - NettCare - Caregiver Portal
     </title>
 
     {% include "includes/styles.html" %}
@@ -33,7 +33,7 @@
     </div>
 
     {% include "includes/scripts.html" %}
-
+    {% include "includes/_loading_spinner.html" %}
   <!-- Specific JS goes HERE -->
 
     {% block javascripts %}

@@ -3,44 +3,44 @@
 
 {% block content %}
 
-<script src="https://cdn.docuseal.co/js/form.js"></script>
-<div class="mx-auto row d-flex">
-  <div class="col-6">
-<a href="{% url 'profile' %}"><i class="fa-solid fa-circle-arrow-left"></i><h2>Exit Portal</h2> </a>
+  <script src="https://cdn.docuseal.co/js/form.js"></script>
+  <div class="mx-auto row d-flex">
+    <div class="col-6">
+      <a href="{% url 'profile' %}"><i class="fa-solid fa-circle-arrow-left"></i><h2>Exit Portal</h2> </a>
+    </div>
+    <div class="col-6">
+      <a href="#doc-sign-modal" uk-toggle><i class="fa-solid fa-solid fa-file-signature"></i><h2>Sign Different Document</h2> </a>
+    </div>
   </div>
-  <div class="col-6">
-<a href="#doc-sign-modal" uk-toggle><i class="fa-solid fa-solid fa-file-signature"></i><h2>Sign Different Document</h2> </a>
-</div>
-</div>
 
-<docuseal-form 
-data-src="{{ doc_url }}"
-data-email="{{ employee.email }}"
-data-with-send-copy-button="false"
-data-allow-typed-signature="false"
-data-with-title="false">
-</docuseal-form>
+  <docuseal-form
+    data-src="{{ doc_url }}"
+    data-email="{{ employee.email }}"
+    data-with-send-copy-button="false"
+    data-allow-typed-signature="false"
+    data-with-title="false">
+  </docuseal-form>
 
-{% include "include/_docsign-modal.html" %}
-<script defer>
-  document.querySelector('docuseal-form').addEventListener('completed',  (e) => {e.detail
-    Swal.fire({
-      title: "Signed and Delivered",
-      text: "You have successfully signed the document. Would You Like to Sign Another?",
-      showCancelButton: true,
-      cancelButtonText:"Return to Profile",
-      icon: "success",
-      confirmButtonText: "Sign Another Document",
-      showLoaderOnConfirm: true,
-      preConfirm: () => { 
-        var el = $('#doc-sign-modal')
-        UIkit.modal(el).show();
+  {% include "include/_docsign-modal.html" %}
+  <script defer>
+    document.querySelector('docuseal-form').addEventListener('completed',  (e) => {e.detail
+      Swal.fire({
+        title: "Signed and Delivered",
+        text: "You have successfully signed the document. Would You Like to Sign Another?",
+        showCancelButton: true,
+        cancelButtonText:"Return to Profile",
+        icon: "success",
+        confirmButtonText: "Sign Another Document",
+        showLoaderOnConfirm: true,
+        preConfirm: () => {
+          var el = $('#doc-sign-modal')
+          UIkit.modal(el).show();
+        },
+        preDeny: () => {
+          window.open(`${location.hostname}/profile`, '_parent').focus();
+
+        }
       },
-      preDeny: () => {
-        window.open(`${location.hostname}/profile`, '_parent').focus();
-
-      }
-      },
-    )});
+      )});
   </script>
-{% endblock content %} 
+{% endblock content %}

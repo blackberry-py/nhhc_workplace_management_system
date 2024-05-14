@@ -31,8 +31,9 @@ from localflavor.us.models import USStateField, USZipCodeField
 from loguru import logger
 from phonenumber_field.modelfields import PhoneNumberField
 from sage_encrypt.fields.asymmetric import EncryptedCharField, EncryptedEmailField
-
+from django.core.cache import cache
 from nhhc.utils.password_generator import RandomPasswordGenerator
+from nhhc.utils.managers import CachedQuerySet
 
 now: Arrow = now(tz="US/Central")
 
@@ -91,6 +92,8 @@ class ClientInterestSubmission(models.Model, ExportModelOperationsMixin("client_
         PHYS_THERAPY = "PT", _("Physical Therapy")
         OTHER = "NA", _("Other")
 
+    objects = CachedQuerySet.as_manager()
+
     first_name = EncryptedCharField(max_length=10485760)
     last_name = EncryptedCharField(max_length=10485760)
     email = EncryptedEmailField(null=True)
@@ -107,7 +110,7 @@ class ClientInterestSubmission(models.Model, ExportModelOperationsMixin("client_
     last_modified = ModificationDateTimeField()
     reviewed_by = models.ForeignKey(
         Employee,
-        on_delete=models.PROTECT,
+        on_delete=models.DO_NOTHING,
         blank=True,
         null=True,
     )
@@ -211,6 +214,7 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
         JUNIOR = "J", _("3+ Months")
         NEW = "N", _("No Prior Experience")
 
+    objects = CachedQuerySet.as_manager()
     first_name = EncryptedCharField(max_length=10485760)
     last_name = EncryptedCharField(max_length=10485760)
     contact_number = PhoneNumberField(region="US")
@@ -236,7 +240,7 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
     hired = models.BooleanField(null=True, blank=True)
     reviewed_by = models.ForeignKey(
         Employee,
-        on_delete=models.PROTECT,
+        on_delete=models.DO_NOTHING,
         null=True,
         blank=True,
     )
@@ -304,6 +308,7 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
         self.hired = False
         self.reviewed = True
         self.reviewed_by = rejected_by
+        self.save()
 
     class Meta:
         """

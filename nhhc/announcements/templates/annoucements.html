@@ -2,184 +2,220 @@
 {% load static %}
 {% block title %} Announcements {% endblock title %}
 {% block content %}
-<link href="{% static 'tinymce/css/prism.css' %}" rel="stylesheet">
+  <link href="{% static 'tinymce/css/prism.css' %}" rel="stylesheet">
 
-<style>
-  .popOver {
-    z-index: 1100;
-  }
-  .hide-me {
-    display: none;
-  }
-  td {
-    word-wrap: break-word;
-  }
+  <style>
+    .popOver {
+      z-index: 1100;
+    }
+    .hide-me {
+      display: none;
+    }
+    td {
+      word-wrap: break-word;
+    }
+    .show {
+      display: block;
+    }
 
-</style>
+    .remove {
+      display: none;
+    }
+  </style>
 
-<div class="header bg-purple pb-6">
-  <div class="container-fluid">
-    <div class="header-body">
-      <div class="row align-items-center py-4">
-        <div class="col-lg-6 col-7">
-          <h6 class="h2 text-white d-inline-block mb-0">Announcements</h6>
-          <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+  <div class="header bg-purple pb-6">
+    <div class="container-fluid">
+      <div class="header-body">
+        <div class="row align-items-center py-4">
+          <div class="col-lg-6 col-7">
+            <h6 class="h2 text-white d-inline-block mb-0">Announcements</h6>
+            <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
 
-          </nav>
+            </nav>
+          </div>
+
         </div>
-
       </div>
     </div>
   </div>
-</div>
 
 <!-- Page content -->
-<div class="container-fluid mt--6">
-  <div class="row mb-6">
-    <div class="col">
-      <div class="card">
+  <div class="container-fluid mt--6">
+    <div class="row mb-6">
+      <div class="col">
+        <div class="card">
         <!-- Card header -->
-        <div class="card-header border-0">
-          <h3 class="mb-0">Announcements</h3>
+          <div class="card-header border-0">
+            <h3 class="mb-0">Announcements</h3>
           <!-- Search Bar -->
-          {% if request.user.is_staff %}
-          <div class="popOver col-lg-3 text-right">
-            <button uk-toggle="target: #new-annoucement-modal" id="btn-create-annoucement" data-target="#new-annoucement-modal" class="btn btn-lg btn-neutral">Create New Announcement</button>
-          </div>
-        {% endif %}
-        </div>
-      </div>
-    </div>
-  </div>
-          <!-- Light table -->
-          <div class="row">
-          <div class="col-12">
-          <ul class=" nav nav-tabs">
-            <li class="tab nav-item">
-              <a class="nav-link tab active" id="all" aria-current="page" href="#">{{ all_submission }} Total Announcements</a>
-            </li>
             {% if request.user.is_staff %}
-              <li class="nav-item">
-                <a class="nav-link tab" id="deleted" href="#">{{ deleted }} Archived Announcements </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link tab" id="draft" href="#">{{ draft }} Draft Announcements</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link tab" id="active" href="#">{{ active }} Active Announcements</a>
-              </li>
-            {% endif %}
-          </ul>
-        </div>
-          </div>
-
-          <div class="table-responsive">
-            <table class="table align-items-center table-flush table-hover">
-              <thead class="thead-light">
-                <tr>
-                  <th scope="col" class="sort" data-sort="name">Status</th>
-                  <th scope="col" class="sort" data-sort="name">Created By</th>
-                  <th scope="col" class="sort" data-sort="budget">Catagory</th>
-                  <th scope="col" class="sort" data-sort="budget">Message</th>
-                  <th scope="col"></th>
-                </tr>
-              </thead>
-              <tbody class="list">
-                {% for anouncement in announcements %}
-                  {% if anouncement.status == 'D' %}
-                    <tr class="announcement draft">
-                  {% elif anouncement.status == 'A' %}
-                    <tr class="announcement active">
-                  {% elif anouncement.status == 'X' %}
-                    <tr class="announcement deleted">
-                  {% endif %}
-                  <td>
-                    {{ anouncement.get_status_display }}
-                  </td>
-                  <td class="posted-by">
-                    {{ anouncement.posted_by.first_name }} {{ anouncement.posted_by.last_name }}
-                  </td>
-                  <td>
-                    {{ anouncement.get_message_type_display }}
-                  </td>
-
-                  <td class="message">
-                    {{ anouncement.message | truncatewords:10 }}
-                  </td>
-                  <td>
-                    <a class="btn btn-secondary" href="{% url 'announcement_detail' pk=anouncement.id %}">Edit</a>
-                  </td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-            {% if is_paginated %}
-              <div class="mx-auto text-center">
-                <div class="pagination">
-                  <span class="page-links">
-                    {% if page_obj.has_previous %}
-                      <a href="{% url 'announcements' page=page_obj.previous_page_number %}"><i class="fa-solid fa-left-long fa-2xl"></i></a>
-                    {% endif %}
-                    <span class="page-current">
-                      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-                    </span>
-                    {% if page_obj.has_next %}
-                      <a href="{% url 'announcements' page=page_obj.next_page_number %}"><i class="fa-solid fa-right-long fa-2xl"></i></a>
-                    {% endif %}
-                  </span>
-                </div>
+              <div class="popOver col-lg-3 text-right">
+                <button uk-toggle="target: #new-annoucement-modal" id="btn-create-annoucement" data-target="#new-annoucement-modal" class="btn btn-lg btn-neutral">Create New Announcement</button>
               </div>
             {% endif %}
           </div>
         </div>
- {% include "include/_modal.html" %}
+      </div>
+    </div>
+          <!-- Light table -->
+    <div class="row">
+      <div class="col-12">
+        <ul class=" nav nav-tabs">
+          <li class="tab nav-item">
+            <a class="nav-link tab active" id="all" aria-current="page" href="#">{{ all_submission }} Total Announcements</a>
+          </li>
+          {% if request.user.is_staff %}
+            <li class="nav-item">
+              <a class="nav-link tab" id="deleted" href="#">{{ deleted }} Archived Announcements </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link tab" id="draft" href="#">{{ draft }} Draft Announcements</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link tab" id="active" href="#">{{ active }} Active Announcements</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
 
- <script src="{% static 'tinymce/js/prism.js' %}"></script>
+    <div class="table-responsive">
+      <table class="table align-items-center table-flush table-hover">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col" class="sort" data-sort="name">Status</th>
+            <th scope="col" class="sort" data-sort="name">Created By</th>
+            <th scope="col" class="sort" data-sort="budget">Catagory</th>
+            <th scope="col" class="sort" data-sort="budget">Message</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody class="list">
+          {% for anouncement in announcements %}
+            {% if anouncement.status == 'D' %}
+              <tr class="announcement draft">
+            {% elif anouncement.status == 'A' %}
+              <tr class="announcement active">
+            {% elif anouncement.status == 'X' %}
+              <tr class="announcement deleted">
+            {% endif %}
+            <td>
+              {{ anouncement.get_status_display }}
+            </td>
+            <td class="posted-by">
+              {{ anouncement.posted_by.first_name }} {{ anouncement.posted_by.last_name }}
+            </td>
+            <td>
+              {{ anouncement.get_message_type_display }}
+            </td>
+
+            <td class="message">
+              {{ anouncement.message | truncatewords:10 }}
+            </td>
+            <td>
+              <a class="btn btn-secondary" href="{% url 'announcement_detail' pk=anouncement.id %}">Edit</a>
+            </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% if is_paginated %}
+        <div class="mx-auto text-center">
+          <div class="pagination">
+            <span class="page-links">
+              {% if page_obj.has_previous %}
+                <a href="{% url 'announcements' page=page_obj.previous_page_number %}"><i class="fa-solid fa-left-long fa-2xl"></i></a>
+              {% endif %}
+              <span class="page-current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+              </span>
+              {% if page_obj.has_next %}
+                <a href="{% url 'announcements' page=page_obj.next_page_number %}"><i class="fa-solid fa-right-long fa-2xl"></i></a>
+              {% endif %}
+            </span>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+  {% include "include/_modal.html" %}
+
+  <script src="{% static 'tinymce/js/prism.js' %}"></script>
 
 
 {% endblock content %}
- 
+
 <!-- Specific JS goes HERE -->
 
 {% block javascripts %}
-<script defer>
-  function toggleCreateBtn(){
-  $('#btn-create-annoucement').toggleClass('hide-me')
-  }
-$('#new-annoucement-modal').on('show', toggleCreateBtn).on('hidden', toggleCreateBtn)
+  <script defer>
+    function toggleCreateBtn(){
+      $('#btn-create-annoucement').toggleClass('hide-me')
+    }
+    $('#new-annoucement-modal').on('show', toggleCreateBtn).on('hidden', toggleCreateBtn)
 
 
-function confirmSaveAsADraft  (title, message, message_type) {
-  let data = {
-      title: title,
-      message: message,
-      message_type: message_type,
-  };
-  data = JSON.stringify(data);
-  Swal.fire({
-      title: "Confirm Save as A Draft",
-      html: '<p>You are about to save this annoucement as <strong>Draft</strong>.\n It will <strong>Not Be Seen</strong> by anyone who is not a CareNett Admin User. </p> ',
-      showCancelButton: true,
-      icon: "warning",
-      input: "text",
-      confirmButtonText: "Save Draft",
-      showLoaderOnConfirm: true,
-      preConfirm: (input) => {
+    function confirmSaveAsADraft  (title, message, message_type) {
+      let data = {
+        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+        title: title,
+        message: message,
+        message_type: message_type,
+        status: "D"
+      };
+      data = JSON.stringify(data);
+      Swal.fire({
+        title: "Confirm Save as A Draft",
+        html: '<p>You are about to save this annoucement as <strong>Draft</strong>.\n It will <strong>Not Be Seen</strong> by anyone who is not a CareNett Admin User. </p> ',
+        showCancelButton: true,
+        icon: "warning",
+        input: "text",
+        confirmButtonText: "Save Draft",
+        showLoaderOnConfirm: true,
+        preConfirm: (input) => {
           try {
-              $.ajax({
-                  url: "announcement/draft/",
-                  data: data,
-                  type: "POST",
-                  success: ntfy(title = "Saved!", message = "New Announcement Draft Saved", type = "success"),
-              });
+            $.ajax({
+              url: "announcement/draft/",
+              data: data,
+              type: "POST",
+              success: ntfy(title = "Saved!", message = "New Announcement Draft Saved", type = "success"),
+            });
           } catch (error) {
-              Swal.showValidationMessage(`Request failed: ${error}`);
+            Swal.showValidationMessage(`Request failed: ${error}`);
 
           }
 
-      }, allowOutsideClick: () => !Swal.isLoading(),
+        }, allowOutsideClick: () => !Swal.isLoading(),
 
-  })
-}
-</script>
+      })
+    }
+
+    const all = document.querySelectorAll('.annoucements')
+    const tabs = document.querySelectorAll('.tab')
+
+    const allArray = Array.from(all)
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(tab => tab.classList.remove('active'))
+        tab.classList.add('active')
+
+        const tabId = tab.id
+
+        allArray.forEach(div => {
+          div.classList.remove('show', 'remove')
+
+          if (tabId === 'all') {
+            div.classList.add('show')
+          } else if (tabId === 'draft' &&!div.classList.contains('draft')) {
+            div.classList.add('remove')
+          } else if (tabId === 'active' &&!div.classList.contains('active')) {
+            div.classList.add('remove')
+          } else if (tabId === 'deleted' &&!div.classList.contains('deleted')) {
+            div.classList.add('remove')
+          }
+        })
+      })
+    })
+  </script>
 {% endblock javascripts %}

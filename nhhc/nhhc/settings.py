@@ -19,7 +19,9 @@ logger.remove()  # Remove all handlers added so far, including the default one.
 # SECTION - Basic Application Defintion
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ["SECRET_KEY"]
-DEBUG = bool(os.environ["ENABLE_DEBUGGING"])
+# DEBUG = bool(os.environ["ENABLE_DEBUGGING"])
+DEBUG = True
+KOLO_DISABLE = not DEBUG
 DATETIME_FORMAT: str = "m/d/yyyy h:mm A"
 ADMINS = [("Terry Brooks", "Terry@BrooksJr.com")]
 WSGI_APPLICATION = "nhhc.wsgi.application"
@@ -27,15 +29,17 @@ WSGI_APPLICATION = "nhhc.wsgi.application"
 # SECTION - CORS and CSFR Settings
 CSRF_COOKIE_NAME = "nhhc-csrf"
 CSRF_FAILURE_VIEW = "nhhc.urls.permission_denied_handler"
-CORS_ALLOW_HEADERS = list(os.environ["CORS_ALLOW_HEADERS"].split(","))
-CSRF_TRUSTED_ORIGINS = list(os.environ["CSRF_TRUSTED_ORGINS"].split(","))
-# CORS_ALLOWED_ORIGIN_REGEXES = list(os.environ["CORS_ALLOWED_ORIGINS"].split(","))
+CSRF_TRUSTED_ORIGINS = ["http://localhost"]
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:8080",
+]
 CSRF_HEADER_NAME = "X_CSRFToken"
 CSRF_USE_SESSIONS = True
-REFERRER_POLICY = "origin"
+SESSION_COOKIE_DOMAIN = os.environ["SESSION_COOKIE_DOMAIN"]
+REFERRER_POLICY = "strict-origin-when-cross-origin"
 SESSION_COOKIE_NAME = "nhhc-session"
 SESSION_COOKIE_SECURE = True
-# !SECTION 
+# !SECTION
 
 ROBOTS_USE_HOST = False
 ADMINRESTRICT_ALLOW_PRIVATE_IP = False
@@ -48,18 +52,21 @@ RECAPTCHA_PRIVATE_KEY = os.environ["RECAPTCHA_PRIVATE_KEY"]
 RESTRICT_ADMIN_BY_IPS = True
 ALLOWED_ADMIN_IPS = list(os.environ["ALLOWED_IPS"].split(","))
 SITE_ID = os.environ["SITE_ID"]
-SECURE_SSL_REDIRECT = not DEBUG
+SECURE_SSL_REDIRECT = False
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 ENVIRONMENT_FLOAT = True
 ENVIRONMENT_NAME = os.environ["ENVIRONMENT_NAME"]
 ENVIRONMENT_COLOR = os.environ["ENVIRONMENT_COLOR"]
 REQUEST_BASE_URL = os.environ["REQUEST_BASE_URL"]
+
 # SECTION - Email Communication
-if not DEBUG:
-    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-else:
-    EMAIL_BACKEND = "anymail.backends.amazon_ses.EmailBackend"
+EMAIL_BACKEND = "jango.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.environ["EMAIL_SERVER"]
 EMAIL_USE_TLS = True
+EMAIL_USE_LOCALTIME = True
+DEFAULT_FROM_EMAIL = "postmaster@netthandshome.care"
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+INTERNAL_SUBMISSION_NOTIFICATION_EMAILS = list(os.environ["INTERNAL_NOTIFICATION_EMAILS"].split(","))
 EMAIL_PORT = os.environ["EMAIL_TSL_PORT"]
 EMAIL_HOST_USER = os.environ["EMAIL"]
 EMAIL_HOST_PASSWORD = os.environ["EMAIL_ACCT_PASSWORD"]
@@ -92,21 +99,6 @@ TINYMCE_JS_URL = f'https://cdn.tiny.cloud/1/{os.environ["TINYMCE_API_KEY"]}/tiny
 TINYMCE_COMPRESSOR = True
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 TINYMCE_SPELLCHECKER = True
-# TINYMCE_DEFAULT_CONFIG = {
-#     "theme": "silver",
-#     "height": 300,
-#     "menubar": True,
-#     "plugins": "advlist,autolink,lists,link,image,charmap,print,preview,anchor,"
-#     "searchreplace,visualblocks,code,fullscreen,spellchecker, insertdatetime,media,table,paste,"
-#     "code,help,wordcount",
-#     "toolbar": "undo redo | formatselect | "
-#     "bold italic backcolor | alignleft aligncenter "
-#     "alignright alignjustify | bullist numlist outdent indent | "
-#     "removeformat | help",
-#     "language" : "en",
-#       "resize": False
-
-# }
 TINYMCE_DEFAULT_CONFIG = {
     "menubar": "file edit view insert format tools table help",
     "plugins": "advlist autolink lists link image charmap print preview anchor searchreplace visualblocks code " "fullscreen insertdatetime media table paste code help wordcount spellchecker",
@@ -124,6 +116,7 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "jazzmin",
+    "django_admin_env_notice",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -151,18 +144,17 @@ INSTALLED_APPS = [
     "easy_thumbnails",
     "tinymce",
     "filer",
-    # "filer_pdf",
     "robots",
     # "IpWhitelister",
-    "health_check",  # required
-    "health_check.db",  # stock Django health checkers
+    "health_check",
+    "health_check.db",
     "health_check.cache",
-    'health_check.contrib.s3boto3_storage', 
-        'health_check.contrib.redis',               # requires Redis broker
-
+    "health_check.contrib.s3boto3_storage",
+    "health_check.contrib.redis",
     "sage_encrypt",
     "anymail",
     "health_check.storage",
+    "django_celery_results",
     "health_check.contrib.migrations",
     "debug_toolbar",
     ## Installed Internal Apps
@@ -203,12 +195,12 @@ MIDDLEWARE = [
 ]
 AUTH_USER_MODEL = "employee.Employee"
 ROOT_URLCONF = "nhhc.urls"
-INTERNAL_IPS = ["127.0.0.1"]
+# INTERNAL_IPS = ["127.0.0.1"]
 
 
 # SECTION - Database and Caching
-CACHE_TTL = int(os.environ["TIME_TO_LIVE_MINUTES"]) * 60
-
+CACHE_TTL: int = int(os.environ["TIME_TO_LIVE_MINUTES"]) * 60
+QUERYSET_TTL: int = int(os.environ["QUERYSET_TTL"])
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -231,7 +223,7 @@ ENCRYPT_PUBLIC_KEY = os.environ["DB_GPG_PUBLIC_KEY"]
 # !SECTION
 
 # Section - Caching
-REDIS_URL =  os.environ["REDIS_CACHE_URI_TOKEN"]
+REDIS_URL = os.environ["REDIS_CACHE_URI_TOKEN"]
 HEALTHCHECK_CACHE_KEY = "healthcheck_key"
 
 CACHES = {
@@ -242,7 +234,15 @@ CACHES = {
             "PARSER_CLASS": os.environ["CACHE_PARSER"],
         },
         "KEY_PREFIX": "NHHC-NATIVE",
-    }
+    },
+    "celery": {
+        "BACKEND": os.environ["CACHE_ENGINE"],
+        "LOCATION": f'{os.environ["REDIS_CACHE_URI_TOKEN"]}/3',
+        "OPTIONS": {
+            "PARSER_CLASS": os.environ["CACHE_PARSER"],
+        },
+        "KEY_PREFIX": "C-TASK",
+    },
 }
 ROBOTS_CACHE_TIMEOUT = 60 * 60 * 24
 
@@ -457,6 +457,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "nhhc.utils.context_processors.from_settings",
             ],
         },
     },
@@ -518,7 +519,7 @@ HIGHLIGHT_MOINITORING = highlight_io.H(
     instrument_logging=True,
     service_name="netthands-app",
     service_version="git-sha",
-    environment="development",
+    environment=str(os.environ["HIGHLIGHT_ENV"]),
 )
 PRIMARY_LOG_FILE = os.path.join("/data/", "logs", "primary_ops.log")
 CRITICAL_LOG_FILE = os.path.join("/data/", "logs", "fatal.log")
@@ -532,7 +533,7 @@ logger.add(
     backtrace=True,
     serialize=True,
 )
-# logger.add(DEBUG_LOG_FILE, format=LOG_FORMAT, colorize=True, diagnose=True, catch=True, backtrace=True, level="DEBUG")
+logger.add(DEBUG_LOG_FILE, format=LOG_FORMAT, colorize=True, diagnose=True, catch=True, backtrace=True, level="DEBUG")
 logger.add(PRIMARY_LOG_FILE, colorize=True, format=LOG_FORMAT, diagnose=False, catch=True, backtrace=False, level="INFO")
 logger.add(LOGTAIL_HANDLER, colorize=True, format=LOG_FORMAT, diagnose=False, catch=True, backtrace=False, level="DEBUG")
 REQUEST_LOG_USER = True
@@ -694,4 +695,17 @@ JAZZMIN_SETTINGS = {
     # Add a language dropdown into the admin
     "language_chooser": False,
 }
+# !SECTION
+# SECTION - ASYNC/BACKGROUND WORKERS
+CELERY_BROKER_URL = f"{os.environ['REDIS_CACHE_URI_TOKEN']}/4"
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_TRACK_STARTED = os.environ["CELERY_TRACK_TASK_START"]
+CELERY_TASK_TIME_LIMIT = int(os.environ["CELERY_TASK_TIME_LIMIT"]) * 60
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_CACHE_BACKEND = "celery"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_RESULT_EXTENDED = True
+
 # !SECTION

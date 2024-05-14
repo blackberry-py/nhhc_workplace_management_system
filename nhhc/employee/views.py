@@ -15,6 +15,7 @@ To use the functions in this module, import the module and call the desired func
 """
 
 
+from typing import Any
 from django.contrib.auth import login
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
@@ -22,19 +23,24 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django_filters.rest_framework import DjangoFilterBackend
 from employee.models import Employee
+from compliance.models import Compliance
 from loguru import logger
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from web.models import EmploymentApplicationModel
-
+from django.views.decorators.http import require_POST
+from django.forms.models import model_to_dict
+from django.contrib.auth import authenticate
 from nhhc.utils.helpers import (
     get_content_for_unauthorized_or_forbidden,
     get_status_code_for_unauthorized_or_forbidden,
-    send_new_user_credentials,
 )
+from nhhc.utils.mailer import PostOffice
 
+# from  employee.tasks import send_async_onboarding_email, send_async_rejection_email
 # SECTION - Template - Rendering & API Class-Based Views
+HR_MAILROOM = PostOffice("HR@netthandshome.care")
 
 
 # SECTION - Templates
@@ -54,7 +60,7 @@ class EmployeeRoster(ListView):
     queryset = Employee.objects.all().order_by("last_name")
     template_name = "employee-listing.html"
     context_object_name = "employees"
-    paginate_by = 25
+    # paginate_by = 25
 
 
 class EmployeeDetail(DetailView):
@@ -72,6 +78,11 @@ class EmployeeDetail(DetailView):
     model = Employee
     template_name = "employee-detail.html"
     context_object_name = "employee"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["compliance"] = Compliance.objects.get(employee=self.get_object())
+        return context
 
 
 # !SECTION
@@ -121,6 +132,7 @@ class EmployeeRosterAPIView(ListCreateAPIView):
 # SECTION AJAX Hook Views
 
 
+@require_POST
 def reject(request: HttpRequest) -> HttpResponse:
     """
     Ajax Hook that updates EmploymentApplicationModel sets application status to REJECTED
@@ -135,7 +147,7 @@ def reject(request: HttpRequest) -> HttpResponse:
         pk = request.POST.get("pk")
         submission = EmploymentApplicationModel.objects.get(id=pk)
         submission.reject_applicant(rejected_by=request.user)  # type: ignore
-        submission.save()
+        HR_MAILROOM.send_external_applicant_rejection_email(submission)
         logger.success(f"Application Rejected for {submission.last_name}. {submission.first_name}")
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
     except Exception as e:
@@ -143,6 +155,7 @@ def reject(request: HttpRequest) -> HttpResponse:
         return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
+@require_POST
 def hire(request: HttpRequest) -> HttpResponse:
     """
     Handle the process of hiring an applicant.
@@ -208,12 +221,13 @@ def hire(request: HttpRequest) -> HttpResponse:
     # Condition Checked: New User Creds are Sent VIA email and Frontend has been provided confirmation
     try:
         applicant.save()
-        send_new_user_credentials(
-            new_user_email=hired_user["email"],
-            new_user_first_name=hired_user["first_name"],
-            password=hired_user["plain_text_password"],
-            username=hired_user["username"],
-        )
+        new_user_credentials = {
+            "new_user_email": hired_user["email"],
+            "new_user_first_name": hired_user["first_name"],
+            "plaintext_temp_password": hired_user["plain_text_password"],
+            "username": hired_user["username"],
+        }
+        HR_MAILROOM.send_external_applicant_new_hire_onboarding_email(new_user_credentials)
         content = f"username: {hired_user['username']},  password: {hired_user['plain_text_password']}, employee_id: {hired_user['employee_id']}"
         logger.success(f"Successfully Converted Appicant to Employee - {hired_user['last_name']}, {hired_user['first_name']}")
         return HttpResponse(status=status.HTTP_201_CREATED, content=bytes(content, "utf-8"))
@@ -225,6 +239,7 @@ def hire(request: HttpRequest) -> HttpResponse:
         )
 
 
+@require_POST
 def terminate(request: HttpRequest) -> HttpResponse:
     """
     This function is used to terminates an applicant based on the provided 'pk' value in the request.
@@ -244,12 +259,16 @@ def terminate(request: HttpRequest) -> HttpResponse:
         )
     # Condition Checked: POST REQUEST  is vaild with a interger PK in body in key `pk`
     try:
-        pk = request.POST.get("pk")
-        logger.debug(f"Termination Request Initated for Employee ID: {pk}")
+        user = authenticate(username=request.user.username, password=request.POST.get("password"))
+        if user is not None:
+            pk = request.POST.get("pk")
+            logger.debug(f"Termination Request Initated for Employee ID: {pk}")
+        else:
+            return HttpResponse(status=status.HTTP_403_FORBIDDEN, content="Invaild Password User Combonataton")
     except (ValueError, TypeError):
         logger.info("Bad Request to Hire Applicant, Invaild or NO Applcation PK Submitted")
         return HttpResponse(
-            status=400,
+            status=status.HTTP_400_BAD_REQUEST,
             content="Failed to terminate employee. Invalid or no 'pk' value provided in the request.",
         )
     # Condition Checked: Provided PK Employee ID associated with an Employee Instance
@@ -269,13 +288,50 @@ def terminate(request: HttpRequest) -> HttpResponse:
         return HttpResponse(status=400, content=f"Failed to terminate employee.. Error: {e}.")
 
 
-def force_pwd_login(request, *args, **kwargs):
-    response = login(request, *args, **kwargs)
-    if response.status_code == 302:
-        # We have a user
-        try:
-            if request.user.get_profile().force_password_change:
-                return redirect("django.contrib.auth.views.password_change")
-        except AttributeError:  # No profile?
-            pass
-    return response
+@require_POST
+def promote(request: HttpRequest) -> HttpResponse:
+    """
+    This function is used to promote an applicant based on the provided 'pk' value in the request.
+
+    Args:
+    - request (HttpRequest): The HTTP request object containing the 'pk' value.
+
+    Returns:
+    - HttpResponse: Returns an HTTP response with a status code indicating the success or failure of the hiring process.
+    """
+    # Condition Checked: Requesting User is Logged in and An Admin
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        logger.warning("No Authenticated or Non-Admin Termination Request Recieved - Denying Request")
+        return HttpResponse(
+            status=get_status_code_for_unauthorized_or_forbidden(request),
+            content=get_content_for_unauthorized_or_forbidden(request),
+        )
+    # Condition Checked: POST REQUEST  is vaild with a interger PK in body in key `pk`
+    try:
+        user = authenticate(username=request.user.username, password=request.POST.get("password"))
+        if user is not None:
+            pk = request.POST.get("pk")
+            logger.debug(f"Termination Request Initated for Employee ID: {pk}")
+        else:
+            return HttpResponse(status=status.HTTP_403_FORBIDDEN, content="Invaild Password User Combonataton")
+    except (ValueError, TypeError):
+        logger.info("Bad Request to Hire Applicant, Invaild or NO Applcation PK Submitted")
+        return HttpResponse(
+            status=status.HTTP_400_BAD_REQUEST,
+            content="Failed to terminate employee. Invalid or no 'pk' value provided in the request.",
+        )
+    # Condition Checked: Provided PK Employee ID associated with an Employee Instance
+    try:
+        promoted_employee = Employee.objects.get(id=pk)
+        logger.debug(f"Termination Request Resolving to {promoted_employee.last_name}, {promoted_employee.first_name}")
+    except Employee.DoesNotExist:
+        logger.info("Failed to hire applicant. Employment application not found.")
+        return HttpResponse(status=404, content="Failed to promote employee.. Employee not found.")
+    # Condition Checked: An Corrosponding Employee Model Instance is created via the .terminate_employment method on the Employee class
+    try:
+        promoted_employee.promote_to_admin()
+        logger.success(f"employment status for {promoted_employee.last_name}, {promoted_employee.first_name} PRMOTED")
+        return HttpResponse(status=204)
+    except Exception as e:
+        logger.exception(f"Failed to terminate employee. Error: {e}.")
+        return HttpResponse(status=400, content=f"Failed to PROMOTING employee.. Error: {e}.")

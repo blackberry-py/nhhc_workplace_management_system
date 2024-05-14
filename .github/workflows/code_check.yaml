@@ -61,5 +61,8 @@ jobs:
             id: cache-virtualenv
 
           - run: |
+              sudo mkdir /data
+              sudo chown -R $USER:$USER /data
+              sudo chmod 777
               cd nhhc
               make pipeline-test

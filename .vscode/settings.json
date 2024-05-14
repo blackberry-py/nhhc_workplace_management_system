@@ -15,4 +15,5 @@
     "makefile.buildLog": "/workspaces/NettHands/nhhc/logs/build.log",
     "kolo.pathToKoloDirectory": "nhhc",
     "python.REPL.enableREPLSmartSend": false,
+    "docsifyPreview.indexFile": "/workspaces/NettHands/nhhc/docs/",
 }

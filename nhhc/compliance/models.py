@@ -10,6 +10,8 @@ from django_extensions.db.models import TimeStampedModel
 from django_prometheus.models import ExportModelOperationsMixin
 from employee.models import Employee
 from filer.fields.file import FilerFileField
+from django.core.cache import cache
+from nhhc.utils.managers import CachedQuerySet
 
 
 class Contract(TimeStampedModel, models.Model, ExportModelOperationsMixin("contracts")):
@@ -25,6 +27,7 @@ class Contract(TimeStampedModel, models.Model, ExportModelOperationsMixin("contr
     - active: BooleanField, default is True
     """
 
+    objects = CachedQuerySet.as_manager()
     code = models.CharField(max_length=10, unique=True)
     name = models.CharField(max_length=10485760, blank=False, null=False)
     description = models.TextField(blank=True, null=True)
@@ -95,6 +98,7 @@ class Compliance(TimeStampedModel, models.Model, ExportModelOperationsMixin("com
         CC_SUPERVISOR = "CARE_COORDINATOR_SUPERVISOR", _("Care Coordinator Supervisor")
         HC_SUPERVISOR = "HOMECARE_SUPERVISOR", _("Homecare Supervisor")
 
+    objects = CachedQuerySet.as_manager()
     employee = models.OneToOneField(
         Employee,
         on_delete=models.CASCADE,

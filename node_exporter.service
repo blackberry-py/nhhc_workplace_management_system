@@ -1,0 +1,17 @@
+[Unit]
+Description=Prometheus Node Exporter Metric Exporter Service
+Documentation=https://github.com/prometheus/node_exporter
+After=network-online.target
+
+[Service]
+Type=simple
+User=nodeExportrer
+Group=nodeExportrer
+EnvironmentFile=/etc/default/node_exporterd
+ExecStart=/opt/node_exporter/node_exporter $OPTIONS
+Restart=on-failure
+RestartSec=5
+
+
+[Install]
+WantedBy=multi-user.target

@@ -11,7 +11,6 @@ Attributes:
 
 from django.contrib.auth.decorators import login_required
 from django.urls import path, re_path
-from django.views.decorators.csrf import csrf_exempt
 from portal import views
 
 urlpatterns = [
@@ -29,12 +28,12 @@ urlpatterns = [
     ),
     path(
         "reviewed",
-        csrf_exempt(views.marked_reviewed),
+        views.marked_reviewed,
         name="marked_reviewed",
     ),
     path(
         "api/inquiries",
-    views.ClientInquiriesAPIListView.as_view(),
+        views.ClientInquiriesAPIListView.as_view(),
         name="all_client_inquiries_api",
     ),
     path(

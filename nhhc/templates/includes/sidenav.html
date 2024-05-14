@@ -5,7 +5,7 @@
     <!-- Brand -->
     <div class="sidenav-header  align-items-center">
       <a class="navbar-brand" href="{% url 'homepage' %}">
-        <img height="120px" width="120px" id="sidenav-logo" src="{% static 'img/logo-dark.svg' %}" alt="LOGO" class="navbar-brand-img"/>
+        <img height="120px" width="120px" id="sidenav-logo" src="{% static 'img/CareNettLogo.png' %}" alt="CareNet-LOGO" class="navbar-brand-img"/>
       </a>
     </div>
     <div class="navbar-inner">
@@ -61,27 +61,13 @@
             </li>
             <li class="nav-item">
               <a class="nav-link {% if request.path == '/inquiries' %} active {% endif %}" href="{% url 'inquiries' %}">
-                <i class="ni ni-collection text-purple"> <span class="badge position-absolute top-0
-                                                                      start-0 translate-middle rounded-pill
-                                                                      bg-danger">
-                  {% client_count %}
-                  <span class="visually-hidden">
-                    Notifications of new responses
-                  </span>
-                </span> </i>
+                <i class="ni ni-collection text-purple">{% client_count %} </i>
                 <span class="nav-link-text">Service Inquiries</span>
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'applicants-list' %}">
-                <i class="ni ni-badge text-black"> <span class="badge position-absolute top-0
-                                                                start-0 translate-middle rounded-pill
-                                                                bg-danger">
-                  {% app_count %}
-                  <span class="visually-hidden">
-                    Notifications of new responses
-                  </span>
-                </span> </i>
+                <i class="ni ni-badge text-black"> {% app_count %} </i>
                 <span class="nav-link-text">Employment Applications</span>
               </a>
             </li>

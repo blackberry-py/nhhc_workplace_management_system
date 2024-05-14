@@ -20,15 +20,9 @@
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
 
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
 
 <!-- PROJECT LOGO -->
-
+![CareNett Logo](../static/img/CareNettLogo.png)
 <br />
 <div align="center">
   <a href="https://github.com/terry-brooksjr/NettHandsHomecare">
@@ -37,7 +31,7 @@
 <h3 align="center">CareNett</h3>
 <h4>Administrative User Guide</h4>
 
-- <p align="center">
+<p align="center">
     A Guide that aims to inform Nett Hands Home Care CareMNett Administative Users how to execute commom platform functions
       <br />
 
@@ -60,13 +54,17 @@
         <ul>
         <li> <a href="#hiring">Hiring an Applicant</li></a>
         <li><a href="#rejecting"> Rejecting an Applicant</a> </li>
+        <li><a href="#rejecting"> Rejecting an Applicant</a> </li>
         </ul>
         </li>
         </details>
         <details>
         <summary>Employee Managemet</summary>
-        <li><a href="#installation">How to  </a></li>
-      </ul>
+        <details>
+        <ul>
+        <li><a href="#promoting"> Granting a Employee Administrative Rights</a> </li>
+        </ul>
+        </details>
     </li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>

@@ -14,8 +14,26 @@
   </li>
 {% endblock tab %}
 {% block profile_content %}
-  {% csrf_token %}
-  {% crispy form %}
+  {% if form.is_multipart %}
+    <form enctype="multipart/form-data" class="show-loading-after-submit" method="POST" action="{% url 'profile' %}">
+      {% csrf_token %}
+
+      {% crispy form %}
+    </form>
+  {% else %}
+    <form method="POST" class="show-loading-after-submit" action="{% url 'profile' %}">
+
+      {% csrf_token %}
+
+      {% crispy form %}
+    </form>
+  {% endif %}
+
+  {% include "include/_docsign-modal.html" %}
+
+{% endblock profile_content %}
+
+{% block javascript %}
   <script>
     (function ($) {
 
@@ -34,9 +52,7 @@
 
 
         });
-      }(jQuery));;
+    }(jQuery));;
 
   </script>
-  {% include 'include/_docsign-modal.html' %}
-
-{% endblock profile_content %}
+{% endblock javascript %}

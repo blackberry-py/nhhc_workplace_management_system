@@ -23,6 +23,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_extensions.db.fields import CreationDateTimeField, ModificationDateTimeField
 from django_prometheus.models import ExportModelOperationsMixin
+from nhhc.utils.managers import CachedQuerySet
 
 now = arrow.now(tz="America/Chicago")
 
@@ -57,6 +58,7 @@ class PayrollException(models.Model, ExportModelOperationsMixin("exceptions")):
         APPROVED = "A", _("Approved - Time Amended")
         REJECTED = "R", _("Rejected")
 
+    objects = CachedQuerySet.as_manager()
     date = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()

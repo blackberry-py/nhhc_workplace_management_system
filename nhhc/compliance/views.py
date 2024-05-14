@@ -25,6 +25,7 @@ from django.views.generic.edit import FormView, UpdateView
 from django.views.generic import TemplateView
 from formset.upload import FileUploadMixin
 from employee.models import Employee
+
 # Create your views here.
 
 
@@ -44,8 +45,6 @@ class CreateContractFormView(FormView):
     template_name = "new_contract.html"
     form_class = ContractForm
 
-
-
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
         Retrieves the context data for the view.
@@ -55,13 +54,11 @@ class CreateContractFormView(FormView):
 
         Returns:
         - dict[str, Any]: The context data for the view.
-        """ 
-    template_name = "docuseal.html"
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
         return context
+
 
 class ComplianceProfileDetailView(DetailView):
     """
@@ -97,8 +94,8 @@ class ComplianceProfileFormView(UpdateView, FileUploadMixin):
     model = Compliance
     template_name = "compliance_forms.html"
     context_object_name = "employee"
-    
-    
+
+
 class DocusealCompliaceDocsSigning_IDOA(TemplateView):
     """
     A view for displaying and signing compliance documents using Docuseal.
@@ -109,14 +106,16 @@ class DocusealCompliaceDocsSigning_IDOA(TemplateView):
     Methods:
     - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
     """
+
     template_name = "docuseal.html"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
-        context['doc_url'] = "https://docuseal.co/d/r5UbQeVsQgkwUp"
+        context["doc_url"] = "https://docuseal.co/d/r5UbQeVsQgkwUp"
         return context
-    
+
+
 class DocusealCompliaceDocsSigning_HCA(TemplateView):
     """
     A view for displaying and signing compliance documents using Docuseal.
@@ -127,14 +126,16 @@ class DocusealCompliaceDocsSigning_HCA(TemplateView):
     Methods:
     - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
     """
+
     template_name = "docuseal.html"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
-        context['doc_url'] = "https://docuseal.co/d/3KA4PP4CEjpy4r"
+        context["doc_url"] = "https://docuseal.co/d/3KA4PP4CEjpy4r"
         return context
-    
+
+
 class DocusealCompliaceDocsSigning_DoNotDrive(TemplateView):
     """
     A view for displaying and signing compliance documents using Docuseal.
@@ -145,13 +146,16 @@ class DocusealCompliaceDocsSigning_DoNotDrive(TemplateView):
     Methods:
     - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
     """
+
     template_name = "docuseal.html"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
-        context['doc_url'] = "https://docuseal.co/d/v1FPgz9xgBJVgH"
+        context["doc_url"] = "https://docuseal.co/d/v1FPgz9xgBJVgH"
         return context
+
+
 class DocusealCompliaceDocsSigning_JobDesc(TemplateView):
     """
     A view for displaying and signing compliance documents using Docuseal.
@@ -162,14 +166,15 @@ class DocusealCompliaceDocsSigning_JobDesc(TemplateView):
     Methods:
     - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
     """
+
     template_name = "docuseal.html"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
-        context['doc_url'] = "https://docuseal.co/d/KQUEkomQZr1ddD"
+        context["doc_url"] = "https://docuseal.co/d/KQUEkomQZr1ddD"
         return context
-    
+
 
 class DocusealCompliaceDocsSigning_i9(TemplateView):
     """
@@ -181,13 +186,15 @@ class DocusealCompliaceDocsSigning_i9(TemplateView):
     Methods:
     - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
     """
+
     template_name = "docuseal.html"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
-        context['doc_url'] = "https://docuseal.co/d/ovQk6ACHqajQvC"
+        context["doc_url"] = "https://docuseal.co/d/ovQk6ACHqajQvC"
         return context
+
 
 # TODO: Implement Reporting
 def generate_report(requst):

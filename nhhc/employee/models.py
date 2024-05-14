@@ -391,7 +391,7 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
     sms_contact_agreement = models.BooleanField(null=True, help_text="Please Confirm that You Agree to the SMS Communication ")
     sms_contact_number = PhoneNumberField(null=True)
     zipcode = USZipCodeField(null=True)
-    application_id = models.BigIntegerField(default=0, unique=True)
+    application_id = models.BigIntegerField(unique=True, blank=True, null=True)
     hire_date = CreationDateTimeField()
     termination_date = models.DateField(null=True, blank=True)
     qualifications = models.CharField(
@@ -401,6 +401,7 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
         max_length=10485760,
         blank=True,
     )
+    _date_joined = CreationDateTimeField(db_column="date_joined")
     last_modifed = ModificationDateTimeField()
 
     def __str__(self) -> str:
@@ -411,6 +412,19 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
         self.username = self.username + "_TERMINATED"
         self.email = self.email + "_TERMINATED"
         self.is_active = False
+        self.save()
+
+    @property
+    def date_joined(self):
+        return self._date_joined
+
+    @date_joined.setter
+    def date_joined(self):
+        self._date_joined = self.hire_date
+
+    def promote_to_admin(self) -> None:
+        self.is_staff = True
+        self.is_superuser = True
         self.save()
 
     class Meta:

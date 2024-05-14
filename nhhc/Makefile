@@ -1,9 +1,9 @@
 VENV := /workspaces/NettHands/.venv
 # BIN := /usr/local/bin
-PYTHON := $(BIN)/python3.12
+PYTHON := $(BIN)/python3.11
 # SHELL := /bin/bash
 
-PYTHON := $(VENV)/bin/python
+PYTHON := $(VENV)/bin/python3.11
 SHELL := /bin/bash
 CURRENTDATE=`date +"%Y-%m-%d-%T"`
 
@@ -58,6 +58,7 @@ admin:
 
 .PHONY: start
 start:
-	doppler run -t $(DOPPLER_TOKEN)  --  gunicorn --workers=2  --threads=2 nhhc.wsgi:application -b :8080
-
-deploy: install migrate start ## Install requirements, apply migrations, then start development server\\\\\\\\\
+	doppler run -t $(DOPPLER_TOKEN)  --  gunicorn --workers=2  --threads=2 nhhc.wsgi:application -b 127.0.0.1:9000 --reload
+.PHONY: workers
+workers:
+	doppler run -t $(DOPPLER_TOKEN)  --  celery -A nhhc worker -D --loglevel debug

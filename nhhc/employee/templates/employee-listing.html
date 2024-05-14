@@ -1,6 +1,18 @@
 {% extends "layouts/base.html" %}
 {% load static %}
 {% block title %} Applicants {% endblock title %}
+{% block stylesheets %}
+
+  <style>
+    .show {
+      display: block;
+    }
+
+    .remove {
+      display: none;
+    }
+  </style>
+{% endblock stylesheets %}
 {% block content %}
 
   <div class="header bg-warning pb-6">
@@ -78,6 +90,9 @@
                               {{ employee.username }}
                               {% if employee.is_superuser %}
                                 <span class="badge badge-pill badge-warning">Admin</span>
+                              {% elif not employee.is_superuser %}
+
+
                               {% endif %}
                             </div>
                           </div>
@@ -154,14 +169,38 @@
     </div>
   </div>
   </div>
-
-
-          <!-- Card footer -->
-
-
   </div>
 
 {% endblock content %}
 
 <!-- Specific JS goes HERE -->
-{% block javascripts %}{% endblock javascripts %}
+{% block javascripts %}
+
+  <script type="text/javascript" defer>
+    const all = document.querySelectorAll('.employee')
+    const tabs = document.querySelectorAll('.tab')
+
+    const allArray = Array.from(all)
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(tab => tab.classList.remove('active'))
+        tab.classList.add('active')
+
+        const tabId = tab.id
+
+        allArray.forEach(div => {
+          div.classList.remove('show', 'remove')
+
+          if (tabId === 'all') {
+            div.classList.add('show')
+          } else if (tabId === 'active' &&!div.classList.contains('active')) {
+            div.classList.add('remove')
+          } else if (tabId === 'former' &&!div.classList.contains('former')) {
+            div.classList.add('remove')
+          }
+        })
+      })
+    })
+  </script>
+{% endblock javascripts %}

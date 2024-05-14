@@ -16,7 +16,7 @@
         <div class="row align-items-center">
           <div class="col-8">
             <h3 class="mb-0">Employee Compliance Details - {{employee.employee.last_name}}, {{employee.employee.first_name}}
-              <a href={% url 'applicant-details' pk=employee.employee.application_id %}><em><sub>Link to Employment Application</sub></a></em>
+              <a href='{% url "applicant-details" pk=employee.employee.application_id %}'><em><sub>Link to Employment Application</sub></a></em>
             </h3>
           </div>
         </div>
@@ -37,9 +37,21 @@
         </ul>
               {# djlint:on #}
 
-        {% csrf_token %}
+        {% if form.is_multipart %}
+          <form enctype="multipart/form-data" class="show-loading-after-submit" method="POST" action="{% url 'staff_update_compliance' %}">
+            {% csrf_token %}
 
-        {% crispy form %}
+            {% crispy form %}
+          </form>
+        {% else %}
+          <form method="POST" class="show-loading-after-submit" action="{% url 'staff_update_compliance' %}">
+
+            {% csrf_token %}
+
+            {% crispy form %}
+          </form>
+        {% endif %}
+
       </div>
     </div>
   </div>

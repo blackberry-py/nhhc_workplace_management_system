@@ -102,9 +102,9 @@ class Profile(LoginRequiredMixin, View):
 # TODO: Implement REST endpoint with DRF
 
 
-class EmploymentApplicationModelAPIListView(LoginRequiredMixin, mixins.DestroyModelMixin, generics.ListCreateAPIView):
-    queryset = EmploymentApplicationModel.objects.all()
-    serializer_class = (EmploymentApplicationModel,)
+class EmploymentApplicationModelAPIListView(mixins.DestroyModelMixin, generics.ListCreateAPIView):
+    queryset = EmploymentApplicationModel.objects.queryset_from_cache()
+    serializer_class = [EmploymentApplicationModel]
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = [
@@ -131,7 +131,7 @@ class EmploymentApplicationModelAPIListView(LoginRequiredMixin, mixins.DestroyMo
     ]
 
     def destroy(self, request, instance):
-        if self.request.user.is_superuser is False:  # type: ignore
+        if request.user.is_superuser is False:  # type: ignore
             return Response(
                 data="Only Managers can preform a delete operation",
                 status=status.HTTP_403_FORBIDDEN,
@@ -154,7 +154,7 @@ def all_client_inquiries(request: HttpRequest) -> HttpResponse:
 
 
 class ClientInquiriesAPIListView(generics.ListCreateAPIView):
-    queryset = ClientInterestSubmission.objects.all()
+    queryset = ClientInterestSubmission.objects.queryset_from_cache()
     serializer_class = ClientInquiriesSerializer
     permission_classes = [
         permissions.IsAuthenticated,
@@ -170,18 +170,18 @@ class ClientInquiriesListView(LoginRequiredMixin, ListView):
 
     template_name = "service-inquiries.html"
     model = ClientInterestSubmission
-    queryset = ClientInterestSubmission.objects.all().order_by("-date_submitted")
+    queryset = ClientInterestSubmission.objects.queryset_from_cache().order_by("-date_submitted")
     context_object_name = "submissions"
     paginate_by = 25
 
     def get_context_data(self, **kwargs) -> Dict[str, str]:
         context = super().get_context_data(**kwargs)
-        context["unresponsed"] = ClientInterestSubmission.objects.filter(reviewed=False).count()
+        context["unresponsed"] = ClientInterestSubmission.objects.queryset_from_cache().filter(reviewed=False).count()
         context["showSearch"] = True
-        context["reviewed"] = ClientInterestSubmission.objects.filter(
+        context["reviewed"] = ClientInterestSubmission.queryset_from_cache.filter(
             reviewed=True,
         ).count()
-        context["all_submissions"] = ClientInterestSubmission.objects.all().count()
+        context["all_submissions"] = ClientInterestSubmission.queryset_from_cache.count()
         return context
 
 
@@ -203,17 +203,17 @@ class EmploymentApplicationListView(LoginRequiredMixin, ListView):
 
     template_name = "submitted-applications.html"
     model = EmploymentApplicationModel
-    queryset = EmploymentApplicationModel.objects.all().order_by("-date_submitted")
+    queryset = EmploymentApplicationModel.objects.queryset_from_cache().order_by("-date_submitted")
     context_object_name = "submissions"
     paginate_by = 25
 
     def get_context_data(self, **kwargs) -> Dict[str, str]:
         context = super().get_context_data(**kwargs)
-        context["unresponsed"] = EmploymentApplicationModel.objects.filter(reviewed=False).count()
+        context["unresponsed"] = EmploymentApplicationModel.objects.queryset_from_cache().filter(reviewed=False).count()
         context["reviewed"] = EmploymentApplicationModel.objects.filter(
             reviewed=True,
         ).count()
-        context["all_submissions"] = EmploymentApplicationModel.objects.all().count()
+        context["all_submissions"] = EmploymentApplicationModel.objects.queryset_from_cache().count()
         return context
 
 
@@ -237,7 +237,7 @@ def all_applicants(request: HttpRequest) -> HttpResponse:
     Returns:
     - HttpResponse: JSON response containing all employment applications
     """
-    inquiries = EmploymentApplicationModel.objects.all().values()
+    inquiries = EmploymentApplicationModel.objects.queryset_from_cache().values()
     for inquiry in inquiries:
         inquiry["contact_number"] = str(inquiry["contact_number"])
     applicant_json = json.dumps(list(inquiries), cls=DjangoJSONEncoder)

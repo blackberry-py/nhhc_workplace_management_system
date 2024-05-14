@@ -3,7 +3,7 @@
 {% block title %} {{ type }} Applicant - {{ submission.last_name }}, {{ submission.first_name }} {% endblock title %}
 {% load crispy_forms_tags %}
 
-<link rel="stylesheet" href="{% static '/css/custom-portal-styles.css' %}" type="text/css"/>
+<link rel="stylesheet" href="{% static 'css/custom-portal-styles.css' %}" type="text/css"/>
 
 {% block content %}
   <div class="col-xl-8 order-xl-1">
@@ -136,7 +136,79 @@
         </div>
       </div>
     </div>
+    <form class="d-none">
+      {% csrf_token %}
+    </form>
+    <script type="text/javascript" defer>
+      function confirmHire(pk) {
+        let sentData = {
+          csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+          pk: pk,
+        };
+        console.log(`Hiring Applicant with primary key ${pk}`);
 
+        Swal.fire({
+          title: "Confirm Hire",
+          html: "You are about to start employment and create and employment profile.",
+          showCancelButton: true,
+          icon: "warning",
+          confirmButtonText: "Hire",
+          showLoaderOnConfirm: true,
+          preConfirm: () => {
+            try {
+              var request = $.post("/applicant/hire/", sentData, (data, status) => {
+                Swal.fire({
+                  title: "Success!",
+                  icon: "success",
+                  html: `<h1>Employee Hired.</h1>\n ${data}`,
+                  didClose: () => {
+                    window.location.href(`/employee/${data.employee_id}`);
+                  },
+                });
+              });
+            } catch (error) {
+              Swal.showValidationMessage(`Request failed: ${error}`);
+            }
+          },
+          allowOutsideClick: () => !Swal.isLoading(),
+        });
+      }
+
+      function confirmRejection(pk) {
+        let sentData = {
+          csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+          pk: pk,
+        };
+        console.log(`Rejecting Applicant with primary key ${pk}`);
+
+        Swal.fire({
+          title: "Confirm Rejection",
+          text: "You are about to reject this applicant. This will send a email of notifying the applicant",
+          showCancelButton: true,
+          icon: "warning",
+          confirmButtonText: "Reject",
+          showLoaderOnConfirm: true,
+          preConfirm: () => {
+            try {
+              var request = $.post("/applicant/reject/", sentData, (data, status) => {
+                Swal.fire({
+                  title: "Applicant Rejected",
+                  icon: "info",
+                  text: `Applicant rejected. \n They have been  notified by email`,
+                  didClose: () => {
+                    window.location.reload();
+                  },
+                });
+              });
+            } catch (error) {
+              Swal.showValidationMessage(`Request failed: ${error}`);
+            }
+          },
+          allowOutsideClick: () => !Swal.isLoading(),
+        });
+      }
+
+    </script>
 {% endblock content %}
 
 <!-- Specific JS goes HERE -->
