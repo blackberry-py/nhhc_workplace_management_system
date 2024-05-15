@@ -1762,3 +1762,4 @@ zopfli==0.2.3 ; python_version >= "3.11" and python_version < "3.12" \
     --hash=sha256:f48de4818c10c539fdd01276512043ae4ae738e0301e9cace1dd38f4bcffad6a \
     --hash=sha256:f69b161b4d49e256ab285c6c6ee1cf217fda864a9b175d24fa0a0b8c2de9ff13 \
     --hash=sha256:ff86a2cd6b9864027861a129d6d73231b6d463f0d364ca0fdca4492390357cba
+celery
