@@ -30,7 +30,6 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from web.models import EmploymentApplicationModel
 from django.views.decorators.http import require_POST
-from django.forms.models import model_to_dict
 from django.contrib.auth import authenticate
 from nhhc.utils.helpers import (
     get_content_for_unauthorized_or_forbidden,

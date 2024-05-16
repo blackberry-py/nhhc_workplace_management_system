@@ -14,7 +14,6 @@ from nhhc.utils.email_templates import (
 )
 from loguru import logger
 from django.forms.models import model_to_dict
-from anymail.message import AnymailMessageMixin
 
 
 class PostOffice(EmailMultiAlternatives):
@@ -50,8 +49,8 @@ class PostOffice(EmailMultiAlternatives):
             subject: str = f"Thanks For Your Employment Interest, {applicant['first_name']}!"
             to: list = applicant["email"].lower()
             content_subtype = "text/html"
-            html_content = APPLICATION_BODY
-            text_content = PLAIN_TEXT_APPLICATION_BODY
+            html_content = APPLICATION_BODY.substitute(first_name=applicant["first_name"])
+            text_content = PLAIN_TEXT_APPLICATION_BODY.substitute(first_name=applicant["first_name"])
 
             msg = EmailMultiAlternatives(subject=subject, to=[to], body=text_content, from_email=self.from_email, reply_to=[self.reply_to])
             msg.attach_alternative(html_content, content_subtype)
@@ -82,8 +81,8 @@ class PostOffice(EmailMultiAlternatives):
             subject: str = f"We Are On It, {interested_client['first_name']}!"
             to: list = interested_client["email"].lower()
             content_subtype = "text/html"
-            html_content = CLIENT_BODY
-            text_content = PLAIN_TEXT_CLIENT_BODY
+            html_content = CLIENT_BODY.substitute(first_name=interested_client["first_name"])
+            text_content = PLAIN_TEXT_CLIENT_BODY.substitute(first_name=interested_client["first_name"])
 
             msg = EmailMultiAlternatives(subject=subject, to=[to], from_email=self.from_email, reply_to=[self.reply_to], body=text_content)
             msg.attach_alternative(html_content, content_subtype)

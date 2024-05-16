@@ -94,6 +94,11 @@
       </div>
     </div>
   </div>
+  <
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascript %}
   <script defer>
     function switchTab(){
       console.log('Checking Location')
@@ -112,6 +117,4 @@
     }
     $('document').load(switchTab)
   </script>
-{% endblock content %}
-
-<!-- Specific JS goes HERE -->
+{% endblock javascript %}

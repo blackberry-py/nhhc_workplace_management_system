@@ -117,6 +117,24 @@
                 {% endif %}
               </td>
             </tr>
+            <tr>
+              <td>
+                W4 - Tax Withholding                          </td>
+              <td>
+                {% if request.user.irs_w4_attestation is None %}
+                  <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
+                {% else %}
+                  <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
+                {% endif %}
+              </td>
+              <td>
+                {% if request.user.irs_w4_attestation is None %}
+                  <a href="{% url 'w4_sign' %}" class="btn btn-primary">Sign</a>
+                {% else %}
+                  <a href="{% url 'w4_sign' %}" class="btn btn-primary">Re-Sign</a>
+                {% endif %}
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>

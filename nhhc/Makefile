@@ -44,9 +44,9 @@ test: ## Run tests
 pipeline-test: ## Run tests
 	${VIRTUAL_ENV}/bin/python manage.py test web employee portal  --verbosity=2  --keepdb   --force-color
 
-.PHONY: run3
+.PHONY: run
 run: ## Run the Django server
-	doppler run -t $(DOPPLER_TOKEN) -- 	$(PYTHON) manage.py runserver 8080
+	doppler run -t $(DOPPLER_TOKEN) -- 	$(PYTHON) manage.py runserver 7772
 
 .PHONY: debug
 debug: ## Run the Django server
@@ -58,7 +58,7 @@ admin:
 
 .PHONY: start
 start:
-	doppler run -t $(DOPPLER_TOKEN)  --  gunicorn --workers=2  --threads=2 nhhc.wsgi:application -b 127.0.0.1:9000 --reload
+	doppler run -t $(DOPPLER_TOKEN)  --  gunicorn --workers=2  --threads=2 nhhc.wsgi:application -b 127.0.0.1:8080
 .PHONY: workers
 workers:
 	doppler run -t $(DOPPLER_TOKEN)  --  celery -A nhhc worker -D --loglevel debug

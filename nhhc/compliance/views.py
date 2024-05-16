@@ -25,10 +25,17 @@ from django.views.generic.edit import FormView, UpdateView
 from django.views.generic import TemplateView
 from formset.upload import FileUploadMixin
 from employee.models import Employee
+import json
+from django.views.decorators.http import require_POST
+from compliance.tasks import process_signed_form
+from django.http import HttpRequest, HttpResponse
+from rest_framework import status
+from loguru import logger
 
 # Create your views here.
 
 
+# SECTION - Contract Related Viewws
 def create_contract(request):
     pass
 
@@ -45,21 +52,23 @@ class CreateContractFormView(FormView):
     template_name = "new_contract.html"
     form_class = ContractForm
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        """
-        Retrieves the context data for the view.
+    # def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    #     """
+    #     Retrieves the context data for the view.
 
-        Parameters:
-        - kwargs (Any): Additional keyword arguments.
+    #     Parameters:
+    #     - kwargs (Any): Additional keyword arguments.
 
-        Returns:
-        - dict[str, Any]: The context data for the view.
-        """
-        context = super().get_context_data(**kwargs)
-        context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
-        return context
+    #     Returns:
+    #     - dict[str, Any]: The context data for the view.
+    #     """
+    #     context = super().get_context_data(**kwargs)
+    #     context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
+    #     return context
 
 
+# !SECTION
+# SECTION - Compliance Related Views
 class ComplianceProfileDetailView(DetailView):
     """
     This class is a DetailView that displays the details of a Compliance object.
@@ -94,6 +103,25 @@ class ComplianceProfileFormView(UpdateView, FileUploadMixin):
     model = Compliance
     template_name = "compliance_forms.html"
     context_object_name = "employee"
+
+
+# !SECTION
+
+# SECTION - Attestation Forms
+
+
+@require_POST
+def signed_attestations(request: HttpRequest) -> HttpResponse:
+    docuseal_payload = json.loads(request.POST)
+    uploaded = process_signed_form(docuseal_payload)
+    try:
+        if uploaded:
+            return HttpResponse(content="Posted To S3", status=status.HTTP_201_CREATED)
+        else:
+            logger.trace()
+            return HttpResponse(content="Failed To Posted To S3", status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+    except Exception as e:
+        logger.error(f"Error Uploding to S3: {e}")
 
 
 class DocusealCompliaceDocsSigning_IDOA(TemplateView):
@@ -196,8 +224,31 @@ class DocusealCompliaceDocsSigning_i9(TemplateView):
         return context
 
 
+class DocusealCompliaceDocsSigning_irs_w4(TemplateView):
+    """
+    A view for displaying and signing compliance documents using Docuseal.
+
+    Attributes:
+    - template_name (str): The name of the template to be rendered.
+
+    Methods:
+    - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+    """
+
+    template_name = "docuseal.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
+        context["doc_url"] = "hhttps://docuseal.co/d/wmJGUH3wU2GrUJ"
+        return context
+
+
+# !SECTION
+
+
 # TODO: Implement Reporting
-def generate_report(requst):
+def generate_report(request):
     raise NotImplementedError
     # sessio÷≥nDataCSV = f"TTPUpload{now.to_date_string()}.csv"
     # sessions = employee_report_export()

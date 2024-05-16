@@ -59,12 +59,10 @@ class EmployeeForm(ModelForm):
         self.helper.form_action = reverse("profile")
         self.helper.form_id = "profile"
         self.helper.form_method = "post"
-        self.fields["date_of_birth"].widget = (
-            DateInput(
-                attrs={"type": "date", "class": "form-control"},
-            ),
+        self.fields["date_of_birth"].widget = DateInput(
+            attrs={"type": "date", "class": "form-control"},
         )
-        self.fields["password"].required = (False,)
+        self.fields["password"].required = False
         self.helper.layout = Layout(
             HTML(
                 """

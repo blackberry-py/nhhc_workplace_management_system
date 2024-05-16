@@ -12,34 +12,34 @@ class ContractForm(forms.ModelForm):
 
     """Form definition for Contract Model."""
 
-    def is_active_contract(contract_year_start, contract_year_ends):
+    def is_active_contract(self, contract_year_start, contract_year_ends):
         now = datetime.now()
         if contract_year_start <= now and contract_year_end >= now:
             return True
         else:
             return False
 
-        def save(self, commit=True):
-            form_data = self.cleaned_data
-            self.instance.code = form_data["code"]
-            self.instance.name = form_data["name"]
-            self.instance.description = form_data["description"]
-            self.instance.contract_year_start = form_data["contract_year_start"]
-            self.instance.contract_year_end = form_data["contract_year_end"]
-            self.instance.active = is_active_contract(orm_data["contract_year_start"], form_data["contract_year_end"])
-            return super(ContractForm, self).save(commit)
+    def save(self, commit=True):
+        form_data = self.cleaned_data
+        self.instance.code = form_data["code"]
+        self.instance.name = form_data["name"]
+        self.instance.description = form_data["description"]
+        self.instance.contract_year_start = form_data["contract_year_start"]
+        self.instance.contract_year_end = form_data["contract_year_end"]
+        self.instance.active = self.is_active_contract(form_data["contract_year_start"], form_data["contract_year_end"])
+        return super(ContractForm, self).save(commit)
 
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            self.helper = FormHelper()
-            self.helper.form_id = "contract"
-            self.helper.form_method = "post"
-            self.fields["contract_year_end"].widget = forms.widgets.DateInput(
-                attrs={"type": "date", "class": "form-control"},
-            )
-            self.fields["contract_year_end"].widget = forms.widgets.DateInput(
-                attrs={"type": "date", "class": "form-control"},
-            )
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = "contract"
+        self.helper.form_method = "post"
+        self.fields["contract_year_end"].widget = forms.widgets.DateInput(
+            attrs={"type": "date", "class": "form-control"},
+        )
+        self.fields["contract_year_end"].widget = forms.widgets.DateInput(
+            attrs={"type": "date", "class": "form-control"},
+        )
 
     class Meta:
         model = Contract

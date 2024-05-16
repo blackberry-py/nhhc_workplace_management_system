@@ -18,7 +18,8 @@
     data-email="{{ employee.email }}"
     data-with-send-copy-button="false"
     data-allow-typed-signature="false"
-    data-with-title="false">
+    data-external-id="{{ employee.employee_id }}"
+    data-allow-to-resubmit="false">
   </docuseal-form>
 
   {% include "include/_docsign-modal.html" %}

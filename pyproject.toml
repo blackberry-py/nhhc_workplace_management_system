@@ -66,6 +66,7 @@ django-referrer-policy = "^1.0"
 celery = "^5.4.0"
 django-celery-results = "^2.5.1"
 flower = "^2.0.1"
+pymupdf = "^1.24.3"
 
 
 [tool.poetry.group.dev.dependencies]

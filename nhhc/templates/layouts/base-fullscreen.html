@@ -60,11 +60,11 @@
     </div>
 
     {% include "includes/scripts.html" %}
-    {% include "includes/_loading_spinner.html" %}
 
   <!-- Specific JS goes HERE -->
     {% block javascripts %}{% endblock javascripts %}
-
+    {% include "includes/_loading_spinner.html" %}
+    ``
   </body>
 
 </html>
