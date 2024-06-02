@@ -12,6 +12,4 @@ These URL patterns are used to define the routing for the views in the applicati
 from django.urls import path
 from authentication.views import CustomLoginView
 
-urlpatterns = [
-    # path("login/", CustomLoginView.as_view(), name="account_login")
-]
+urlpatterns = [path("login/", CustomLoginView.as_view(), name="account_login")]

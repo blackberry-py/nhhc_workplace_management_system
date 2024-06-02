@@ -9,8 +9,6 @@ from django.utils.translation import gettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 from django_prometheus.models import ExportModelOperationsMixin
 from employee.models import Employee
-from filer.fields.file import FilerFileField
-from django.core.cache import cache
 from nhhc.utils.managers import CachedQuerySet
 
 
@@ -106,14 +104,13 @@ class Compliance(TimeStampedModel, models.Model, ExportModelOperationsMixin("com
         related_name="compliance_profile_of",
     )
     aps_check_passed = models.BooleanField(null=True, blank=True)
-    aps_check_verification = FilerFileField(
-        on_delete=models.DO_NOTHING,
-        related_name="aps_check_verification",
+    aps_check_verification = models.FileField(
+        upload_to="aps_check_verification",
         blank=True,
         null=True,
     )
 
-    hhs_oig_exclusionary_check_verification = FilerFileField(related_name="hhg_oig", on_delete=models.DO_NOTHING, blank=True, null=True)
+    hhs_oig_exclusionary_check_verification = models.FileField(upload_to="hhg_oig", blank=True, null=True)
     hhs_oig_exclusionary_check_completed = models.BooleanField(
         null=True,
         blank=True,
@@ -124,7 +121,7 @@ class Compliance(TimeStampedModel, models.Model, ExportModelOperationsMixin("com
         blank=True,
         default=False,
     )
-    idph_background_check_verification = FilerFileField(related_name="idph_bg_check", on_delete=models.DO_NOTHING, blank=True, null=True)
+    idph_background_check_verification = models.FileField(upload_to="idph_bg_check", blank=True, null=True)
     initial_idph_background_check_completion_date = models.DateField(
         null=True,
         blank=True,
@@ -134,9 +131,8 @@ class Compliance(TimeStampedModel, models.Model, ExportModelOperationsMixin("com
         blank=True,
     )
     training_exempt = models.BooleanField(null=True, blank=True, default=False)
-    pre_training_verification = FilerFileField(
-        related_name="pretraining_verification",
-        on_delete=models.DO_NOTHING,
+    pre_training_verification = models.FileField(
+        upload_to="pretraining_verification",
         blank=True,
         null=True,
     )

@@ -17,7 +17,7 @@ venv: ## Make a new virtual environment
 
 .PHONY: install
 install: ## Make venv and install requirements
-	doppler run  -t $(DOPPLER_TOKEN) -- pip install --upgrade -r ../requirements.txt
+	doppler run  -t $(DOPPLER_TOKEN) -- pip install --upgrade -r ./requirements.txt
 
 freeze: ## Pin current dependencies
 	$(BIN)/pip freeze > ../requirements.txt
@@ -36,6 +36,10 @@ lint:
 db-shell: ## Access the Postgres Docker database interactively with psql. Pass in DBNAME=<name>.
 	docker exec -it container_name psql -d $(DBNAME)
 
+.PHONY: workers
+workers:
+	doppler run -t $(DOPPLER_TOKEN)  --  celery -A nhhc worker --without-heartbeat --without-gossip --without-mingle -D --loglevel debug
+
 .PHONY: test
 test: ## Run tests
 	doppler run -- coverage run manage.py test web employee portal  --verbosity=2 --keepdb   --failfast  --force-color
@@ -44,8 +48,14 @@ test: ## Run tests
 pipeline-test: ## Run tests
 	${VIRTUAL_ENV}/bin/python manage.py test web employee portal  --verbosity=2  --keepdb   --force-color
 
+
+.PHONY: flower
+flower:
+	doppler run -t $(DOPPLER_TOKEN) -- celery -A nhhc flower --port=9005
+
+
 .PHONY: run
-run: ## Run the Django server
+run: workers
 	doppler run -t $(DOPPLER_TOKEN) -- 	$(PYTHON) manage.py runserver 7772
 
 .PHONY: debug
@@ -57,8 +67,5 @@ admin:
 	doppler run -t $(DOPPLER_TOKEN) --  $(PYTHON) manage.py createsuperuser --no-input
 
 .PHONY: start
-start:
+start: workers
 	doppler run -t $(DOPPLER_TOKEN)  --  gunicorn --workers=2  --threads=2 nhhc.wsgi:application -b 127.0.0.1:8080
-.PHONY: workers
-workers:
-	doppler run -t $(DOPPLER_TOKEN)  --  celery -A nhhc worker -D --loglevel debug

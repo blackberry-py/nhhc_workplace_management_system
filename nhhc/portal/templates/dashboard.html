@@ -12,11 +12,11 @@
     <!-- Page content -->
   <div class="align-content-end">
 
-    {% comment %} {% recent_announcements %} {% endcomment %}
+    {% recent_announcements %}
+    {% include "includes/new_applications_stats.html" %}
 
   </div>
 
   <div class="align-content-end">
-    {% include "includes/new_applications_stats.html" %}
   </div>
 {% endblock content %}

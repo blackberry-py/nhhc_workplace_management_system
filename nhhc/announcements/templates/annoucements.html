@@ -2,7 +2,9 @@
 {% load static %}
 {% block title %} Announcements {% endblock title %}
 {% block content %}
+
   <link href="{% static 'tinymce/css/prism.css' %}" rel="stylesheet">
+  <script src="{% static 'tinymce/js/prism.js' %}"></script>
 
   <style>
     .popOver {
@@ -74,74 +76,97 @@
             <li class="nav-item">
               <a class="nav-link tab" id="active" href="#">{{ active }} Active Announcements</a>
             </li>
-          {% endif %}
-        </ul>
-      </div>
-    </div>
+            </ul>
+            </div>
+            </div>
 
-    <div class="table-responsive">
-      <table class="table align-items-center table-flush table-hover">
-        <thead class="thead-light">
-          <tr>
-            <th scope="col" class="sort" data-sort="name">Status</th>
-            <th scope="col" class="sort" data-sort="name">Created By</th>
-            <th scope="col" class="sort" data-sort="budget">Catagory</th>
-            <th scope="col" class="sort" data-sort="budget">Message</th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody class="list">
-          {% for anouncement in announcements %}
-            {% if anouncement.status == 'D' %}
-              <tr class="announcement draft">
-            {% elif anouncement.status == 'A' %}
-              <tr class="announcement active">
-            {% elif anouncement.status == 'X' %}
-              <tr class="announcement deleted">
+            <div class="table-responsive">
+              <table class="table align-items-center table-flush table-hover">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" class="sort" data-sort="status">Status</th>
+                    <th scope="col" class="sort" data-sort="poster">Created By</th>
+                    <th scope="col" class="sort" data-sort="catagory">Catagory</th>
+                    <th scope="col" class="sort" data-sort="message">Message</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody class="list">
+                  {% for anouncement in announcements %}
+                    {% if anouncement.status == 'D' %}
+                      <tr class="announcement draft">
+                    {% elif anouncement.status == 'A' %}
+                      <tr class="announcement active">
+                    {% elif anouncement.status == 'X' %}
+                      <tr class="announcement deleted">
+                    {% endif %}
+                    <td>
+                      {{ anouncement.get_status_display }}
+                    </td>
+                    <td class="posted-by">
+                      {{ anouncement.posted_by.first_name }} {{ anouncement.posted_by.last_name }}
+                    </td>
+                    <td>
+                      {{ anouncement.get_message_type_display }}
+                    </td>
+
+                    <td class="message">
+                      {{ anouncement.message | truncatewords:10 }}
+                    </td>
+                    <td>
+                      <a class="btn btn-secondary" href="{% url 'announcement_detail' pk=anouncement.id %}">Edit</a>
+                    </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+            </div>
+            </div>
+          {% else %}
+            <div class="table-responsive">
+              <table class="table align-items-center table-flush table-hover">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" class="sort" data-sort="budget">Message</th>
+                    <th scope="col">Posted Date</th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+
+            {% for anouncement in announcements %}
+              {% if anouncement.status == 'A' %}
+                <tr class="announcement">
+                  <td>{{ anouncement.message }}</td>
+                  <td>{{  anouncement.posted_by }}</td>
+                </tr>
+              {% endif %}
             {% endif %}
-            <td>
-              {{ anouncement.get_status_display }}
-            </td>
-            <td class="posted-by">
-              {{ anouncement.posted_by.first_name }} {{ anouncement.posted_by.last_name }}
-            </td>
-            <td>
-              {{ anouncement.get_message_type_display }}
-            </td>
-
-            <td class="message">
-              {{ anouncement.message | truncatewords:10 }}
-            </td>
-            <td>
-              <a class="btn btn-secondary" href="{% url 'announcement_detail' pk=anouncement.id %}">Edit</a>
-            </td>
-            </tr>
           {% endfor %}
-        </tbody>
-      </table>
-      {% if is_paginated %}
-        <div class="mx-auto text-center">
-          <div class="pagination">
-            <span class="page-links">
-              {% if page_obj.has_previous %}
-                <a href="{% url 'announcements' page=page_obj.previous_page_number %}"><i class="fa-solid fa-left-long fa-2xl"></i></a>
-              {% endif %}
-              <span class="page-current">
-                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-              </span>
-              {% if page_obj.has_next %}
-                <a href="{% url 'announcements' page=page_obj.next_page_number %}"><i class="fa-solid fa-right-long fa-2xl"></i></a>
-              {% endif %}
-            </span>
-          </div>
-        </div>
-      {% endif %}
+
+        </table>
+
+{% endif %}
+{% if is_paginated %}
+  <div class="mx-auto text-center">
+    <div class="pagination">
+      <span class="page-links">
+        {% if page_obj.has_previous %}
+          <a href="{% url 'announcements' page=page_obj.previous_page_number %}"><i class="fa-solid fa-left-long fa-2xl"></i></a>
+        {% endif %}
+        <span class="page-current">
+          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+        {% if page_obj.has_next %}
+          <a href="{% url 'announcements' page=page_obj.next_page_number %}"><i class="fa-solid fa-right-long fa-2xl"></i></a>
+        {% endif %}
+      </span>
     </div>
   </div>
-  {% include "include/_modal.html" %}
+{% endif %}
 
-  <script src="{% static 'tinymce/js/prism.js' %}"></script>
-
+{% include "include/_modal.html" %}
 
 {% endblock content %}
 
@@ -149,6 +174,7 @@
 
 {% block javascripts %}
   <script defer>
+
     function toggleCreateBtn(){
       $('#btn-create-annoucement').toggleClass('hide-me')
     }
@@ -158,9 +184,9 @@
     function confirmSaveAsADraft  (title, message, message_type) {
       let data = {
         csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
-        title: title,
-        message: message,
-        message_type: message_type,
+        title: $('#id_announcement_title').val(),
+        message: $('#id_message').val(),
+        message_type: $('#id_id_announcement_title').val(),
         status: "D"
       };
       data = JSON.stringify(data);
@@ -169,7 +195,6 @@
         html: '<p>You are about to save this annoucement as <strong>Draft</strong>.\n It will <strong>Not Be Seen</strong> by anyone who is not a CareNett Admin User. </p> ',
         showCancelButton: true,
         icon: "warning",
-        input: "text",
         confirmButtonText: "Save Draft",
         showLoaderOnConfirm: true,
         preConfirm: (input) => {

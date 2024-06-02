@@ -1,13 +1,27 @@
----
+
 global:
-  scrape_interval: 15s
-  evaluation_interval: 15s
+  scrape_interval: 60s
+  query_log_file: /prometheus/logs/query/query.log
+  # scrape_timeout: 2m
 remote_write:
   - url: https://prometheus-prod-10-prod-us-central-0.grafana.net/api/prom/push
     basic_auth:
-      username: "390644"
-      password: "${GRAFANA_TOKEN}"
+      username: 390644
+      password: glc_eyJvIjoiNjI5NDg1IiwibiI6InN0YWNrLTM0NTE1Mi1pbnRlZ3JhdGlvbi13ZXR0IiwiayI6IkhhRjFmY3M4NzljeVlka004MTR5OTY4RSIsIm0iOnsiciI6InVzIn19
 scrape_configs:
+  - job_name: node
+    static_configs:
+      - targets: ["localhost:9090"]
+  - job_name: server-hardware
+    scrape_interval: 4m
+    scrape_timeout: 2m
+    static_configs:
+      - targets:
+          - 172.21.0.2:9100
+  - job_name: flower
+    static_configs:
+      - targets:
+          - docker.for.mac.localhost:5555
   - job_name: prometheus
     scrape_interval: 30s
     scheme: http
@@ -18,13 +32,4 @@ scrape_configs:
     scrape_interval: 30s
     static_configs:
       - targets:
-          - docker.for.mac.localhost:9000
-  - job_name: server-hardware
-    scrape_interval: 30s
-    static_configs:
-      - targets:
-          - docker.for.mac.localhost:9100
-  - job_name: flower
-    static_configs:
-      - targets:
-          - docker.for.mac.localhost:5555
+          - docker.for.mac.localhost:7772

@@ -21,7 +21,7 @@ from typing import Any
 from compliance.forms import ComplianceForm, ContractForm
 from compliance.models import Compliance
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import FormView, UpdateView
+from django.views.generic.edit import UpdateView, CreateView
 from django.views.generic import TemplateView
 from formset.upload import FileUploadMixin
 from employee.models import Employee
@@ -36,11 +36,9 @@ from loguru import logger
 
 
 # SECTION - Contract Related Viewws
-def create_contract(request):
-    pass
 
 
-class CreateContractFormView(FormView):
+class CreateContractFormView(CreateView):
     """
     class-based template rendering view for creating a new contract form.
 
@@ -240,7 +238,27 @@ class DocusealCompliaceDocsSigning_irs_w4(TemplateView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
-        context["doc_url"] = "hhttps://docuseal.co/d/wmJGUH3wU2GrUJ"
+        context["doc_url"] = "https://docuseal.co/d/wmJGUH3wU2GrUJ"
+        return context
+
+
+class DocusealCompliaceDocsSigning_il_w4(TemplateView):
+    """
+    A view for displaying and signing compliance documents using Docuseal.
+
+    Attributes:
+    - template_name (str): The name of the template to be rendered.
+
+    Methods:
+    - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+    """
+
+    template_name = "docuseal.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
+        context["doc_url"] = "https://docuseal.co/d/M6o9cZ4528yk4L"
         return context
 
 

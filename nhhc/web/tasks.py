@@ -25,12 +25,12 @@ def process_new_application(self, form: Union[EmploymentApplicationForm, Dict[st
         Dict[str,int]: A dictionary containing the results of the notification tasks. The values represent the number of notifications succesful sent.
     """
     try:
-        logger.info(f"Starting Async Application Submission Processing")
         internal_notify_task = career_web_mailer.send_internal_new_applicant_notification(form)
         external_notify_task = career_web_mailer.send_external_application_submission_confirmation(form)
         results = {"internal": internal_notify_task, "external": external_notify_task}
         return results
     except Exception as e:
+        logger.error(f"UNABLE TO SEND: {e}")
         raise self.retry(exc=e, countdown=60)
 
 

@@ -7,7 +7,6 @@ from compliance.models import Compliance
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from employee.models import Employee
-from filer.validation import FileValidationError
 
 from nhhc.utils.validators import UploadHandler  # Replace with the actual module name
 

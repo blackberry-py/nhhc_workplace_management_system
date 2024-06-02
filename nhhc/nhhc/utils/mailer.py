@@ -54,12 +54,12 @@ class PostOffice(EmailMultiAlternatives):
 
             msg = EmailMultiAlternatives(subject=subject, to=[to], body=text_content, from_email=self.from_email, reply_to=[self.reply_to])
             msg.attach_alternative(html_content, content_subtype)
-            sent_emails = msg.send()
-            logger.debug(msg.anymail_status.status)
-            logger.debug(msg.anymail_status.esp_response)
-            if msg.anymail_status.status not in ["sent", "queued"]:
-                logger.error(f" EMAIL TRANSMISSION FAILURE: {msg.anymail_status.esp_response}")
+            sent_emails: int = msg.send()
+            if sent_emails <= 0:
+                logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
                 raise RuntimeError("Email Not Sents")
+            logger.info(f"Number of External Emails Sent:{sent_emails}")
+            return sent_emails
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
 
@@ -87,10 +87,8 @@ class PostOffice(EmailMultiAlternatives):
             msg = EmailMultiAlternatives(subject=subject, to=[to], from_email=self.from_email, reply_to=[self.reply_to], body=text_content)
             msg.attach_alternative(html_content, content_subtype)
             sent_emails = msg.send()
-            logger.debug(msg.anymail_status.status)
-            logger.debug(msg.anymail_status.esp_response)
-            if msg.anymail_status.status not in ["sent", "queued"]:
-                logger.error(f" EMAIL TRANSMISSION FAILURE: {msg.anymail_status.esp_response}")
+            if sent_emails <= 0:
+                logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
                 raise RuntimeError("Email Not Sents")
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
@@ -120,19 +118,10 @@ class PostOffice(EmailMultiAlternatives):
             text_content = PLAIN_TEXT_REJECTION_EMAI_TEMPLATE.substitute(first_name=rejected_applicant["first_name"])
             msg = EmailMultiAlternatives(subject=subject, to=[to], from_email=self.from_email, reply_to=self.reply_to, body=text_content)
             msg.attach_alternative(html_content, content_subtype)
-            message_response = msg.send()
-            if message_response > 0:
-                logger.success(f"Successful EMAIL transmission to {rejected_applicant['last_name'], rejected_applicant['first_name']}({rejected_applicant['email']})")
-                return True
-            else:
-                logger.error(f" EMAIL TRANSMISSION FAILURE:{message_response}")
-                raise RuntimeError(message_response)
-            # logger.debug(msg.anymail_status.status )
-            # logger.debug(msg.anymail_status.esp_response )
-
-        #     if msg.anymail_status.status not in ['sent', 'queued']:
-        #         logger.error(f' EMAIL TRANSMISSION FAILURE: {msg.anymail_status.esp_response}')
-        #         raise RuntimeError("Email Not Sents")
+            sent_emails = msg.send()
+            if sent_emails <= 0:
+                logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
+                raise RuntimeError("Email Not Sents")
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
 
@@ -161,23 +150,22 @@ class PostOffice(EmailMultiAlternatives):
             msg = EmailMultiAlternatives(subject=subject, to=[to], from_email=self.from_email, reply_to=[self.reply_to], body=text_content)
             msg.attach_alternative(html_content, content_subtype)
             sent_emails = msg.send()
-            logger.debug(msg.anymail_status.status)
-            logger.debug(msg.anymail_status.esp_response)
-            if msg.anymail_status.status not in ["sent", "queued"]:
-                logger.error(f" EMAIL TRANSMISSION FAILURE: {msg.anymail_status.esp_response}")
+            if sent_emails <= 0:
+                logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
                 raise RuntimeError("Email Not Sents")
-            return sent_emails
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
 
-    def send_internal_new_applicant_notification(self, applicant: dict) -> None:
+    def send_internal_new_applicant_notification(self, applicant: dict) -> int:
         """
         Trigger Intrernal Notification of a New Application
 
         Args:
             interested_client (dict) Dictornary representation of the newly hired Applicant's employee model instance
+
         Returns:
-            None
+            int Number of emails successfully send
+
 
         Raises:
             Exception: If the email transmission fails.
@@ -208,10 +196,8 @@ class PostOffice(EmailMultiAlternatives):
             )
             msg = EmailMessage(subject=subject, from_email=self.from_email, reply_to=self.reply_to, to=[to], body=body)
             sent_emails = msg.send()
-            logger.debug(msg.anymail_status.status)
-            logger.debug(msg.anymail_status.esp_response)
-            if msg.anymail_status.status not in ["sent", "queued"]:
-                logger.error(f" EMAIL TRANSMISSION FAILURE: {msg.anymail_status.esp_response}")
+            if sent_emails <= 0:
+                logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
                 raise RuntimeError("Email Not Sents")
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
@@ -244,10 +230,8 @@ class PostOffice(EmailMultiAlternatives):
             )
             msg = EmailMessage(subject=subject, from_email=self.from_email, reply_to=self.reply_to, to=[to], body=body)
             sent_emails = msg.send()
-            logger.debug(msg.anymail_status.status)
-            logger.debug(msg.anymail_status.esp_response)
-            if msg.anymail_status.status not in ["sent", "queued"]:
-                logger.error(f" EMAIL TRANSMISSION FAILURE: {msg.anymail_status.esp_response}")
+            if sent_emails <= 0:
+                logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
                 raise RuntimeError("Email Not Sents")
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")

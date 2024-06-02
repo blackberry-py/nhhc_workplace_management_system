@@ -21,9 +21,15 @@ from crispy_forms.layout import HTML, Column, Field, Layout, Row, Submit
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
+from django.forms import forms, ModelForm, fields
+from formset.widgets import UploadedFileInput
+from formset.fields import Activator
+from formset.renderers import ButtonVariant
+from formset.widgets import Button
+from nhhc.utils.upload import FileValidator
 
 
-class ClientInterestForm(forms.ModelForm):
+class ClientInterestForm(ModelForm):
     """Form definition for ClientInterestSubmission."""
 
     captcha = ReCaptchaField()
@@ -92,10 +98,30 @@ class ClientInterestForm(forms.ModelForm):
         }
 
 
-class EmploymentApplicationForm(forms.ModelForm):
+class EmploymentApplicationForm(ModelForm):
     """Form definition for EmploymentApplicationModel."""
 
+    submit = Activator(
+        widget=Button(
+            action="disable -> spinner -> delay(500) -> submit -> reload !~ scrollToError",
+            button_variant=ButtonVariant.SUCCESS,
+            auto_disable=True,
+            attrs={"value": "Apply"},
+        ),
+    )
     captcha = ReCaptchaField()
+    resume_cv = fields.FileField(
+        label="Resumé/Work History",
+        widget=UploadedFileInput(
+            attrs={
+                "max-size": 1024 * 1024,
+                "accept": "application/msword, application/pdf, text/plain",
+            }
+        ),
+        help_text="Optional - Upload a copy of your resume or work history. Only .doc, .pdf OR .txt up to 1MB",
+        required=False,
+        validators=[FileValidator],
+    )
 
     def __init__(self, *args, **kwargs):  # pragma: no cover
         super().__init__(*args, **kwargs)
@@ -154,11 +180,21 @@ class EmploymentApplicationForm(forms.ModelForm):
             Row(
                 Column("availability_friday", css_class="form-group col-md-3 mb-0"),
                 Column("availability_saturday", css_class="form-group col-md-3 mb-0"),
-                Column("availability_sunday", css_class="form-group col-md- mb-0"),
+                Column("availability_sunday", css_class="form-group col-md-3 mb-0"),
                 css_class="form-row",
             ),
+            HTML(
+                """<h3 class="application-text">Supporting Documents</h3>""",
+            ),
+            Row(Column("resume_cv", css_class="form-group col-md-12 mb-0"), css_class="form-row"),
             Field("captcha", placeholder="Enter captcha"),
-            Submit("submit", "Submit Application"),
+            HTML(
+                """ <button id="loading-btn-submit" class="btn btn-primary" style="display: none;" disabled>
+          <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+          Submitting...
+        </button> """
+            ),
+            Submit(name="submit", value="Submit", css_id="btn-submit"),
         )
 
     def clean(self):
@@ -200,6 +236,7 @@ class EmploymentApplicationForm(forms.ModelForm):
             "availability_friday",
             "availability_saturday",
             "availability_sunday",
+            "resume_cv",
             "captcha",
         )
         labels = {

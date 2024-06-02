@@ -7,7 +7,6 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_extensions.db.models import CreationDateTimeField, ModificationDateTimeField
 from django_prometheus.models import ExportModelOperationsMixin
-from filer.fields.file import FilerFileField
 from localflavor.us.models import USStateField, USZipCodeField
 from loguru import logger
 from phonenumber_field.modelfields import PhoneNumberField
@@ -345,30 +344,27 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
     )
     emergency_contact_phone = PhoneNumberField(region="US", null=True, blank=True)
     city = EncryptedCharField(max_length=10485760, null=True, blank=True)
-    idoa_agency_policies_attestation = FilerFileField(
-        on_delete=models.DO_NOTHING,
-        related_name="idoa_agency_policies",
+    idoa_agency_policies_attestation = models.FileField(
+        upload_to="idoa_agency_policies",
         blank=True,
         null=True,
     )
-    dhs_i9 = FilerFileField(related_name="i9", on_delete=models.DO_NOTHING, blank=True, null=True)
-    marketing_recruiting_limitations_attestation = FilerFileField(related_name="marketing_recruiting_limitations", on_delete=models.DO_NOTHING, blank=True, null=True)
-    do_not_drive_agreement_attestation = FilerFileField(related_name="do_not_drive_agreement", on_delete=models.DO_NOTHING, blank=True, null=True)
-    job_duties_attestation = FilerFileField(related_name="job_duties", on_delete=models.DO_NOTHING, blank=True, null=True)
-    hca_policy_attestation = FilerFileField(related_name="hca_policy", on_delete=models.DO_NOTHING, blank=True, null=True)
-    irs_w4_attestation = FilerFileField(related_name="irs_w4", on_delete=models.DO_NOTHING, blank=True, null=True)
-    state_w4_attestation = FilerFileField(related_name="state_w4", on_delete=models.DO_NOTHING, blank=True, null=True)
-    idph_background_check_authorization = FilerFileField(related_name="idph_bg_check_auth", on_delete=models.DO_NOTHING, blank=True, null=True)
-    qualifications_verification = FilerFileField(
-        related_name="resume",
-        on_delete=models.DO_NOTHING,
+    dhs_i9 = models.FileField(upload_to="i9", blank=True, null=True)
+    marketing_recruiting_limitations_attestation = models.FileField(upload_to="marketing_recruiting_limitations", blank=True, null=True)
+    do_not_drive_agreement_attestation = models.FileField(upload_to="do_not_drive_agreement", blank=True, null=True)
+    job_duties_attestation = models.FileField(upload_to="job_duties", blank=True, null=True)
+    hca_policy_attestation = models.FileField(upload_to="hca_policy", blank=True, null=True)
+    irs_w4_attestation = models.FileField(upload_to="irs_w4", blank=True, null=True)
+    state_w4_attestation = models.FileField(upload_to="state_w4", blank=True, null=True)
+    idph_background_check_authorization = models.FileField(upload_to="idph_bg_check_auth", blank=True, null=True)
+    qualifications_verification = models.FileField(
+        upload_to="resume",
         null=True,
         blank=True,
     )
 
-    cpr_verification = FilerFileField(
-        related_name="cpr_verification",
-        on_delete=models.DO_NOTHING,
+    cpr_verification = models.FileField(
+        upload_to="cpr_verification",
         null=True,
         blank=True,
     )

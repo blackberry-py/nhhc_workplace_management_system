@@ -7,14 +7,13 @@
 {% block title %} CareNett Login  {% endblock title %}
 
 <!-- Specific CSS goes HERE -->
-{% block customstyles %}
+{% block stylesheets %}
   <style>
-    #care-nett-login-logo {
-      height:175px;
-      width:auto;
+    img#care-nett-login-logo {
+      height: 100px;
     }
   </style>
-{% endblock %}
+{% endblock stylesheets %}
 {% block content %}
 
 {% comment %} TODO: Add Spinner oe Loader to run from the submitssin of the user creds {% endcomment %}
@@ -25,7 +24,7 @@
         <div class="card bg-secondary shadow border-0">
           <div class="card-header bg-transparent pb-5">
             <div class="care-nett-logo text-center" >
-              <img src="{% static 'img/CareNettLogo.png' %}" id="care-nett-login-logo"/>
+              <img src="{% static 'img/CareNettLogo.png' %}" height="100px" width="auto" id="care-nett-login-logo"/>
             </div>
             <div class="text-muted text-center mt-2 mb-3">
               <h1>Nett Hands Home Care</h1>
@@ -53,7 +52,7 @@
               {% endif %}
 
             </div>
-            <form method="post" class="show-loading-after-click">
+            <form method="post" class="show-loading-after-click" onsubmit="openLoader()">
               {% csrf_token %}
               <div class="form-group mb-3">
                 <div class="input-group input-group-alternative">
@@ -81,7 +80,11 @@
                 <span class="text-muted form-check-label">Remember me?</span>
               </div>
 
-              <div class="text-center">
+              <div class="text-center  justify-content-center">
+                <button id="loading-btn-login" style="display: none;" class="btn btn-primary my-4" disabled>
+                  <span class=" text-center spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                  Signing In...
+                </button>
                 <input id="btn-login" type="submit" value="Sign In" class="btn btn-primary my-4">
               </div>
             </form>
@@ -101,17 +104,10 @@
 <!-- Specific JS goes HERE -->
 {% block javascripts %}
   <script defer>
-    function inprogressLogIn() {
-
-      $('body').loading({
-        stoppable: true,
-        message: "Logging In..."
-      });
-      $("#btn-login").prop("disabled", true);
-
+    function openLoader() {
+      document.getElementById("btn-login").style.display = "none";
+      document.getElementById("loading-btn-login").style.display = "block";
     }
-
-    $("#btn-login").on("click", inprogressLogIn);
-
   </script>
+
 {% endblock javascripts %}

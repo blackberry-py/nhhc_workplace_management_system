@@ -61,67 +61,70 @@ class AnnouncementDetailsForm(forms.ModelForm):
         self.fields["message"].label = False
 
         self.helper.layout = Layout(
-                Row(
-                    HTML(
-                        """
+            Row(
+                HTML(
+                    """
                 <div class="form-group col-4 mb-0">
             <label class="form-label">Post Status</label>
             <h5 class="textinput form-control" readonly>{{ announcement.get_status_display }}</h5>
             </div>
                             """
-                    ),
-                    Column(
-                        "announcement_title",
-                        css_class="form-group col-lg-6 mb-0 editable ",
-                        css_id="announcement_title",
-                    ),
-                    Column(
-                        "message_type",
-                        css_class="form-group col-lg-4 mb-0 editable ",
-                        css_id="message_type",
-                    ), css_class="form-row "
                 ),
-                Row(
-                    Column(
-                        "message",
-                        css_class="form-group col-12 mb-0 editable form-text-area",
-                        css_id="message",
-                    ),css_class="form-row "
+                Column(
+                    "announcement_title",
+                    css_class="form-group col-lg-6 mb-0 editable ",
+                    css_id="announcement_title",
                 ),
-                HTML(
-                    """
+                Column(
+                    "message_type",
+                    css_class="form-group col-lg-4 mb-0 editable ",
+                    css_id="message_type",
+                ),
+                css_class="form-row ",
+            ),
+            Row(
+                Column(
+                    "message",
+                    css_class="form-group col-12 mb-0 editable form-text-area",
+                    css_id="message",
+                ),
+                css_class="form-row ",
+            ),
+            HTML(
+                """
 <hr class="uk-divider-icon"/>
                     <h4> Post Details</h4>
                     """
-                ),
-                Row(
-                    HTML(
-                        """
+            ),
+            Row(
+                HTML(
+                    """
                 <div class="form-group col-6 mb-0">
             <label class="form-label">Posted By</label>
             <h5 class="textinput form-control" readonly>{{ announcement.posted_by.username }}</h5>
             </div>
                             """
-                    ),
-                    HTML(
-                        """
+                ),
+                HTML(
+                    """
                 <div class="form-group col-6 mb-0">
             <label class="form-label">Posted on</label>
             <h5 class="textinput form-control" readonly>{{ announcement.date_posted }}</h5>
             </div>
                             """
-                    ),css_class="form-row "
                 ),
-                Row(
-                        Submit("submit", "Update Announcement"),
-                
-                    HTML(""" <a href="{% url 'announcements' %}" class="btn btn-dark">Cancel</a>"""),
-                    HTML("""
+                css_class="form-row ",
+            ),
+            Row(
+                Submit("submit", "Update Announcement"),
+                HTML(""" <a href="{% url 'announcements' %}" class="btn btn-dark">Cancel</a>"""),
+                HTML(
+                    """
                          <button class="btn btn-danger" onClick="confirmPostArchival({{ announcement.pk }})">Archive Annoucement</button>
                          """
-                    ),css_class="uk-text-right uk-modal-footer"
-            
-            )
+                ),
+                css_class="uk-text-right uk-modal-footer",
+            ),
         )
 
 
@@ -175,14 +178,13 @@ class AnnouncementForm(forms.ModelForm):
                     Submit(
                         "submit",
                         "Post Announcement",
-                        onClick="confirmAnnouncementPost",
                     ),
                     Button("cancel", "Cancel", css_class="btn btn-danger uk-modal-close"),
                     Button(
                         "submit",
                         "Save Draft",
                         css_class="btn btn-danger",
-                        onClick="",
+                        onClick="confirmSaveAsADraft",
                     ),
                 ),
                 css_class="uk-text-right uk-modal-footer",

@@ -1,6 +1,5 @@
 {% extends "layouts/base.html" %}
 {% load static %}
-{% block title %} {{ type }} Applicant - {{ submission.last_name }}, {{ submission.first_name }} {% endblock title %}
 {% load crispy_forms_tags %}
 
 <link rel="stylesheet" href="{% static 'css/custom-portal-styles.css' %}" type="text/css"/>
@@ -89,7 +88,24 @@
             </div>
           </div>
           <div class="row">
-            <h1>Availability</h1>
+            <h3><strong>Attachments:</strong></h3>\
+            <div class="col-6">
+              {% if submission.resume_cv %}
+                <a href="{{ submission.resume_cv.url }}" target="_blank"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+              {% else %}
+                <p>No Resume Provided</p>
+              {% endif %}
+            </div>
+            <div class="col-6">
+              {% if submission.cpr_card %}
+                <a href="{{ submission.cpr_card.url }}" target="_blank"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+              {% else %}
+                <p>No CPR Card Provided</p>
+              {% endif %}
+            </div>
+          </div>
+          <div class="row">
+            <h3>Availability</h3>
           </div>
           <div class="row">
             <ul class="availability-list">
@@ -117,7 +133,7 @@
             </ul>
           </div>
           <div class="row">
-            {% if submission.reviewed is True %}
+            {% if submission.reviewed %}
               <div class="col-6">
                 <h3><strong> Staff Member Who Reviewed Request:</strong></h3>
                 <p>{{ submission.reviewed_by.username }}</p>

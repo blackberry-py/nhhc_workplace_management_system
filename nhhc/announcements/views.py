@@ -16,8 +16,7 @@ from django.views.decorators.http import require_POST
 from loguru import logger
 
 # Create your views here.
-ANNOUCEMENTS = Announcements.objects.queryset_from_cache().select_related("posted_by")
-logger.debug(type(ANNOUCEMENTS))
+ANNOUCEMENTS = Announcements.objects.select_related("posted_by")
 
 
 def app_status(request: HttpRequest) -> HttpResponse:

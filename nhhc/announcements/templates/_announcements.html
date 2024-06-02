@@ -12,56 +12,60 @@
             </div>
             <section class="carousel-landmark wow fadeIn" data-wow-delay="0.5s">
                 <div id="carouselExampleCaptions" class="carousel slide testimonial-carousel border-start border-primary">
+                    {% if recent_announcements %}
+                        {% for annoncement in recent_announcements %}
+                            <div class="carousel-inner"><!--The Carousel Container-->
+                                <div class="carousel-item"><!--The Carousel item 1-->
+                                    <div class="testimonial-item ps-5">
+                                        {% if announcement.message_type == 'C' %}
+                                            <span class="badge rounded-pill text-bg-primary text-bg-danger px-3 mb-3">{{ announcement.message_type }}</span>
 
-                    {% for annoncement in recent_announcements %}
-                        <div class="carousel-inner"><!--The Carousel Container-->
-                            <div class="carousel-item"><!--The Carousel item 1-->
-                                <div class="testimonial-item ps-5">
-                                    {% if announcement.message_type == 'C' %}
-                                        <span class="badge rounded-pill text-bg-primary text-bg-danger px-3 mb-3">{{ announcement.message_type }}</span>
+                                        {% elif announcement.message_type == 'T' %}
+                                            <span class="badge rounded-pill text-bg-primary text-bg-info  px-3 mb-3">{{ announcement.message_type }}</span>
 
-                                    {% elif announcement.message_type == 'T' %}
-                                        <span class="badge rounded-pill text-bg-primary text-bg-info  px-3 mb-3">{{ announcement.message_type }}</span>
+                                        {% elif announcement.message_type == 'X' %}
+                                            <span class="badge rounded-pill text-bg-primary  text-bg-warning  px-3 mb-3">{{ announcement.message_type }}</span>
+                                        {% else %}
+                                            <span class="badge rounded-pill text-bg-primary      text-bg-primary     px-3 mb-3">{{ announcement.message_type }}</span>
+                                        {% endif %}
+                                        <br/>
+                                        <h1 class="mb-4 announcement-title">{{ announcement.announcement_title }}</h1>
 
-                                    {% elif announcement.message_type == 'X' %}
-                                        <span class="badge rounded-pill text-bg-primary  text-bg-warning  px-3 mb-3">{{ announcement.message_type }}</span>
-                                    {% else %}
-                                        <span class="badge rounded-pill text-bg-primary      text-bg-primary     px-3 mb-3">{{ announcement.message_type }}</span>
-                                    {% endif %}
-                                    <br/>
-                                    <h1 class="mb-4 announcement-title">{{ announcement.announcement_title }}</h1>
+                                        <p class="fs-4 textimal-text">{{ announcement.message }}</p>
+                                        <div class="d-flex align-items-center">
+                                            <div class="ps-3">
+                                                <h5 class="mb-1 announced-by">{{ announcement.posted_by.first_name }}</h5>
 
-                                    <p class="fs-4 textimal-text">{{ announcement.message }}</p>
-                                    <div class="d-flex align-items-center">
-                                        <div class="ps-3">
-                                            <h5 class="mb-1 announced-by">{{ announcement.posted_by.first_name }}</h5>
-
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        </section>
-                        <section class="carousel-landmark wow fadeIn" data-wow-delay="0.5s">
-                            <div id="carouselNavigation" class="carousel slide testimonial-carousel border-start border-primary">
+                        {% endfor %}
+                    {% else %}
+                        <h3>No Recent Annoucements</h3>
+                    {% endif %}
 
-                    {% endfor %}
+                </section>
+                <section class="carousel-landmark wow fadeIn" data-wow-delay="0.5s">
+                    <div id="carouselNavigation" class="carousel slide testimonial-carousel border-start border-primary">
+
+
                 <!-- Control Buttons -->
-                    <div class="control-btn float-start">
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselNavigation" data-bs-slide="prev">
-                            <i class="fa-solid fa-arrow-left"></i>
-                            <span class="carousel-control-prev-icon visually-hidden" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselNavigation" data-bs-slide="next">
-                            <i class="fa-solid fa-arrow-right"></i>
-                            <span class="carousel-control-next-icon visually-hidden" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
+                        <div class="control-btn float-start">
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselNavigation" data-bs-slide="prev">
+                                <i class="fa-solid fa-arrow-left"></i>
+                                <span class="carousel-control-prev-icon visually-hidden" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselNavigation" data-bs-slide="next">
+                                <i class="fa-solid fa-arrow-right"></i>
+                                <span class="carousel-control-next-icon visually-hidden" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
                     </div>
-                </div>
-            </section>
-        </div><!--End of row g-5-->
-    </div><!-- container py-5 -->
-</div><!--End of Container-xxl py-5 -->
+                </section>
+            </div><!--End of row g-5-->
+        </div><!-- container py-5 -->
+    </div><!--End of Container-xxl py-5 -->
 </div>

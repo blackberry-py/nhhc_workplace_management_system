@@ -2457,13 +2457,16 @@ ul.form-errors-list{
   width: 33.33%;
 }
 
-img#care-nett-login-logo {
-  height: 100px;
-}
+
 .show {
   display: block;
 }
 
 .remove {
   display: none;
+}
+
+.dj-dropbox {
+  border: 1px dotted white;
+  height: 150px;
 }

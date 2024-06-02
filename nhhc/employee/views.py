@@ -36,6 +36,7 @@ from nhhc.utils.helpers import (
     get_status_code_for_unauthorized_or_forbidden,
 )
 from nhhc.utils.mailer import PostOffice
+from employee.tasks import send_async_onboarding_email
 
 # from  employee.tasks import send_async_onboarding_email, send_async_rejection_email
 # SECTION - Template - Rendering & API Class-Based Views
@@ -146,7 +147,7 @@ def reject(request: HttpRequest) -> HttpResponse:
         pk = request.POST.get("pk")
         submission = EmploymentApplicationModel.objects.get(id=pk)
         submission.reject_applicant(rejected_by=request.user)  # type: ignore
-        HR_MAILROOM.send_external_applicant_rejection_email(submission)
+        HR_MAILROOM.send_external_applicant_rejection_email.delay(submission)
         logger.success(f"Application Rejected for {submission.last_name}. {submission.first_name}")
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
     except Exception as e:
@@ -226,7 +227,7 @@ def hire(request: HttpRequest) -> HttpResponse:
             "plaintext_temp_password": hired_user["plain_text_password"],
             "username": hired_user["username"],
         }
-        HR_MAILROOM.send_external_applicant_new_hire_onboarding_email(new_user_credentials)
+        send_async_onboarding_email.delay(new_user_credentials)
         content = f"username: {hired_user['username']},  password: {hired_user['plain_text_password']}, employee_id: {hired_user['employee_id']}"
         logger.success(f"Successfully Converted Appicant to Employee - {hired_user['last_name']}, {hired_user['first_name']}")
         return HttpResponse(status=status.HTTP_201_CREATED, content=bytes(content, "utf-8"))
@@ -267,7 +268,7 @@ def terminate(request: HttpRequest) -> HttpResponse:
     except (ValueError, TypeError):
         logger.info("Bad Request to Hire Applicant, Invaild or NO Applcation PK Submitted")
         return HttpResponse(
-            status=status.HTTP_400_BAD_REQUEST,
+            status=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content="Failed to terminate employee. Invalid or no 'pk' value provided in the request.",
         )
     # Condition Checked: Provided PK Employee ID associated with an Employee Instance

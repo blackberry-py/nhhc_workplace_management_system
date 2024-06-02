@@ -1,17 +1,107 @@
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Column, Field, Layout, Reset, Row, Submit, Button
-from django.forms import ModelForm, forms, BooleanField, CheckboxInput
+from django.forms import ModelForm, fields, BooleanField, CheckboxInput
 from django.forms.widgets import DateInput
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from employee.models import Employee
+from formset.widgets import UploadedFileInput
 
 
 class EmployeeForm(ModelForm):
     phone_sms_identical = BooleanField(required=False, widget=CheckboxInput, label="Same as Contact")
     sms_contact_agreement = BooleanField(required=True, widget=CheckboxInput, label="I AGREE")
-
+    qualifications_verification = fields.FileField(
+        label="Resumé/Work History",
+        widget=UploadedFileInput(
+            attrs={
+                "max-size": 1024 * 1024,
+            }
+        ),
+        # help_text="Upload a copy of your resume or work history. Only .doc or .pdf files up to 1MB",
+        required=False,
+    )
+    cpr_verification = fields.FileField(
+        label="Most Recent CPR Card",
+        widget=UploadedFileInput(
+            attrs={
+                "max-size": 1024 * 1024,
+            }
+        ),
+        # help_text="Upload a copy of your resume or work history. Only .jpeg OR .pdf files up to 1MB",
+        required=False,
+    )
+    idoa_agency_policies_attestation = fields.FileField(
+        label="Signed IL Dept of Public Health & Agency Policy",
+        widget=UploadedFileInput(
+            attrs={
+                "max-size": 1024 * 1024,
+            }
+        ),
+        # # help_text=f"<p class='text-light'>Upload a signed copy of your Dept of Public Health & Agency Policy or <a href='{reverse_lazy('idoa_sign')}'> Click Here to sign</a>!</p>" ,
+        required=False,
+    )
+    idph_background_check_authorization = fields.FileField(
+        label="Signed Background Check Authorization",
+        widget=UploadedFileInput(
+            attrs={
+                "max-size": 1024 * 1024,
+            }
+        ),
+        # help_text=f"<p class='text-light'>Upload a signed copy of your  Background Check Authorization or <a href='#'> Click Here to sign</a>!</p>" ,         # TODO: Update Link to Correct DocSeal Page
+        required=False,
+    )
+    do_not_drive_agreement_attestation = fields.FileField(
+        label="Signed Do Not Drive Agreement",
+        widget=UploadedFileInput(
+            attrs={
+                "max-size": 1024 * 1024,
+            }
+        ),
+        # help_text=f"<p class='text-light'>Upload a signed copy of your Do Not Drive Agreement or <a href='{reverse_lazy('dnd_sign')}'> Click Here to sign</a>!</p>" ,
+        required=False,
+    )
+    job_duties_attestation = fields.FileField(
+        label="Signed Job Duties",
+        widget=UploadedFileInput(
+            attrs={
+                "max-size": 1024 * 1024,
+            }
+        ),
+        # help_text=f"<p class='text-light'>Upload a signed copy of your Job Duties or <a href='{reverse_lazy('jobdesc_sign')}'> Click Here to sign</a>!</p>" ,
+        required=False,
+    )
+    hca_policy_attestation = fields.FileField(
+        label="Signed HCA Policy",
+        widget=UploadedFileInput(
+            attrs={
+                "max-size": 1024 * 1024,
+            }
+        ),
+        # help_text=f"<p class='text-light'>Upload a signed copy of your HCA Policy or <a href='{reverse_lazy('hca_sign')}'> Click Here to sign</a>!</p>" ,
+        required=False,
+    )
+    dhs_i9 = fields.FileField(
+        label="Signed Dept of Homeland Security - I9 Form",
+        widget=UploadedFileInput(
+            attrs={
+                "max-size": 1024 * 1024,
+            }
+        ),
+        # help_text=f"<p class='text-light'>Upload a signed copy of your HCA Policy or <a href='{reverse_lazy('i9_sign')}'> Click Here to sign</a>!</p>" ,
+        required=False,
+    )
+    irs_w4_attestation = fields.FileField(
+        label="Signed Federal W4 Form",
+        widget=UploadedFileInput(
+            attrs={
+                "max-size": 1024 * 1024,
+            }
+        ),
+        # help_text=f"<p class='text-light'>Upload a signed copy of your HCA Policy or <a href='{reverse_lazy('w4_sign')}'> Click Here to sign</a>!</p>" ,
+        required=False,
+    )
     """
     Form definition for Employee Model.
 
@@ -251,12 +341,12 @@ class EmployeeForm(ModelForm):
                 Row(
                     Column(
                         "cpr_verification",
-                        help_text="Please Upload Photo of an Unexpired CPR Card",
+                        # help_text="Please Upload Photo of an Unexpired CPR Card",
                         css_class="form-group col-lg-4 mb-0 editable ",
                     ),
                     Column(
                         "qualifications_verification",
-                        help_text="Please upload a copy of the document selected in the User Information field - Highest Level of Education/Home Healthcare Qualification",
+                        # help_text="Please upload a copy of the document selected in the User Information field - Highest Level of Education/Home Healthcare Qualification",
                         css_class="``form-group`` col-lg-4 mb-0 editable ",
                     ),
                     Column(
@@ -274,12 +364,12 @@ class EmployeeForm(ModelForm):
                     ),
                     Column(
                         "idph_background_check_authorization",
-                        help_text="Please upload a copy of the document selected in the User Information field - Highest Level of Education/Home Healthcare Qualification",
+                        # help_text="Please upload a copy of the document selected in the User Information field - Highest Level of Education/Home Healthcare Qualification",
                         css_class="form-group col-lg-4 mb-0 editable ",
                     ),
                     Column(
                         "job_duties_attestation",
-                        help_text="Please upload a copy of signed job duties",
+                        # help_text="Please upload a copy of signed job duties",
                         css_class="form-group col-lg-4 mb-0 editable ",
                     ),
                     css_class="form-row",
@@ -298,7 +388,7 @@ class EmployeeForm(ModelForm):
                     ),
                     Column(
                         "state_w4_attestation",
-                        help_text="Please upload a copy of the document selected in the User Information field - Highest Level of Education/Home Healthcare Qualification",
+                        # help_text="Please upload a copy of the document selected in the User Information field - Highest Level of Education/Home Healthcare Qualification",
                         css_class="form-group col-lg-4 mb-0 editable ",
                     ),
                     css_class="form-row",

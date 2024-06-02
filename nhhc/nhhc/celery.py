@@ -2,6 +2,7 @@ from celery import Celery
 from celery.signals import setup_logging  # noqa
 from django.conf import settings
 import os
+from celery.schedules import crontab
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "nhhc.settings")
 

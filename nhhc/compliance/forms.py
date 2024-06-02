@@ -12,7 +12,7 @@ class ContractForm(forms.ModelForm):
 
     """Form definition for Contract Model."""
 
-    def is_active_contract(self, contract_year_start, contract_year_ends):
+    def is_active_contract(self, contract_year_start, contract_year_end):
         now = datetime.now()
         if contract_year_start <= now and contract_year_end >= now:
             return True

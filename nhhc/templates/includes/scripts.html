@@ -42,6 +42,15 @@
             ],
         },
     });
+    H.identify({{ request.user.email }}, {
+        highlightDisplayName: "{{ request.user.last_name }}, {{ request.user.first_name }}",
+        {% if request.user.is_staff %}
+            accountType: "staff",
+        {% else %}
+            accountType: "standard",
+        {% endif %}
+        hasUsedFeature: true
+    });
 </script>
 
 <!-- BetterStack - Uptime  Annoucement Injector  -->

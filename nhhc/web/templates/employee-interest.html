@@ -1,6 +1,8 @@
 {% extends "includes/base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
+{% load formsetify %}
+{% load render_form from formsetify %}
 
 {% block custom_js %}
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default" defer></script>
@@ -9,6 +11,9 @@
     <style>
         .frontend-form {
             width: 33.33%;
+        }
+        .form-text {
+            color: antiquewhite;
         }
     </style>
 
@@ -35,7 +40,7 @@
                         </div>
                     {% else %}
                         <p>Employment Requirements</p>
-                        <ul>
+                        <ul>                                                                                                                              nn b
                             <li>IDPH State Fingerprinting</li>
                             <li>24 Hour Pre-Service Training <em>(Can Be Provided by Nett Hand, if employment offer is extended)</em></li>
                             <li>High School Diploma or GED Mandatory</li>
@@ -53,16 +58,22 @@
 
     <!-- Employment Applicant Start -->
     <section id="interest-form" class="contact spad mx-auto">
-        <form class="frontend-form" id="employment-application" method="POST">
-            {% csrf_token %}
+        <form id="employment-interest-form"   enctype="multipart/form-data" class="frontend-form" method="post" action="{{ request.path }}" onsubmit="openLoader()">
             {% crispy form %}
         </form>
     <!-- Employment Applicant End -->
 
     </section>
 
+
 {% endblock main %}
 
 {% block customscripts %}
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDwRtpvIRYnt2dt8cSMzdxjVE1tfxcO4Ww&loading=async&callback=initAutocomplete&libraries=places&v=weekly" defer></script>
+    <script defer>
+        function openLoader() {
+            document.getElementById("btn-submit").style.display = "none";
+            document.getElementById("loading-btn-submit").style.display = "block";
+        }
+    </script>
 {% endblock customscripts %}

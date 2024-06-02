@@ -4,11 +4,12 @@ Description: This module contains views for rendering web pages, processing form
 """
 
 from django.conf import settings
+from django.forms import model_to_dict
 from django.http import FileResponse, HttpRequest, HttpResponse, HttpResponsePermanentRedirect
-from django.shortcuts import render, reverse
+from django.shortcuts import reverse
 from django.templatetags.static import static
 from django.views.decorators.cache import cache_page
-from django.views.generic.edit import FormView
+from formset.views import FormView
 from loguru import logger
 from web.forms import ClientInterestForm, EmploymentApplicationForm
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
@@ -16,6 +17,7 @@ from nhhc.utils.helpers import CachedTemplateView
 from web.tasks import process_new_application
 from django.views.decorators.http import require_safe
 from django.utils.decorators import method_decorator
+from web.tasks import process_new_application, process_new_client_interest
 
 CACHE_TTL: int = settings.CACHE_TTL
 
@@ -51,7 +53,6 @@ class ClientInterestFormView(FormView):
         if form.is_valid():
             logger.debug("Form Is Valid")
             form.save()
-            process_new_application.delay_on_commit(form.cleaned_data)
             return HttpResponsePermanentRedirect(reverse("submitted", kwargs={"type": "Client Interest Form"}))
         else:
             logger.error("Form Is Invalid")
@@ -71,7 +72,9 @@ class EmploymentApplicationFormView(FormView):
             logger.debug("Form Is Valid")
             form.cleaned_data["contact_number"] = str(form["contact_number"])
             form.save()
-            process_new_application.delay_on_commit(form.cleaned_data)
+            processed_form = form.cleaned_data
+            del processed_form["resume_cv"]
+            process_new_application.delay(processed_form)
             return HttpResponsePermanentRedirect(reverse("submitted"), {"type": "Employment Interest Form"})
         else:
             logger.error("Form Is Invalid")

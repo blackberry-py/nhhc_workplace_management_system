@@ -34,6 +34,7 @@ from sage_encrypt.fields.asymmetric import EncryptedCharField, EncryptedEmailFie
 from django.core.cache import cache
 from nhhc.utils.password_generator import RandomPasswordGenerator
 from nhhc.utils.managers import CachedQuerySet
+from nhhc.utils.upload import UploadHandler
 
 now: Arrow = now(tz="US/Central")
 
@@ -136,6 +137,10 @@ class ClientInterestSubmission(models.Model, ExportModelOperationsMixin("client_
         ordering = ["last_name", "first_name", "date_submitted"]
         verbose_name = "Interested Client"
         verbose_name_plural = "Interested Clients"
+
+
+applicant_resume_uploads = UploadHandler("applicant/resume")
+applicant_cpr_card_uploads = UploadHandler("applicant/cpr_card")
 
 
 class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("applications")):
@@ -247,6 +252,7 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
     date_submitted = CreationDateTimeField()
     last_modified = ModificationDateTimeField()
     employee_id = models.BigIntegerField(blank=True, null=True)
+    resume_cv = models.FileField(upload_to=applicant_resume_uploads.generate_randomized_file_name, null=True, blank=True)
 
     def hire_applicant(self, hired_by: Employee) -> Dict[str, str]:
         """
@@ -275,6 +281,7 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
                 city=self.city,
                 zipcode=self.zipcode,
                 application_id=self.pk,
+                qualifications_verification=self.resume_cv,
             )
             password = RandomPasswordGenerator.generate()
             new_employee.password = make_password(password)

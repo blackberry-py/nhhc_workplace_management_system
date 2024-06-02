@@ -7,11 +7,13 @@
         <button class="uk-modal-close-outside" type="button" uk-close></button>
         <div class="uk-modal-body">
             <h2 class="uk-modal-title">{{ modal_title }}</h2>
-            {% crispy form %}
-            {% csrf_token %}
-            {% for txt in text %}
-                <p> {{ txt.content|safe }} </p>
-            {% endfor %}
+            <form method="post" id="new-annoucement-form" action="{% url 'announcements' %}">
+                {% crispy form %}
+                {% csrf_token %}
+                {% for txt in text %}
+                    <p> {{ txt.content|safe }} </p>
+                {% endfor %}
+            </form><>
         </div>
     </div>
 </div>
