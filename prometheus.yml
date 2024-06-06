@@ -7,7 +7,7 @@ remote_write:
   - url: https://prometheus-prod-10-prod-us-central-0.grafana.net/api/prom/push
     basic_auth:
       username: 390644
-      password: glc_eyJvIjoiNjI5NDg1IiwibiI6InN0YWNrLTM0NTE1Mi1pbnRlZ3JhdGlvbi13ZXR0IiwiayI6IkhhRjFmY3M4NzljeVlka004MTR5OTY4RSIsIm0iOnsiciI6InVzIn19
+      password:
 scrape_configs:
   - job_name: node
     static_configs:
