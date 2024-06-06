@@ -1,9 +1,13 @@
-from django.test import TestCase
 from django.core import mail
-from nhhc.utils.mailer import PostOffice
-from web.forms import EmploymentApplicationForm
+from django.test import TestCase
 from model_bakery import baker
-from nhhc.utils.testing import generate_random_encrypted_char, generate_random_encrypted_email
+from web.forms import EmploymentApplicationForm
+
+from nhhc.utils.mailer import PostOffice
+from nhhc.utils.testing import (
+    generate_random_encrypted_char,
+    generate_random_encrypted_email,
+)
 
 baker.generators.add("sage_encrypt.fields.asymmetric.EncryptedCharField", generate_random_encrypted_char)
 baker.generators.add("sage_encrypt.fields.asymmetric.EncryptedEmailField", generate_random_encrypted_email)

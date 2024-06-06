@@ -1,11 +1,11 @@
+import io
 import random
+import string
+
 import gnupg
 from django.conf import settings
 from faker import Faker
-import io
 from loguru import logger
-import string
-import random
 
 MockData = Faker()
 

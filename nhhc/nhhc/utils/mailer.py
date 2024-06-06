@@ -1,19 +1,20 @@
 from django.conf import settings
-from django.core.mail import EmailMultiAlternatives, EmailMessage
+from django.core.mail import EmailMessage, EmailMultiAlternatives
+from django.forms.models import model_to_dict
+from loguru import logger
+
 from nhhc.utils.email_templates import (
     APPLICATION_BODY,
     CLIENT_BODY,
-    PLAIN_TEXT_CLIENT_BODY,
-    PLAIN_TEXT_APPLICATION_BODY,
     INTERNAL_APPLICATION_NOTIFICATION,
     INTERNAL_CLIENT_SERVICE_REQUEST_NOTIFICATION,
+    NEW_HIRE_ONBOARDING_TEMPLATE_BODY,
+    PLAIN_TEXT_APPLICATION_BODY,
+    PLAIN_TEXT_CLIENT_BODY,
+    PLAIN_TEXT_NEW_HIRE_ONBOARDING_EMAIL_TEMPLATE,
     PLAIN_TEXT_REJECTION_EMAI_TEMPLATE,
     REJECTION_TEMPLATE_BODY,
-    NEW_HIRE_ONBOARDING_TEMPLATE_BODY,
-    PLAIN_TEXT_NEW_HIRE_ONBOARDING_EMAIL_TEMPLATE,
 )
-from loguru import logger
-from django.forms.models import model_to_dict
 
 
 class PostOffice(EmailMultiAlternatives):
@@ -43,7 +44,7 @@ class PostOffice(EmailMultiAlternatives):
         Raises:
             Exception: If the email transmission fails.
         """
-        if type(applicant) != dict:
+        if not isinstance(applicant, dict):
             applicant = model_to_dict(applicant)
         try:
             subject: str = f"Thanks For Your Employment Interest, {applicant['first_name']}!"
@@ -75,7 +76,7 @@ class PostOffice(EmailMultiAlternatives):
         Raises:
             Exception: If the email transmission fails.
         """
-        if type(interested_client) != dict:
+        if not isinstance(interested_client, dict):
             interested_client = model_to_dict(interested_client)
         try:
             subject: str = f"We Are On It, {interested_client['first_name']}!"
@@ -90,6 +91,7 @@ class PostOffice(EmailMultiAlternatives):
             if sent_emails <= 0:
                 logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
                 raise RuntimeError("Email Not Sents")
+            return sent_emails
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
 
@@ -133,12 +135,12 @@ class PostOffice(EmailMultiAlternatives):
         Args:
             interested_client (dict) Dictornary representation of the newly hired Applicant's employee model instance
         Returns:
-            int 
+            int
 
         Raises:
             Exception: If the email transmission fails.
         """
-        if type(new_hire) != dict:
+        if not isinstance(new_hire, dict):
             new_hire = model_to_dict(new_hire)
         try:
             subject: str = f"Welcome to Nett Hands, {new_hire['first_name']}!"
@@ -172,7 +174,7 @@ class PostOffice(EmailMultiAlternatives):
         Raises:
             Exception: If the email transmission fails.
         """
-        if type(applicant) != dict:
+        if not isinstance(applicant, dict):
             applicant = model_to_dict(applicant)
         try:
             subject: str = f"NOTICE: New Application For Employment - {applicant['last_name']}, {applicant['first_name']}!"
@@ -201,6 +203,7 @@ class PostOffice(EmailMultiAlternatives):
             if sent_emails <= 0:
                 logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
                 raise RuntimeError("Email Not Sents")
+            return sent_emails
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
 
@@ -216,8 +219,8 @@ class PostOffice(EmailMultiAlternatives):
         Raises:
             Exception: If the email transmission fails.
         """
-        if type(interested_client) != dict:
-            applicant = model_to_dict(interested_client)
+        if not isinstance(interested_client, dict):
+            interested_client = model_to_dict(interested_client)
         try:
             subject: str = f"NOTICE: New Client Service Request - {interested_client['last_name']}, {interested_client['first_name']}!"
             to: list = settings.INTERNAL_SUBMISSION_NOTIFICATION_EMAILS
@@ -235,5 +238,6 @@ class PostOffice(EmailMultiAlternatives):
             if sent_emails <= 0:
                 logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
                 raise RuntimeError("Email Not Sents")
+            return sent_emails
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")

@@ -19,11 +19,11 @@ This module provides a convenient way to create and customize announcement forms
 from announcements.models import Announcements
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Button, Column, Row, Submit, Layout, HTML
+from crispy_forms.layout import HTML, Button, Column, Layout, Row, Submit
 from django import forms
-from tinymce.widgets import TinyMCE
 from django.utils.translation import gettext_lazy as _
 from formset.widgets import Selectize
+from tinymce.widgets import TinyMCE
 
 
 class AnnouncementDetailsForm(forms.ModelForm):

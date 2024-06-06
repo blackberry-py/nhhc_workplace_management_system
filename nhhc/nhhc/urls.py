@@ -10,6 +10,7 @@ import employee.urls
 import portal.urls
 import web.urls
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
 from django.contrib.sitemaps import Sitemap
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
@@ -18,7 +19,6 @@ from django.urls.resolvers import RegexPattern, RoutePattern
 from django.views.decorators.cache import cache_page
 from loguru import logger
 from web.sitemaps import StaticViewSitemap
-from django.contrib.auth.decorators import login_required
 
 # SECTION - Sitemap
 sitemaps: Dict[str, Sitemap] = {"static": StaticViewSitemap}

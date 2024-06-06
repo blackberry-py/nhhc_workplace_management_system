@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 from django_prometheus.models import ExportModelOperationsMixin
 from employee.models import Employee
+
 from nhhc.utils.managers import CachedQuerySet
 
 

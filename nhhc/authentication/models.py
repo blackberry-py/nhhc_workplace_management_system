@@ -3,11 +3,11 @@ from uuid import uuid4
 
 from compliance.models import Compliance
 from django.conf import settings
+from django.core.cache import cache
 from django.db import models
 from django_extensions.db.models import TimeStampedModel
 from employee.models import Employee
 from loguru import logger
-from django.core.cache import cache
 
 
 class UserProfile(TimeStampedModel, models.Model):

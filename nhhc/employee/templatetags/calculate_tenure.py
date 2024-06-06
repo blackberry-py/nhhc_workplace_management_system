@@ -1,5 +1,6 @@
-import arrow
 from datetime import datetime
+
+import arrow
 from django import template
 
 register = template.Library()

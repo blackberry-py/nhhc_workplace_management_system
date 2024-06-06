@@ -1,9 +1,10 @@
-import os
-import requests
 import json
+import os
+
 import boto3
-from botocore.exceptions import ClientError
 import pymupdf
+import requests
+from botocore.exceptions import ClientError
 
 
 def get_parameters():

@@ -304,7 +304,8 @@ We greatly appreciate your interest in joining Nett Hands Home Care as a Home He
     """
 )
 
-PLAIN_TEXT_APPLICATION_BODY = """
+PLAIN_TEXT_APPLICATION_BODY: Template = Template(
+    """
 Dear $first_name,
 
 We greatly appreciate your interest in joining Nett Hands Home Care as a Home Health Caregiver! Your application signifies a crucial step in our recruitment process, which we approach with utmost seriousness.
@@ -317,90 +318,9 @@ Warm regards,
 
 Nett Hands Home Care Recruiting
 """
-_CLIENT_STYLE_DECLARATIONS: str = """
+)
 
-		* {
-			box-sizing: border-box;
-		}
-
-		body {
-			margin: 0;
-			padding: 0;
-		}
-
-		a[x-apple-data-detectors] {
-			color: inherit !important;
-			text-decoration: inherit !important;
-		}
-
-		#MessageViewBody a {
-			color: inherit;
-			text-decoration: none;
-		}
-
-		p {
-			line-height: inherit
-		}
-
-		.desktop_hide,
-		.desktop_hide table {
-			mso-hide: all;
-			display: none;
-			max-height: 0px;
-			overflow: hidden;
-		}
-
-		.image_block img+div {
-			display: none;
-		}
-
-		@media (max-width:620px) {
-			.desktop_hide table.icons-inner {
-				display: inline-block !important;
-			}
-
-			.icons-inner {
-				text-align: center;
-			}
-
-			.icons-inner td {
-				margin: 0 auto;
-			}
-
-			.image_block div.fullWidth {
-				max-width: 100% !important;
-			}
-
-			.mobile_hide {
-				display: none;
-			}
-
-			.row-content {
-				width: 100% !important;
-			}
-
-			.stack .column {
-				width: 100%;
-				display: block;
-			}
-
-			.mobile_hide {
-				min-height: 0;
-				max-height: 0;
-				max-width: 0;
-				overflow: hidden;
-				font-size: 0px;
-			}
-
-			.desktop_hide,
-			.desktop_hide table {
-				display: table !important;
-				max-height: none !important;
-			}
-		}
-        """
-
-CLIENT_BODY: str = Template(
+CLIENT_BODY: Template = Template(
     """
 <!DOCTYPE html>
 <html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
@@ -721,7 +641,8 @@ CLIENT_BODY: str = Template(
 </html>
     """
 )
-PLAIN_TEXT_CLIENT_BODY = """
+PLAIN_TEXT_CLIENT_BODY: Template = Template(
+    """
 $first_name,
 
 We are thrilled by your interest in becoming a part of our Nett Hands Home Care family! The care and  well-being  of our patients is our top priority, and you can rest assured that we are committed to delivering exceptional care to you or your loved ones.
@@ -732,6 +653,7 @@ Thank you sincerely,
 
 Nett Hands Home Care Recruiting
 """
+)
 
 
 REJECTION_TEMPLATE_BODY: Template = Template(

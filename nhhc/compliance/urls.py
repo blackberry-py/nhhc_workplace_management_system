@@ -12,5 +12,8 @@ urlpatterns = [
     path("sign/dhs/i9", views.DocusealCompliaceDocsSigning_i9.as_view(), name="i9_sign"),
     path("sign/irs/w4", views.DocusealCompliaceDocsSigning_irs_w4.as_view(), name="w4_sign"),
     path("sign/il/w4", views.DocusealCompliaceDocsSigning_il_w4.as_view(), name="il_w4_sign"),
-    re_path(r"^signed/$",csrf_exempt(views.signed_attestations), name="signed_form_processing"),  # NOTE - Using AWS Lambda to decoupled to process signed forms from Docseal Webhook, and Post the signed form to s3
+    path("sign/idph/bg-auth", views.DocusealCompliaceDocsSigning_idph_bg_auth.as_view * (), name="bg_sign"),
+    re_path(
+        r"^signed/$", csrf_exempt(views.signed_attestations), name="signed_form_processing"
+    ),  # NOTE - Using AWS Lambda to decoupled to process signed forms from Docseal Webhook, and Post the signed form to s3
 ]

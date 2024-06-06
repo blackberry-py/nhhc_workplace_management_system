@@ -1,9 +1,9 @@
 import re
 
+from authentication.models import UserProfile
 from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
 from django.utils.deprecation import MiddlewareMixin
-from authentication.models import UserProfile
 
 
 class PasswordChangeMiddleware(MiddlewareMixin):

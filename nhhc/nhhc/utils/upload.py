@@ -14,20 +14,19 @@ Methods:
     - validate_filecontents(file_name: str, file: typing.IO) -> bool: Validates the contents of a file against a list of disallowed code snippets.
 """
 
-import typing
 import os
 import random
 import re
 import string
-from filetype import guess
+import typing
 
-from django.conf import settings
 import magic
-from loguru import logger
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
-from django.utils.deconstruct import deconstructible
 from django.template.defaultfilters import filesizeformat
+from django.utils.deconstruct import deconstructible
+from django.utils.translation import gettext_lazy as _
+from filetype import guess
+from loguru import logger
 
 
 class FileValidationError(AttributeError):
@@ -76,6 +75,7 @@ class FileValidator(object):
     def __eq__(self, other):
         return isinstance(other, FileValidator) and self.max_size == other.max_size and self.min_size == other.min_size and self.content_types == other.content_types
 
+
 @deconstructible
 class UploadHandler:
     def __init__(self, upload_type):
@@ -102,7 +102,6 @@ class UploadHandler:
         final_path = os.path.join(self.s3_path, filename)
         logger.debug(final_path)
         return final_path
-    
+
     def __eq__(self, other):
         return isinstance(other, UploadHandler) and self.s3_path == other.s3_path
-

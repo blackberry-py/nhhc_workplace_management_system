@@ -1,15 +1,16 @@
-import os
-import requests
 import json
-from celery import shared_task
-from employee.models import Employee
-from django.conf import settings
+import os
+
 import boto3
-from botocore.exceptions import ClientError
 import pymupdf
+import requests
+from botocore.exceptions import ClientError
+from celery import shared_task
+from django.conf import settings
 from django.http import HttpRequest, HttpResponse
-from rest_framework import status
+from employee.models import Employee
 from loguru import logger
+from rest_framework import status
 
 
 def upload_file_to_s3(file_name, bucket=settings.AWS_STORAGE_BUCKET_NAME, object_name=None) -> bool:

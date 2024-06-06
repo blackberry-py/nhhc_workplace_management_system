@@ -1,7 +1,7 @@
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import HTML, Column, Field, Layout, Reset, Row, Submit, Button
-from django.forms import ModelForm, fields, BooleanField, CheckboxInput
+from crispy_forms.layout import HTML, Button, Column, Field, Layout, Reset, Row, Submit
+from django.forms import BooleanField, CheckboxInput, ModelForm, fields
 from django.forms.widgets import DateInput
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _

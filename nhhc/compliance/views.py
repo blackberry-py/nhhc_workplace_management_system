@@ -22,22 +22,24 @@ For more detailed information on each class and function, refer to the individua
 """
 
 
+import json
 import os
 from typing import Any
+
 from compliance.forms import ComplianceForm, ContractForm
 from compliance.models import Compliance
-from django.views.generic.detail import DetailView
-from django.views.generic.edit import UpdateView, CreateView
-from django.views.generic import TemplateView
-from formset.upload import FileUploadMixin
-from employee.models import Employee
-from django.views.decorators.http import require_POST
 from compliance.tasks import process_signed_form
 from django.http import HttpRequest, HttpResponse
-from rest_framework import status
-from loguru import logger
-import json
 from django.utils.text import get_valid_filename
+from django.views.decorators.http import require_POST
+from django.views.generic import TemplateView
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView, UpdateView
+from employee.models import Employee
+from formset.upload import FileUploadMixin
+from loguru import logger
+from rest_framework import status
+
 # Create your views here.
 
 
@@ -122,8 +124,7 @@ def signed_attestations(request: HttpRequest) -> HttpResponse:
         uploading_employee = Employee.objects.get(employee_id=employee_id)
         doc_type_prefix = ""
         employee_upload_suffix = f"{uploading_employee.last_name.lower()}_{uploading_employee.first_name.lower()}.pdf"
-        
-        # Process document types and assign file paths to employee attestations
+
         match document_type:
             case "Nett Hands - Do Not Drive Agreement - 2024":
                 doc_type_prefix = "do_not_drive_agreement_attestation"
@@ -159,6 +160,11 @@ def signed_attestations(request: HttpRequest) -> HttpResponse:
                 doc_type_prefix = "job_duties_attestation"
                 filepath = os.path.join("attestations",doc_type_prefix,employee_upload_suffix )
                 uploading_employee.job_duties_attestation = filepath
+                uploading_employee.save()
+            case "IDPH - Health Care Worker Background Check Authorization":
+                doc_type_prefix = "idph_background_check_authorization"
+                filepath = os.path.join("attestations",doc_type_prefix,employee_upload_suffix )
+                uploading_employee.idph_background_check_authorization = filepath
                 uploading_employee.save()
             case _:
                 logger.error(f'Invaild Document Type: {document_type}')
@@ -307,5 +313,23 @@ class DocusealCompliaceDocsSigning_il_w4(TemplateView):
         context["doc_url"] = "https://docuseal.co/d/M6o9cZ4528yk4L"
         return context
 
+class DocusealCompliaceDocsSigning_idph_bg_auth(TemplateView):
+    """
+    A view for displaying and signing compliance documents using Docuseal.
+
+    Attributes:
+    - template_name (str): The name of the template to be rendered.
+
+    Methods:
+    - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+    """
+
+    template_name = "docuseal.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
+        context["doc_url"] = "https://docuseal.co/d/RiVYseBYUpvrxD"
+        return context
 
 # !SECTION
