@@ -170,7 +170,7 @@ def hire(request: HttpRequest) -> HttpResponse:
         HttpResponse: The response object with the appropriate status code and content.
                 400 - If POST body does not a vaild PK \n
                 404 - If PK from POST body ids not matched to as vaild Employment Application \n
-                405 - If Internal Conversion of Applicant to Employee Fails \n
+                422 - If Internal Conversion of Applicant to Employee Fails \n
                 424 - If Creds Notification Email or Notice to the Front End Fails \n
                 201 - On Successful hiring and notification\n
     Raises:
@@ -191,7 +191,7 @@ def hire(request: HttpRequest) -> HttpResponse:
     except (ValueError, TypeError):
         logger.warning("Bad Request to Hire Applicant, Invalid or NO Applcation PK Submitted")
         return HttpResponse(
-            status=status.HTTP_400_BAD_REQUEST,
+            status=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content=bytes(
                 "Failed to hire applicant. Invalid or no 'pk' value provided in the request.",
                 "utf-8",

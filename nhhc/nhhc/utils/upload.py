@@ -26,7 +26,6 @@ import magic
 from loguru import logger
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
-from employee.models import Employee
 from django.utils.deconstruct import deconstructible
 from django.template.defaultfilters import filesizeformat
 
@@ -77,14 +76,14 @@ class FileValidator(object):
     def __eq__(self, other):
         return isinstance(other, FileValidator) and self.max_size == other.max_size and self.min_size == other.min_size and self.content_types == other.content_types
 
-
+@deconstructible
 class UploadHandler:
     def __init__(self, upload_type):
         self.s3_path = upload_type
 
     def generate_randomized_file_name(
         self,
-        instance: Employee,
+        instance,
         filename: str,
     ) -> typing.Union[os.PathLike, str]:
         """
@@ -103,3 +102,7 @@ class UploadHandler:
         final_path = os.path.join(self.s3_path, filename)
         logger.debug(final_path)
         return final_path
+    
+    def __eq__(self, other):
+        return isinstance(other, UploadHandler) and self.s3_path == other.s3_path
+

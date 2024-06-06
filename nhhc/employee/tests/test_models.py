@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from employee.models import Employee
-
+from model_bakery import baker
 User = get_user_model()
 
 

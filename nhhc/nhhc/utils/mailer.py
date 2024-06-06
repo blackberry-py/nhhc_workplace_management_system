@@ -106,7 +106,7 @@ class PostOffice(EmailMultiAlternatives):
             Exception: If the email transmission fails.
         """
 
-        if type(rejected_applicant) != dict:
+        if not isinstance(rejected_applicant, dict):
             rejected_applicant = model_to_dict(rejected_applicant)
             logger.info(f"Inititating EMAIL Transmission - Rejection Email - Receipent {rejected_applicant['last_name'], rejected_applicant['first_name']}({rejected_applicant['email']})")
 
@@ -122,17 +122,18 @@ class PostOffice(EmailMultiAlternatives):
             if sent_emails <= 0:
                 logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
                 raise RuntimeError("Email Not Sents")
+            return sent_emails
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
 
-    def send_external_applicant_new_hire_onboarding_email(self, new_hire: dict) -> None:
+    def send_external_applicant_new_hire_onboarding_email(self, new_hire: dict) -> int:
         """
         Sends email informing the application of their Login Creidntals and the start of their emoployment
 
         Args:
             interested_client (dict) Dictornary representation of the newly hired Applicant's employee model instance
         Returns:
-            None
+            int 
 
         Raises:
             Exception: If the email transmission fails.
@@ -153,6 +154,7 @@ class PostOffice(EmailMultiAlternatives):
             if sent_emails <= 0:
                 logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
                 raise RuntimeError("Email Not Sents")
+            return sent_emails
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
 

@@ -244,3 +244,18 @@ ts=2024-06-01T02:14:08.250Z caller=node_exporter.go:118 level=info collector=wat
 ts=2024-06-01T02:14:08.251Z caller=node_exporter.go:118 level=info collector=xfs
 ts=2024-06-01T02:14:08.251Z caller=node_exporter.go:118 level=info collector=zfs
 ts=2024-06-01T02:14:08.251Z caller=node_exporter.go:224 level=error err="listen tcp :9100: bind: address already in use"
+doppler run -t dp.st.prod.TBM3dq9InthdzkRpwrnrQ2o5Suf921QSleMhSbskcVS -- cd ./docs && docsify serve docs
+(node:41435) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+Serving /Users/terry-brooks/Documents/NettHands/nhhc/docs now.
+Listening at http://localhost:3000
+
+doppler run -t dp.st.prod.TBM3dq9InthdzkRpwrnrQ2o5Suf921QSleMhSbskcVS -- cd ./docs && docsify serve docs
+(node:41807) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+Serving /Users/terry-brooks/Documents/NettHands/nhhc/docs now.
+Listening at http://localhost:60763
+
+make: *** [docs] Interrupt: 2

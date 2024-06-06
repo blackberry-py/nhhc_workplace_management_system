@@ -1,22 +1,28 @@
 """
-Module: nhhc.compliance.views
+This module contains views related to contract creation, compliance profiles, and attestation forms.
 
-This module contains views related to compliance and contract management within the application. It includes views for creating contracts, managing compliance profiles, and generating reports.
+The module includes class-based views for creating contract forms, updating compliance profiles, and handling signed attestation forms. It also provides views for displaying and signing compliance documents using Docuseal.
 
 Classes:
-- CreateContractFormView: A FormView for creating new contracts using the ContractForm.
-- ComplianceProfileDetailView: A DetailView for displaying compliance details for an employee.
-- ComplianceProfileFormView: An UpdateView for managing compliance forms for an employee.
-- ComplianceProfile: A View for handling GET and POST requests related to compliance profiles.
+- CreateContractFormView: A view for creating a new contract form.
+- ComplianceProfileDetailView: A DetailView for displaying Compliance object details.
+- ComplianceProfileFormView: A view for updating compliance profiles.
+- DocusealCompliaceDocsSigning_*: Views for displaying and signing compliance documents using Docuseal.
 
 Functions:
-- create_contract: Placeholder function for creating contracts.
-- generate_report: Function for generating a CSV report with employee data.
+- signed_attestations: Handles signed attestation forms.
 
-Note: This module interacts with models from the compliance app and uses form classes for data input and display.
+Attributes:
+- Various template names and context object names are defined for different views.
+
+Note: The module structure is organized into sections for Contract Related Views, Compliance Related Views, and Attestation Forms.
+
+For more detailed information on each class and function, refer to the individual docstrings within the code.
+
 """
 
 
+import os
 from typing import Any
 from compliance.forms import ComplianceForm, ContractForm
 from compliance.models import Compliance
@@ -25,13 +31,13 @@ from django.views.generic.edit import UpdateView, CreateView
 from django.views.generic import TemplateView
 from formset.upload import FileUploadMixin
 from employee.models import Employee
-import json
 from django.views.decorators.http import require_POST
 from compliance.tasks import process_signed_form
 from django.http import HttpRequest, HttpResponse
 from rest_framework import status
 from loguru import logger
-
+import json
+from django.utils.text import get_valid_filename
 # Create your views here.
 
 
@@ -49,20 +55,6 @@ class CreateContractFormView(CreateView):
 
     template_name = "new_contract.html"
     form_class = ContractForm
-
-    # def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-    #     """
-    #     Retrieves the context data for the view.
-
-    #     Parameters:
-    #     - kwargs (Any): Additional keyword arguments.
-
-    #     Returns:
-    #     - dict[str, Any]: The context data for the view.
-    #     """
-    #     context = super().get_context_data(**kwargs)
-    #     context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
-    #     return context
 
 
 # !SECTION
@@ -104,23 +96,77 @@ class ComplianceProfileFormView(UpdateView, FileUploadMixin):
 
 
 # !SECTION
-
 # SECTION - Attestation Forms
 
 
 @require_POST
 def signed_attestations(request: HttpRequest) -> HttpResponse:
-    docuseal_payload = json.loads(request.POST)
-    uploaded = process_signed_form(docuseal_payload)
-    try:
-        if uploaded:
-            return HttpResponse(content="Posted To S3", status=status.HTTP_201_CREATED)
-        else:
-            logger.trace()
-            return HttpResponse(content="Failed To Posted To S3", status=status.HTTP_422_UNPROCESSABLE_ENTITY)
-    except Exception as e:
-        logger.error(f"Error Uploding to S3: {e}")
+    """
+    Process signed document requests and assign file paths to employee attestations.
 
+    Args:
+        request (HttpRequest): The HTTP request object containing the document payload.
+
+    Returns:
+        HttpResponse(status code: 201): A response indicating the status of the file path assignment process.
+
+    Raises:
+        HttpResponse(status_code: 422): If an invalid document type is encountered during processing.
+    """
+    logger.info('Signed Document Request Recieved From AWS')
+    try:
+        docuseal_payload = json.loads(request.body)
+        logger.debug(docuseal_payload)
+        employee_id = docuseal_payload['data']['external_id']
+        document_type = docuseal_payload['data']['template']['name']
+        uploading_employee = Employee.objects.get(employee_id=employee_id)
+        doc_type_prefix = ""
+        employee_upload_suffix = f"{uploading_employee.last_name.lower()}_{uploading_employee.first_name.lower()}.pdf"
+        
+        # Process document types and assign file paths to employee attestations
+        match document_type:
+            case "Nett Hands - Do Not Drive Agreement - 2024":
+                doc_type_prefix = "do_not_drive_agreement_attestation"
+                filepath = os.path.join("attestations",doc_type_prefix,employee_upload_suffix )
+                uploading_employee.do_not_drive_agreement_attestation = filepath
+                uploading_employee.save()
+            case "State of Illinois - Department of Revenue - Withholding Worksheet (W4)":
+                doc_type_prefix = "state_w4_attestation"
+                filepath = os.path.join("attestations",doc_type_prefix,employee_upload_suffix )
+                uploading_employee.state_w4_attestation = filepath
+                uploading_employee.save()
+            case "US Internal Revenue Services -Withholding Certificate (W4) - 20243":
+                doc_type_prefix = "irs_w4_attestation"
+                filepath = os.path.join("attestations",doc_type_prefix,employee_upload_suffix )
+                uploading_employee.state_w4_attestation = filepath
+                uploading_employee.save()
+            case "US Department of Homeland Security - Employment Eligibility Verification (I-9)":
+                doc_type_prefix = "dha_i9"
+                filepath = os.path.join("attestations",doc_type_prefix,employee_upload_suffix )
+                uploading_employee.dha_i9 = filepath
+                uploading_employee.save()
+            case "Nett Hands HCA Policy - 2024":
+                doc_type_prefix = "hca_policy_attestation"
+                filepath = os.path.join("attestations",doc_type_prefix,employee_upload_suffix )
+                uploading_employee.hca_policy_attestation = filepath
+                uploading_employee.save()
+            case "Nett Hands & Illinois Department of Aging General Policies":
+                doc_type_prefix = "idoa_agency_policies_attestation"
+                filepath = os.path.join("attestations",doc_type_prefix,employee_upload_suffix )
+                uploading_employee.idoa_agency_policies_attestation = filepath
+                uploading_employee.save()
+            case "Nett Hands Homehealth Care Aide (HCA)   Job Desc - 2024":
+                doc_type_prefix = "job_duties_attestation"
+                filepath = os.path.join("attestations",doc_type_prefix,employee_upload_suffix )
+                uploading_employee.job_duties_attestation = filepath
+                uploading_employee.save()
+            case _:
+                logger.error(f'Invaild Document Type: {document_type}')
+                return HttpResponse(content='Invaild Document Type', status=status.HTTP_406_NOT_ACCEPTABLE)
+        return HttpResponse(content="Processed File Path", status=status.HTTP_201_CREATED)
+    except Exception as e:
+        logger.error(f'Unable to Assign FilePath: {e}')
+        return HttpResponse(content="Unable to Assign FilePath", status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 class DocusealCompliaceDocsSigning_IDOA(TemplateView):
     """
@@ -263,57 +309,3 @@ class DocusealCompliaceDocsSigning_il_w4(TemplateView):
 
 
 # !SECTION
-
-
-# TODO: Implement Reporting
-def generate_report(request):
-    raise NotImplementedError
-    # sessio÷≥nDataCSV = f"TTPUpload{now.to_date_string()}.csv"
-    # sessions = employee_report_export()
-    # with open(sessionDataCSV, "w+") as csv_output_file_pointer:
-    #     csv_writer = csv.writer(csv_output_file_pointer)
-    #     # Writing headers of CSV file
-    #     header = (
-    #         "SSN",
-    #         "FirstName",
-    #         "LastName",
-    #         "MiddleName",
-    #         "DateOfBirth",
-    #         "Gender",
-    #         "EmailAddress",
-    #         "Ethnicity",
-    #         "Race",
-    #         "Qualifications",
-    #         "LanguageCode",
-    #         "ContractNumber",
-    #         "EmployeeTitle",
-    #         "TitleStartDate",
-    #         "CaseLoad",
-    #         "Prior to 10/01/2021",
-    #         "TrainingDate",
-    #         "InitialCBC",
-    #         "MostCurrentCBC",
-    #     )
-    #     csv_writer.writerow(header)
-    #     for employee in employees:
-    #         row_data = (
-    #             employee["social_security"],
-    #             employee["first_name"],
-    #             employee["last_name"],
-    #             employee["middle_name"],
-    #             employee["date_of_birth"],
-    #             employee["gender"],
-    #             employee["ethnicity"],
-    #             employee["race"],
-    #             employee["qualifications"],
-    #             employee["language"],
-    #             employee["contract"],
-    #             employee["title"],
-    #             employee["hire_date"],
-    #             "Find Out What Caseload Is" "False",
-    #             " ",
-    #             employee["initial_idph_background_check_completion_date"],
-    #             employee["current_idph_background_check_completion_date"],
-    #         )
-    #         csv_writer.writerow(row_data)
-    #         os.open(sessionDataCSV, os.O_NONBLOCK)
