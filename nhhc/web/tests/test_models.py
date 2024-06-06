@@ -1,7 +1,7 @@
+from datetime import datetime
 from pprint import pprint
 
 import arrow
-from datetime import datetime
 from django.test import TestCase
 from employee.models import Employee
 from faker import Faker

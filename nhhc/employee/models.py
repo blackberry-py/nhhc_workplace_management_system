@@ -1,6 +1,5 @@
 import arrow
 from django.contrib.auth import get_user_model
-
 from django.contrib.auth.models import AbstractUser, BaseUserManager, User
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
@@ -15,6 +14,8 @@ from sage_encrypt.fields.asymmetric import (
     EncryptedDateField,
     EncryptedEmailField,
 )
+
+from nhhc.utils.upload import UploadHandler
 
 NOW = str(arrow.now().format("YYYY-MM-DD"))
 
@@ -125,6 +126,10 @@ class EmployeeManager(EmployeeMethodUtility, BaseUserManager, ExportModelOperati
         user.is_superuser = True
         user.save()
         return user
+
+
+employee_resume_uploads = UploadHandler("resume")
+employee_cpr_card_uploads = UploadHandler("cpr_verification")
 
 
 class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("employee")):
@@ -358,13 +363,13 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
     state_w4_attestation = models.FileField(upload_to="state_w4", blank=True, null=True)
     idph_background_check_authorization = models.FileField(upload_to="idph_bg_check_auth", blank=True, null=True)
     qualifications_verification = models.FileField(
-        upload_to="resume",
+        upload_to=employee_resume_uploads,
         null=True,
         blank=True,
     )
 
     cpr_verification = models.FileField(
-        upload_to="cpr_verification",
+        upload_to=employee_cpr_card_uploads,
         null=True,
         blank=True,
     )

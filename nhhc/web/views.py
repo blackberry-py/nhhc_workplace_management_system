@@ -5,19 +5,24 @@ Description: This module contains views for rendering web pages, processing form
 
 from django.conf import settings
 from django.forms import model_to_dict
-from django.http import FileResponse, HttpRequest, HttpResponse, HttpResponsePermanentRedirect
+from django.http import (
+    FileResponse,
+    HttpRequest,
+    HttpResponse,
+    HttpResponsePermanentRedirect,
+)
 from django.shortcuts import reverse
 from django.templatetags.static import static
+from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+from django.views.decorators.http import require_safe
 from formset.views import FormView
 from loguru import logger
 from web.forms import ClientInterestForm, EmploymentApplicationForm
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
-from nhhc.utils.helpers import CachedTemplateView
-from web.tasks import process_new_application
-from django.views.decorators.http import require_safe
-from django.utils.decorators import method_decorator
 from web.tasks import process_new_application, process_new_client_interest
+
+from nhhc.utils.helpers import CachedTemplateView
 
 CACHE_TTL: int = settings.CACHE_TTL
 

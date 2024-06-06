@@ -8,7 +8,7 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from employee.models import Employee
 
-from nhhc.utils.validators import UploadHandler  # Replace with the actual module name
+from nhhc.utils.upload import UploadHandler  # Replace with the actual module name
 
 # class TestUploadHandler(unittest.TestCase):
 #     def setUp(self):

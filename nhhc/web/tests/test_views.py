@@ -1,9 +1,10 @@
-from http import HTTPStatus
-from django.urls import reverse
-from django.test import Client, RequestFactory, TestCase
-from web.views import ClientInterestFormView, EmploymentApplicationFormView, favicon
-from faker import Faker
 import json
+from http import HTTPStatus
+
+from django.test import Client, RequestFactory, TestCase
+from django.urls import reverse
+from faker import Faker
+from web.views import ClientInterestFormView, EmploymentApplicationFormView, favicon
 
 test_data = Faker()
 

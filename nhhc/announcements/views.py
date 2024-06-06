@@ -1,18 +1,17 @@
 import json
 from typing import Dict
 
-from announcements.forms import AnnouncementForm, AnnouncementDetailsForm
+from announcements.forms import AnnouncementDetailsForm, AnnouncementForm
 from announcements.models import Announcements
-from django.http import HttpRequest, HttpResponse
-from django.views.generic.detail import DetailView
-from django.views.generic.list import ListView
-from django.views.generic.edit import FormMixin
-from formset.views import FormView
-from django.views import View
-from django.urls import reverse
-from django.views.generic.edit import UpdateView, FormMixin
 from django.forms.models import model_to_dict
+from django.http import HttpRequest, HttpResponse
+from django.urls import reverse
+from django.views import View
 from django.views.decorators.http import require_POST
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import FormMixin, UpdateView
+from django.views.generic.list import ListView
+from formset.views import FormView
 from loguru import logger
 
 # Create your views here.

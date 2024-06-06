@@ -18,7 +18,9 @@ Classes:
 import json
 from typing import Any, Dict
 
+from announcements.models import Announcements
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
@@ -32,7 +34,6 @@ from django.views.generic.edit import UpdateView
 from django.views.generic.list import ListView
 from django_filters.rest_framework import DjangoFilterBackend
 from employee.forms import EmployeeForm
-from announcements.models import Announcements
 from employee.models import Employee
 from formset.upload import FileUploadMixin
 from loguru import logger
@@ -40,7 +41,6 @@ from portal.serializers import ClientInquiriesSerializer
 from rest_framework import generics, mixins, permissions, status
 from rest_framework.response import Response
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
-from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 @login_required(login_url="/login/")

@@ -16,27 +16,28 @@ To use the functions in this module, import the module and call the desired func
 
 
 from typing import Any
-from django.contrib.auth import login
+
+from compliance.models import Compliance
+from django.contrib.auth import authenticate, login
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
+from django.views.decorators.http import require_POST
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django_filters.rest_framework import DjangoFilterBackend
 from employee.models import Employee
-from compliance.models import Compliance
+from employee.tasks import send_async_onboarding_email
 from loguru import logger
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from web.models import EmploymentApplicationModel
-from django.views.decorators.http import require_POST
-from django.contrib.auth import authenticate
+
 from nhhc.utils.helpers import (
     get_content_for_unauthorized_or_forbidden,
     get_status_code_for_unauthorized_or_forbidden,
 )
 from nhhc.utils.mailer import PostOffice
-from employee.tasks import send_async_onboarding_email
 
 # from  employee.tasks import send_async_onboarding_email, send_async_rejection_email
 # SECTION - Template - Rendering & API Class-Based Views
@@ -147,12 +148,12 @@ def reject(request: HttpRequest) -> HttpResponse:
         pk = request.POST.get("pk")
         submission = EmploymentApplicationModel.objects.get(id=pk)
         submission.reject_applicant(rejected_by=request.user)  # type: ignore
-        HR_MAILROOM.send_external_applicant_rejection_email.delay(submission)
+        HR_MAILROOM.send_external_applicant_rejection_email(submission)
         logger.success(f"Application Rejected for {submission.last_name}. {submission.first_name}")
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
     except Exception as e:
         logger.error(f"JS AJAX Request Failed - Applicant Not Rejected = {e}")
-        return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return HttpResponse(status=status.HTTP_406_NOT_ACCEPTABLE)
 
 
 @require_POST
@@ -170,7 +171,7 @@ def hire(request: HttpRequest) -> HttpResponse:
         HttpResponse: The response object with the appropriate status code and content.
                 400 - If POST body does not a vaild PK \n
                 404 - If PK from POST body ids not matched to as vaild Employment Application \n
-                405 - If Internal Conversion of Applicant to Employee Fails \n
+                422 - If Internal Conversion of Applicant to Employee Fails \n
                 424 - If Creds Notification Email or Notice to the Front End Fails \n
                 201 - On Successful hiring and notification\n
     Raises:
@@ -215,7 +216,7 @@ def hire(request: HttpRequest) -> HttpResponse:
     except Exception as e:
         logger.error(f"Failed to hire applicant. Error: {e}")
         return HttpResponse(
-            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+            status=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content=bytes(f"Failed to hire applicant. Error: {e}.", "utf-8"),
         )
     # Condition Checked: New User Creds are Sent VIA email and Frontend has been provided confirmation

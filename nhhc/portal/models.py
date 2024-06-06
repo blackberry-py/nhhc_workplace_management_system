@@ -23,6 +23,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_extensions.db.fields import CreationDateTimeField, ModificationDateTimeField
 from django_prometheus.models import ExportModelOperationsMixin
+
 from nhhc.utils.managers import CachedQuerySet
 
 now = arrow.now(tz="America/Chicago")

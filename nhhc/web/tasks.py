@@ -1,9 +1,11 @@
-from nhhc.utils.mailer import PostOffice
-from web.forms import EmploymentApplicationForm, ClientInterestSubmission
+from typing import Any, Dict, Union
+
 from celery import shared_task
 from django.http import HttpRequest
-from typing import Union, Dict, Any
 from loguru import logger
+from web.forms import ClientInterestSubmission, EmploymentApplicationForm
+
+from nhhc.utils.mailer import PostOffice
 
 career_web_mailer = PostOffice(
     from_email="Careers@NettHandsHome.care",

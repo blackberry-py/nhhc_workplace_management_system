@@ -16,11 +16,12 @@ from uuid import uuid4
 from authentication.models import UserProfile
 from compliance.models import Compliance
 from django.db.models import signals
+from django.forms.models import model_to_dict
 from employee.models import Employee
 from loguru import logger
 from web.models import EmploymentApplicationModel
+
 from nhhc.utils.mailer import PostOffice
-from django.forms.models import model_to_dict
 
 
 # SECTION - User Management Signals

@@ -1,9 +1,9 @@
-VENV := /workspaces/NettHands/.venv
+VENV := /Users/terry-brooks/Documents/NettHands/.venv
 # BIN := /usr/local/bin
-PYTHON := $(BIN)/python3.11
+PYTHON := python3
 # SHELL := /bin/bash
 
-PYTHON := $(VENV)/bin/python3.11
+PYTHON_INTERPRETER := $(VENV)/bin/$(PYTHON)
 SHELL := /bin/bash
 CURRENTDATE=`date +"%Y-%m-%d-%T"`
 
@@ -24,11 +24,11 @@ freeze: ## Pin current dependencies
 
 .PHONY: collect
 collect:
-	doppler run  -t $(DOPPLER_TOKEN) -- $(PYTHON)  manage.py collectstatic --no-input
+	doppler run  -t $(DOPPLER_TOKEN) -- $(PYTHON_INTERPRETER)  manage.py collectstatic --no-input
 
 migrate: ## Make and run migrations
-	doppler run -t $(DOPPLER_TOKEN) -- 	$(PYTHON) manage.py makemigrations
-	doppler run -t $(DOPPLER_TOKEN) -- 	$(PYTHON) manage.py migrate
+	doppler run -t $(DOPPLER_TOKEN) -- 	$(PYTHON_INTERPRETER) manage.py makemigrations
+	doppler run -t $(DOPPLER_TOKEN) -- 	$(PYTHON_INTERPRETER) manage.py migrate
 
 lint:
 	doppler run -t $(DOPPLER_TOKEN) -- prospector  -w  pylint pyroma mypy dodgy mccabe bandit profile-validator > prospector_results_${CURRENTDATE}.json
@@ -38,6 +38,7 @@ db-shell: ## Access the Postgres Docker database interactively with psql. Pass i
 
 .PHONY: workers
 workers:
+	cd nhhc/
 	doppler run -t $(DOPPLER_TOKEN)  --  celery -A nhhc worker --without-heartbeat --without-gossip --without-mingle -D --loglevel debug
 
 .PHONY: test
@@ -51,12 +52,20 @@ pipeline-test: ## Run tests
 
 .PHONY: flower
 flower:
-	doppler run -t $(DOPPLER_TOKEN) -- celery -A nhhc flower --port=9005
+	nohup doppler run -t $(DOPPLER_TOKEN) -- celery -A nhhc flower --port=9005
+
+.PHONY: 	docs
+docs:
+	nohup doppler run -t $(DOPPL/Users/terry-brooks/Documents/NettHands/.venvER_TOKEN) -- cd ./docs && docsify serve docs
+
+
+
+
 
 
 .PHONY: run
-run: workers
-	doppler run -t $(DOPPLER_TOKEN) -- 	$(PYTHON) manage.py runserver 7772
+run: 
+	doppler run -t $(DOPPLER_TOKEN) -- 	$(PYTHON_INTERPRETER) manage.py runserver 7772
 
 .PHONY: debug
 debug: ## Run the Django server
@@ -64,8 +73,8 @@ debug: ## Run the Django server
 
 .PHONY: admin
 admin:
-	doppler run -t $(DOPPLER_TOKEN) --  $(PYTHON) manage.py createsuperuser --no-input
+	doppler run -t $(DOPPLER_TOKEN) --  $(PYTHON_INTERPRETER) manage.py createsuperuser --no-input
 
 .PHONY: start
-start: workers
-	doppler run -t $(DOPPLER_TOKEN)  --  gunicorn --workers=2  --threads=2 nhhc.wsgi:application -b 127.0.0.1:8080
+start: 
+	doppler run -t $(DOPPLER_TOKEN)  --  gunicorn --workers=2  --threads=2 nhhc.wsgi:application -b :7772

@@ -6,8 +6,8 @@ import employee.models
 import localflavor.us.models
 import phonenumber_field.modelfields
 import sage_encrypt.fields.asymmetric
-from django.db import migrations, models
 from django.contrib.postgres.operations import CryptoExtension
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
