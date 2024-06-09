@@ -63,6 +63,7 @@ class PostOffice(EmailMultiAlternatives):
             return sent_emails
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
+            settings.HIGHLIGHT_MONITORING.record_exception(f"ERROR: Unable to Send Email - {e}")
 
     def send_external_client_submission_confirmation(self, interested_client: dict) -> None:
         """
@@ -94,6 +95,7 @@ class PostOffice(EmailMultiAlternatives):
             return sent_emails
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
+            settings.HIGHLIGHT_MONITORING.record_exception(f"ERROR: Unable to Send Email - {e}")
 
     def send_external_applicant_rejection_email(self, rejected_applicant: dict) -> int:
         """
@@ -237,7 +239,9 @@ class PostOffice(EmailMultiAlternatives):
             sent_emails = msg.send()
             if sent_emails <= 0:
                 logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
+                settings.HIGHLIGHT_MONITORING.record_exception(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
                 raise RuntimeError("Email Not Sents")
             return sent_emails
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
+            settings.HIGHLIGHT_MONITORING.record_exception("ERROR: Unable to Send Email - {e}")

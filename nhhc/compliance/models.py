@@ -11,6 +11,7 @@ from django_prometheus.models import ExportModelOperationsMixin
 from employee.models import Employee
 
 from nhhc.utils.managers import CachedQuerySet
+from nhhc.utils.upload import UploadHandler
 
 
 class Contract(TimeStampedModel, models.Model, ExportModelOperationsMixin("contracts")):
@@ -56,6 +57,12 @@ class Contract(TimeStampedModel, models.Model, ExportModelOperationsMixin("contr
         verbose_name_plural = "State Contracts"
 
 
+aps_check_verification_uploads = UploadHandler(upload_type="aps_check_verification")
+hhs_oig_exclusionary_check_verification_uploads = UploadHandler(upload_type="hhs_oig_exclusionary_check_verification")
+idph_background_check_verification_uploads = UploadHandler(upload_type="idph_background_check_verification")
+pretraining_verification_uploads = UploadHandler(upload_type="pretraining_verification")
+
+
 class Compliance(TimeStampedModel, models.Model, ExportModelOperationsMixin("compliance")):
     """
         This module defines the Compliance model, which is responsible for storing and managing compliance and auditing data for employees.
@@ -97,7 +104,6 @@ class Compliance(TimeStampedModel, models.Model, ExportModelOperationsMixin("com
         CC_SUPERVISOR = "CARE_COORDINATOR_SUPERVISOR", _("Care Coordinator Supervisor")
         HC_SUPERVISOR = "HOMECARE_SUPERVISOR", _("Homecare Supervisor")
 
-    objects = CachedQuerySet.as_manager()
     employee = models.OneToOneField(
         Employee,
         on_delete=models.CASCADE,
@@ -106,12 +112,12 @@ class Compliance(TimeStampedModel, models.Model, ExportModelOperationsMixin("com
     )
     aps_check_passed = models.BooleanField(null=True, blank=True)
     aps_check_verification = models.FileField(
-        upload_to="aps_check_verification",
+        upload_to="aps_check_verification_uploads",
         blank=True,
         null=True,
     )
 
-    hhs_oig_exclusionary_check_verification = models.FileField(upload_to="hhg_oig", blank=True, null=True)
+    hhs_oig_exclusionary_check_verification = models.FileField(upload_to="hhs_oig_exclusionary_check_verification_uploads", blank=True, null=True)
     hhs_oig_exclusionary_check_completed = models.BooleanField(
         null=True,
         blank=True,
@@ -122,7 +128,7 @@ class Compliance(TimeStampedModel, models.Model, ExportModelOperationsMixin("com
         blank=True,
         default=False,
     )
-    idph_background_check_verification = models.FileField(upload_to="idph_bg_check", blank=True, null=True)
+    idph_background_check_verification = models.FileField(upload_to="idph_background_check_verification_uploads", blank=True, null=True)
     initial_idph_background_check_completion_date = models.DateField(
         null=True,
         blank=True,
@@ -133,7 +139,7 @@ class Compliance(TimeStampedModel, models.Model, ExportModelOperationsMixin("com
     )
     training_exempt = models.BooleanField(null=True, blank=True, default=False)
     pre_training_verification = models.FileField(
-        upload_to="pretraining_verification",
+        upload_to="pretraining_verification_uploads",
         blank=True,
         null=True,
     )

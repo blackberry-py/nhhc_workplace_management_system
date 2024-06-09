@@ -58,7 +58,7 @@ def portal_dashboard(request: HttpRequest) -> HttpResponse:
     """
     context = dict()
     context["segment"] = "index"
-    context["recent_announcements"] = Announcements.objects.queryset_from_cache().filter(status="A")[:5]
+    context["recent_announcements"] = Announcements.objects.filter(status="A")[:5]
     html_template = loader.get_template("dashboard.html")
     return HttpResponse(html_template.render(context, request))
 
@@ -180,10 +180,10 @@ class ClientInquiriesListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context["unresponsed"] = ClientInterestSubmission.objects.filter(reviewed=False).count()
         context["showSearch"] = True
-        context["reviewed"] = ClientInterestSubmission.filter(
+        context["reviewed"] = ClientInterestSubmission.objects.filter(
             reviewed=True,
         ).count()
-        context["all_submissions"] = ClientInterestSubmission.all().count()
+        context["all_submissions"] = ClientInterestSubmission.objects.all().count()
         return context
 
 

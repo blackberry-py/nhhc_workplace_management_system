@@ -39,12 +39,14 @@ from employee.models import Employee
 from formset.upload import FileUploadMixin
 from loguru import logger
 from rest_framework import status
-
-# Create your views here.
+from django.urls import  reverse_lazy
 
 
 # SECTION - Contract Related Viewws
 
+class SuccessfulUpdate(TemplateView):
+    template_name = "compliance/successful_update.html"
+    extra_context = {"title": "Form Updated Successfully"}
 
 class CreateContractFormView(CreateView):
     """
@@ -95,9 +97,10 @@ class ComplianceProfileFormView(UpdateView, FileUploadMixin):
     model = Compliance
     template_name = "compliance_forms.html"
     context_object_name = "employee"
+    success_url = reverse_lazy("form-updated")
 
 
-# !SECTION
+#~`````` !SECTION
 # SECTION - Attestation Forms
 
 
@@ -136,7 +139,7 @@ def signed_attestations(request: HttpRequest) -> HttpResponse:
                 filepath = os.path.join("attestations",doc_type_prefix,employee_upload_suffix )
                 uploading_employee.state_w4_attestation = filepath
                 uploading_employee.save()
-            case "US Internal Revenue Services -Withholding Certificate (W4) - 20243":
+            case "US Internal Revenue Services - Withholding Certificate (W4) - 2024":
                 doc_type_prefix = "irs_w4_attestation"
                 filepath = os.path.join("attestations",doc_type_prefix,employee_upload_suffix )
                 uploading_employee.state_w4_attestation = filepath
@@ -191,6 +194,7 @@ class DocusealCompliaceDocsSigning_IDOA(TemplateView):
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
         context["doc_url"] = "https://docuseal.co/d/r5UbQeVsQgkwUp"
+        context['title'] = "Nett Hands & Illinois Department of Aging General Policies"
         return context
 
 
@@ -211,6 +215,7 @@ class DocusealCompliaceDocsSigning_HCA(TemplateView):
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
         context["doc_url"] = "https://docuseal.co/d/3KA4PP4CEjpy4r"
+        context['title'] = "US Department of Homeland Security - Employment Eligibility Verification"
         return context
 
 
@@ -231,6 +236,7 @@ class DocusealCompliaceDocsSigning_DoNotDrive(TemplateView):
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
         context["doc_url"] = "https://docuseal.co/d/v1FPgz9xgBJVgH"
+        context['title'] = "Nett Hands - Do Not Drive Agreement"
         return context
 
 
@@ -251,6 +257,7 @@ class DocusealCompliaceDocsSigning_JobDesc(TemplateView):
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
         context["doc_url"] = "https://docuseal.co/d/KQUEkomQZr1ddD"
+        context['title'] = "Nett Hands Homehealth Care Aide (HCA) Job Desc"
         return context
 
 
@@ -271,6 +278,7 @@ class DocusealCompliaceDocsSigning_i9(TemplateView):
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
         context["doc_url"] = "https://docuseal.co/d/ovQk6ACHqajQvC"
+        context['title'] = "US Department of Homeland Security - Employment Eligibility Verification"
         return context
 
 
@@ -291,6 +299,7 @@ class DocusealCompliaceDocsSigning_irs_w4(TemplateView):
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
         context["doc_url"] = "https://docuseal.co/d/wmJGUH3wU2GrUJ"
+        context['title'] = "US Internal Revenue Services - Withholding Certificate"
         return context
 
 
@@ -311,6 +320,7 @@ class DocusealCompliaceDocsSigning_il_w4(TemplateView):
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
         context["doc_url"] = "https://docuseal.co/d/M6o9cZ4528yk4L"
+        context['title'] = "State of Illinois - Department of Revenue - Withholding Worksheet"
         return context
 
 class DocusealCompliaceDocsSigning_idph_bg_auth(TemplateView):
@@ -330,6 +340,7 @@ class DocusealCompliaceDocsSigning_idph_bg_auth(TemplateView):
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
         context["doc_url"] = "https://docuseal.co/d/RiVYseBYUpvrxD"
+        context['title'] = "Health Care Worker Background Check Authorization"
         return context
 
 # !SECTION

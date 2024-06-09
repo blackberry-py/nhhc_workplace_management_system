@@ -20,7 +20,6 @@ import re
 import string
 import typing
 
-import magic
 from django.conf import settings
 from django.template.defaultfilters import filesizeformat
 from django.utils.deconstruct import deconstructible
@@ -61,16 +60,11 @@ class FileValidator(object):
             raise FileValidationError(self.error_messages["min_size"], "min_size", params)
 
         if self.content_types:
-            content_type = magic.from_buffer(data.read(), mime=True)
-            data.seek(0)
             file = guess(data)
             type = file.mime
 
-            if content_type not in settings.ALLOWED_UPLOAD_MIME_TYPES:
-                params = {"content_type": content_type}
-                raise FileValidationError(self.error_messages["content_type"], "content_type", params)
-            elif type not in settings.ALLOWED_UPLOAD_MIME_TYPES:
-                raise FileValidationError(self.error_messages["content_type"], "content_type", params)
+        if type not in settings.ALLOWED_UPLOAD_MIME_TYPES:
+            raise FileValidationError(self.error_messages["content_type"], "content_type", params)
 
     def __eq__(self, other):
         return isinstance(other, FileValidator) and self.max_size == other.max_size and self.min_size == other.min_size and self.content_types == other.content_types

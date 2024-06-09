@@ -1,4 +1,4 @@
-# Django #
+x# Django #
 *.log
 *.pot
 *.pyc
@@ -148,3 +148,12 @@ nhhc/prospector_results_*
 nhhc/mediafiles/*
 nhhc/prospector.json
 /workspaces/NettHands/mypy-html.css
+
+mypy-html.css
+celeryd
+/workspaces/NettHands/nhhc/docs/node_modules/*
+/nhhc/docs/node_modules
+/.aws/*
+.devcontainer/devcontainer_init.sh
+/.aws
+nohup.out

@@ -74,7 +74,7 @@ def post_announcement(request: HttpRequest, pk: int) -> HttpResponse:
         return HttpResponse(status=201)
 
     else:
-        new_announcement = Announcements.objects.queryset_from_cache().get(id=pk)
+        new_announcement = Announcements.objects.get(id=pk)
         new_announcement.status = "A"
         new_announcement.save()
         return HttpResponse(status=204)
@@ -85,17 +85,9 @@ def delete_announcement(request: HttpRequest) -> HttpResponse:
     pk = int(request.POST.get("pk"))
     logger.debug(pk)
     if pk is not None:
-        archived_announcement = Announcements.objects.queryset_from_cache().get(id=pk)
+        archived_announcement = Announcements.objects.get(id=pk)
         archived_announcement.archive()
         return HttpResponse(status=204)
     else:
-        logger.error("No Annoiucement FOunbd")
+        logger.error("No Annoiucement Found")
         return HttpResponse(status=404)
-
-
-# elif "announcement_title" in request.POST.keys():
-#     form = AnnouncementDetailsForm(request.POST)
-#     if form.is_valid():
-#         archived_announcement = Announcements.objects.queryset_from_cache().get(pk=form.cleaned_data.get('id'))
-#         archived_announcement.archive()
-#         return HttpResponse(status=204)

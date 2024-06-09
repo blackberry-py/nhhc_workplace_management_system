@@ -3,6 +3,13 @@ on: push
 jobs:
   setup-virtualenv:
     runs-on: ubuntu-latest
+    container:
+      image: terrybrooks/nhhc-amd:latest
+      env:
+        DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+        DOPPLER_PROJECT: ${{ env.DOPPLER_PROJECT }}
+        DOPPLER_CONFIG: ${{ env.DOPPLER_CONFIG }}
+        DOPPLER_ENV: ${{ env.DOPPLER_ENV }}
     steps:
       - name: Get Code Checkout
         uses: 'Actions/Checkout@v3'

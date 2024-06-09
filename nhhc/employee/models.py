@@ -354,19 +354,15 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
         blank=True,
         null=True,
     )
-    dhs_i9 = models.FileField(upload_to="i9", blank=True, null=True)
-    marketing_recruiting_limitations_attestation = models.FileField(upload_to="marketing_recruiting_limitations", blank=True, null=True)
-    do_not_drive_agreement_attestation = models.FileField(upload_to="do_not_drive_agreement", blank=True, null=True)
-    job_duties_attestation = models.FileField(upload_to="job_duties", blank=True, null=True)
-    hca_policy_attestation = models.FileField(upload_to="hca_policy", blank=True, null=True)
-    irs_w4_attestation = models.FileField(upload_to="irs_w4", blank=True, null=True)
-    state_w4_attestation = models.FileField(upload_to="state_w4", blank=True, null=True)
-    idph_background_check_authorization = models.FileField(upload_to="idph_bg_check_auth", blank=True, null=True)
-    qualifications_verification = models.FileField(
-        upload_to=employee_resume_uploads,
-        null=True,
-        blank=True,
-    )
+    dhs_i9 = models.FileField(upload_to="i9", blank=True, null=True, default=None)
+    marketing_recruiting_limitations_attestation = models.FileField(upload_to="marketing_recruiting_limitations", blank=True, null=True, default=None)
+    do_not_drive_agreement_attestation = models.FileField(upload_to="do_not_drive_agreement", blank=True, null=True, default=None)
+    job_duties_attestation = models.FileField(upload_to="job_duties", blank=True, null=True, default=None)
+    hca_policy_attestation = models.FileField(upload_to="hca_policy", blank=True, null=True, default=None)
+    irs_w4_attestation = models.FileField(upload_to="irs_w4", blank=True, null=True, default=None)
+    state_w4_attestation = models.FileField(upload_to="state_w4", blank=True, null=True, default=None)
+    idph_background_check_authorization = models.FileField(upload_to="idph_bg_check_auth", blank=True, null=True, default=None)
+    qualifications_verification = models.FileField(upload_to=employee_resume_uploads, null=True, blank=True, default=None)
 
     cpr_verification = models.FileField(
         upload_to=employee_cpr_card_uploads,

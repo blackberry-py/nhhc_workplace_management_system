@@ -70,7 +70,7 @@ class ClientInterestForm(ModelForm):
                 css_class="form-row",
             ),
             Field("captcha", placeholder="Enter captcha"),
-            Submit("submit", "Submit Application"),
+            Submit("submit", "Submit Interest"),
         )
 
     class Meta:

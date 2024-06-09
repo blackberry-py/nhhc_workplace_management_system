@@ -26,6 +26,7 @@ DEBUG = True
 KOLO_DISABLE = not DEBUG
 DATETIME_FORMAT: str = "m/d/yyyy h:mm A"
 ADMINS = [("Terry Brooks", "Terry@BrooksJr.com")]
+MANAGERS = ADMINS
 WSGI_APPLICATION = "nhhc.wsgi.application"
 ROBOTS_USE_HOST = False
 FIRST_DAY_OF_WEEK = 1
@@ -41,19 +42,38 @@ REQUEST_BASE_URL = os.environ["REQUEST_BASE_URL"]
 ROOT_URLCONF = "nhhc.urls"
 
 # SECTION - CORS and CSFR Settings
+REFERRER_POLICY = "strict-origin-when-cross-origin"
 CSRF_COOKIE_NAME = "nhhc-csrf"
 CSRF_FAILURE_VIEW = "nhhc.urls.permission_denied_handler"
-# CORS_ALLOWED_ORIGIN_REXES = list(os.environ["CSRF_TRUSTED_ORGINS"].split(","))
-CORS_ALLOW_ALL_ORIGINS = True
-# CORS_ORIGIN_WHITELIST =list(os.environ["CORS_ALLOWED_ORIGINS"].split(","))
-CSRF_HEADER_NAME = "X_CSRFToken"
-CSRF_USE_SESSIONS = True
-SESSION_COOKIE_DOMAIN = os.environ["SESSION_COOKIE_DOMAIN"]
-REFERRER_POLICY = "strict-origin-when-cross-origin"
 SESSION_COOKIE_NAME = "nhhc-session"
-SECURE_SSL_REDIRECT = not DEBUG
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+CSRF_HEADER_NAME = "X_CSRFToken"
+
+if DEBUG:
+    CSRF_COOKIE_SECURE = False
+    CORS_ALLOW_PRIVATE_NETWORK = True
+    CSRF_COOKIE_DOMAIN = None
+    SESSION_COOKIE_SECURE = False
+    SESSION_COOKIE_HTTPONLY = False
+    CORS_ALLOW_CREDENTIALS = True
+    SESSION_COOKIE_SAMESITE = "None"
+    CSRF_COOKIE_SAMESITE = "None"
+    CORS_ALLOWED_ORIGIN_REGEXES = [
+        r"^null$",
+        r"^http://localhost:[0-9]+$",
+        r"^http://127\\.0\\.0\\.1:[0-9]+$",
+        r"^https://localhost:[0-9]+$",
+        r"^https://127\\.0\\.0\\.1:[0-9]+$",
+    ]
+else:
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    CORS_ORIGIN_ALLOW_ALL = True
+    CORS_URLS_REGEX = list(os.environ["CORS_URLS_REGEX"].split(","))
+    SESSION_COOKIE_DOMAIN = os.environ["SESSION_COOKIE_DOMAIN"]
+    CSRF_USE_SESSIONS = True
+
+
 # !SECTION
 
 # SECTION - Protcols, ACL COnfigs
@@ -171,24 +191,22 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "kolo.middleware.KoloMiddleware",
-    "django.middleware.cache.UpdateCacheMiddleware",
     "django_prometheus.middleware.PrometheusBeforeMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
-    "django_referrer_policy.middleware.ReferrerPolicyMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.cache.UpdateCacheMiddleware",
+    "django_referrer_policy.middleware.ReferrerPolicyMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "request.middleware.RequestMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # "nhhc.middleware.password_change.PasswordChangeMiddleware",
     "allauth.account.middleware.AccountMiddleware",
-    "django_prometheus.middleware.PrometheusAfterMiddleware",
-    "django.middleware.common.CommonMiddleware",
     "django.middleware.cache.FetchFromCacheMiddleware",
+    "django_prometheus.middleware.PrometheusAfterMiddleware",
 ]
 
 # SECTION - Database and Caching

@@ -21,7 +21,7 @@
       {% crispy form %}
     </form>
   {% else %}
-    <form method="POST" class="show-loading-after-submit" action="{% url 'profile' %}">
+    <form  method="POST" class="show-loading-after-submit" action="{% url 'profile' %}">
 
       {% csrf_token %}
 

@@ -147,7 +147,7 @@
             {% if employee.termination_date is None %}
               <p>{{ employee.hire_date | timesince  }}</p><em class="text-muted"><sub>- Current - </sub></em>
             {% else %}
-              <p>{{ employee.hire_date | timesince: employee.termination_date   }}</p><em class="text-danger"><sub>- Final - </sub></em>
+              <p>{{ employee.hire_date | timesince:employee.termination_date   }}</p><em class="text-danger"><sub>- Final - </sub></em>
             {% endif %}
           </div>
           {% if employee.termination_date is not None %}
@@ -181,22 +181,90 @@
             {% endif %}
           </div>
         </div>
-
-        <div class="w-full text-center">
-          {% if request.user.is_superuser %}
-            {% if employee.is_superuser %}
-              <button id="demote-employee-btn" onclick="confirmDemoteToUser({{ employee.id }})" class="btn btn-warning" >Revoke Administrtative Privileges </button>
-
+        <div class="row">
+          <div class="col-4">
+            <h3><strong>I-9</strong></h3>
+            {% if employee.dhs_i9 %}
+              <a href="{{ employee.dhs_i9.url }}" target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
             {% else %}
-              <button id="promote-employee-btn" onclick="confirmPromoteToAdmin({{ employee.id }})" class="btn btn-warning" >Grant Administrtative Privileges </button>
+              <p>No Signed Document Available</p>
             {% endif %}
-          {% endif %}
-          <button id="terminate-employee-btn" class="btn btn-danger" >Terminate Employment</button>
+          </div>
+          <div class="col-4">
+            <h3><strong>Do Not Drive Agreement</strong></h3>
+            {% if employee.do_not_drive_agreement_attestation %}
+              <a href="{{ employee.do_not_drive_agreement_attestation.url }}" target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
+            {% else %}
+              <p>No Signed Document Available</p>
+            {% endif %}
+          </div>
+          <div class="col-4">
+            <h3><strong>IDPH Signed Background Authorization</strong></h3>
+            {% if employee.idph_background_check_authorization %}
+              <a href="{{ employee.idph_background_check_authorization.url }}" target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
+            {% else %}
+              <p>No Signed Document Available</p>
+            {% endif %}
+          </div>
+        </div>
 
-          <a  class="btn btn-secondary" href="{% url 'roster' %}">Back to Employee Roster</a>
+        <div class="row">
+
+          <div class="col-4">
+            <h3><strong>IDOA General Policies</strong></h3>
+            {% if employee.idoa_agency_policies_attestation %}
+              <a href="{{ employee.idoa_agency_policies_attestation.url }}" target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
+            {% else %}
+              <p>No Signed Document Available</p>
+            {% endif %}
+          </div>
+          <div class="col-4">
+            <h3><strong>HCA Job Duties </strong></h3>
+            {% if employee.job_duties_attestation %}
+              <a href="{{ employee.job_duties_attestation.url }}" target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
+            {% else %}
+              <p>No Signed Document Available</p>
+            {% endif %}
+          </div>
+
+          <div class="col-4">
+            <h3><strong>Tax Witholding (w4 - State) </strong></h3>
+            {% if employee.state_w4_attestation %}
+              <a href="{{ employee.state_w4_attestation.url }}" target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
+            {% else %}
+              <p>No Signed Document Available</p>
+            {% endif %}
+          </div>
+        </div>
+        <div class="row">
+
+          <div class="col-4">
+            <h3><strong>Tax Witholding (w4 - Federal)</strong></h3>
+            {% if employee.irs_w4_attestation %}
+              <a href="{{ employee.irs_w4_attestation.url }}" target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
+            {% else %}
+              <p>No Signed Document Available</p>
+            {% endif %}
+          </div>
+
         </div>
       </div>
+
+      <div class="w-full text-center">
+        {% if request.user.is_superuser %}
+          {% if employee.is_superuser %}
+            <button id="demote-employee-btn" onclick="confirmDemoteToUser({{ employee.id }})" class="btn btn-warning" >Revoke Administrtative Privileges </button>
+
+          {% else %}
+            <button id="promote-employee-btn" onclick="confirmPromoteToAdmin({{ employee.id }})" class="btn btn-warning" >Grant Administrtative Privileges </button>
+          {% endif %}
+        {% endif %}
+        <button id="terminate-employee-btn" class="btn btn-danger" >Terminate Employment</button>
+
+        <a  class="btn btn-secondary" href="{% url 'roster' %}">Back to Employee Roster</a>
+      </div>
     </div>
+  </div>
   </div>
 
   <form class="d-none">

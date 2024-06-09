@@ -1,5 +1,6 @@
 {% load static %}
 
+
 <!-- JQuery Imports -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
@@ -29,10 +30,12 @@
 <script src="https://unpkg.com/highlight.run"></script>
 
 <!-- Highlight.io APM Trace and Session Monitoring -->
-<script>
+{% comment %} <script>
     H.init('jdkmrpog', {
-        environment: 'production3',
+        environment: 'production',
         version: 'v:1',
+        enablePerformanceRecording: true,
+        enableCanvasRecording: true,
         tracingOrigins: true,
         networkRecording: {
             enabled: true,
@@ -42,8 +45,8 @@
             ],
         },
     });
-    H.identify({{ request.user.email }}, {
-        highlightDisplayName: "{{ request.user.last_name }}, {{ request.user.first_name }}",
+    H.identify("{{ request.user.email |default:'anon@anon.com' }}", {
+        highlightDisplayName: "{{ request.user.last_name|default:'User' }}, {{ request.user.first_name|default:'Anon' }}",
         {% if request.user.is_staff %}
             accountType: "staff",
         {% else %}
@@ -51,7 +54,7 @@
         {% endif %}
         hasUsedFeature: true
     });
-</script>
+</script> {% endcomment %}
 
 <!-- BetterStack - Uptime  Annoucement Injector  -->
 <script src="https://uptime.betterstack.com/widgets/announcement.js" data-id="181789" async="async" type="text/javascript"></script>

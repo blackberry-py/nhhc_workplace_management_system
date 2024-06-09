@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 {% load static %}
-
+{% block title  %}Digital Signinging Portal - {{ title }}{% endblock title %}
 {% block content %}
 
   <script src="https://cdn.docuseal.co/js/form.js"></script>
@@ -19,7 +19,11 @@
     data-with-send-copy-button="false"
     data-allow-typed-signature="false"
     data-external-id="{{ employee.employee_id }}"
-    data-allow-to-resubmit="false">
+    data-allow-to-resubmit="false"
+    data-metadata="{
+                  "employee_last_name": "{{ employee.last_name }}",
+                                                   "employee_first_name": "{{ employee.first_name }}"
+                                                      }">
   </docuseal-form>
 
   {% include "include/_docsign-modal.html" %}

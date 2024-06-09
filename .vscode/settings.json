@@ -16,4 +16,14 @@
     "kolo.pathToKoloDirectory": "nhhc",
     "python.REPL.enableREPLSmartSend": false,
     "docsifyPreview.indexFile": "/workspaces/NettHands/nhhc/docs/",
+    "[html]": {
+        "editor.defaultFormatter": "monosans.djlint"
+    },
+    "docify.commentService.programmingLanguage": "python",
+    "docify.commentService.docstringFormat": "Google",
+    "docify.commentService.autoTranslationService": "English",
+    "docify.translateService.docstringFormat": "Google",
+    "[django-html]": {
+        "editor.defaultFormatter": "junstyle.vscode-django-support"
+    },
 }

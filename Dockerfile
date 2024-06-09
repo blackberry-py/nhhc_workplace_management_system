@@ -30,4 +30,4 @@ RUN mkdir -p src/app/.doppler
 RUN chown nhhc_app:nhhc src/app/.doppler
 RUN chmod 775 src/app/.doppler
 
-ENTRYPOINT [ "make", "start"]
+CMD "bash"

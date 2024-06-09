@@ -38,7 +38,7 @@
               {# djlint:on #}
 
         {% if form.is_multipart %}
-          <form enctype="multipart/form-data" class="show-loading-after-submit" method="POST" action="{% url 'staff_update_compliance' %}">
+          <form enctype="multipart/form-data" class="show-loading-after-submit" method="POST" action="{% url 'staff_update_compliance' pk=employee.employee_id %}">
             {% csrf_token %}
 
             {% crispy form %}

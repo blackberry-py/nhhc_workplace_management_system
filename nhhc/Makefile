@@ -1,4 +1,4 @@
-VENV := /Users/terry-brooks/Documents/NettHands/.venv
+VENV := /Users/terry-brooks/GitHub/NettHands/.venv
 # BIN := /usr/local/bin
 PYTHON := python3
 # SHELL := /bin/bash
@@ -64,7 +64,7 @@ docs:
 
 
 .PHONY: run
-run: 
+run:
 	doppler run -t $(DOPPLER_TOKEN) -- 	$(PYTHON_INTERPRETER) manage.py runserver 7772
 
 .PHONY: debug
@@ -76,5 +76,5 @@ admin:
 	doppler run -t $(DOPPLER_TOKEN) --  $(PYTHON_INTERPRETER) manage.py createsuperuser --no-input
 
 .PHONY: start
-start: 
+start:
 	doppler run -t $(DOPPLER_TOKEN)  --  gunicorn --workers=2  --threads=2 nhhc.wsgi:application -b :7772

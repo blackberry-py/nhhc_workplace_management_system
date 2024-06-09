@@ -1,17 +1,11 @@
-version: "2"
 services:
     nhhc:
         environment:
-            - DOPPLER_TOKEN: ${DOPPLER_TOKEN}
+            - DOPPLER_TOKEN: "dp.st.prod.XHIp5y7f5Mc5h2Wfs7aOWKIXtDL6TXYFWBMJl5SaVVR"
             - DOPPLER_PROJECT: "nhhc"
-            - DOPPLER_CONFIG: "dev"
+            - DOPPLER_CONFIG: "prod"
             - DOPPLER_ENV: 1
-        image: terrybrooks/nhhc
-    reverse-proxy:
-        image: traefik:v3.0
-        command: --api.insecure=true --providers.docker
+        image: terrybrooks/nhhc-arm
         ports:
-        - "80:80"
-        - "8080:8080"
-        volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
+          - "80:7772"
+          - "443:7772"
