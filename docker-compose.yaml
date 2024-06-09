@@ -1,7 +1,7 @@
 services:
     nhhc:
         environment:
-            - DOPPLER_TOKEN: "dp.st.prod.XHIp5y7f5Mc5h2Wfs7aOWKIXtDL6TXYFWBMJl5SaVVR"
+            - DOPPLER_TOKEN: $("DOPPLER_TOKEN")
             - DOPPLER_PROJECT: "nhhc"
             - DOPPLER_CONFIG: "prod"
             - DOPPLER_ENV: 1
