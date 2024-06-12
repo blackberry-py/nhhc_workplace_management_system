@@ -65,7 +65,7 @@ docs:
 
 .PHONY: run
 run:
-	doppler run -t $(DOPPLER_TOKEN) -- 	$(PYTHON_INTERPRETER) manage.py runserver 7772
+	doppler run -t $(DOPPLER_TOKEN) -- 	$(PYTHON_INTERPRETER) manage.py runserver 9555
 
 .PHONY: debug
 debug: ## Run the Django server

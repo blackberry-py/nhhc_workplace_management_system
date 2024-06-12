@@ -157,3 +157,7 @@ celeryd
 .devcontainer/devcontainer_init.sh
 /.aws
 nohup.out
+
+nhhc/attestations/*
+nhhc/restricted/attestations/do_not_drive_agreement_attestation/brooks_terry.pdf
+nhhc/restricted/attestations/idoa_agency_policies_attestation/brooks_terry.pdf

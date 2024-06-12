@@ -22,7 +22,7 @@ logger.remove()  # Remove all handlers added so far, including the default one.
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ["SECRET_KEY"]
 # DEBUG = bool(os.environ["ENABLE_DEBUGGING"])
-DEBUG = True
+DEBUG: bool = True
 KOLO_DISABLE = not DEBUG
 DATETIME_FORMAT: str = "m/d/yyyy h:mm A"
 ADMINS = [("Terry Brooks", "Terry@BrooksJr.com")]
@@ -47,31 +47,24 @@ CSRF_COOKIE_NAME = "nhhc-csrf"
 CSRF_FAILURE_VIEW = "nhhc.urls.permission_denied_handler"
 SESSION_COOKIE_NAME = "nhhc-session"
 CSRF_HEADER_NAME = "X_CSRFToken"
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^null$",
+    r"^http://localhost:[0-9]+$",
+    r"^http://127\\.0\\.0\\.1:[0-9]+$",
+    r"^https://localhost:[0-9]+$",
+    r"^https://127\\.0\\.0\\.1:[0-9]+$",
+    r"^https://docuseal.s3.amazonaws.com/*",
+]
 
-if DEBUG:
-    CSRF_COOKIE_SECURE = False
-    CORS_ALLOW_PRIVATE_NETWORK = True
-    CSRF_COOKIE_DOMAIN = None
-    SESSION_COOKIE_SECURE = False
-    SESSION_COOKIE_HTTPONLY = False
-    CORS_ALLOW_CREDENTIALS = True
-    SESSION_COOKIE_SAMESITE = "None"
-    CSRF_COOKIE_SAMESITE = "None"
-    CORS_ALLOWED_ORIGIN_REGEXES = [
-        r"^null$",
-        r"^http://localhost:[0-9]+$",
-        r"^http://127\\.0\\.0\\.1:[0-9]+$",
-        r"^https://localhost:[0-9]+$",
-        r"^https://127\\.0\\.0\\.1:[0-9]+$",
-    ]
-else:
-    CSRF_COOKIE_SECURE = True
-    SESSION_COOKIE_SECURE = True
-    SESSION_COOKIE_HTTPONLY = True
-    CORS_ORIGIN_ALLOW_ALL = True
-    CORS_URLS_REGEX = list(os.environ["CORS_URLS_REGEX"].split(","))
-    SESSION_COOKIE_DOMAIN = os.environ["SESSION_COOKIE_DOMAIN"]
-    CSRF_USE_SESSIONS = True
+
+CSRF_COOKIE_SECURE = False
+CORS_ALLOW_PRIVATE_NETWORK = True
+CSRF_COOKIE_DOMAIN = None
+SESSION_COOKIE_SECURE = False
+CORS_ORIGIN_ALLOW_ALL = True
+SESSION_COOKIE_HTTPONLY = False
+CORS_ALLOW_CREDENTIALS = True
+# CSRF_TRUSTED_ORIGINS = ["http://localhost"]
 
 
 # !SECTION
@@ -193,8 +186,8 @@ MIDDLEWARE = [
     "kolo.middleware.KoloMiddleware",
     "django_prometheus.middleware.PrometheusBeforeMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.cache.UpdateCacheMiddleware",
     "django_referrer_policy.middleware.ReferrerPolicyMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -318,6 +311,8 @@ BUNNY_BASE_DIR = os.environ["BUNNY_BASE_DIR"]
 # !SECTION
 STORAGE_DESTINATION = os.environ["STORAGE_DESTINATION"]
 FILE_UPLOAD_TEMP_DIR = os.environ["FILE_UPLOAD_TEMP_DIR"]
+
+
 # SECTION - AWS settings
 AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]
 AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]

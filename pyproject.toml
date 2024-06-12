@@ -74,6 +74,7 @@ werkzeug = "^3.0.3"
 pyopenssl = "^24.1.0"
 filemagic = "^1.6"
 filetype = "^1.2.0"
+django-progressbarupload = "^0.1.7"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -115,6 +116,7 @@ profile = "black"
 [tool.black]
 line-length = 200
 target-version = ['py37']
+extend-exclude = "nhhc/compliance/views.py, nhhc/nhhc/utils/upload.py"
 
 [tool.coverage.report]
 exclude_also = [

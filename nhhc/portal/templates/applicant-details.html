@@ -88,143 +88,138 @@
             </div>
           </div>
           <div class="row">
-            <h3><strong>Attachments:</strong></h3>\
+            <h3><strong>Attachments:</strong></h3>
             <div class="col-6">
               {% if submission.resume_cv %}
-                <a href="{{ submission.resume_cv.url }}" target="_blank"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+                <a href="{{ submission.resume_cv.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
+                <p>Resume</p>
               {% else %}
                 <p>No Resume Provided</p>
               {% endif %}
             </div>
+          </div>
+        </div>
+        <div class="row">
+          <h3>Availability</h3>
+        </div>
+        <div class="row">
+          <ul class="availability-list">
+            {% if submission.availability_monday %}
+              <li><p>Monday</p></li>
+            {% endif %}
+            {% if submission.availability_tuesday %}
+              <li><p>Tuesday</p></li>
+            {% endif %}
+            {% if submission.availability_wednesday %}
+              <li><p>Wednesday</p></li>
+            {% endif %}
+            {% if submission.availability_thursday %}
+              <li><p>Thursday</p></li>
+            {% endif %}
+            {% if submission.availability_friday %}
+              <li><p>Friday</p></li>
+            {% endif %}
+            {% if submission.availability_saturday %}
+              <li><p>Saturday</p></li>
+            {% endif %}
+            {% if submission.availability_sunday %}
+              <p>Sunday</p>
+            {% endif %}
+          </ul>
+        </div>
+        <div class="row">
+          {% if submission.reviewed %}
             <div class="col-6">
-              {% if submission.cpr_card %}
-                <a href="{{ submission.cpr_card.url }}" target="_blank"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
-              {% else %}
-                <p>No CPR Card Provided</p>
-              {% endif %}
+              <h3><strong> Staff Member Who Reviewed Request:</strong></h3>
+              <p>{{ submission.reviewed_by.username }}</p>
             </div>
-          </div>
-          <div class="row">
-            <h3>Availability</h3>
-          </div>
-          <div class="row">
-            <ul class="availability-list">
-              {% if submission.availability_monday %}
-                <li><p>Monday</p></li>
-              {% endif %}
-              {% if submission.availability_tuesday %}
-                <li><p>Tuesday</p></li>
-              {% endif %}
-              {% if submission.availability_wednesday %}
-                <li><p>Wednesday</p></li>
-              {% endif %}
-              {% if submission.availability_thursday %}
-                <li><p>Thursday</p></li>
-              {% endif %}
-              {% if submission.availability_friday %}
-                <li><p>Friday</p></li>
-              {% endif %}
-              {% if submission.availability_saturday %}
-                <li><p>Saturday</p></li>
-              {% endif %}
-              {% if submission.availability_sunday %}
-                <p>Sunday</p>
-              {% endif %}
-            </ul>
-          </div>
-          <div class="row">
-            {% if submission.reviewed %}
-              <div class="col-6">
-                <h3><strong> Staff Member Who Reviewed Request:</strong></h3>
-                <p>{{ submission.reviewed_by.username }}</p>
-              </div>
-            {% endif %}
-          </div>
-          <div class="w-full text-center mb-3">
-            {% if submission.hired is None %}
-              <button id="mark-reviewed-btn" onclick="confirmHire({{ submission.id }})" class="btn btn-success">Hire</button>
-              <button id="mark-reviewed-btn" onclick="confirmRejection({{ submission.id }})" class="btn btn-danger">Reject</button>
-            {% endif %}
-          </div>
-          <div class="w-full text-center">
-            <a  class="btn btn-secondary" href="{% url 'applicants-list' %}">Back to Applicant List</a>
-          </div>
+          {% endif %}
+        </div>
+        <div class="w-full text-center mb-3">
+          {% if submission.hired is None %}
+            <button id="mark-reviewed-btn" onclick="confirmHire({{ submission.id }})" class="btn btn-success">Hire</button>
+            <button id="mark-reviewed-btn" onclick="confirmRejection({{ submission.id }})" class="btn btn-danger">Reject</button>
+          {% endif %}
+        </div>
+        <div class="w-full text-center">
+          <a  class="btn btn-secondary" href="{% url 'applicants-list' %}">Back to Applicant List</a>
         </div>
       </div>
     </div>
-    <form class="d-none">
-      {% csrf_token %}
-    </form>
-    <script type="text/javascript" defer>
-      function confirmHire(pk) {
-        let sentData = {
-          csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
-          pk: pk,
-        };
-        console.log(`Hiring Applicant with primary key ${pk}`);
+  </div>
+  <form class="d-none">
+    {% csrf_token %}
+  </form>
+  <script type="text/javascript" defer>
+    function confirmHire(pk) {
+      let sentData = {
+        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+        pk: pk,
+      };
+      console.log(`Hiring Applicant with primary key ${pk}`);
 
-        Swal.fire({
-          title: "Confirm Hire",
-          html: "You are about to start employment and create and employment profile.",
-          showCancelButton: true,
-          icon: "warning",
-          confirmButtonText: "Hire",
-          showLoaderOnConfirm: true,
-          preConfirm: () => {
-            try {
-              var request = $.post("/applicant/hire/", sentData, (data, status) => {
-                Swal.fire({
-                  title: "Success!",
-                  icon: "success",
-                  html: `<h1>Employee Hired.</h1>\n ${data}`,
-                  didClose: () => {
-                    window.location.href(`/employee/${data.employee_id}`);
-                  },
-                });
+      Swal.fire({
+        title: "Confirm Hire",
+        html: "You are about to start employment and create an employment profile and send the onboarding email.",
+        showCancelButton: true,
+        icon: "warning",
+        confirmButtonText: "Hire",
+        showLoaderOnConfirm: true,
+        preConfirm: () => {
+          try {
+            var request = $.post("/applicant/hire/", sentData, (data, status) => {
+              Swal.fire({
+                title: "Success!",
+                icon: "success",
+                html: `<h1>Employee Hired.</h1>\n ${data}`,
+                didClose: () => {
+                  window.location.href(`/employee/${data.employee_id}`);
+                },
               });
-            } catch (error) {
-              Swal.showValidationMessage(`Request failed: ${error}`);
-            }
-          },
-          allowOutsideClick: () => !Swal.isLoading(),
-        });
-      }
+            });
+          } catch (error) {
+            Swal.showValidationMessage(`Request failed: ${error}`);
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      });
+    }
 
-      function confirmRejection(pk) {
-        let sentData = {
-          csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
-          pk: pk,
-        };
-        console.log(`Rejecting Applicant with primary key ${pk}`);
+    function confirmRejection(pk) {
+      let sentData = {
+        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+        pk: pk,
+      };
+      console.log(`Rejecting Applicant with primary key ${pk}`);
 
-        Swal.fire({
-          title: "Confirm Rejection",
-          text: "You are about to reject this applicant. This will send a email of notifying the applicant",
-          showCancelButton: true,
-          icon: "warning",
-          confirmButtonText: "Reject",
-          showLoaderOnConfirm: true,
-          preConfirm: () => {
-            try {
-              var request = $.post("/applicant/reject/", sentData, (data, status) => {
-                Swal.fire({
-                  title: "Applicant Rejected",
-                  icon: "info",
-                  text: `Applicant rejected. \n They have been  notified by email`,
-                  didClose: () => {
-                    window.location.reload();
-                  },
-                });
+      Swal.fire({
+        title: "Confirm Rejection",
+        text: "You are about to reject this applicant. This will send a email of notifying the applicant",
+        showCancelButton: true,
+        icon: "warning",
+        confirmButtonText: "Reject",
+        showLoaderOnConfirm: true,
+        preConfirm: () => {
+          try {
+            var request = $.post("/applicant/reject/", sentData, (data, status) => {
+              Swal.fire({
+                title: "Applicant Rejected",
+                icon: "info",
+                text: `Applicant rejected. \n They have been  notified by email`,
+                didClose: () => {
+                  window.location.reload();
+                },
               });
-            } catch (error) {
-              Swal.showValidationMessage(`Request failed: ${error}`);
-            }
-          },
-          allowOutsideClick: () => !Swal.isLoading(),
-        });
-      }
+            });
+          } catch (error) {
+            Swal.showValidationMessage(`Request failed: ${error}`);
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      });
+    }
 
-    </script>
+  </script>
 {% endblock content %}
 
 <!-- Specific JS goes HERE -->

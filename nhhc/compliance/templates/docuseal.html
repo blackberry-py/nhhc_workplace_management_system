@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 {% load static %}
-{% block title  %}Digital Signinging Portal - {{ title }}{% endblock title %}
+{% block title  %} {{ title }} Digital Signing Portal  - NettCare {% endblock title %}
 {% block content %}
 
   <script src="https://cdn.docuseal.co/js/form.js"></script>
@@ -19,11 +19,8 @@
     data-with-send-copy-button="false"
     data-allow-typed-signature="false"
     data-external-id="{{ employee.employee_id }}"
-    data-allow-to-resubmit="false"
-    data-metadata="{
-                  "employee_last_name": "{{ employee.last_name }}",
-                                                   "employee_first_name": "{{ employee.first_name }}"
-                                                      }">
+    data-allow-to-resubmit="true"
+    data-metadata=' { "first_name": "{{employee.first_name}}", "last_name": "{{employee.last_name}}"}'x>
   </docuseal-form>
 
   {% include "include/_docsign-modal.html" %}
@@ -31,7 +28,7 @@
     document.querySelector('docuseal-form').addEventListener('completed',  (e) => {e.detail
       Swal.fire({
         title: "Signed and Delivered",
-        text: "You have successfully signed the document. Would You Like to Sign Another?",
+        text: "You have successfully signed the document. This document will be uploaded to your profile within 24 Hours. Would You Like to Sign Another?",
         showCancelButton: true,
         cancelButtonText:"Return to Profile",
         icon: "success",

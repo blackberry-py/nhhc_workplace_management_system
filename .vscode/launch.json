@@ -24,8 +24,11 @@
             "type": "python",
             "request": "launch",
             "python": "${command:python.interpreterPath}",
-            "program": "${workspaceFolder}/nhhc/manage.py",
+            "program": "doppler run -- ${workspaceFolder}/nhhc/manage.py",
             "args": [
+                "doppler",
+                "run",
+                "--",
                 "runserver"
             ],
             "django": true,
@@ -36,7 +39,10 @@
             "host": "127.0.0.1",
             "port": 8000,
             "env": {
-                "DOPPLER_ENV": "1"
+                "DOPPLER_ENV": "1",
+                "DOPPLER_TOKEN": "${DOPPLER_TOKEN}"
+                "DOPPLER_PROJECT": "nhhc",
+                "DOPPLER_CONFIG": "prod"
             }
         }
     ]

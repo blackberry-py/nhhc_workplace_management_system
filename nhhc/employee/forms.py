@@ -335,7 +335,6 @@ class EmployeeForm(ModelForm):
                 HTML(
                     """
         <h3 class="small-heading muted-text mb-4">Supporting Documentation</strong></h3>
-        <p>If you are a new hire, need to update, or been told you are missing any of these documents. <a href="#doc-sign-modal" uk-toggle>Click Here to sign them digitally</p></a>
         """
                 ),
                 Row(
@@ -352,63 +351,81 @@ class EmployeeForm(ModelForm):
             </tr>
           </thead>
           <tbody>
+
             <tr>
               <td>
                 IDOA Policy
               </td>
-
               <td>
-              <td>
-                {% if request.user.idoa_agency_policies_attestation is None %}
+                {% if request.user.idoa_agency_policies_attestation == "NONE" %}
                   <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
                 {% else %}
                   <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
                 {% endif %}
               </td>
               <td>
-                {% if request.user.idoa_agency_policies_attestation is " " %}
+                {% if request.user.idoa_agency_policies_attestation == "NONE" %}
                   <a href="{% url 'idoa_sign' %}" class="btn btn-primary">Sign</a>
                 {% else %}
-                <a href="{{ idoa_agency_policies_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+                <a href="{{ request.user.idoa_agency_policies_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
 
                 {% endif %}
               </td>
             </tr>
+
             <tr>
               <td>
                 HCA to as Family Member Policy
               </td>
               <td>
-                {% if request.user.hca_policy_attestation is None %}
+                {% if request.user.hca_policy_attestation == "NONE" %}
                   <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
                 {% else %}
                   <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
                 {% endif %}
               </td>
               <td>
-                {% if request.user.hca_policy_attestation is None %}
+                {% if request.user.hca_policy_attestation == "NONE" %}
                   <a href="{% url 'hca_sign' %}" class="btn btn-primary">Sign</a>
                 {% else %}
-                 <a href="{{ hca_policy_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+                 <a href="{{ request.user.hca_policy_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
                 {% endif %}
               </td>
             </tr>
+
             <tr>
               <td>
                 Home Healthcare Aide(HCA) Job Description
               </td>
               <td>
-                {% if request.user.job_duties_attestation is None %}
+                {% if request.user.job_duties_attestation == "NONE" %}
                   <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
                 {% else %}
                   <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
                 {% endif %}
               </td>
               <td>
-                {% if request.user.job_duties_attestation is  " " %}
+                {% if request.user.job_duties_attestation == "NONE" %}
                   <a href="{% url 'jobdesc_sign' %}" class="btn btn-primary">Sign</a>
                 {% else %}
-               <a href="{{ request.user.job_duties_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+                 <a href="{{ request.user.job_duties_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
+                {% endif %}
+              </td>
+              </tr>
+              <tr>
+              <td>IDPH - Healthcare Worker Background Check Authorization	 </td>
+                         <td>
+                {% if request.user.idph_background_check_authorization == "NONE" %}
+                  <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
+                {% else %}
+                  <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
+                {% endif %}
+              </td>
+              <td>
+                {% if request.user.idph_background_check_authorization == "NONE"  %}
+                  <a href="{% url 'bg_sign' %}" class="btn btn-primary">Sign</a>
+                {% else %}
+                <a href="{{ request.user.idph_background_check_authorization.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
                 {% endif %}
               </td>
             </tr>
@@ -416,17 +433,17 @@ class EmployeeForm(ModelForm):
               <td>
                 I-9 Wotk Authorization                           </td>
               <td>
-                {% if request.user.dhs_i9 is None %}
+                {% if request.user.dhs_i9 == "NONE" %}
                   <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
                 {% else %}
                   <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
                 {% endif %}
               </td>
               <td>
-                {% if request.user.dhs_i9 is None %}
+                {% if request.user.dhs_i9 == "NONE" %}
                   <a href="{% url 'i9_sign' %}" class="btn btn-primary">Sign</a>
                 {% else %}
-               <a href={{ dhs_i9.url }} target="_blank"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+                 <a href={{ request.user.dhs_i9.url }} target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
                 {% endif %}
               </td>
             </tr>
@@ -434,17 +451,17 @@ class EmployeeForm(ModelForm):
               <td>
                 Do Not Drive Policy                           </td>
               <td>
-                {% if request.user.do_not_drive_agreement_attestation is None %}
+                {% if request.user.do_not_drive_agreement_attestation == "NONE" %}
                   <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
                 {% else %}
                   <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
                 {% endif %}
               </td>
               <td>
-                {% if request.user.do_not_drive_agreement_attestation is None %}
+                {% if request.user.do_not_drive_agreement_attestation == "NONE" %}
                   <a href="{% url 'dnd_sign' %}" class="btn btn-primary">Sign</a>
                 {% else %}
-                {% comment %} <a href="{{ request.user.do_not_drive_agreement_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a> {% endcomment %}
+               <a href="{{ request.user.do_not_drive_agreement_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
                 {% endif %}
               </td>
             </tr>
@@ -452,17 +469,17 @@ class EmployeeForm(ModelForm):
               <td>
                 W4 - Ferderal Tax Withholding                          </td>
               <td>
-                {% if request.user.irs_w4_attestation is None %}
+                {% if request.user.irs_w4_attestation == "NONE" %}
                   <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
                 {% else %}
                   <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
                 {% endif %}
               </td>
               <td>
-                {% if request.user.irs_w4_attestation is None %}
+                {% if request.user.irs_w4_attestation == "NONE" %}
                   <a href="{% url 'w4_sign' %}" class="btn btn-primary">Sign</a>
                 {% else %}
-                {% comment %} <a href="{{ request.user.irs_w4_attestation.url  }}" target="_blank"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a> {% endcomment %}
+                 <a href="{{ request.user.irs_w4_attestation.url  }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
                 {% endif %}
               </td>
             </tr>
@@ -470,98 +487,27 @@ class EmployeeForm(ModelForm):
               <td>
                 W4 - State of Illinois Tax Withholding                          </td>
               <td>
-                {% if request.user.state_w4_attestation is None %}
+                {% if request.user.state_w4_attestation == "NONE" %}
                   <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
                 {% else %}
                   <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
                 {% endif %}
               </td>
               <td>
-                {% if request.user.state_w4_attestation is None %}
+                {% if request.user.state_w4_attestation == "NONE" %}
                   <a href="{% url 'il_w4_sign' %}" class="btn btn-primary">Sign</a>
                 {% else %}
-                {% comment %} <a href="{{ request.user.state_w4_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a> {% endcomment %}
+                <a href="{{ request.user.state_w4_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
                 {% endif %}
               </td>
             </tr>
-            <tr>
-              <td>
-                IDPH - Healthcare Worker Background Check Authorization                        </td>
-              <td>
-                {% if request.user.idph_background_check_authorization is None %}
-                  <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
-                {% else %}
-                  <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
-                {% endif %}
-              </td>
-              <td>
-                {% if request.user.idph_background_check_authorization.url is None %}
-                  <a href="{% url 'bg_sign' %}" class="btn btn-primary">Sign</a>
-                {% else %}
-                {% comment %} <a href="{{ request.user.idph_background_check_authorization.url }}" target="_blank"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a> {% endcomment %}
-                {% endif %}
-              </td>
-            </tr>
+
           </tbody>
         </table>
       </div>
                     """
                     )
                 ),
-                #         Row(
-                #             Column(
-                #                 "cpr_verification",
-                #                 # help_text="Please Upload Photo of an Unexpired CPR Card",
-                #                 css_class="form-group col-lg-4 mb-0 editable ",
-                #             ),
-                #             Column(
-                #                 "qualifications_verification",
-                #                 # help_text="Please upload a copy of the document selected in the User Information field - Highest Level of Education/Home Healthcare Qualification",
-                #                 css_class="``form-group`` col-lg-4 mb-0 editable ",
-                #             ),
-                #             Column(
-                #                 "do_not_drive_agreement_attestation",
-                #                 helptext="<Please Provide a Copy of the",
-                #                 css_class="form-group col-lg-4 mb-0 editable ",
-                #             ),
-                #             css_class="form-row",
-                #         ),
-                #         Row(
-                #             Column(
-                #                 "hca_policy_attestation",
-                #                 helptext="Please ....",
-                #                 css_class="form-group col-lg-4 mb-0 editable ",
-                #             ),
-                #             Column(
-                #                 "idph_background_check_authorization",
-                #                 # help_text="Please upload a copy of the document selected in the User Information field - Highest Level of Education/Home Healthcare Qualification",
-                #                 css_class="form-group col-lg-4 mb-0 editable ",
-                #             ),
-                #             Column(
-                #                 "job_duties_attestation",
-                #                 # help_text="Please upload a copy of signed job duties",
-                #                 css_class="form-group col-lg-4 mb-0 editable ",
-                #             ),
-                #             css_class="form-row",
-                #         ),
-                #         HTML(
-                #             """
-                # <h3 class="small-heading muted-text mb-4">Payroll and Tax Information</strong></h3>
-                # """,
-                #         ),
-                #         Row(
-                #             Column(
-                #                 "irs_w4_attestation",
-                #                 helptext="Please ....",
-                #                 css_class="form-group col-lg-4 mb-0 editable ",
-                #             ),
-                #             Column(
-                #                 "state_w4_attestation",
-                #                 # help_text="Please upload a copy of the document selected in the User Information field - Highest Level of Education/Home Healthcare Qualification",
-                #                 css_class="form-group col-lg-4 mb-0 editable ",
-                #             ),
-                #             css_class="form-row",
-                #         ),
                 HTML(
                     """
                              <hr class="uk-divider-icon" />

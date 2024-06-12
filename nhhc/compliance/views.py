@@ -25,7 +25,9 @@ For more detailed information on each class and function, refer to the individua
 import json
 import os
 from typing import Any
-
+import requests
+import boto3
+from botocore.exceptions import ClientError
 from compliance.forms import ComplianceForm, ContractForm
 from compliance.models import Compliance
 from compliance.tasks import process_signed_form
@@ -40,12 +42,12 @@ from formset.upload import FileUploadMixin
 from loguru import logger
 from rest_framework import status
 from django.urls import  reverse_lazy
-
+from nhhc.utils.upload import S3HANDLER
 
 # SECTION - Contract Related Viewws
 
 class SuccessfulUpdate(TemplateView):
-    template_name = "compliance/successful_update.html"
+    template_name = "successful_update.html"
     extra_context = {"title": "Form Updated Successfully"}
 
 class CreateContractFormView(CreateView):
@@ -100,7 +102,7 @@ class ComplianceProfileFormView(UpdateView, FileUploadMixin):
     success_url = reverse_lazy("form-updated")
 
 
-#~`````` !SECTION
+#!SECTION
 # SECTION - Attestation Forms
 
 
@@ -120,59 +122,66 @@ def signed_attestations(request: HttpRequest) -> HttpResponse:
     """
     logger.info('Signed Document Request Recieved From AWS')
     try:
+        logger.debug(request.body)
         docuseal_payload = json.loads(request.body)
-        logger.debug(docuseal_payload)
         employee_id = docuseal_payload['data']['external_id']
         document_type = docuseal_payload['data']['template']['name']
         uploading_employee = Employee.objects.get(employee_id=employee_id)
         doc_type_prefix = ""
+        document_id = docuseal_payload['data']['template']['id']
         employee_upload_suffix = f"{uploading_employee.last_name.lower()}_{uploading_employee.first_name.lower()}.pdf"
+# fmt: off
 
         match document_type:
             case "Nett Hands - Do Not Drive Agreement - 2024":
                 doc_type_prefix = "do_not_drive_agreement_attestation"
-                filepath = os.path.join("attestations",doc_type_prefix,employee_upload_suffix )
+                filepath = os.path.join("attestations",doc_type_prefix,"_".join(doc_type_prefix,employee_upload_suffix) )
                 uploading_employee.do_not_drive_agreement_attestation = filepath
                 uploading_employee.save()
             case "State of Illinois - Department of Revenue - Withholding Worksheet (W4)":
                 doc_type_prefix = "state_w4_attestation"
-                filepath = os.path.join("attestations",doc_type_prefix,employee_upload_suffix )
+                filepath = os.path.join("attestations",doc_type_prefix,"_".join(doc_type_prefix,employee_upload_suffix) )
                 uploading_employee.state_w4_attestation = filepath
                 uploading_employee.save()
             case "US Internal Revenue Services - Withholding Certificate (W4) - 2024":
                 doc_type_prefix = "irs_w4_attestation"
-                filepath = os.path.join("attestations",doc_type_prefix,employee_upload_suffix )
+                filepath = os.path.join("attestations",doc_type_prefix,"_".join(doc_type_prefix,employee_upload_suffix) )
                 uploading_employee.state_w4_attestation = filepath
                 uploading_employee.save()
             case "US Department of Homeland Security - Employment Eligibility Verification (I-9)":
                 doc_type_prefix = "dha_i9"
-                filepath = os.path.join("attestations",doc_type_prefix,employee_upload_suffix )
+                filepath = os.path.join("attestations",doc_type_prefix,"_".join(doc_type_prefix,employee_upload_suffix) )
                 uploading_employee.dha_i9 = filepath
                 uploading_employee.save()
             case "Nett Hands HCA Policy - 2024":
                 doc_type_prefix = "hca_policy_attestation"
-                filepath = os.path.join("attestations",doc_type_prefix,employee_upload_suffix )
+                filepath = os.path.join("attestations",doc_type_prefix,"_".join(doc_type_prefix,employee_upload_suffix) )
                 uploading_employee.hca_policy_attestation = filepath
                 uploading_employee.save()
             case "Nett Hands & Illinois Department of Aging General Policies":
                 doc_type_prefix = "idoa_agency_policies_attestation"
-                filepath = os.path.join("attestations",doc_type_prefix,employee_upload_suffix )
+                filepath = os.path.join("attestations",doc_type_prefix,"_".join(doc_type_prefix,employee_upload_suffix) )
                 uploading_employee.idoa_agency_policies_attestation = filepath
                 uploading_employee.save()
-            case "Nett Hands Homehealth Care Aide (HCA)   Job Desc - 2024":
+            case "Nett Hands Homehealth Care Aide (HCA)  Job Desc - 2024":
                 doc_type_prefix = "job_duties_attestation"
-                filepath = os.path.join("attestations",doc_type_prefix,employee_upload_suffix )
+                filepath = os.path.join("attestations",doc_type_prefix,"_".join(doc_type_prefix,employee_upload_suffix) )
                 uploading_employee.job_duties_attestation = filepath
                 uploading_employee.save()
             case "IDPH - Health Care Worker Background Check Authorization":
                 doc_type_prefix = "idph_background_check_authorization"
-                filepath = os.path.join("attestations",doc_type_prefix,employee_upload_suffix )
+                filepath = os.path.join("attestations",doc_type_prefix,"_".join(doc_type_prefix,employee_upload_suffix) )
                 uploading_employee.idph_background_check_authorization = filepath
                 uploading_employee.save()
             case _:
-                logger.error(f'Invaild Document Type: {document_type}')
+                logger.error(f'Invaild Document Type: {document_type} - {document_id}')
                 return HttpResponse(content='Invaild Document Type', status=status.HTTP_406_NOT_ACCEPTABLE)
-        return HttpResponse(content="Processed File Path", status=status.HTTP_201_CREATED)
+    # fmt: on
+
+        if S3HANDLER.download_pdf_file(docuseal_payload):
+            return HttpResponse(content="Processed File Path", status=status.HTTP_201_CREATED)
+        else:
+            return HttpResponse(content="Failed to Process File", status=status.HTTP_422_UNPROCESSABLE_ENTITY)
     except Exception as e:
         logger.error(f'Unable to Assign FilePath: {e}')
         return HttpResponse(content="Unable to Assign FilePath", status=status.HTTP_422_UNPROCESSABLE_ENTITY)

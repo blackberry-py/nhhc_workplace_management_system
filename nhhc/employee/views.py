@@ -32,6 +32,8 @@ from rest_framework import status
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from web.models import EmploymentApplicationModel
+from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
 
 from nhhc.utils.helpers import (
     get_content_for_unauthorized_or_forbidden,
@@ -64,6 +66,7 @@ class EmployeeRoster(ListView):
     # paginate_by = 25
 
 
+@method_decorator(never_cache, name="dispatch")
 class EmployeeDetail(DetailView):
     """
     A class-based template view that displays detailed information about an employee.

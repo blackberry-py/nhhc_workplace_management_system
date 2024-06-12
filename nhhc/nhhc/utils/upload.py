@@ -1,17 +1,23 @@
 """
-module: nhhc.utils.validators
+Module: upload_handler.py
 
-Module for handling file uploads and validation.
+This module contains classes and functions related to handling file uploads and downloads, specifically to and from an S3 bucket.
 
-This module contains a class UploadHandler with static methods for generating randomized file names, validating MIME types, and validating file contents against a list of disallowed code snippets.
+Classes:
+- FileValidationError: Custom exception for file validation errors.
+- FileValidator: Class for validating file properties such as size and content type.
+- UploadHandler: Class for handling file uploads to S3 with customized file naming.
+- ProgressPercentage: Class for tracking upload progress.
+- S3HANDLER: Class for uploading and downloading files to and from S3.
 
-Attributes:
-    - UploadHandler: A class for handling file uploads and validation.
+Functions:
+- S3HANDLER.upload_file_to_s3: Uploads a file to an S3 bucket.
+- S3HANDLER.generate_filename: Generates a filename based on payload data.
+- S3HANDLER.download_pdf_file: Downloads a PDF file from a URL and uploads it to S3.
 
-Methods:
-    - generate_randomized_file_name(initial_file_name: str, uploader: Employee) -> str: Generates a randomized file name based on the uploader's information.
-    - validate_mime_type(file_name: str, file: typing.IO) -> bool: Validates the MIME type of a file against the whitelist of allowed MIME types.
-    - validate_filecontents(file_name: str, file: typing.IO) -> bool: Validates the contents of a file against a list of disallowed code snippets.
+Usage:
+Import the module and utilize the classes and functions for handling file uploads and downloads to and from an S3 bucket.
+
 """
 
 import os
@@ -19,6 +25,12 @@ import random
 import re
 import string
 import typing
+import requests
+import json
+import boto3
+from botocore.exceptions import ClientError
+import threading
+import sys
 
 from django.conf import settings
 from django.template.defaultfilters import filesizeformat
@@ -99,3 +111,117 @@ class UploadHandler:
 
     def __eq__(self, other):
         return isinstance(other, UploadHandler) and self.s3_path == other.s3_path
+
+class ProgressPercentage(object):
+
+    def __init__(self, filename):
+        self._filename = filename
+        self._size = float(os.path.getsize(filename))
+        self._seen_so_far = 0
+        self._lock = threading.Lock()
+
+    def __call__(self, bytes_amount):
+        # To simplify, assume this is hooked up to a single filename
+        with self._lock:
+            self._seen_so_far += bytes_amount
+            percentage = (self._seen_so_far / self._size) * 100
+            sys.stdout.write(
+                "\r%s  %s / %s  (%.2f%%)" % (
+                    self._filename, self._seen_so_far, self._size,
+                    percentage))
+            sys.stdout.flush()
+
+class S3HANDLER:
+    @staticmethod
+    def upload_file_to_s3(file_name,
+                      bucket: str = settings.AWS_STORAGE_BUCKET_NAME,
+                      object_name=None) -> bool:
+        """Upload a file to an S3 bucket
+        Args:
+            file_name: File to upload
+            bucket: Bucket to upload to
+            object_name: S3 object name. If not specified then file_name is used
+        Returns:
+            bool  - True if file was uploaded, else False
+        """
+        if object_name is None:
+            object_name = file_name
+            logger.debug(object_name)
+            logger.debug(file_name)
+
+        # Upload the file
+        s3_client = boto3.client("s3")
+        try:
+            s3_client.upload_file(file_name, bucket, object_name, Callback=ProgressPercentage(file_name))
+            return True
+        except ClientError as e:
+            return False
+
+    @staticmethod
+    def generate_filename(payload: dict) -> str:
+        employee_upload_suffix = f"{payload['data']['metadata']['last_name'].lower()}_{payload['data']['metadata']['first_name'].lower()}.pdf"
+        document_id = payload['data']['template']['id']
+        doc_type_prefix = ""
+        filepath = ""
+        match document_id:
+            case 90907:
+                doc_type_prefix = "do_not_drive_agreement_attestation"
+                path = os.path.join("restricted", "attestations", doc_type_prefix)
+                os.makedirs(path, exist_ok=True)
+                filepath = os.path.join(path, "_".join(doc_type_prefix,employee_upload_suffix))
+            case 101305:
+                doc_type_prefix = "state_w4_attestation"
+                path = os.path.join("restricted", "attestations", doc_type_prefix)
+                os.makedirs(path, exist_ok=True)
+                filepath = os.path.join(path, "_".join(doc_type_prefix,employee_upload_suffix))
+            case 91067:
+                doc_type_prefix = "dha_i9"
+                path = os.path.join("restricted", "attestations", doc_type_prefix)
+                os.makedirs(path, exist_ok=True)
+                filepath = os.path.join(path, "_".join(doc_type_prefix,employee_upload_suffix))
+            case 90909:
+                doc_type_prefix = "hca_policy_attestation"
+                path = os.path.join("restricted", "attestations", doc_type_prefix)
+                os.makedirs(path, exist_ok=True)
+                filepath = os.path.join(path, "_".join(doc_type_prefix,employee_upload_suffix))
+            case 90908:
+                doc_type_prefix = "idoa_agency_policies_attestation"
+                path = os.path.join("restricted", "attestations", doc_type_prefix)
+                os.makedirs(path, exist_ok=True)
+                filepath = os.path.join(path, "_".join(doc_type_prefix,employee_upload_suffix))
+            case 90910:
+                doc_type_prefix = "job_duties_attestation"
+                path = os.path.join("restricted", "attestations", doc_type_prefix)
+                filepath = os.path.join(path, "_".join(doc_type_prefix,employee_upload_suffix))
+            case 116255:
+                doc_type_prefix = "idph_background_check_authorization"
+                path = os.path.join("restricted", "attestations", doc_type_prefix)
+                os.makedirs(path, exist_ok=True)
+                filepath = os.path.join(path, "_".join(doc_type_prefix,employee_upload_suffix))
+        return filepath
+
+    def download_pdf_file(payload: dict) -> bool:
+        """Download PDF from given URL to local directory.
+
+        :param url: The url of the PDF file to be downloaded
+        :return: True if PDF file was successfully downloaded, otherwise False.
+        """
+
+        # Request URL and get response object
+        response = requests.get(payload["data"]["documents"][0]["url"],
+                                stream=True)
+
+        # isolate PDF filename from URL
+        pdf_file_name = S3HANDLER.generate_filename(payload)
+
+        if response.status_code == 200:
+            # Save in current working directory
+            with open(pdf_file_name, 'wb+') as pdf_object:
+                pdf_object.write(response.content)
+                S3HANDLER.upload_file_to_s3(pdf_file_name)
+                print(f'{pdf_file_name} was successfully saved!')
+                return True
+        else:
+            print(f'Uh oh! Could not download {pdf_file_name},')
+            print(f'HTTP response status code: {response.status_code}')
+            return False

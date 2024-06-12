@@ -5,7 +5,6 @@
 {% load anonymize %}
 {% load humanize %}
 {% load widget_tweaks %}
-\
 {% block content %}
   {% if employee.termination_date is not None %}
     <div id="terminated-notice" class="w-100 p-3 text-center sticky-top "><strong>Notice:</strong>This Profile is for a Terminated Employee</div>
@@ -259,7 +258,7 @@
             <button id="promote-employee-btn" onclick="confirmPromoteToAdmin({{ employee.id }})" class="btn btn-warning" >Grant Administrtative Privileges </button>
           {% endif %}
         {% endif %}
-        <button id="terminate-employee-btn" class="btn btn-danger" >Terminate Employment</button>
+        <button id="terminate-employee-btn" class="btn btn-danger">Terminate Employment</button>
 
         <a  class="btn btn-secondary" href="{% url 'roster' %}">Back to Employee Roster</a>
       </div>

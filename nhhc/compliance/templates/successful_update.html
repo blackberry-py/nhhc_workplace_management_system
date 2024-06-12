@@ -1,0 +1,14 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} {{ type }} Updated  - {{ employee.last_name }}, {{ employee.first_name }}             {% endblock title %}
+{% load crispy_forms_tags %}
+{% load anonymize %}
+{% load humanize %}
+{% load widget_tweaks %}
+
+{% block content %}
+    <div class="submission-confirmation">
+        <img id='check' src="https://cdn.netthandshome.care/staticfiles/img/success_animated_check.gif" />
+        <h1>{{ type }} Updated!</h1>
+        <a href={{ request.path }}/a><h4>Back to Profile</h4></a>
+{% endblock %}
