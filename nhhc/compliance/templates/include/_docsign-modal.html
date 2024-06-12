@@ -12,7 +12,6 @@
         <h2 class="uk-modal-title">Nett Hands HR Digital Signature Portal</h2>
         <sub class=".text-muted">Use the Escape Key to Close Window</sub>
       </div>
-      """
       <div class="table-responsive">
         <table class="table align-items-center table-flush table-hover">
           <thead class="thead-light">
@@ -98,7 +97,7 @@
                 {% if request.user.idph_background_check_authorization == "NONE"  %}
                   <a href="{% url 'bg_sign' %}" class="btn btn-primary">Sign</a>
                 {% else %}
- {% comment %} <a href="{{ request.user.idph_background_check_authorization.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>  {% comment %}
+  <a href="{{ request.user.idph_background_check_authorization.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>  
 {% endif %}
 </td>
 </tr>
@@ -116,7 +115,7 @@ I-9 Wotk Authorization                           </td>
 {% if request.user.dhs_i9 == "NONE" %}
   <a href="{% url 'i9_sign' %}" class="btn btn-primary">Sign</a>
 {% else %}
-{% comment %}  <a href={{ dhs_i9.url }} target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>  {% endcomment %}
+  <a href={{ dhs_i9.url }} target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>  
                 {% endif %}
               </td>
             </tr>
@@ -134,7 +133,7 @@ I-9 Wotk Authorization                           </td>
                 {% if request.user.do_not_drive_agreement_attestation == "NONE" %}
                   <a href="{% url 'dnd_sign' %}" class="btn btn-primary">Sign</a>
                 {% else %}
-{% comment %} <a href="{{ request.user.do_not_drive_agreement_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a> {% endcomment %}
+ <a href="{{ request.user.do_not_drive_agreement_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a> 
                 {% endif %}
               </td>
             </tr>
@@ -152,7 +151,7 @@ I-9 Wotk Authorization                           </td>
                 {% if request.user.irs_w4_attestation == "NONE" %}
                   <a href="{% url 'w4_sign' %}" class="btn btn-primary">Sign</a>
                 {% else %}
-{% comment %} <a href="{{ request.user.irs_w4_attestation.url  }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a> {% endcomment %}
+ <a href="{{ request.user.irs_w4_attestation.url  }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a> 
                 {% endif %}
               </td>
             </tr>
@@ -170,7 +169,7 @@ I-9 Wotk Authorization                           </td>
                 {% if request.user.state_w4_attestation == "NONE" %}
                   <a href="{% url 'il_w4_sign' %}" class="btn btn-primary">Sign</a>
                 {% else %}
-{% comment %} <a href="{{ request.user.state_w4_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a> {% endcomment %}
+ <a href="{{ request.user.state_w4_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a> 
                 {% endif %}
               </td>
             </tr>

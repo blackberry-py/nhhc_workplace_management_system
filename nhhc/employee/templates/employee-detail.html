@@ -6,6 +6,134 @@
 {% load humanize %}
 {% load widget_tweaks %}
 {% block content %}
+<form class="d-none">
+
+  {% csrf_token %}
+</form>
+
+<script defer type="text/javascript">
+
+  function confirmTermination(pk) {
+    let sentData = {
+      pk: pk,
+      password: $('#swal2-input').val(),
+      csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+    };
+
+    Swal.fire({
+      title: "Confirm Termination",
+      showCancelButton: true,
+      icon: "warning",
+      confirmButtonText: "Terminate",
+      html: `<p>Terry You are about to terminate employment for this employee.\n It will lock them out of their account and archive their compliance profile.</p> <p><strong>Note: </strong>Archived profiles will still have the documents available, but cannot be modified.</p>  <br/><br/><p>Please enter your CareNett password to confirm.</p>  <label for="terminate-password-confirmation" class="sr-only">Password</label> <br/><input  class="form-control" type='password' placeholder='Enter CareNett Password' id='terminate-password-confirmation' name='terminate-password-confirmation' />`,
+
+      preConfirm: (input) => {
+        console.log(`Sending Termination Request with Employee ID ${pk}`);
+        try {
+          var request = $.post("/employee/terminate/", sentData, (data, status) => {
+            Swal.fire({
+              title: "Employment Terminated!",
+              icon: "success",
+              text: `Employee Terminated. They have been notified via email.`,
+              didClose: () => {
+                window.location.reload();
+              },
+            });
+          });
+        } catch (error) {
+          Swal.showValidationMessage(`Request failed: ${error}`);
+        }
+      },
+      allowOutsideClick: () => !Swal.isLoading(),
+    });
+  }
+
+  function confirmPromoteToAdmin(pk) {
+    let sentData = 
+    console.log(`Sending Promotion Request with Employee ID ${pk}`);
+
+    Swal.fire({
+      title: "Confirm Privileges Grant",
+      html: '<p>You are about to issue enhanced CareNett Privileges for this employee.\n <strong>It will allow them to execute and access the administative functions</p></strong><br/><br/><p>Please type \"grant\" to confirm</p>',
+      showCancelButton: true,
+      icon: "warning",
+      input: "password",
+      confirmButtonText: "Grant",
+      showLoaderOnConfirm: true,
+      preConfirm: (input) => {
+        if (input) {
+          try {
+            var request = $.post("/employee/promote/", {
+              pk: pk,
+              csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+              password: input
+            }, (data, status) => {
+              Swal.fire({
+                title: "Administrtative Privileges Granted!",
+                icon: "success",
+                text: `The administative Privileges of this user have been granted`,
+                didClose: () => {
+                  window.location.reload();
+                },
+              });
+            });
+          } catch (error) {
+            Swal.showValidationMessage(`Request failed: ${error}`);
+          }
+        } else {
+          Swal.showValidationMessage(
+            'Please type CareNett  password to confirm'
+          );
+        }
+      },
+      allowOutsideClick: () => !Swal.isLoading(),
+    });
+  }
+  function confirmDemoteToStandardUser(pk) {
+    let sentData = {
+      pk: pk,
+      csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+    };
+    console.log(`Send=ing Promotion Request with Employee ID ${pk}`);
+
+    Swal.fire({
+      title: "Confirm Privileges Revocation",
+      html: '<p>You are about to revoke enhanced CareNett Privileges for this employee.\n <strong>It will disallow them to execute and access the administative functions</p></strong><br/><br/><p>Please enter your CareNett password to confirm.</p>',
+      showCancelButton: true,
+      icon: "warning",
+      input: "password",
+      confirmButtonText: "Revoke",
+      showLoaderOnConfirm: true,
+      preConfirm: (input) => {
+        if (input) {
+          try {
+            var request = $.post("/employee/demote/", {
+              pk: pk,
+              csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+              password: input
+            }, (data, status) => {
+              Swal.fire({
+                title: "Administrtative Privileges Revoked!",
+                icon: "success",
+                text: `The administative Privileges of this user have been revoked`,
+                didClose: () => {
+                  window.location.reload();
+                },
+              });
+            });
+          } catch (error) {
+            Swal.showValidationMessage(`Request failed: ${error}`);
+          }
+        } else {
+          Swal.showValidationMessage(
+            'Please type enter CareNett Password'
+          );
+        }
+      },
+      allowOutsideClick: () => !Swal.isLoading(),
+    });
+  }
+</script>
   {% if employee.termination_date is not None %}
     <div id="terminated-notice" class="w-100 p-3 text-center sticky-top "><strong>Notice:</strong>This Profile is for a Terminated Employee</div>
   {% endif %}
@@ -21,9 +149,9 @@
       </div>
       <div class="card-body">
         <div class="row">
-          <div class="col-12 mb-0">
-
-            <h1>Personal Information</h1>
+          <div class="col-12 mb-0 text-center">
+            
+            <u><h1>Personal Information</h1></u>
           </div>
         </div>
         <ul class="nav nav-tabs">
@@ -79,16 +207,21 @@
         </div>
         <hr class="my-4" />
         <div class="row">
-          <div class="col-12">
-            <h1>Contact Information</h1>
+          <div class="col-12 txt-center">
+            <u><h1>Contact Information</h1></u>
+            
           </div>
         </div>
         <div class="row">
-          <div class="col-12">
-            <h3><strong>Home Address:</strong></h3>
-            <p>{{ employee.home_address }}</p>
+          <div class="col-9">
+            <h3><strong>Street Address:</strong></h3>
+            <p>{{ employee.street_address1 }}</p>
           </div>
+          <div class="col-3">
+          <h3><strong>Unit:</strong></h3>
+          <p>{{ employee.street_address2 }}</p>
         </div>
+       </div>
         <div class="row">
           <div class="col-5">
             <h3><strong>City:</strong></h3>
@@ -105,8 +238,8 @@
         </div>
         <hr class="my-4" />
 
-        <div class="row">
-          <h2>Emergency Contact Information</h2>
+        <div class="row text-center">
+          <u><h2>Emergency Contact Information</h2></u>
         </div>
         <div class="row">
           <div class="col-6">
@@ -161,46 +294,57 @@
             <h3><strong>Related to Client:</strong></h3>
             <p>{{ employee.family_hca }}</p>
           </div>
+        </div>
+        <div class="row text-center">
+          <h1><u>Supporting Documents</u></h1>
+          </div>
+          <div class="row">
           <div class="col-4">
-            <h3><strong>GED/High School Diploma:</strong></h3>
-            {% if employee.qualifications_verification %}
-              <a href="{{ employee.qualifications_verification.url }}" target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
+            <h3><strong>GED/High School Diploma/Resume:</strong></h3>
+            {% if employee.qualifications_verification != "NONE"%}
+              <a href="{{ employee.qualifications_verification.url }}" target="_blank"><i class="fa-solid fa-file-pdf-o fa-2xl"></i></a>
             {% else %}
               <p>No File Available</p>
             {% endif %}
           </div>
           <div class="col-4">
             <h3><strong>CPR Verification:</strong></h3>
-            {% if employee.cpr_verification %}
-              <div class="center">
-                <a href="{{ employee.cpr_verification.url }}" target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
+            {% if employee.cpr_verification != "NONE" %}
+                <a href="{{ employee.cpr_verification.url }}" target="_blank"><i class="fa-solid fa-file-pdf-o fa-2xl"></i></a>
               </div>
             {% else %}
               <p>No File Available</p>
             {% endif %}
           </div>
+          <div class="col-4">
+            <h3><strong>Tax Witholding (w4 - Federal)</strong></h3>
+            {% if employee.irs_w4_attestation != "NONE" %}
+              <a href="{{ employee.irs_w4_attestation.url }}" target="_blank"><i class="fa-solid fa-file-pdf-o fa-2xl"></i></a>
+            {% else %}
+              <p>No Signed Document Available</p>
+            {% endif %}
         </div>
         <div class="row">
           <div class="col-4">
             <h3><strong>I-9</strong></h3>
-            {% if employee.dhs_i9 %}
-              <a href="{{ employee.dhs_i9.url }}" target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
+            {% if  employee.dhs_i9 != "NONE" %}
+              <a href="{{ employee.dhs_i9.url }}" target="_blank"><i class="fa-solid fa-file-pdf-o fa-2xl"></i></a>
             {% else %}
               <p>No Signed Document Available</p>
             {% endif %}
           </div>
           <div class="col-4">
             <h3><strong>Do Not Drive Agreement</strong></h3>
-            {% if employee.do_not_drive_agreement_attestation %}
-              <a href="{{ employee.do_not_drive_agreement_attestation.url }}" target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
+            {% if employee.do_not_drive_agreement_attestation != "NONE" %}
+              <a href="{{ employee.do_not_drive_agreement_attestation.url }}" target="_blank"><i class="fa-solid fa-file-pdf-o fa-2xl"></i></a>
             {% else %}
               <p>No Signed Document Available</p>
             {% endif %}
           </div>
           <div class="col-4">
             <h3><strong>IDPH Signed Background Authorization</strong></h3>
-            {% if employee.idph_background_check_authorization %}
-              <a href="{{ employee.idph_background_check_authorization.url }}" target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
+            {% if employee.idph_background_check_authorization != "NONE" %}
+              <a href="{{ employee.idph_background_check_authorization.url }}" target="_blank"><i class="fa-solid fa-file-pdf-o fa-2xl"></i></a>
             {% else %}
               <p>No Signed Document Available</p>
             {% endif %}
@@ -211,16 +355,16 @@
 
           <div class="col-4">
             <h3><strong>IDOA General Policies</strong></h3>
-            {% if employee.idoa_agency_policies_attestation %}
-              <a href="{{ employee.idoa_agency_policies_attestation.url }}" target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
+            {% if employee.idoa_agency_policies_attestation != "NONE" %}
+              <a href="{{ employee.idoa_agency_policies_attestation.url }}" target="_blank"><i class="fa-solid fa-file-pdf-o fa-2xl"></i></a>
             {% else %}
               <p>No Signed Document Available</p>
             {% endif %}
           </div>
           <div class="col-4">
             <h3><strong>HCA Job Duties </strong></h3>
-            {% if employee.job_duties_attestation %}
-              <a href="{{ employee.job_duties_attestation.url }}" target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
+            {% if employee.job_duties_attestation  != "NONE" %}
+              <a href="{{ employee.job_duties_attestation.url }}" target="_blank"><i class="fa-solid fa-file-pdf-o fa-2xl"></i></a>
             {% else %}
               <p>No Signed Document Available</p>
             {% endif %}
@@ -228,37 +372,26 @@
 
           <div class="col-4">
             <h3><strong>Tax Witholding (w4 - State) </strong></h3>
-            {% if employee.state_w4_attestation %}
-              <a href="{{ employee.state_w4_attestation.url }}" target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
+            {% if employee.state_w4_attestation != "NONE" %}
+              <a href="{{ employee.state_w4_attestation.url }}" target="_blank"><i class="fa-solid fa-file-pdf-o fa-2xl"></i></a>
             {% else %}
               <p>No Signed Document Available</p>
             {% endif %}
           </div>
         </div>
-        <div class="row">
-
-          <div class="col-4">
-            <h3><strong>Tax Witholding (w4 - Federal)</strong></h3>
-            {% if employee.irs_w4_attestation %}
-              <a href="{{ employee.irs_w4_attestation.url }}" target="_blank"><i class="fa-solid fa-file fa-2xl"></i></a>
-            {% else %}
-              <p>No Signed Document Available</p>
-            {% endif %}
-          </div>
-
-        </div>
+     
       </div>
 
       <div class="w-full text-center">
         {% if request.user.is_superuser %}
           {% if employee.is_superuser %}
-            <button id="demote-employee-btn" onclick="confirmDemoteToUser({{ employee.id }})" class="btn btn-warning" >Revoke Administrtative Privileges </button>
+            <button id="demote-employee-btn" onclick="confirmDemoteToStandardUser({{ employee.employee_id }})" class="btn btn-warning" >Revoke Administrtative Privileges </button>
 
           {% else %}
-            <button id="promote-employee-btn" onclick="confirmPromoteToAdmin({{ employee.id }})" class="btn btn-warning" >Grant Administrtative Privileges </button>
+            <button id="promote-employee-btn" onclick="confirmPromoteToAdmin({{ employee.employee_id }})" class="btn btn-warning" >Grant Administrtative Privileges </button>
           {% endif %}
         {% endif %}
-        <button id="terminate-employee-btn" class="btn btn-danger">Terminate Employment</button>
+        <button id="terminate-employee-btn" onclick="confirmTermination({{ employee.employee_id }})" class="btn btn-danger">Terminate Employment</button>
 
         <a  class="btn btn-secondary" href="{% url 'roster' %}">Back to Employee Roster</a>
       </div>
@@ -266,88 +399,5 @@
   </div>
   </div>
 
-  <form class="d-none">
-    {% csrf_token %}
-  </form>
-  <script defer type="text/javascript">
 
-    function confirmTermination(pk) {
-      let sentData = {
-        pk: pk,
-        password: $('#swal2-input').val(),
-        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-      };
-
-      Swal.fire({
-        title: "Confirm Termination",
-        showCancelButton: true,
-        icon: "warning",
-        confirmButtonText: "Terminate",
-        html: `<p>Terry You are about to terminate employment for this employee.\n It will lock them out of their account and archive their compliance profile.</p> <p><strong>Note: </strong>Archived profiles will still have the documents available, but cannot be modified.</p>  <br/><br/><p>Please enter your CareNett password to confirm.</p>  <label for="terminate-password-confirmation" class="sr-only">Password</label> <br/><input  class="form-control" type='password' placeholder='Enter CareNett Password' id='terminate-password-confirmation' name='terminate-password-confirmation' />`,
-
-        preConfirm: (input) => {
-          console.log(`Sending Termination Request with Employee ID ${pk}`);
-          try {
-            var request = $.post("/employee/terminate/", sentData, (data, status) => {
-              Swal.fire({
-                title: "Employment Terminated!",
-                icon: "success",
-                text: `Employee Terminated. They have been notified via email.`,
-                didClose: () => {
-                  window.location.reload();
-                },
-              });
-            });
-          } catch (error) {
-            Swal.showValidationMessage(`Request failed: ${error}`);
-          }
-        },
-        allowOutsideClick: () => !Swal.isLoading(),
-      });
-    }
-    $("#terminate-employee-btn").on('click', () -> {
-      confirmTermination({{ employee.id }})
-    } )
-    function confirmPromoteToAdmin(pk) {
-      let sentData = {
-        pk: pk,
-        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-      };
-      console.log(`Send=ing Promotion Request with Employee ID ${pk}`);
-
-      Swal.fire({
-        title: "Confirm Privileges Grant",
-        text: '<p>You are about to issue enhanced CareNett Privileges for this employee.\n <strong>It will allow them to execute and access the administative functions</p></strong><br/><br/><p>Please enter your CareNett password to confirm.</p>',
-        showCancelButton: true,
-        icon: "warning",
-        input: "password",
-        confirmButtonText: "Grant",
-        showLoaderOnConfirm: true,
-        preConfirm: (input) => {
-          if (input === "terminate") {
-            try {
-              var request = $.post("/employee/terminate/", sentData, (data, status) => {
-                Swal.fire({
-                  title: "Employment Terminated!",
-                  icon: "success",
-                  text: `Employee Terminated. They have been notified via email.`,
-                  didClose: () => {
-                    window.location.reload();
-                  },
-                });
-              });
-            } catch (error) {
-              Swal.showValidationMessage(`Request failed: ${error}`);
-            }
-          } else {
-            Swal.showValidationMessage(
-              'Please type enter CareNett Password'
-            );
-          }
-        },
-        allowOutsideClick: () => !Swal.isLoading(),
-      });
-    }
-
-  </script>
 {% endblock content %}

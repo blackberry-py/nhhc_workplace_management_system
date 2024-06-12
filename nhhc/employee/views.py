@@ -303,39 +303,109 @@ def promote(request: HttpRequest) -> HttpResponse:
     Returns:
     - HttpResponse: Returns an HTTP response with a status code indicating the success or failure of the hiring process.
     """
-    # Condition Checked: Requesting User is Logged in and An Admin
+    # Check if the requesting user is logged in and an admin
     if not request.user.is_authenticated or not request.user.is_superuser:
-        logger.warning("No Authenticated or Non-Admin Termination Request Recieved - Denying Request")
+        logger.warning("No Authenticated or Non-Admin Termination Request Received - Denying Request")
         return HttpResponse(
             status=get_status_code_for_unauthorized_or_forbidden(request),
             content=get_content_for_unauthorized_or_forbidden(request),
         )
-    # Condition Checked: POST REQUEST  is vaild with a interger PK in body in key `pk`
+
+    # Authenticate the user
     try:
         user = authenticate(username=request.user.username, password=request.POST.get("password"))
-        if user is not None:
-            pk = request.POST.get("pk")
-            logger.debug(f"Termination Request Initated for Employee ID: {pk}")
-        else:
-            return HttpResponse(status=status.HTTP_403_FORBIDDEN, content="Invaild Password User Combonataton")
+        if user is None:
+            return HttpResponse(status=status.HTTP_403_FORBIDDEN, content="Invalid Password User Combination")
+
+        # Get the employee ID from the request
+        pk = request.POST.get("pk")
+        if not pk:
+            logger.info("Bad Request to Promote Applicant, Invalid or No Application PK Submitted")
+            return HttpResponse(
+                status=status.HTTP_400_BAD_REQUEST,
+                content="Failed to promote employee. Invalid or no 'pk' value provided in the request.",
+            )
+
+        # Get the employee instance from the provided PK
+        try:
+            promoted_employee = Employee.objects.get(employee_id=pk)
+            logger.debug(f"Promotion Request Resolving to {promoted_employee.last_name}, {promoted_employee.first_name}")
+
+            # Promote the employee to admin
+            try:
+                promoted_employee.promote_to_admin()
+                logger.success(f"Employment status for {promoted_employee.last_name}, {promoted_employee.first_name} PROMOTED")
+                return HttpResponse(status=204)
+            except Exception as e:
+                logger.exception(f"Failed to promote employee. Error: {e}")
+                return HttpResponse(status=400, content=f"Failed to promote employee. Error: {e}")
+
+        except Employee.DoesNotExist:
+            logger.info("Failed to promote employee. Employee not found.")
+            return HttpResponse(status=404, content="Failed to promote employee. Employee not found.")
+
     except (ValueError, TypeError):
-        logger.info("Bad Request to Hire Applicant, Invaild or NO Applcation PK Submitted")
+        logger.info("Bad Request to Promote Applicant, Invalid or No Application PK Submitted")
         return HttpResponse(
             status=status.HTTP_400_BAD_REQUEST,
-            content="Failed to terminate employee. Invalid or no 'pk' value provided in the request.",
+            content="Failed to promote employee. Invalid or no 'pk' value provided in the request.",
         )
-    # Condition Checked: Provided PK Employee ID associated with an Employee Instance
+
+@require_POST
+def demote(request: HttpRequest) -> HttpResponse:
+    """
+    This function is used to promote an applicant based on the provided 'pk' value in the request.
+
+    Args:
+    - request (HttpRequest): The HTTP request object containing the 'pk' value.
+
+    Returns:
+    - HttpResponse: Returns an HTTP response with a status code indicating the success or failure of the hiring process.
+    """
+    # Check if the requesting user is logged in and an admin
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        logger.warning("No Authenticated or Non-Admin Termination Request Received - Denying Request")
+        return HttpResponse(
+            status=get_status_code_for_unauthorized_or_forbidden(request),
+            content=get_content_for_unauthorized_or_forbidden(request),
+        )
+
+    # Authenticate the user
     try:
-        promoted_employee = Employee.objects.get(id=pk)
-        logger.debug(f"Termination Request Resolving to {promoted_employee.last_name}, {promoted_employee.first_name}")
-    except Employee.DoesNotExist:
-        logger.info("Failed to hire applicant. Employment application not found.")
-        return HttpResponse(status=404, content="Failed to promote employee.. Employee not found.")
-    # Condition Checked: An Corrosponding Employee Model Instance is created via the .terminate_employment method on the Employee class
-    try:
-        promoted_employee.promote_to_admin()
-        logger.success(f"employment status for {promoted_employee.last_name}, {promoted_employee.first_name} PRMOTED")
-        return HttpResponse(status=204)
-    except Exception as e:
-        logger.exception(f"Failed to terminate employee. Error: {e}.")
-        return HttpResponse(status=400, content=f"Failed to PROMOTING employee.. Error: {e}.")
+        user = authenticate(username=request.user.username, password=request.POST.get("password"))
+        if user is None:
+            return HttpResponse(status=status.HTTP_403_FORBIDDEN, content="Invalid Password User Combination")
+
+        # Get the employee ID from the request
+        pk = request.POST.get("pk")
+        if not pk:
+            logger.info("Bad Request to Demote Applicant, Invalid or No Application PK Submitted")
+            return HttpResponse(
+                status=status.HTTP_400_BAD_REQUEST,
+                content="Failed to demote employee. Invalid or no 'pk' value provided in the request.",
+            )
+
+        # Get the employee instance from the provided PK
+        try:
+            demoted_employee = Employee.objects.get(employee_id=pk)
+            logger.debug(f"Demotion Request Resolving to {demoted_employee.last_name}, {demoted_employee.first_name}")
+
+            # Promote the employee to admin
+            try:
+                demoted_employee.demote_from_admin()
+                logger.success(f"Employment status for {demoted_employee.last_name}, {demoted_employee.first_name} DEMOTED")
+                return HttpResponse(status=204)
+            except Exception as e:
+                logger.exception(f"Failed to promote employee. Error: {e}")
+                return HttpResponse(status=400, content=f"Failed to promote employee. Error: {e}")
+
+        except Employee.DoesNotExist:
+            logger.info("Failed to promote employee. Employee not found.")
+            return HttpResponse(status=404, content="Failed to promote employee. Employee not found.")
+
+    except (ValueError, TypeError):
+        logger.info("Bad Request to Promote Applicant, Invalid or No Application PK Submitted")
+        return HttpResponse(
+            status=status.HTTP_400_BAD_REQUEST,
+            content="Failed to promote employee. Invalid or no 'pk' value provided in the request.",
+        )

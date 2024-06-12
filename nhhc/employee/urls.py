@@ -48,5 +48,7 @@ urlpatterns = [
     path("applicant/hire/", csrf_exempt(views.hire), name="hire-employee"),
     # re_path(r"^accounts/login/$", views.force_pwd_login),
     path("employee/terminate/", csrf_exempt(views.terminate), name="terminate_employee"),
+    path("employee/promote/", csrf_exempt(views.promote), name="promote_employee"),
+    path("employee/demote/", csrf_exempt(views.demote), name="promote_employee"),
     path("api", include(router.urls)),
 ]
