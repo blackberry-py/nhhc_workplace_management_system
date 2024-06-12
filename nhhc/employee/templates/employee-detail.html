@@ -14,23 +14,24 @@
 <script defer type="text/javascript">
 
   function confirmTermination(pk) {
-    let sentData = {
-      pk: pk,
-      password: $('#swal2-input').val(),
-      csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-    };
+
 
     Swal.fire({
       title: "Confirm Termination",
       showCancelButton: true,
       icon: "warning",
       confirmButtonText: "Terminate",
-      html: `<p>Terry You are about to terminate employment for this employee.\n It will lock them out of their account and archive their compliance profile.</p> <p><strong>Note: </strong>Archived profiles will still have the documents available, but cannot be modified.</p>  <br/><br/><p>Please enter your CareNett password to confirm.</p>  <label for="terminate-password-confirmation" class="sr-only">Password</label> <br/><input  class="form-control" type='password' placeholder='Enter CareNett Password' id='terminate-password-confirmation' name='terminate-password-confirmation' />`,
+      input: "password",
+      html: `<p>Terry You are about to terminate employment for this employee.\n It will lock them out of their account and archive their compliance profile.</p> <p><strong>Note: </strong>Archived profiles will still have the documents available, but cannot be modified.</p>  <br/><br/><p>Please enter your CareNett password to confirm.</p>`,
 
       preConfirm: (input) => {
         console.log(`Sending Termination Request with Employee ID ${pk}`);
         try {
-          var request = $.post("/employee/terminate/", sentData, (data, status) => {
+          var request = $.post("/employee/terminate/", {
+            pk: pk,
+            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+            password: input
+          }, (data, status) => {
             Swal.fire({
               title: "Employment Terminated!",
               icon: "success",
@@ -383,6 +384,7 @@
       </div>
 
       <div class="w-full text-center">
+        {% if not employee.termination_date %}
         {% if request.user.is_superuser %}
           {% if employee.is_superuser %}
             <button id="demote-employee-btn" onclick="confirmDemoteToStandardUser({{ employee.employee_id }})" class="btn btn-warning" >Revoke Administrtative Privileges </button>
@@ -392,7 +394,7 @@
           {% endif %}
         {% endif %}
         <button id="terminate-employee-btn" onclick="confirmTermination({{ employee.employee_id }})" class="btn btn-danger">Terminate Employment</button>
-
+{% endif %}
         <a  class="btn btn-secondary" href="{% url 'roster' %}">Back to Employee Roster</a>
       </div>
     </div>

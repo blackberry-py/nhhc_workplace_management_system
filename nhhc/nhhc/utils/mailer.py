@@ -14,6 +14,7 @@ from nhhc.utils.email_templates import (
     PLAIN_TEXT_NEW_HIRE_ONBOARDING_EMAIL_TEMPLATE,
     PLAIN_TEXT_REJECTION_EMAI_TEMPLATE,
     REJECTION_TEMPLATE_BODY,
+    PLAIN_TEXT_TERMINATION_EMAIL_TEMPLATE
 )
 
 
@@ -122,6 +123,37 @@ class PostOffice(EmailMultiAlternatives):
             text_content = PLAIN_TEXT_REJECTION_EMAI_TEMPLATE.substitute(first_name=rejected_applicant["first_name"])
             msg = EmailMultiAlternatives(subject=subject, to=[to], from_email=self.from_email, reply_to=self.reply_to, body=text_content)
             msg.attach_alternative(html_content, content_subtype)
+            sent_emails = msg.send()
+            if sent_emails <= 0:
+                logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
+                raise RuntimeError("Email Not Sents")
+            return sent_emails
+        except Exception as e:
+            logger.trace(f"ERROR: Unable to Send Email - {e}")
+     
+    def send_external_applicant_termination_email(self, terminated_employee: dict) -> int:
+        """
+        Sends email terminating  employment of the reciepent
+
+        Args:
+            new_applicant (dict) Dictornary representation  of the Instance of the submitted application
+        Returns:
+            None
+
+        Raises:
+            Exception: If the email transmission fails.
+        """
+
+        if not isinstance(terminated_employee, dict):
+            terminated_employee = model_to_dict(terminated_employee)
+            logger.info(f"Inititating EMAIL Transmission - Termination Email - Receipent {terminated_employee['last_name'], terminated_employee['first_name']}({terminated_employee['email']})")
+
+        try:
+            subject: str = f"NOTICE: Termination of Employment from Nett Hands Home Care"
+            to: list = terminated_employee["email"].lower()
+            content_subtype = "text/html"
+            text_content = PLAIN_TEXT_TERMINATION_EMAIL_TEMPLATE.substitute(first_name=terminated_employee["first_name"])
+            msg = EmailMessage(subject=subject, to=[to], from_email=self.from_email, reply_to=self.reply_to, body=text_content)
             sent_emails = msg.send()
             if sent_emails <= 0:
                 logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")

@@ -241,12 +241,10 @@ def hire(request: HttpRequest) -> HttpResponse:
             status=status.HTTP_424_FAILED_DEPENDENCY,
             content=bytes(f"Failed to send new user credentials. Error: {e}.", "utf-8"),
         )
-
-
 @require_POST
 def terminate(request: HttpRequest) -> HttpResponse:
     """
-    This function is used to terminates an applicant based on the provided 'pk' value in the request.
+    This function is used to promote an applicant based on the provided 'pk' value in the request.
 
     Args:
     - request (HttpRequest): The HTTP request object containing the 'pk' value.
@@ -254,43 +252,54 @@ def terminate(request: HttpRequest) -> HttpResponse:
     Returns:
     - HttpResponse: Returns an HTTP response with a status code indicating the success or failure of the hiring process.
     """
-    # Condition Checked: Requesting User is Logged in and An Admin
+    # Check if the requesting user is logged in and an admin
     if not request.user.is_authenticated or not request.user.is_superuser:
-        logger.warning("No Authenticated or Non-Admin Termination Request Recieved - Denying Request")
+        logger.warning("No Authenticated or Non-Admin Termination Request Received - Denying Request")
         return HttpResponse(
             status=get_status_code_for_unauthorized_or_forbidden(request),
             content=get_content_for_unauthorized_or_forbidden(request),
         )
-    # Condition Checked: POST REQUEST  is vaild with a interger PK in body in key `pk`
+
+    # Authenticate the user
     try:
         user = authenticate(username=request.user.username, password=request.POST.get("password"))
-        if user is not None:
-            pk = request.POST.get("pk")
-            logger.debug(f"Termination Request Initated for Employee ID: {pk}")
-        else:
-            return HttpResponse(status=status.HTTP_403_FORBIDDEN, content="Invaild Password User Combonataton")
-    except (ValueError, TypeError):
-        logger.info("Bad Request to Hire Applicant, Invaild or NO Applcation PK Submitted")
-        return HttpResponse(
-            status=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            content="Failed to terminate employee. Invalid or no 'pk' value provided in the request.",
-        )
-    # Condition Checked: Provided PK Employee ID associated with an Employee Instance
-    try:
-        terminated_employee = Employee.objects.get(id=pk)
-        logger.debug(f"Termination Request Resolving to {terminated_employee.last_name}, {terminated_employee.first_name}")
-    except Employee.DoesNotExist:
-        logger.info("Failed to hire applicant. Employment application not found.")
-        return HttpResponse(status=404, content="Failed to terminate employee.. Employee not found.")
-    # Condition Checked: An Corrosponding Employee Model Instance is created via the .terminate_employment method on the Employee class
-    try:
-        terminated_employee.terminate_employment()
-        logger.success(f"employment status for {terminated_employee.last_name}, {terminated_employee.first_name} TERMINATED")
-        return HttpResponse(status=204)
-    except Exception as e:
-        logger.exception(f"Failed to terminate employee. Error: {e}.")
-        return HttpResponse(status=400, content=f"Failed to terminate employee.. Error: {e}.")
+        if user is None:
+            return HttpResponse(status=status.HTTP_403_FORBIDDEN, content="Invalid Password User Combination")
 
+        # Get the employee ID from the request
+        pk = request.POST.get("pk")
+        if not pk:
+            logger.info("Bad Request to Promote Applicant, Invalid or No Application PK Submitted")
+            return HttpResponse(
+                status=status.HTTP_400_BAD_REQUEST,
+                content="Failed to promote employee. Invalid or no 'pk' value provided in the request.",
+            )
+
+        # Get the employee instance from the provided PK
+        try:
+            terminated_employee = Employee.objects.get(employee_id=pk)
+            logger.debug(f"Promotion Request Resolving to {terminated_employee.last_name}, {terminated_employee.first_name}")
+
+            # Promote the employee to admin
+            try:
+                HR_MAILROOM.send_external_applicant_termination_email(terminated_employee)
+                terminated_employee.terminate_employment()
+                logger.success(f"Employment status for {terminated_employee.last_name}, {terminated_employee.first_name} PROMOTED")
+                return HttpResponse(status=204)
+            except Exception as e:
+                logger.exception(f"Failed to promote employee. Error: {e}")
+                return HttpResponse(status=400, content=f"Failed to promote employee. Error: {e}")
+
+        except Employee.DoesNotExist:
+            logger.info("Failed to promote employee. Employee not found.")
+            return HttpResponse(status=404, content="Failed to promote employee. Employee not found.")
+
+    except (ValueError, TypeError):
+        logger.info("Bad Request to Promote Applicant, Invalid or No Application PK Submitted")
+        return HttpResponse(
+            status=status.HTTP_400_BAD_REQUEST,
+            content="Failed to promote employee. Invalid or no 'pk' value provided in the request.",
+        )
 
 @require_POST
 def promote(request: HttpRequest) -> HttpResponse:

@@ -408,7 +408,6 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
     def terminate_employment(self) -> None:
         self.termination_date = NOW
         self.username = self.username + "_TERMINATED"
-        self.email = self.email + "_TERMINATED"
         self.is_active = False
         self.save()
 

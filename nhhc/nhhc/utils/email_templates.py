@@ -1487,6 +1487,30 @@ Warm regards,
 Nett Hands Homecare HR Team
 """
 )
+
+PLAIN_TEXT_TERMINATION_EMAIL_TEMPLATE: Template = Template(
+	"""
+Dear $first_name,
+
+I hope this email finds you well. It is with regret that I must inform you that your employment with Nett Hands Home Care has been terminated, effective immediately.
+
+First and foremost, I want to express our gratitude for your service during your time with us. Your dedication and hard work have been valued contributions to our team, and we appreciate the effort you have put forth in caring for our clients.
+
+As you are aware, upon termination, it is necessary to address certain administrative matters. If applicable, you will receive your final pay on the next schduuled pay cycle. If you have any questions, please reach out to our payroll department at payroll@netthandshome.care to facilitate the process of receiving your final paycheck. They will assist you with any questions or concerns you may have regarding your compensation.
+
+Additionally, I must remind you of your obligation to return any and all equipment owned by Nett Hands Home Care. Failure to do so will result in deductions from your final pay. Please ensure that all company property is returned promptly to avoid any complications.
+
+Furthermore, it is imperative that you cease all communication with your current clients immediately. Our care coordination team will be reaching out to inform them of your separation from the company and to facilitate a smooth transition of care. We appreciate your cooperation in this matter to ensure the continuity of care for our clients.
+
+If you have any questions or require further clarification regarding the termination process, please do not hesitate to contact me directly at [your contact information].
+
+Once again, thank you for your service to Nett Hands Home Care. We wish you all the best in your future endeavors.
+
+Sincerely,
+
+Nett Hands Homecare Human Resources 
+	"""
+)
 # !SECTION
 
 # SECTION - Internal Email Templates
