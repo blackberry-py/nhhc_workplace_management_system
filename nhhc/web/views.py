@@ -50,7 +50,7 @@ class ClientInterestFormView(FormView):
     form_class = ClientInterestForm
     model = ClientInterestSubmission
     template_name = "client-interest.html"
-    success_url = "/submitted"
+    success_url = reversed("submitted")
     extra_context = {"title": "Client Services Request"}
 
     def form_valid(self, form: ClientInterestForm) -> HttpResponsePermanentRedirect:
@@ -58,10 +58,10 @@ class ClientInterestFormView(FormView):
         if form.is_valid():
             logger.debug("Form Is Valid")
             form.save()
-            return HttpResponsePermanentRedirect(reverse("submitted", kwargs={"type": "Client Interest Form"}))
+            return HttpResponsePermanentRedirect(reverse("submitted"), {"type": "Client Interest Form"})
         else:
             logger.error("Form Is Invalid")
-            return HttpResponsePermanentRedirect(reverse("client_interest", kwargs={"errors": form.errors}))
+            return HttpResponsePermanentRedirect(reverse("client_interest"), {"errors": form.errors})
 
 
 class EmploymentApplicationFormView(FormView):

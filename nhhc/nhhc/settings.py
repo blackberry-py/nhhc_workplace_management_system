@@ -22,7 +22,7 @@ logger.remove()  # Remove all handlers added so far, including the default one.
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ["SECRET_KEY"]
 # DEBUG = bool(os.environ["ENABLE_DEBUGGING"])
-DEBUG: bool = True
+DEBUG: bool = False
 KOLO_DISABLE = not DEBUG
 DATETIME_FORMAT: str = "m/d/yyyy h:mm A"
 ADMINS = [("Terry Brooks", "Terry@BrooksJr.com")]
@@ -47,14 +47,6 @@ CSRF_COOKIE_NAME = "nhhc-csrf"
 CSRF_FAILURE_VIEW = "nhhc.urls.permission_denied_handler"
 SESSION_COOKIE_NAME = "nhhc-session"
 CSRF_HEADER_NAME = "X_CSRFToken"
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^null$",
-    r"^http://localhost:[0-9]+$",
-    r"^http://127\\.0\\.0\\.1:[0-9]+$",
-    r"^https://localhost:[0-9]+$",
-    r"^https://127\\.0\\.0\\.1:[0-9]+$",
-    r"^https://docuseal.s3.amazonaws.com/*",
-]
 
 
 CSRF_COOKIE_SECURE = False
