@@ -340,7 +340,7 @@ class EmployeeForm(ModelForm):
                 Row(
                     HTML(
                         """
-                      <div class="table-responsive">
+      <div class="table-responsive">
         <table class="table align-items-center table-flush table-hover">
           <thead class="thead-light">
             <tr>
@@ -356,150 +356,121 @@ class EmployeeForm(ModelForm):
               <td>
                 IDOA Policy
               </td>
+              {% if request.user.idoa_agency_policies_attestation == "NONE" %}
               <td>
-                {% if request.user.idoa_agency_policies_attestation == "NONE" %}
                   <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
-                {% else %}
-                  <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
-                {% endif %}
-              </td>
-              <td>
-                {% if request.user.idoa_agency_policies_attestation == "NONE" %}
+                </td>
+                <td>
                   <a href="{% url 'idoa_sign' %}" class="btn btn-primary">Sign</a>
+                </td>
                 {% else %}
-                <a href="{{ request.user.idoa_agency_policies_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
-
+                <td>
+                  <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
+                </td>
+                <td>
+                <a href="{{ idoa_agency_policies_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
+                </td>
                 {% endif %}
-              </td>
             </tr>
 
             <tr>
               <td>
                 HCA to as Family Member Policy
               </td>
+              {% if request.user.hca_policy_attestation == "NONE" %}
               <td>
-                {% if request.user.hca_policy_attestation == "NONE" %}
                   <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
-                {% else %}
-                  <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
-                {% endif %}
-              </td>
-              <td>
-                {% if request.user.hca_policy_attestation == "NONE" %}
+                </td>
+                <td>
                   <a href="{% url 'hca_sign' %}" class="btn btn-primary">Sign</a>
+                </td>
                 {% else %}
-                 <a href="{{ request.user.hca_policy_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
+                <td>
+                  <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
+                </td>
+                <td>
+                  <a href="{{ hca_policy_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
+                </td>
                 {% endif %}
-              </td>
             </tr>
 
             <tr>
               <td>
                 Home Healthcare Aide(HCA) Job Description
               </td>
+              {% if request.user.job_duties_attestation == "NONE" %}
               <td>
-                {% if request.user.job_duties_attestation == "NONE" %}
                   <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
-                {% else %}
-                  <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
-                {% endif %}
               </td>
               <td>
-                {% if request.user.job_duties_attestation == "NONE" %}
-                  <a href="{% url 'jobdesc_sign' %}" class="btn btn-primary">Sign</a>
-                {% else %}
-                 <a href="{{ request.user.job_duties_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
-                {% endif %}
+                <a href="{% url 'hca_sign' %}" class="btn btn-primary">Sign</a>
               </td>
-              </tr>
-              <tr>
+              {% else %}
+              <td>
+                <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
+                </td>
+                <td>
+                  <a href="{{ job_duties_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
+              </td>
+                {% endif %}
+            </tr>
+            <tr>
               <td>IDPH - Healthcare Worker Background Check Authorization	 </td>
-                         <td>
-                {% if request.user.idph_background_check_authorization == "NONE" %}
-                  <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
+              {% if request.user.idph_background_check_authorization == "NONE" %}
+              <td><i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub></td>
+              <td><a href="{% url 'bg_sign' %}" class="btn btn-primary">Sign</a></td>
                 {% else %}
-                  <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
+                 <td> <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub></td>
+                 <td>   <a href="{{ request.user.idph_background_check_authorization.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a> </td>
                 {% endif %}
-              </td>
-              <td>
-                {% if request.user.idph_background_check_authorization == "NONE"  %}
-                  <a href="{% url 'bg_sign' %}" class="btn btn-primary">Sign</a>
-                {% else %}
-                <a href="{{ request.user.idph_background_check_authorization.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
-                {% endif %}
-              </td>
+</tr>
+<tr>
+<td>
+I-9 Work Authorization</td>
+{% if request.user.dhs_i9 == "NONE" %}
+<td><i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub></td>
+<td><a href="{% url 'i9_sign' %}" class="btn btn-primary">Sign</a></td><
+{% else %}
+<td>  <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub></td>
+<td>  <a href={{ dhs_i9.url }} target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a></td>
+{% endif %}
             </tr>
             <tr>
               <td>
-                I-9 Wotk Authorization                           </td>
-              <td>
-                {% if request.user.dhs_i9 == "NONE" %}
-                  <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
-                {% else %}
-                  <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
-                {% endif %}
-              </td>
-              <td>
-                {% if request.user.dhs_i9 == "NONE" %}
-                  <a href="{% url 'i9_sign' %}" class="btn btn-primary">Sign</a>
-                {% else %}
-                 <a href={{ request.user.dhs_i9.url }} target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
-                {% endif %}
-              </td>
-            </tr>
-            <tr>
-              <td>
-                Do Not Drive Policy                           </td>
-              <td>
+                Do Not Drive Policy</td>
                 {% if request.user.do_not_drive_agreement_attestation == "NONE" %}
-                  <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
+              <td><i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub></td>
+                  <td><a href="{% url 'dnd_sign' %}" class="btn btn-primary">Sign</a></td>
                 {% else %}
-                  <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
+                  <td><i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub></td>
+              <td><a href="{{ request.user.do_not_drive_agreement_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a> </td>
                 {% endif %}
-              </td>
-              <td>
-                {% if request.user.do_not_drive_agreement_attestation == "NONE" %}
-                  <a href="{% url 'dnd_sign' %}" class="btn btn-primary">Sign</a>
-                {% else %}
-               <a href="{{ request.user.do_not_drive_agreement_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
-                {% endif %}
-              </td>
-            </tr>
+           </tr>
             <tr>
               <td>
                 W4 - Ferderal Tax Withholding                          </td>
-              <td>
                 {% if request.user.irs_w4_attestation == "NONE" %}
-                  <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
-                {% else %}
-                  <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
-                {% endif %}
-              </td>
+
               <td>
-                {% if request.user.irs_w4_attestation == "NONE" %}
-                  <a href="{% url 'w4_sign' %}" class="btn btn-primary">Sign</a>
+                  <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub></td>
+                  <td>                  <a href="{% url 'w4_sign' %}" class="btn btn-primary">Sign</a></td>
                 {% else %}
-                 <a href="{{ request.user.irs_w4_attestation.url  }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
-                {% endif %}
-              </td>
+                  <td><i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub></td>
+                  <td> <a href="{{ request.user.irs_w4_attestation.url  }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a></td>
+                    {% endif %}
             </tr>
             <tr>
               <td>
                 W4 - State of Illinois Tax Withholding                          </td>
-              <td>
                 {% if request.user.state_w4_attestation == "NONE" %}
-                  <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub>
-                {% else %}
-                  <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
-                {% endif %}
-              </td>
               <td>
-                {% if request.user.state_w4_attestation == "NONE" %}
-                  <a href="{% url 'il_w4_sign' %}" class="btn btn-primary">Sign</a>
+                  <i class="fa-solid fa-file-circle-exclamation" style="color: #f50000;"></i> <sub>Not Completed</sub></td>
+                  <td>                  <a href="{% url 'il_w4_sign' %}" class="btn btn-primary">Sign</a>
+                  </td>
                 {% else %}
-                <a href="{{ request.user.state_w4_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
+                  <td><i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub></td>
+                  <td> <a href="{{ request.user.state_w4_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a> </td>
                 {% endif %}
-              </td>
             </tr>
 
           </tbody>

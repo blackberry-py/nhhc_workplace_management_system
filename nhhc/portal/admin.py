@@ -9,13 +9,7 @@ from web.models import ClientInterestSubmission, EmploymentApplicationModel
 
 now = datetime.now()
 # Register your models here.
-all_models = [
-    Contract,
-    PayrollException,
-    ClientInterestSubmission,
-    EmploymentApplicationModel,
-    UserProfile,
-]
+all_models = [Contract, PayrollException, ClientInterestSubmission, EmploymentApplicationModel, UserProfile, Compliance]
 
 
 for model in all_models:
@@ -37,14 +31,6 @@ class EmployeeAdmin(admin.ModelAdmin):
     list_display = ["first_name", "last_name", "username", "hire_date"]
     actions = []
     date_hierarchy = "hire_date"
-    change_form_template = "progressbarupload/change_form.html"
-    add_form_template = "progressbarupload/change_form.html"
 
 
-class ComplianceAdmin(admin.ModelAdmin):
-    change_form_template = "progressbarupload/change_form.html"
-    add_form_template = "progressbarupload/change_form.html"
-
-
-admin.site.register(Compliance, ComplianceAdmin)
 admin.site.register(Employee, EmployeeAdmin)

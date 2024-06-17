@@ -205,6 +205,11 @@ class DocusealCompliaceDocsSigning_IDOA(TemplateView):
         context["doc_url"] = "https://docuseal.co/d/r5UbQeVsQgkwUp"
         context['title'] = "Nett Hands & Illinois Department of Aging General Policies"
         return context
+    def dispatch(self, *args, **kwargs):
+            response = super(DocusealCompliaceDocsSigning_IDOA, self).dispatch(*args, **kwargs)
+            response['Access-Control-Allow-Origin'] = "*"
+            return response
+
 
 
 class DocusealCompliaceDocsSigning_HCA(TemplateView):
@@ -226,7 +231,10 @@ class DocusealCompliaceDocsSigning_HCA(TemplateView):
         context["doc_url"] = "https://docuseal.co/d/3KA4PP4CEjpy4r"
         context['title'] = "US Department of Homeland Security - Employment Eligibility Verification"
         return context
-
+    def dispatch(self, *args, **kwargs):
+            response = super(DocusealCompliaceDocsSigning_HCA, self).dispatch(*args, **kwargs)
+            response['Access-Control-Allow-Origin'] = "*"
+            return response
 
 class DocusealCompliaceDocsSigning_DoNotDrive(TemplateView):
     """
@@ -247,6 +255,10 @@ class DocusealCompliaceDocsSigning_DoNotDrive(TemplateView):
         context["doc_url"] = "https://docuseal.co/d/v1FPgz9xgBJVgH"
         context['title'] = "Nett Hands - Do Not Drive Agreement"
         return context
+    def dispatch(self, *args, **kwargs):
+            response = super(DocusealCompliaceDocsSigning_DoNotDrive, self).dispatch(*args, **kwargs)
+            response['Access-Control-Allow-Origin'] = "*"
+            return response
 
 
 class DocusealCompliaceDocsSigning_JobDesc(TemplateView):
@@ -268,7 +280,10 @@ class DocusealCompliaceDocsSigning_JobDesc(TemplateView):
         context["doc_url"] = "https://docuseal.co/d/KQUEkomQZr1ddD"
         context['title'] = "Nett Hands Homehealth Care Aide (HCA) Job Desc"
         return context
-
+    def dispatch(self, *args, **kwargs):
+            response = super(DocusealCompliaceDocsSigning_JobDesc, self).dispatch(*args, **kwargs)
+            response['Access-Control-Allow-Origin'] = "*"
+            return response
 
 class DocusealCompliaceDocsSigning_i9(TemplateView):
     """
@@ -289,7 +304,10 @@ class DocusealCompliaceDocsSigning_i9(TemplateView):
         context["doc_url"] = "https://docuseal.co/d/ovQk6ACHqajQvC"
         context['title'] = "US Department of Homeland Security - Employment Eligibility Verification"
         return context
-
+    def dispatch(self, *args, **kwargs):
+            response = super(DocusealCompliaceDocsSigning_i9, self).dispatch(*args, **kwargs)
+            response['Access-Control-Allow-Origin'] = "*"
+            return response
 
 class DocusealCompliaceDocsSigning_irs_w4(TemplateView):
     """
@@ -310,6 +328,10 @@ class DocusealCompliaceDocsSigning_irs_w4(TemplateView):
         context["doc_url"] = "https://docuseal.co/d/wmJGUH3wU2GrUJ"
         context['title'] = "US Internal Revenue Services - Withholding Certificate"
         return context
+    def dispatch(self, *args, **kwargs):
+            response = super(DocusealCompliaceDocsSigning_irs_w4, self).dispatch(*args, **kwargs)
+            response['Access-Control-Allow-Origin'] = "*"
+            return response
 
 
 class DocusealCompliaceDocsSigning_il_w4(TemplateView):
@@ -331,6 +353,10 @@ class DocusealCompliaceDocsSigning_il_w4(TemplateView):
         context["doc_url"] = "https://docuseal.co/d/M6o9cZ4528yk4L"
         context['title'] = "State of Illinois - Department of Revenue - Withholding Worksheet"
         return context
+    def dispatch(self, *args, **kwargs):
+            response = super(DocusealCompliaceDocsSigning_il_w4, self).dispatch(*args, **kwargs)
+            response['Access-Control-Allow-Origin'] = "*"
+            return response
 
 class DocusealCompliaceDocsSigning_idph_bg_auth(TemplateView):
     """
@@ -351,5 +377,10 @@ class DocusealCompliaceDocsSigning_idph_bg_auth(TemplateView):
         context["doc_url"] = "https://docuseal.co/d/RiVYseBYUpvrxD"
         context['title'] = "Health Care Worker Background Check Authorization"
         return context
+    def dispatch(self, *args, **kwargs):
+            response = super(DocusealCompliaceDocsSigning_idph_bg_auth, self).dispatch(*args, **kwargs)
+            response['Access-Control-Allow-Origin'] = "*"
+            return response
+
 
 # !SECTION

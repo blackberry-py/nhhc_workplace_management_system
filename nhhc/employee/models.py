@@ -352,7 +352,7 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
     idoa_agency_policies_attestation = models.FileField(
         upload_to="idoa_agency_policies",
         blank=True,
-        null=True,
+        default="NONE",
     )
     dhs_i9 = models.FileField(upload_to="i9", blank=True, default="NONE")
     marketing_recruiting_limitations_attestation = models.FileField(upload_to="marketing_recruiting_limitations", blank=True, default="NONE")
@@ -424,7 +424,7 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
         self.is_staff = True
         self.is_superuser = True
         self.save()
-  
+
     def demote_from_admin(self) -> None:
         self.is_staff = True
         self.is_superuser = False
