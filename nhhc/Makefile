@@ -1,11 +1,12 @@
-VENV := /Users/terry-brooks/GitHub/NettHands/.venv
-# BIN := /usr/local/bin
+# Define constants
+# DEV_ENV_RUNNING_IN_CONTAINER ?= false
+VENV_DIR := $(if $(DEV_ENV_RUNNING_IN_CONTAINER), /workspaces/NettHands/.venv, /Users/terry-brooks/GitHub/NettHands/.venv)
 PYTHON := python3
-# SHELL := /bin/bash
-
-PYTHON_INTERPRETER := $(VENV)/bin/$(PYTHON)
+BIN := $(VENV_DIR)/bin
+PYTHON_INTERPRETER := $(BIN)/$(PYTHON)
 SHELL := /bin/bash
-CURRENTDATE=`date +"%Y-%m-%d-%T"`
+CURRENT_DATE := $(shell date +"%Y-%m-%d-%T")
+
 
 .PHONY: help
 help: ## Show this help
@@ -16,7 +17,7 @@ venv: ## Make a new virtual environment
 	python3 -m venv $(VENV) && source $(BIN)/activate
 
 .PHONY: install
-install: ## Make venv and install requirements
+install: venv ## Make venv and install requirements
 	doppler run  -t $(DOPPLER_TOKEN) -- pip install --upgrade -r ./requirements.txt
 
 freeze: ## Pin current dependencies

@@ -1,6 +1,6 @@
  Getting started
 
-  * [How to Use This Guide](quickstart.md)
+  * [How to Use This Guide](overview.md)
   * [User Types](users.md)
   * [Managing Your Profile Details](profile_management.md)
 

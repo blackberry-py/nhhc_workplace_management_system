@@ -104,6 +104,7 @@ handler500: Callable = server_error_handler
 # SECTION - Master URL Route Patterns
 
 urlpatterns: List[Union[RoutePattern, RegexPattern]] = [
+    path("control-center/defender/", include("defender.urls")),  # defender admin
     path("__debug__/", include("debug_toolbar.urls")),
     path("control-center/", admin.site.urls, name="admin"),
     path("", include(portal.urls)),

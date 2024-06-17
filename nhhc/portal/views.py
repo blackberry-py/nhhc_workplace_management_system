@@ -57,8 +57,14 @@ def portal_dashboard(request: HttpRequest) -> HttpResponse:
     - HttpResponse: Rendered HTML template
     """
     context = dict()
-    context["segment"] = "index"
-    context["recent_announcements"] = Announcements.objects.filter(status="A")[:5]
+    recent_anouncements = list(Announcements.objects.all().filter(status="A").order_by("-date_posted")[:5])
+    if len(recent_anouncements) > 0:
+        listed_amnnoucements = []
+        for announcement in list(recent_anouncements):
+            announcement = model_to_dict(announcement)
+            announcement["posted_by"] = Employee.objects.get(employee_id=announcement["posted_by"]).first_name
+            listed_amnnoucements.append(announcement)
+        context["recent_announcements"] = listed_amnnoucements
     html_template = loader.get_template("dashboard.html")
     return HttpResponse(html_template.render(context, request))
 

@@ -7,29 +7,29 @@ remote_write:
   - url: https://prometheus-prod-10-prod-us-central-0.grafana.net/api/prom/push
     basic_auth:
       username: 390644
-      password: $PASSWORD
+      password: glc_eyJvIjoiNjI5NDg1IiwibiI6InN0YWNrLTM0NTE1Mi1pbnRlZ3JhdGlvbi10b2tlIiwiayI6IjBERzY5bzBROHpHN3MwNWkweDhzc2pQayIsIm0iOnsiciI6InVzIn19
 scrape_configs:
   - job_name: node
     static_configs:
-      - targets: ["localhost:9090"]
+      - targets: ["34.121.129.110:9090"]
   - job_name: server-hardware
     scrape_interval: 4m
     scrape_timeout: 2m
     static_configs:
       - targets:
-          - localhost:9100
+          - 34.121.129.110:9100
   - job_name: flower
     static_configs:
       - targets:
-          - docker.for.mac.localhost:5555
+          - 34.121.129.110:5555
   - job_name: prometheus
     scrape_interval: 30s
     scheme: http
     static_configs:
       - targets:
-          - localhost:9090
+          - 34.121.129.110:9090
   - job_name: django
     scrape_interval: 30s
     static_configs:
       - targets:
-          - docker.for.mac.localhost:7772
+          - 34.121.129.110:7772

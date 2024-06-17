@@ -15,7 +15,6 @@ from formset.views import FormView
 from loguru import logger
 
 # Create your views here.
-ANNOUCEMENTS = Announcements.objects.select_related("posted_by")
 
 
 def app_status(request: HttpRequest) -> HttpResponse:
@@ -26,10 +25,10 @@ def app_status(request: HttpRequest) -> HttpResponse:
 
 class AnnoucementsListView(FormMixin, ListView):
     model = Announcements
-    queryset = ANNOUCEMENTS
+    queryset = Announcements.objects.all()
     template_name = "annoucements.html"
     context_object_name = "announcements"
-    success_url = "\announcments"
+    success_url = "/announcments"
     form_class = AnnouncementForm
     paginate_by = 25
     extra_context = {"modal_title": "Create New Annoucement", "sort_entity_selector": '".annoucements"'}
@@ -37,9 +36,9 @@ class AnnoucementsListView(FormMixin, ListView):
 
 class AnnoucementsUpdateView(UpdateView):
     form_class = AnnouncementDetailsForm
-    queryset = ANNOUCEMENTS
+    queryset = Announcements.objects.all()
     model = Announcements
-    template_name = "annoucements-details.html"
+    template_name = "Announcements.objects.all()-details.html"
     context_object_name = "announcement"
     extra_context = {}
 
