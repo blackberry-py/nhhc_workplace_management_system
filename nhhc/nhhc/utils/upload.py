@@ -181,6 +181,7 @@ class S3HANDLER:
         employee_upload_suffix = f"{payload['data']['metadata']['last_name'].lower()}_{payload['data']['metadata']['first_name'].lower()}.pdf"
         document_id = payload['data']['template']['id']
         doc_type_prefix = S3HANDLER.get_doc_type(document_id)
+
         path = os.path.join("restricted", "attestations", doc_type_prefix)
         os.makedirs(path, exist_ok=True)
         return os.path.join(path, f"{doc_type_prefix}_{employee_upload_suffix}")
