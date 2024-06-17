@@ -156,50 +156,36 @@ class S3HANDLER:
             return True
         except ClientError as e:
             return False
+    @staticmethod
+    def get_doc_type(document_id: int) -> str:
+        match document_id:
+            case 90907:
+                return "do_not_drive_agreement_attestation"
+            case 101305:
+                return "state_w4_attestation"
+            case 91067:
+                return "dha_i9"
+            case 90909:
+                return "hca_policy_attestation"
+            case 90908:
+                return "doa_agency_policies_attestation"
+            case 90910:
+                return "job_duties_attestation"
+            case 116255:
+                return  "idph_background_check_authorization"
+            case _:
+                return "unknown"
 
     @staticmethod
     def generate_filename(payload: dict) -> str:
         employee_upload_suffix = f"{payload['data']['metadata']['last_name'].lower()}_{payload['data']['metadata']['first_name'].lower()}.pdf"
         document_id = payload['data']['template']['id']
-        doc_type_prefix = ""
-        filepath = ""
-        match document_id:
-            case 90907:
-                doc_type_prefix = "do_not_drive_agreement_attestation"
-                path = os.path.join("restricted", "attestations", doc_type_prefix)
-                os.makedirs(path, exist_ok=True)
-                filepath = os.path.join(path, "_".join(doc_type_prefix,employee_upload_suffix))
-            case 101305:
-                doc_type_prefix = "state_w4_attestation"
-                path = os.path.join("restricted", "attestations", doc_type_prefix)
-                os.makedirs(path, exist_ok=True)
-                filepath = os.path.join(path, "_".join(doc_type_prefix,employee_upload_suffix))
-            case 91067:
-                doc_type_prefix = "dha_i9"
-                path = os.path.join("restricted", "attestations", doc_type_prefix)
-                os.makedirs(path, exist_ok=True)
-                filepath = os.path.join(path, "_".join(doc_type_prefix,employee_upload_suffix))
-            case 90909:
-                doc_type_prefix = "hca_policy_attestation"
-                path = os.path.join("restricted", "attestations", doc_type_prefix)
-                os.makedirs(path, exist_ok=True)
-                filepath = os.path.join(path, "_".join(doc_type_prefix,employee_upload_suffix))
-            case 90908:
-                doc_type_prefix = "idoa_agency_policies_attestation"
-                path = os.path.join("restricted", "attestations", doc_type_prefix)
-                os.makedirs(path, exist_ok=True)
-                filepath = os.path.join(path, "_".join(doc_type_prefix,employee_upload_suffix))
-            case 90910:
-                doc_type_prefix = "job_duties_attestation"
-                path = os.path.join("restricted", "attestations", doc_type_prefix)
-                filepath = os.path.join(path, "_".join(doc_type_prefix,employee_upload_suffix))
-            case 116255:
-                doc_type_prefix = "idph_background_check_authorization"
-                path = os.path.join("restricted", "attestations", doc_type_prefix)
-                os.makedirs(path, exist_ok=True)
-                filepath = os.path.join(path, "_".join(doc_type_prefix,employee_upload_suffix))
-        return filepath
+        doc_type_prefix = S3HANDLER.get_doc_type(document_id)
+        path = os.path.join("restricted", "attestations", doc_type_prefix)
+        os.makedirs(path, exist_ok=True)
+        return os.path.join(path, f"{doc_type_prefix}_{employee_upload_suffix}")
 
+    @staticmethod
     def download_pdf_file(payload: dict) -> bool:
         """Download PDF from given URL to local directory.
 
