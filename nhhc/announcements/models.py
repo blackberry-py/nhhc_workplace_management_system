@@ -102,6 +102,9 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
     )
     status = models.CharField(max_length=10485760, choices=STATUS.choices, default=STATUS.DRAFT, db_index=True)
 
+    def __str__(self) -> str:
+        return f"{self.announcement_title} ({self.status} - {self.posted_by.last_name}, {self.posted_by.first_name})"
+
     def post(self, request: HttpRequest) -> None:
         """
         Method to post an annoucement instance.

@@ -41,6 +41,7 @@ from portal.serializers import ClientInquiriesSerializer
 from rest_framework import generics, mixins, permissions, status
 from rest_framework.response import Response
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
+from nhhc.utils.helpers import NeverCacheMixin
 
 
 @login_required(login_url="/login/")
@@ -97,7 +98,7 @@ class ProfileFormView(LoginRequiredMixin, UpdateView, FileUploadMixin):
         return reverse("profile")
 
 
-class Profile(LoginRequiredMixin, View):
+class Profile(NeverCacheMixin, LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         view = ProfileDetailView.as_view()
         return view(request, *args, **kwargs)

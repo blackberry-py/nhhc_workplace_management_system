@@ -15,8 +15,7 @@ career_web_mailer = PostOffice(
 )
 
 
-@shared_task(bind=True)
-def process_new_application(self, form: Union[EmploymentApplicationForm, Dict[str, Any]], **kwargs) -> Dict[str, int]:
+def process_new_application(form: Union[EmploymentApplicationForm, Dict[str, Any]], **kwargs) -> Dict[str, int]:
     """
     Async Celery task to Process new employment interest by sending internal and external notifications.
 
@@ -33,7 +32,7 @@ def process_new_application(self, form: Union[EmploymentApplicationForm, Dict[st
         return results
     except Exception as e:
         logger.error(f"UNABLE TO SEND: {e}")
-        raise self.retry(exc=e, countdown=60)
+        return {"internal": 0, "external": 0}
 
 
 client_web_mailer = PostOffice(
@@ -44,8 +43,7 @@ client_web_mailer = PostOffice(
 )
 
 
-@shared_task(bind=True)
-def process_new_client_interest(self, form: Union[ClientInterestSubmission, Dict[str, Any]], **kwargs) -> Dict[str, int]:
+def process_new_client_interest(form: Union[ClientInterestSubmission, Dict[str, Any]], **kwargs) -> Dict[str, int]:
     """
     Async Celery task to Process new client interest by sending internal and external notifications.
 
@@ -62,4 +60,4 @@ def process_new_client_interest(self, form: Union[ClientInterestSubmission, Dict
         results: Dict[str, int] = {"internal": internal_notify_task, "external": external_notify_task}
         return results
     except Exception as e:
-        raise self.retry(exc=e, countdown=60)
+        logger.error(f"Unable to Send Client Confirmation Email:{e}")

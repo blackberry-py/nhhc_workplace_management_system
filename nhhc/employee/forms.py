@@ -368,7 +368,7 @@ class EmployeeForm(ModelForm):
                   <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
                 </td>
                 <td>
-                <a href="{{ idoa_agency_policies_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
+                <a href="{{ request.user.idoa_agency_policies_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
                 </td>
                 {% endif %}
             </tr>
@@ -389,7 +389,7 @@ class EmployeeForm(ModelForm):
                   <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
                 </td>
                 <td>
-                  <a href="{{ hca_policy_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
+                  <a href="{{ request.user.hca_policy_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
                 </td>
                 {% endif %}
             </tr>
@@ -410,7 +410,7 @@ class EmployeeForm(ModelForm):
                 <i class="fa-solid fa-check" style="color: #008000;"></i> <sub>Completed</sub>
                 </td>
                 <td>
-                  <a href="{{ job_duties_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
+                  <a href="{{ request.user.job_duties_attestation.url }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></i></a>
               </td>
                 {% endif %}
             </tr>

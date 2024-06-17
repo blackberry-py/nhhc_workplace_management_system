@@ -7,6 +7,8 @@ from django.views.decorators.cache import cache_page
 from django.views.generic import TemplateView
 from loguru import logger
 from rest_framework import status
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 
 
 def get_status_code_for_unauthorized_or_forbidden(request: HttpRequest) -> int:
@@ -76,6 +78,12 @@ class CachedTemplateView(TemplateView):
     @classmethod
     def as_view(cls, **initkwargs):  # @NoSelf
         return cache_page(settings.CACHE_TTL)(super(CachedTemplateView, cls).as_view(**initkwargs))
+
+
+class NeverCacheMixin(object):
+    @method_decorator(never_cache)
+    def dispatch(self, *args, **kwargs):
+        return super(NeverCacheMixin, self).dispatch(*args, **kwargs)
 
 
 # Decorator to Exponetiually Retry Certain Failures.

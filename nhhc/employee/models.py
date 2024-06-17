@@ -362,11 +362,11 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
     irs_w4_attestation = models.FileField(upload_to="irs_w4", blank=True, default="NONE")
     state_w4_attestation = models.FileField(upload_to="state_w4", blank=True, default="NONE")
     idph_background_check_authorization = models.FileField(upload_to="idph_bg_check_auth", blank=True, default="NONE")
-    qualifications_verification = models.FileField(upload_to=employee_resume_uploads, null=True, blank=True, default=None)
+    qualifications_verification = models.FileField(upload_to=employee_resume_uploads, default="NONE", blank=True)
 
     cpr_verification = models.FileField(
         upload_to=employee_cpr_card_uploads,
-        null=True,
+        default="NONE",
         blank=True,
     )
 

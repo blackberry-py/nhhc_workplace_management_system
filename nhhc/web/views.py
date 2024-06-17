@@ -58,6 +58,7 @@ class ClientInterestFormView(FormView):
         if form.is_valid():
             logger.debug("Form Is Valid")
             form.save()
+            process_new_client_interest.delay(form.cleaned_data)
             return HttpResponsePermanentRedirect(reverse("submitted"), {"type": "Client Interest Form"})
         else:
             logger.error("Form Is Invalid")
@@ -79,7 +80,7 @@ class EmploymentApplicationFormView(FormView):
             form.save()
             processed_form = form.cleaned_data
             del processed_form["resume_cv"]
-            process_new_application.delay(processed_form)
+            process_new_application(processed_form)
             return HttpResponsePermanentRedirect(reverse("submitted"), {"type": "Employment Interest Form"})
         else:
             logger.error("Form Is Invalid")

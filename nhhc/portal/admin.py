@@ -6,10 +6,11 @@ from django.contrib import admin
 from employee.models import Employee
 from portal.models import PayrollException  # Assessment, InServiceTraining,
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
+from announcements.models import Announcements
 
 now = datetime.now()
 # Register your models here.
-all_models = [Contract, PayrollException, ClientInterestSubmission, EmploymentApplicationModel, UserProfile, Compliance]
+all_models = [Contract, PayrollException, Announcements, ClientInterestSubmission, EmploymentApplicationModel, UserProfile, Compliance]
 
 
 for model in all_models:

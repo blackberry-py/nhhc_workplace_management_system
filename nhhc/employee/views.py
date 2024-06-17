@@ -26,7 +26,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django_filters.rest_framework import DjangoFilterBackend
 from employee.models import Employee
-from employee.tasks import send_async_onboarding_email
+from employee.tasks import send_async_onboarding_email, send_async_temrination_email
 from loguru import logger
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView
@@ -231,8 +231,10 @@ def hire(request: HttpRequest) -> HttpResponse:
             "plaintext_temp_password": hired_user["plain_text_password"],
             "username": hired_user["username"],
         }
-        send_async_onboarding_email.delay(new_user_credentials)
+        notice = HR_MAILROOM.send_external_applicant_new_hire_onboarding_email(new_user_credentials)
         content = f"username: {hired_user['username']},  password: {hired_user['plain_text_password']}, employee_id: {hired_user['employee_id']}"
+        if notice != 1:
+            logger.error(f"Email Not Sent: {notice}")
         logger.success(f"Successfully Converted Appicant to Employee - {hired_user['last_name']}, {hired_user['first_name']}")
         return HttpResponse(status=status.HTTP_201_CREATED, content=bytes(content, "utf-8"))
     except Exception as e:
@@ -241,6 +243,8 @@ def hire(request: HttpRequest) -> HttpResponse:
             status=status.HTTP_424_FAILED_DEPENDENCY,
             content=bytes(f"Failed to send new user credentials. Error: {e}.", "utf-8"),
         )
+
+
 @require_POST
 def terminate(request: HttpRequest) -> HttpResponse:
     """
@@ -284,7 +288,8 @@ def terminate(request: HttpRequest) -> HttpResponse:
             try:
                 HR_MAILROOM.send_external_applicant_termination_email(terminated_employee)
                 terminated_employee.terminate_employment()
-                logger.success(f"Employment status for {terminated_employee.last_name}, {terminated_employee.first_name} PROMOTED")
+                logger.success(f"Employment status for {terminated_employee.last_name}, {terminated_employee.first_name} TERMINATED")
+                logger.info("Sending Termination email")
                 return HttpResponse(status=204)
             except Exception as e:
                 logger.exception(f"Failed to promote employee. Error: {e}")
@@ -300,6 +305,7 @@ def terminate(request: HttpRequest) -> HttpResponse:
             status=status.HTTP_400_BAD_REQUEST,
             content="Failed to promote employee. Invalid or no 'pk' value provided in the request.",
         )
+
 
 @require_POST
 def promote(request: HttpRequest) -> HttpResponse:
@@ -359,6 +365,7 @@ def promote(request: HttpRequest) -> HttpResponse:
             status=status.HTTP_400_BAD_REQUEST,
             content="Failed to promote employee. Invalid or no 'pk' value provided in the request.",
         )
+
 
 @require_POST
 def demote(request: HttpRequest) -> HttpResponse:
