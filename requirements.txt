@@ -142,6 +142,7 @@ more-itertools==10.2.0
 msgpack==1.0.8
 mypy==1.10.0
 mypy-extensions==1.0.0
+-e git+ssh://git@github.com/NettHandsHomeCare-Portal/NettHands.git@581fc9ff5f546bbdd995c88c56f75122258e7c4a#egg=nhhc
 nodeenv==1.9.0
 oauthlib==3.2.2
 opentelemetry-api==1.22.0
