@@ -127,50 +127,36 @@ def signed_attestations(request: HttpRequest) -> HttpResponse:
         employee_id = docuseal_payload['data']['external_id']
         document_type = docuseal_payload['data']['template']['name']
         uploading_employee = Employee.objects.get(employee_id=employee_id)
-        doc_type_prefix = ""
         document_id = docuseal_payload['data']['template']['id']
+        doc_type_prefix = S3HANDLER.get_doc_type(document_id)
         employee_upload_suffix = f"{uploading_employee.last_name.lower()}_{uploading_employee.first_name.lower()}.pdf"
+        filepath = os.path.join("attestations",doc_type_prefix,f"{doc_type_prefix}_{employee_upload_suffix}" )
+
 # fmt: off
 
         match document_type:
             case "Nett Hands - Do Not Drive Agreement - 2024":
-                doc_type_prefix = "do_not_drive_agreement_attestation"
-                filepath = os.path.join("attestations",doc_type_prefix,f"{doc_type_prefix}_{employee_upload_suffix}" )
                 uploading_employee.do_not_drive_agreement_attestation = filepath
                 uploading_employee.save()
             case "State of Illinois - Department of Revenue - Withholding Worksheet (W4)":
-                doc_type_prefix = "state_w4_attestation"
-                filepath = os.path.join("attestations",doc_type_prefix,f"{doc_type_prefix}_{employee_upload_suffix}" )
                 uploading_employee.state_w4_attestation = filepath
                 uploading_employee.save()
             case "US Internal Revenue Services - Withholding Certificate (W4) - 2024":
-                doc_type_prefix = "irs_w4_attestation"
-                filepath = os.path.join("attestations",doc_type_prefix,f"{doc_type_prefix}_{employee_upload_suffix}")
                 uploading_employee.state_w4_attestation = filepath
                 uploading_employee.save()
             case "US Department of Homeland Security - Employment Eligibility Verification (I-9)":
-                doc_type_prefix = "dha_i9"
-                filepath = os.path.join("attestations",doc_type_prefix,f"{doc_type_prefix}_{employee_upload_suffix}" )
                 uploading_employee.dha_i9 = filepath
                 uploading_employee.save()
             case "Nett Hands HCA Policy - 2024":
-                doc_type_prefix = "hca_policy_attestation"
-                filepath = os.path.join("attestations",doc_type_prefix,f"{doc_type_prefix}_{employee_upload_suffix}" )
                 uploading_employee.hca_policy_attestation = filepath
                 uploading_employee.save()
             case "Nett Hands & Illinois Department of Aging General Policies":
-                doc_type_prefix = "idoa_agency_policies_attestation"
-                filepath = os.path.join("attestations",doc_type_prefix,f"{doc_type_prefix}_{employee_upload_suffix}" )
                 uploading_employee.idoa_agency_policies_attestation = filepath
                 uploading_employee.save()
             case "Nett Hands Homehealth Care Aide (HCA)  Job Desc - 2024":
-                doc_type_prefix = "job_duties_attestation"
-                filepath = os.path.join("attestations",doc_type_prefix,f"{doc_type_prefix}_{employee_upload_suffix}" )
                 uploading_employee.job_duties_attestation = filepath
                 uploading_employee.save()
             case "IDPH - Health Care Worker Background Check Authorization":
-                doc_type_prefix = "idph_background_check_authorization"
-                filepath = os.path.join("attestations",doc_type_prefix,f"{doc_type_prefix}_{employee_upload_suffix}" )
                 uploading_employee.idph_background_check_authorization = filepath
                 uploading_employee.save()
             case _:
