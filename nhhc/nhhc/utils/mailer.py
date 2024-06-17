@@ -13,8 +13,8 @@ from nhhc.utils.email_templates import (
     PLAIN_TEXT_CLIENT_BODY,
     PLAIN_TEXT_NEW_HIRE_ONBOARDING_EMAIL_TEMPLATE,
     PLAIN_TEXT_REJECTION_EMAI_TEMPLATE,
+    PLAIN_TEXT_TERMINATION_EMAIL_TEMPLATE,
     REJECTION_TEMPLATE_BODY,
-    PLAIN_TEXT_TERMINATION_EMAIL_TEMPLATE
 )
 
 
@@ -48,23 +48,27 @@ class PostOffice(EmailMultiAlternatives):
         if not isinstance(applicant, dict):
             applicant = model_to_dict(applicant)
         try:
-            subject: str = f"Thanks For Your Employment Interest, {applicant['first_name']}!"
-            to: list = applicant["email"].lower()
-            content_subtype = "text/html"
-            html_content = APPLICATION_BODY.substitute(first_name=applicant["first_name"])
-            text_content = PLAIN_TEXT_APPLICATION_BODY.substitute(first_name=applicant["first_name"])
-
-            msg = EmailMultiAlternatives(subject=subject, to=[to], body=text_content, from_email=self.from_email, reply_to=[self.reply_to])
-            msg.attach_alternative(html_content, content_subtype)
-            sent_emails: int = msg.send()
-            if sent_emails <= 0:
-                logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
-                raise RuntimeError("Email Not Sents")
-            logger.info(f"Number of External Emails Sent:{sent_emails}")
-            return sent_emails
+            return self._extracted_from_send_external_application_submission_confirmation_17(applicant)
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
             settings.HIGHLIGHT_MONITORING.record_exception(f"ERROR: Unable to Send Email - {e}")
+
+    # TODO Rename this here and in `send_external_application_submission_confirmation`
+    def _extracted_from_send_external_application_submission_confirmation_17(self, applicant):
+        subject: str = f"Thanks For Your Employment Interest, {applicant['first_name']}!"
+        to: list = applicant["email"].lower()
+        content_subtype = "text/html"
+        html_content = APPLICATION_BODY.substitute(first_name=applicant["first_name"])
+        text_content = PLAIN_TEXT_APPLICATION_BODY.substitute(first_name=applicant["first_name"])
+
+        msg = EmailMultiAlternatives(subject=subject, to=[to], body=text_content, from_email=self.from_email, reply_to=[self.reply_to])
+        msg.attach_alternative(html_content, content_subtype)
+        sent_emails: int = msg.send()
+        if sent_emails <= 0:
+            logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
+            raise RuntimeError("Email Not Sents")
+        logger.info(f"Number of External Emails Sent:{sent_emails}")
+        return sent_emails
 
     def send_external_client_submission_confirmation(self, interested_client: dict) -> None:
         """
@@ -130,7 +134,7 @@ class PostOffice(EmailMultiAlternatives):
             return sent_emails
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
-     
+
     def send_external_applicant_termination_email(self, terminated_employee: dict) -> int:
         """
         Sends email terminating  employment of the reciepent

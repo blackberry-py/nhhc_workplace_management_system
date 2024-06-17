@@ -29,6 +29,7 @@ from django.shortcuts import render
 from django.template import loader
 from django.urls import reverse
 from django.views import View
+from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView
 from django.views.generic.list import ListView
@@ -37,10 +38,12 @@ from employee.forms import EmployeeForm
 from employee.models import Employee
 from formset.upload import FileUploadMixin
 from loguru import logger
+from portal.forms import PayrollExceptionForm
 from portal.serializers import ClientInquiriesSerializer
 from rest_framework import generics, mixins, permissions, status
 from rest_framework.response import Response
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
+
 from nhhc.utils.helpers import NeverCacheMixin
 
 
@@ -57,17 +60,26 @@ def portal_dashboard(request: HttpRequest) -> HttpResponse:
     Returns:
     - HttpResponse: Rendered HTML template
     """
-    context = dict()
-    recent_anouncements = list(Announcements.objects.all().filter(status="A").order_by("-date_posted")[:5])
-    if len(recent_anouncements) > 0:
+    context = {}
+
+    html_template = loader.get_template("dashboard.html")
+    return render(request, "dashboard.html", context)
+
+
+class Dashboard(TemplateView):
+    template_name = "dashboard.html"
+
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        recent_annoucements = list(Announcements.objects.all().filter(status="A").order_by("-date_posted")[:5])
         listed_amnnoucements = []
-        for announcement in list(recent_anouncements):
+        for announcement in list(recent_annoucements):
             announcement = model_to_dict(announcement)
             announcement["posted_by"] = Employee.objects.get(employee_id=announcement["posted_by"]).first_name
             listed_amnnoucements.append(announcement)
         context["recent_announcements"] = listed_amnnoucements
-    html_template = loader.get_template("dashboard.html")
-    return HttpResponse(html_template.render(context, request))
+        context["ExceptionForm"] = PayrollExceptionForm()
+        return context
 
 
 class ProfileDetailView(LoginRequiredMixin, DetailView):
@@ -140,14 +152,13 @@ class EmploymentApplicationModelAPIListView(mixins.DestroyModelMixin, generics.L
     ]
 
     def destroy(self, request, instance):
-        if request.user.is_superuser is False:  # type: ignore
+        if request.user.is_superuser is False:
             return Response(
                 data="Only Managers can preform a delete operation",
                 status=status.HTTP_403_FORBIDDEN,
             )
-        else:
-            instance.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 def all_client_inquiries(request: HttpRequest) -> HttpResponse:
@@ -282,6 +293,11 @@ def marked_reviewed(request):
     except Exception as e:
         logger.error(f"ERROR: Unable to Mark {submission.id} REVIEWED: {e}")
         return HttpResponse(status=500)
+
+
+class ExceptionView(View):
+    def get(self, request):
+        pass
 
 
 # !SECTION - END OF AJAX HOOKS

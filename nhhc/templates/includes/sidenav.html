@@ -38,53 +38,53 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if request.path == '/exceptions' %} active {% endif %}" href="{% url 'coming-soon' %}">
-              <i class="ni ni-calendar-grid-58 text-purple"></i>
-              <span class="nav-link-text">Timesheet Exceptions</span>
-            </a>
-          </li>
-        </ul>
-        <!-- Divider -->
-        {% if user.is_staff %}
-          <hr class="my-3"/>
-        <!-- Heading -->
-          <h6 class="navbar-heading p-0 text-muted">
-            <span class="docs-normal">Administrative Funtions</span>
-          </h6>
-        <!-- Navigation -->
-          <ul class="navbar-nav mb-md-3">
-            <li class="nav-item">
-              <a class="nav-link {% if request.path == '/reporting' %} active {% endif %}" href="{% url 'coming-soon' %}">
-                <i class="ni ni-chart-bar-32 text-green"></i>
-                <span class="nav-link-text">Reporting</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link {% if request.path == '/inquiries' %} active {% endif %}" href="{% url 'inquiries' %}">
-                <i class="ni ni-collection text-purple">{% client_count %} </i>
-                <span class="nav-link-text">Service Inquiries</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'applicants-list' %}">
-                <i class="ni ni-badge text-black"> {% app_count %} </i>
-                <span class="nav-link-text">Employment Applications</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'roster' %}">
-                <i class="ni ni-bullet-list-67 text-blue"></i>
-                <span class="nav-link-text">Employee Roster</span>
-              </a>
-            </li>
-        {% else %}
-        {% endif %}
+            <a class="nav-link    href="payroll-exception-modal" uk-toggle id="side-nav-exception-trigger">
+                                                                                                          <i class="ni ni-calendar-grid-58 text-purple"></i>
+                                                                          <span class="nav-link-text">Timesheet Exceptions</span>
+                                                        </a>
+                                                        </li>
+                                                        </ul>
+                                                        <!-- Divider -->
+                                                        {% if user.is_staff %}
+                                                          <hr class="my-3"/>
+                                           <!-- Heading -->
+                                           <h6 class="navbar-heading p-0 text-muted">
+                                                                    <span class="docs-normal">Administrative Funtions</span>
+                                                      </h6>
+                                                      <!-- Navigation -->
+                                                      <ul class="navbar-nav mb-md-3">
+                                                         <li class="nav-item">
+                                                 <a class="nav-link {% if request.path == '/reporting' %} active {% endif %}" href="{% url 'coming-soon' %}">
+                                                                                                                                          <i class="ni ni-chart-bar-32 text-green"></i>
+                                                                         <span class="nav-link-text">Reporting</span>
+                                                            </a>
+                                                            </li>
+                                                            <li class="nav-item">
+                                                 <a class="nav-link {% if request.path == '/inquiries' %} active {% endif %}" href="{% url 'inquiries' %}">
+                                                                                                                                        <i class="ni ni-collection text-purple">{% client_count %} </i>
+                                                                        <span class="nav-link-text">Service Inquiries</span>
+                                                            </a>
+                                                            </li>
+                                                            <li class="nav-item">
+                                                 <a class="nav-link" href="{% url 'applicants-list' %}">
+                                                                                     <i class="ni ni-badge text-black"> {% app_count %} </i>
+                                                                  <span class="nav-link-text">Employment Applications</span>
+                                                            </a>
+                                                            </li>
+                                                            <li class="nav-item">
+                                                 <a class="nav-link" href="{% url 'roster' %}">
+                                                                            <i class="ni ni-bullet-list-67 text-blue"></i>
+                                                                          <span class="nav-link-text">Employee Roster</span>
+                                                            </a>
+                                                            </li>
+                                                          {% else %}
+                                                          {% endif %}
 
-      </ul>
-      <div class="d-flex justify-content-center flex-column">
-        <iframe src="https://status.netthandshome.care/badge?theme=dark" width="250" height="30" frameborder="0" scrolling="no"></iframe>
-      </div>
-    </div>
-  </div>
-</div>
-</nav>
+                                                          </ul>
+                                                          <div class="d-flex justify-content-center flex-column">
+                                                                           <iframe src="https://status.netthandshome.care/badge?theme=dark" width="250" height="30" frameborder="0" scrolling="no"></iframe>
+                                                                                                                                              </div>
+                                                                                                                                              </div>
+                                                                                                                                              </div>
+                                                                                                                                              </div>
+                                                                                                                                              </nav>

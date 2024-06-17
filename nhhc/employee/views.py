@@ -21,6 +21,8 @@ from compliance.models import Compliance
 from django.contrib.auth import authenticate, login
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
@@ -32,8 +34,6 @@ from rest_framework import status
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from web.models import EmploymentApplicationModel
-from django.views.decorators.cache import never_cache
-from django.utils.decorators import method_decorator
 
 from nhhc.utils.helpers import (
     get_content_for_unauthorized_or_forbidden,

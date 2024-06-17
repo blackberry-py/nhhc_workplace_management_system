@@ -20,18 +20,18 @@ Import the module and utilize the classes and functions for handling file upload
 
 """
 
+import json
 import os
 import random
 import re
 import string
-import typing
-import requests
-import json
-import boto3
-from botocore.exceptions import ClientError
-import threading
 import sys
+import threading
+import typing
 
+import boto3
+import requests
+from botocore.exceptions import ClientError
 from django.conf import settings
 from django.template.defaultfilters import filesizeformat
 from django.utils.deconstruct import deconstructible
@@ -73,9 +73,9 @@ class FileValidator(object):
 
         if self.content_types:
             file = guess(data)
-            type = file.mime
+            file_type = file.mime
 
-        if type not in settings.ALLOWED_UPLOAD_MIME_TYPES:
+        if file_type not in settings.ALLOWED_UPLOAD_MIME_TYPES:
             raise FileValidationError(self.error_messages["content_type"], "content_type", params)
 
     def __eq__(self, other):
@@ -206,7 +206,7 @@ class S3HANDLER:
             with open(pdf_file_name, 'wb+') as pdf_object:
                 pdf_object.write(response.content)
                 S3HANDLER.upload_file_to_s3(pdf_file_name)
-                print(f'{pdf_file_name} was successfully saved!')
+                logger.info(f'{pdf_file_name} was successfully saved!')
                 return True
         else:
             print(f'Uh oh! Could not download {pdf_file_name},')

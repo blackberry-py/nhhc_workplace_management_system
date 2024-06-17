@@ -2,6 +2,7 @@
 
 The `urlpatterns` list routes URLs to views.
 """
+import json
 from typing import Callable, Dict, List, Union
 
 import announcements.urls
@@ -46,6 +47,7 @@ def bad_request_handler(request: HttpRequest, exception=None) -> HttpResponse:
     Returns:
         HttpResponse: A response with status code 400 and the 400.html template rendered.
     """
+
     logger.warning(f"BAD REQUEST: {exception}")
     return render(request, "400.html", status=400)
 
@@ -74,9 +76,9 @@ def page_not_found_handler(request: HttpRequest, exception=None) -> HttpResponse
         exception (Exception, optional): The exception that caused the bad request. Defaults to None.
 
     Returns:
-        HttpResponse: A response with status code 400 and the 400.html template rendered.
+        HttpResponse: A response with status code 404 and the 404.html template rendered.
     """
-    logger.warning(f"PAGE NOT FOUND ERROR: {exception}")
+    logger.warning(f"PAGE NOT FOUND ERROR: {exceptions}")
     return render(request, "404.html", status=404)
 
 

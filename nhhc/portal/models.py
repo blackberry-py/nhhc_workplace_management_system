@@ -23,8 +23,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_extensions.db.fields import CreationDateTimeField, ModificationDateTimeField
 from django_prometheus.models import ExportModelOperationsMixin
-
-from nhhc.utils.managers import CachedQuerySet
+from employee.models import Employee
 
 now = arrow.now(tz="America/Chicago")
 
@@ -59,11 +58,13 @@ class PayrollException(models.Model, ExportModelOperationsMixin("exceptions")):
         APPROVED = "A", _("Approved - Time Amended")
         REJECTED = "R", _("Rejected")
 
-    objects = CachedQuerySet.as_manager()
     date = models.DateField()
+    requesting_employee = models.ForeignKey(Employee, on_delete=models.DO_NOTHING, related_name="requesting_employee")
     start_time = models.TimeField()
     end_time = models.TimeField()
+    reviewer = models.ForeignKey(Employee, on_delete=models.DO_NOTHING, related_name="exception_reviewer", null=True, blank=True)
     num_hours = models.PositiveIntegerField()
+    rejection_reason = models.TextField(null=True, blank=True)
     reason = models.TextField(
         validators=[
             MinLengthValidator(50, "the field must contain at least 50 characters"),
@@ -86,6 +87,14 @@ class PayrollException(models.Model, ExportModelOperationsMixin("exceptions")):
         ordering = ["-date"]
         verbose_name = "Payroll Exception"
         verbose_name_plural = "Payroll Exceptions"
+
+    def approve_exception(self, reviewer: Employee) -> None:
+        self.status = "A"
+        self.reviewer = reviewer.employee_id
+
+    def reject_exception(self, reviewer: Employee) -> None:
+        self.status = "R"
+        self.reviewer = reviewer.employee_id
 
 
 # class Assessment(models.Model):

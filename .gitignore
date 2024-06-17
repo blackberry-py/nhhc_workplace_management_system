@@ -1,4 +1,5 @@
 # Django #
+# Django #
 *.log
 *.pot
 *.pyc
@@ -164,3 +165,5 @@ nhhc/restricted/attestations/idoa_agency_policies_attestation/brooks_terry.pdf
 
 nhhc/restricted/*
 .envrc
+
+postgres_ssl.crt

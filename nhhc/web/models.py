@@ -19,9 +19,9 @@ Note: The module also includes choices for services, mobility, and prior experie
 
 
 from datetime import datetime
-from typing import Dict
+from typing import Any, Dict
 
-from arrow import Arrow, now
+from arrow import Arrow, arrow, get, now
 from django.contrib.auth.hashers import make_password
 from django.core.cache import cache
 from django.db import models
@@ -73,7 +73,7 @@ class ClientInterestSubmission(models.Model, ExportModelOperationsMixin("client_
     """
 
     def __str__(self):
-        return f"{self.last_name}, {self.first_name} - Submission Date: {Arrow.get(self.date_submitted).format('YYYY-MM-DD')}"
+        return f"{self.last_name}, {self.first_name} - Submission Date: {datetime.date(self.date_submitted).strftime('%Y-%m-%d')}"
 
     class SERVICES(models.TextChoices):
         """
@@ -270,40 +270,52 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
 
         """
         try:
-            new_employee = Employee(
-                is_superuser=False,
-                username=Employee.create_unique_username(self.first_name, self.last_name),
-                is_active=True,
-                first_name=self.first_name,
-                last_name=self.last_name,
-                email=self.email,
-                street_address1=self.home_address1,
-                street_address2=self.home_address2,
-                state=self.state,
-                city=self.city,
-                zipcode=self.zipcode,
-                application_id=self.pk,
-                qualifications_verification=self.resume_cv,
-            )
-            password = RandomPasswordGenerator.generate()
-            new_employee.password = make_password(password)
-            new_employee.save()
-            self.hired = True
-            self.reviewed = True
-            self.reviewed_by = hired_by
-            return {
-                "user": new_employee,
-                "plain_text_password": password,
-                "username": new_employee.username,
-                "employee_id": new_employee.employee_id,
-                "email": new_employee.email,
-                "first_name": new_employee.first_name,
-                "last_name": new_employee.last_name,
-            }
+            return self._convert_applicant_to_employee(hired_by)
         except Exception as e:
             log_message = f"Unable to Hire {self.last_name},{self.first_name} - REASON:{e} "
             logger.error(log_message)
             return RuntimeError(e)
+
+    def _convert_applicant_to_employee(self, hired_by: Employee) -> Dict[str, Any]:
+        """
+        Converts an applicant to an employee by creating a new Employee instance, generating a random password, saving the employee, and updating applicant attributes.
+
+        Args:
+            hired_by: The user who hired the applicant.
+
+        Returns:
+            dict: A dictionary containing details of the new employee such as user, plain_text_password, username, employee_id, email, first_name, and last_name.
+        """
+        new_employee = Employee(
+            is_superuser=False,
+            username=Employee.create_unique_username(self.first_name, self.last_name),
+            is_active=True,
+            first_name=self.first_name,
+            last_name=self.last_name,
+            email=self.email,
+            street_address1=self.home_address1,
+            street_address2=self.home_address2,
+            state=self.state,
+            city=self.city,
+            zipcode=self.zipcode,
+            application_id=self.pk,
+            qualifications_verification=self.resume_cv,
+        )
+        password = RandomPasswordGenerator.generate()
+        new_employee.password = make_password(password)
+        new_employee.save()
+        self.hired = True
+        self.reviewed = True
+        self.reviewed_by = hired_by
+        return {
+            "user": new_employee,
+            "plain_text_password": password,
+            "username": new_employee.username,
+            "employee_id": new_employee.employee_id,
+            "email": new_employee.email,
+            "first_name": new_employee.first_name,
+            "last_name": new_employee.last_name,
+        }
 
     def reject_applicant(self, rejected_by: Employee) -> None:
         """Rejects an applicant.

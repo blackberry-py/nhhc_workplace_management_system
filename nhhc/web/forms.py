@@ -70,7 +70,13 @@ class ClientInterestForm(ModelForm):
                 css_class="form-row",
             ),
             Field("captcha", placeholder="Enter captcha"),
-            Submit("submit", "Submit Interest"),
+            HTML(
+                """ <button id="loading-btn-submit" class="btn btn-primary" style="display: none;" disabled>
+          <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+          Submitting...
+        </button> """
+            ),
+            Submit("submit", "Submit Interest", css_id="btn-submit"),
         )
 
     class Meta:
@@ -194,7 +200,7 @@ class EmploymentApplicationForm(ModelForm):
           Submitting...
         </button> """
             ),
-            Submit(name="submit", value="Submit", css_id="btn-submit"),
+            Submit(name="submit", value="Apply!", css_id="btn-submit"),
         )
 
     def clean(self):
@@ -210,7 +216,8 @@ class EmploymentApplicationForm(ModelForm):
         seven_day_availability = [availability_sunday, availability_friday, availability_monday, availability_tuesday, availability_wednesday, availability_thursday, availability_saturday]
 
         if True not in seven_day_availability:
-            raise forms.ValidationError(_("You Must be Available at least 1 day a week. Please review the Work Availability Section"), code="invalid")
+            error = forms.ValidationError(_("You Must be Available at least 1 day a week. Please review the Work Availability Section"), code="invalid")
+            self.add_error(error=errors)
 
     class Meta:
         """Meta definition for EmploymentApplicationModelForm."""

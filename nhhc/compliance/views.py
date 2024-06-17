@@ -25,13 +25,15 @@ For more detailed information on each class and function, refer to the individua
 import json
 import os
 from typing import Any
-import requests
+
 import boto3
+import requests
 from botocore.exceptions import ClientError
 from compliance.forms import ComplianceForm, ContractForm
 from compliance.models import Compliance
 from compliance.tasks import process_signed_form
 from django.http import HttpRequest, HttpResponse
+from django.urls import reverse_lazy
 from django.utils.text import get_valid_filename
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
@@ -41,7 +43,7 @@ from employee.models import Employee
 from formset.upload import FileUploadMixin
 from loguru import logger
 from rest_framework import status
-from django.urls import  reverse_lazy
+
 from nhhc.utils.upload import S3HANDLER
 
 # SECTION - Contract Related Viewws

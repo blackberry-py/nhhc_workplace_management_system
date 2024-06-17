@@ -1,8 +1,9 @@
 import json
-import boto3
 import os
-from botocore.exceptions import ClientError
+
+import boto3
 import requests
+from botocore.exceptions import ClientError
 
 client = boto3.client("events")
 

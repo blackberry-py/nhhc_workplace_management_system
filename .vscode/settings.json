@@ -26,4 +26,7 @@
     "[django-html]": {
         "editor.defaultFormatter": "junstyle.vscode-django-support"
     },
+    "CodeGPT.apiKey": "CodeGPT Plus Beta",
+    "doppler.autocomplete.enable": true,
+    "doppler.hover.enable": true,
 }

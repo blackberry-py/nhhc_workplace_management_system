@@ -4,6 +4,7 @@ from typing import Dict
 from announcements.forms import AnnouncementDetailsForm, AnnouncementForm
 from announcements.models import Announcements
 from django.forms.models import model_to_dict
+from django.shortcuts import redirect, reverse
 from django.http import HttpRequest, HttpResponse
 from django.urls import reverse
 from django.views import View
@@ -23,6 +24,23 @@ def app_status(request: HttpRequest) -> HttpResponse:
     pass
 
 
+@require_POST
+def post_announcement(request: HttpRequest, pk: int) -> HttpResponse:
+    body_unicode = request.data.decode("utf-8")
+    body = json.loads(body_unicode)
+    pk = body["pk"]
+    if pk is None:
+        new_announcement = Announcements(request.POST)
+        new_announcement.post()
+        return HttpResponse(status=201)
+
+    else:
+        new_announcement = Announcements.objects.get(id=pk)
+        new_announcement.status = "A"
+        new_announcement.save()
+        return HttpResponse(status=204)
+
+
 class AnnoucementsListView(FormMixin, ListView):
     model = Announcements
     queryset = Announcements.objects.all()
@@ -32,6 +50,9 @@ class AnnoucementsListView(FormMixin, ListView):
     form_class = AnnouncementForm
     paginate_by = 25
     extra_context = {"modal_title": "Create New Annoucement", "sort_entity_selector": '".annoucements"'}
+
+    def post(self, request):
+        return redirect(to=reverse("create-annoucement"))
 
 
 class AnnoucementsUpdateView(UpdateView):
@@ -60,23 +81,6 @@ def save_announcement(request: HttpRequest) -> HttpResponse:
     new_announcement = Announcements(request.POST)
     new_announcement.create_draft()
     return HttpResponse(status=201)
-
-
-@require_POST
-def post_announcement(request: HttpRequest, pk: int) -> HttpResponse:
-    body_unicode = request.data.decode("utf-8")
-    body = json.loads(body_unicode)
-    pk = body["pk"]
-    if pk is None:
-        new_announcement = Announcements(request.POST)
-        new_announcement.post()
-        return HttpResponse(status=201)
-
-    else:
-        new_announcement = Announcements.objects.get(id=pk)
-        new_announcement.status = "A"
-        new_announcement.save()
-        return HttpResponse(status=204)
 
 
 @require_POST

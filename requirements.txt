@@ -38,6 +38,7 @@ defusedxml==0.7.1
 Deprecated==1.2.14
 dill==0.3.8
 distlib==0.3.8
+dj-database-url==2.2.0
 Django==5.0.6
 django-admin-env-notice==1.0
 django-allauth==0.60.1
@@ -54,6 +55,7 @@ django-discover-runner==1.0
 django-extensions==3.2.3
 django-filter==23.5
 django-formset==1.4.5
+django-guardian==2.4.0
 django-health-check==3.18.2
 django-ip-restriction==1.1.1
 django-ipware==5.0.2
@@ -142,7 +144,7 @@ more-itertools==10.2.0
 msgpack==1.0.8
 mypy==1.10.0
 mypy-extensions==1.0.0
--e git+ssh://git@github.com/NettHandsHomeCare-Portal/NettHands.git@581fc9ff5f546bbdd995c88c56f75122258e7c4a#egg=nhhc
+-e git+ssh://git@github.com/NettHandsHomeCare-Portal/NettHands.git@e69a15178e6356fa339e66e0d9a2df2b9aabfc20#egg=nhhc
 nodeenv==1.9.0
 oauthlib==3.2.2
 opentelemetry-api==1.22.0

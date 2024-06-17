@@ -14,7 +14,7 @@ from django.urls import path, re_path
 from portal import views
 
 urlpatterns = [
-    path("dashboard", views.portal_dashboard, name="dashboard"),
+    path("dashboard", views.Dashboard.as_view(), name="dashboard"),
     re_path(r"^profile/$", views.Profile.as_view(), name="profile"),
     path(
         "inquiries/",

@@ -25,6 +25,7 @@ Meta:
 - verbose_name_plural: "Internal Announcements"
 """
 import arrow
+from django.conf import settings
 from django.core.cache import cache
 from django.db import models
 from django.http.request import HttpRequest
@@ -32,7 +33,6 @@ from django.utils.translation import gettext_lazy as _
 from django_prometheus.models import ExportModelOperationsMixin
 from employee.models import Employee
 from loguru import logger
-from django.conf import settings
 
 NOW: str = str(arrow.now().format("YYYY-MM-DD"))
 

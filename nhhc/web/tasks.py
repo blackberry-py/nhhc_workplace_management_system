@@ -28,8 +28,7 @@ def process_new_application(form: Union[EmploymentApplicationForm, Dict[str, Any
     try:
         internal_notify_task = career_web_mailer.send_internal_new_applicant_notification(form)
         external_notify_task = career_web_mailer.send_external_application_submission_confirmation(form)
-        results = {"internal": internal_notify_task, "external": external_notify_task}
-        return results
+        return {"internal": internal_notify_task, "external": external_notify_task}
     except Exception as e:
         logger.error(f"UNABLE TO SEND: {e}")
         return {"internal": 0, "external": 0}
@@ -54,9 +53,9 @@ def process_new_client_interest(form: Union[ClientInterestSubmission, Dict[str, 
         Dict[str,int]: A dictionary containing the results of the notification tasks. The values represent the number of notifications succesful sent.
     """
     try:
-        logger.info(f"Starting Async Client Submission Processing")
+        logger.info("Starting Client Submission Processing")
         internal_notify_task = client_web_mailer.send_internal_new_applicant_notification(form)
-        external_notify_task = client_web_mailer.send_external_application_submission_confirmation(form)
+        external_notify_task = client_web_mailer.send_external_client_submission_confirmation(form)
         results: Dict[str, int] = {"internal": internal_notify_task, "external": external_notify_task}
         return results
     except Exception as e:

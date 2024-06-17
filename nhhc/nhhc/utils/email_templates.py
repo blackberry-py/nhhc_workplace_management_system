@@ -1489,7 +1489,7 @@ Nett Hands Homecare HR Team
 )
 
 PLAIN_TEXT_TERMINATION_EMAIL_TEMPLATE: Template = Template(
-	"""
+    """
 Dear $first_name,
 
 I hope this email finds you well. It is with regret that I must inform you that your employment with Nett Hands Home Care has been terminated, effective immediately.
@@ -1508,7 +1508,7 @@ Once again, thank you for your service to Nett Hands Home Care. We wish you all 
 
 Sincerely,
 
-Nett Hands Homecare Human Resources 
+Nett Hands Homecare Human Resources
 	"""
 )
 # !SECTION

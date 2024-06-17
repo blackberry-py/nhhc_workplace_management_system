@@ -3,7 +3,9 @@
 {% load crispy_forms_tags %}
 {% load formsetify %}
 {% load render_form from formsetify %}
-
+{% block title %}
+    <title>Nett Hands Home Care - Employment Interest Application </title>
+{% endblock title %}
 {% block custom_js %}
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default" defer></script>
 
@@ -34,13 +36,13 @@
                                 <p class="form-error-header">"Please correct the errors below and resubmit...</p>
 
                                 {% for error in form_errors %}
-                                    <li class="form-error"><i class="fa-solid fa-triangle-exclamation"></i> {{ error }}</li>
+                                    <li class="form-error"><i class="fa-solid fa-triangle-exclamation"></i>{{ error }}</li>
                                 {% endfor %}
                             </ul>
                         </div>
                     {% else %}
                         <p>Employment Requirements</p>
-                        <ul>                                                                            
+                        <ul>
                             <li>IDPH State Fingerprinting</li>
                             <li>24 Hour Pre-Service Training <em>(Can Be Provided by Nett Hand, if employment offer is extended)</em></li>
                             <li>High School Diploma or GED Mandatory</li>
@@ -69,7 +71,7 @@
 {% endblock main %}
 
 {% block customscripts %}
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDwRtpvIRYnt2dt8cSMzdxjVE1tfxcO4Ww&loading=async&callback=initAutocomplete&libraries=places&v=weekly" defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAcVC3cpOlGII6mN-jDumKeUMt8914j-GA&loading=async&callback=initAutocomplete&libraries=places&v=weekly" defer></script>
     <script defer>
         function openLoader() {
             document.getElementById("btn-submit").style.display = "none";

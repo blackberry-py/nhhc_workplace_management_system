@@ -15,13 +15,15 @@ class TestViews(TestCase):
         self.client = Client()
 
     def test_client_interest_form_view_get(self):
-        request = self.factory.get("/client-interest/")
-        response = ClientInterestFormView.as_view()(request)
-        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self._extracted_from_test_employment_application_form_view_get_2("/client-interest/", ClientInterestFormView)
 
     def test_employment_application_form_view_get(self):
-        request = self.factory.get("/employment-application/")
-        response = EmploymentApplicationFormView.as_view()(request)
+        self._extracted_from_test_employment_application_form_view_get_2("/employment-application/", EmploymentApplicationFormView)
+
+    # TODO Rename this here and in `test_client_interest_form_view_get` and `test_employment_application_form_view_get`
+    def _extracted_from_test_employment_application_form_view_get_2(self, arg0, arg1):
+        request = self.factory.get(arg0)
+        response = arg1.as_view()(request)
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_favicon_view_get(self):

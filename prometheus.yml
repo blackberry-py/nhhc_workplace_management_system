@@ -1,35 +1,28 @@
-
 global:
   scrape_interval: 60s
-  query_log_file: /prometheus/logs/query/query.log
-  # scrape_timeout: 2m
-remote_write:
-  - url: https://prometheus-prod-10-prod-us-central-0.grafana.net/api/prom/push
-    basic_auth:
-      username: 390644
-      password: glc_eyJvIjoiNjI5NDg1IiwibiI6InN0YWNrLTM0NTE1Mi1pbnRlZ3JhdGlvbi10b2tlIiwiayI6IjBERzY5bzBROHpHN3MwNWkweDhzc2pQayIsIm0iOnsiciI6InVzIn19
+# remote_write:
+#   - url: https://prometheus-prod-10-prod-us-central-0.grafana.net/api/prom/push
+#     basic_auth:
+#       username: 390644
+#       password: glc_eyJvIjoiNjI5NDg1IiwibiI6InN0YWNrLTM0NTE1Mi1pbnRlZ3JhdGlvbi00dWhuODRtOG85IiwiayI6IlU3YW02WVE0MnhRMDRyanBjNFEwd0cxNiIsIm0iOnsiciI6InVzIn19
 scrape_configs:
-  - job_name: node
-    static_configs:
-      - targets: ["34.121.129.110:9090"]
-  - job_name: server-hardware
-    scrape_interval: 4m
-    scrape_timeout: 2m
-    static_configs:
+#  - job_name: server-hardware
+#    scrape_interval: 4m
+#    scrape_timeout: 2m
+#    static_configs:
+#     - targets:
+#         - metrics.netthandshome.care
+ - job_name: prometheus
+   scrape_interval: 30s
+   scheme: http
+   static_configs:
+    - targets:
+       - localhost:9090
+ - job_name: django
+   scrape_interval: 30s
+   static_configs:
       - targets:
-          - 34.121.129.110:9100
-  - job_name: flower
-    static_configs:
-      - targets:
-          - 34.121.129.110:5555
-  - job_name: prometheus
-    scrape_interval: 30s
-    scheme: http
-    static_configs:
-      - targets:
-          - 34.121.129.110:9090
-  - job_name: django
-    scrape_interval: 30s
-    static_configs:
-      - targets:
-          - 34.121.129.110:7772
+          - localhost:8000
+storage:
+  tsdb:
+    out_of_order_time_window: 30m

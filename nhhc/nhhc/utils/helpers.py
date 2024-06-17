@@ -3,12 +3,11 @@ import os
 from django.conf import settings
 from django.core.mail import send_mail
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page, never_cache
 from django.views.generic import TemplateView
 from loguru import logger
 from rest_framework import status
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import never_cache
 
 
 def get_status_code_for_unauthorized_or_forbidden(request: HttpRequest) -> int:

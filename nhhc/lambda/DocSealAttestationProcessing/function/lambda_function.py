@@ -1,10 +1,12 @@
 
 import json
 import os
+
 import boto3
 import pymupdf
 import requests
 from botocore.exceptions import ClientError
+
 
 def upload_file_to_s3(file_name:str, bucket:str="nhhc_chicago", object_name=None) -> bool:
     """Upload a file to an S3 bucket

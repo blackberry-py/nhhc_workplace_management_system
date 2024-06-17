@@ -1,8 +1,8 @@
 #!/Users/terry-brooks/GitHub/NettHands/nhhc/lambda/DocSealAttestationProcessing/.lambda-venv/bin/python3.11
 
-import sys
-import json
 import argparse
+import json
+import sys
 from pprint import pformat
 
 import jmespath

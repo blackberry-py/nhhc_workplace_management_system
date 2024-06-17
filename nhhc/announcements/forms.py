@@ -55,7 +55,7 @@ class AnnouncementDetailsForm(forms.ModelForm):
         self.user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_action = "/"
+        self.helper.form_action = "announcement/create/"
         self.helper.form_id = "announcement-form"
         self.helper.form_method = "post"
         self.fields["message"].label = False

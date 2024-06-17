@@ -1,12 +1,12 @@
 from datetime import datetime
 
+from announcements.models import Announcements
 from authentication.models import UserProfile
 from compliance.models import Compliance, Contract
 from django.contrib import admin
 from employee.models import Employee
 from portal.models import PayrollException  # Assessment, InServiceTraining,
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
-from announcements.models import Announcements
 
 now = datetime.now()
 # Register your models here.
