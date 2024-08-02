@@ -1,31 +1,81 @@
-from compliance.models import Compliance
-from compliance.models import Contract
+from datetime import datetime
+
+from compliance.models import Compliance, Contract
 from crispy_forms.bootstrap import FormActions
-from crispy_forms.bootstrap import Modal
-from crispy_forms.bootstrap import UneditableField
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Column
-from crispy_forms.layout import HTML
-from crispy_forms.layout import Layout
-from crispy_forms.layout import Reset
-from crispy_forms.layout import Row
-from crispy_forms.layout import Submit
+from crispy_forms.layout import HTML, Column, Layout, Reset, Row, Submit
 from django import forms
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 
 class ContractForm(forms.ModelForm):
-    """Form definition for Employee Model."""
+    """
+    Form definition for Contract Model.
+
+    This form is used to create and update contract information.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = "contract"
+        self.helper.form_method = "post"
+        self.fields["contract_year_end"].widget = forms.widgets.DateInput(
+            attrs={"type": "date", "class": "form-control"},
+        )
+        self.fields["contract_year_end"].widget = forms.widgets.DateInput(
+            attrs={"type": "date", "class": "form-control"},
+        )
+
+    def is_active_contract(self, contract_year_start, contract_year_end):
+        """
+        Check if the contract is currently active based on the contract year start and end dates.
+
+        Args:
+            contract_year_start (datetime): The start date of the contract year.
+            contract_year_end (datetime): The end date of the contract year.
+
+        Returns:
+            bool: True if the contract is active, False otherwise.
+        """
+
+    def save(self, commit=True):
+        """
+        Save the form data to the Contract model instance.
+
+        Args:
+            commit (bool, optional): Whether to save the instance to the database. Defaults to True.
+
+        Returns:
+            Contract: The saved Contract instance.
+        """
+        form_data = self.cleaned_data
+        self.instance.code = form_data["code"]
+        self.instance.name = form_data["name"]
+        self.instance.description = form_data["description"]
+        self.instance.contract_year_start = form_data["contract_year_start"]
+        self.instance.contract_year_end = form_data["contract_year_end"]
+        self.instance.active = self.is_active_contract(form_data["contract_year_start"], form_data["contract_year_end"])
+        return super(ContractForm, self).save(commit)
 
     class Meta:
-        """Meta definition for EmployeeForm."""
-
         model = Contract
-        fields = "__all__"
+        fields = (
+            "code",
+            "name",
+            "description",
+            "contract_year_start",
+            "contract_year_end",
+        )
 
 
 class ComplianceForm(forms.ModelForm):
+    """
+    Form definition for Compliance Model.
+
+    This form is used to manage compliance-related information for employees.
+    """
+
     class Meta:
         model = Compliance
         fields = (
@@ -76,14 +126,10 @@ class ComplianceForm(forms.ModelForm):
         self.helper.form_action = "/employee"
         self.helper.form_id = "profile"
         self.helper.form_method = "post"
-        self.fields[
-            "initial_idph_background_check_completion_date"
-        ].widget = forms.widgets.DateInput(
+        self.fields["initial_idph_background_check_completion_date"].widget = forms.widgets.DateInput(
             attrs={"type": "date", "class": "form-control"},
         )
-        self.fields[
-            "current_idph_background_check_completion_date"
-        ].widget = forms.widgets.DateInput(
+        self.fields["current_idph_background_check_completion_date"].widget = forms.widgets.DateInput(
             attrs={"type": "date", "class": "form-control"},
         )
         self.fields["pre_service_completion_date"].widget = forms.widgets.DateInput(
@@ -186,6 +232,12 @@ class ComplianceForm(forms.ModelForm):
             ),
             Row(
                 FormActions(
+                    HTML(
+                        """ <button id="loading-btn-submit" class="btn btn-primary" style="display: none;" disabled>
+          <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+          Saving...
+        </button> """
+                    ),
                     Submit("save", "Save changes", id="edit-button"),
                     Reset(
                         "cancel",

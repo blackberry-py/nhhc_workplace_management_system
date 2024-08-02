@@ -1,0 +1,206 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} Applicants {% endblock title %}
+{% block stylesheets %}
+
+  <style>
+    .show {
+      display: block;
+    }
+
+    .remove {
+      display: none;
+    }
+  </style>
+{% endblock stylesheets %}
+{% block content %}
+
+  <div class="header bg-warning pb-6">
+    <div class="container-fluid">
+      <div class="header-body">
+        <div class="row align-items-center py-4">
+          <div class="col-lg-6 col-7">
+            <h6 class="h2 text-white d-inline-block mb-0">Employee Roster</h6>
+            <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+
+            </nav>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page content -->
+  <div class="container-fluid mt--6">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <!-- Card header -->
+          <div class="card-header border-0">
+            <h3 class="mb-0">Employees</h3>
+            <div id="list-looker">
+              <form class="navbar-search navbar-search-light form-inline mr-sm-3" id="navbar-search-main">
+                <div class="form-group mb-0">
+                  <div class="p-1 bg-light rounded rounded-pill shadow-sm mb-4">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <button id="button-addon2" type="submit" class="btn btn-link text-warning"><i class="fa fa-search"></i></button>
+                      </div>
+                      <input type="search" placeholder="Search by Name, Contact Number" aria-describedby="button-addon2" class="search form-control border-0 bg-light">
+                    </div>
+                  </div>
+                </div>
+              </form>
+
+            </div>
+          <!-- Light table -->
+            <ul class="nav nav-tabs">
+              <li class="tab nav-item">
+                <a class="nav-link tab active" id="active" aria-current="page" href="#">{{ active }} Active Employees Applications</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link tab" id="former" href="#">{{ former }} Former Employees</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link tab" id="all" href="#">{{ all }} All Employees</a>
+              </li>
+
+            </ul>
+            <div class="table-responsive">
+              <table class="table align-items-center table-flush table-hover">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" class="sort" data-sort="name">Username</th>
+
+                    <th scope="col" class="sort" data-sort="budget">First Name</th>
+                    <th scope="col" class="sort" data-sort="status">Last Name</th>
+                    <th scope="col" class="sort" data-sort="completion">Phone</th>
+                    <th scope="col" class="sort" data-sort="reviewed">Hire Date</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody class="list">
+                  {% for employee in employees %}
+                    {% if employee.is_active %}
+                      <tr class="employee active">
+                        <th scope="row">
+                          <div class="media align-items-center">
+                            <div class="media-body">
+                              {{ employee.username }}
+                              {% if employee.is_superuser %}
+                                <span class="badge badge-pill badge-warning">Admin</span>
+                              {% elif not employee.is_superuser %}
+
+
+                              {% endif %}
+                            </div>
+                          </div>
+                        </th>
+                        <td class="first-name">
+                          {{ employee.first_name }}
+                        </td>
+                        <td class="last-name">
+                          {{ employee.last_name }}
+                        </td>
+                        <td class="phone">
+                          {{ employee.phone }}
+                        </td>
+                        <td>
+                          {{ employee.hire_date }}
+                        </td>
+                        <td>
+                          <a class="btn btn-secondary" href="{% url 'employee' pk=employee.employee_id %}">Employee Details</a>
+                        </td>
+                      </tr>
+                    {% elif not employee.is_active %}
+                      <tr class="employee former">
+                        <th scope="row">
+                          <div class="media align-items-center">
+                            <div class="media-body">
+                              {{ employee.username }}
+                              <span class="badge badge-pill badge-dark">Terminated</span>
+
+                            </div>
+                          </div>
+                        </th>
+                        <td class="first-name">
+                          {{ employee.first_name }}
+                        </td>
+                        <td class="last-name">
+                          {{ employee.last_name }}
+                        </td>
+                        <td class="phone">
+                          {{ employee.phone }}
+                        </td>
+                        <td>
+                          {{ employee.hire_date }}
+                        </td>
+                        <td>
+                          <a class="btn btn-secondary" href="{% url 'employee' pk=employee.employee_id %}">Employee Details</a>
+                        </td>
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </tbody>
+            </table>
+                                        {# .... **Now the pagination section** .... #}
+            {% if is_paginated %}
+              <div class="mx-auto text-center">
+                <div id="pagination-navigation" class="pagination">
+                  <span class="page-links">
+                    {% if page_obj.has_previous %}
+                      <a href="{% url 'roster' page=page_obj.previous_page_number %}"><i class="fa-solid fa-left-long fa-2xl"></i></a>
+                    {% endif %}
+                    <span class="page-current">
+                      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+                    {% if page_obj.has_next %}
+                      <a href="{% url 'roster' page=page_obj.next_page_number %}"><i class="fa-solid fa-right-long fa-2xl"></i></a>
+                    {% endif %}
+                  </span>
+
+            {% endif %}
+          </div>
+        <!-- Card footer -->
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}
+
+  <script type="text/javascript" defer>
+    const all = document.querySelectorAll('.employee')
+    const tabs = document.querySelectorAll('.tab')
+
+    const allArray = Array.from(all)
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(tab => tab.classList.remove('active'))
+        tab.classList.add('active')
+
+        const tabId = tab.id
+
+        allArray.forEach(div => {
+          div.classList.remove('show', 'remove')
+
+          if (tabId === 'all') {
+            div.classList.add('show')
+          } else if (tabId === 'active' &&!div.classList.contains('active')) {
+            div.classList.add('remove')
+          } else if (tabId === 'former' &&!div.classList.contains('former')) {
+            div.classList.add('remove')
+          }
+        })
+      })
+    })
+  </script>
+{% endblock javascripts %}

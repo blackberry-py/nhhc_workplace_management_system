@@ -1,0 +1,28 @@
+Fixes Merge Isssues
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# Date:      Mon Jun 17 14:06:46 2024 -0500
+# Committer: Terry Brooks <terry-brooks@Terrys-MacBook-Pro.local>
+#
+# On branch ENHANCEMENT-xml-sitemap
+# Your branch is up to date with 'origin/ENHANCEMENT-xml-sitemap'.
+#
+# Changes to be committed:
+#	modified:   .gitignore
+#	modified:   nhhc/announcements/models.py
+#	modified:   nhhc/compliance/templates/compliance_forms.html
+#	modified:   nhhc/compliance/templates/include/_docsign-modal.html
+#	modified:   nhhc/employee/forms.py
+#	modified:   nhhc/employee/models.py
+#	modified:   nhhc/employee/tasks.py
+#	modified:   nhhc/employee/templates/employee-detail.html
+#	modified:   nhhc/employee/views.py
+#	modified:   nhhc/nhhc/utils/helpers.py
+#	modified:   nhhc/nhhc/utils/upload.py
+#	modified:   nhhc/portal/admin.py
+#	modified:   nhhc/portal/views.py
+#	modified:   nhhc/web/tasks.py
+#	modified:   nhhc/web/views.py
+#

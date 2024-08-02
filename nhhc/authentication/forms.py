@@ -1,46 +1,19 @@
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from allauth.account.forms import LoginForm
+from formset.fields import Activator
+from formset.renderers import ButtonVariant
+from formset.widgets import Button
 
 
-class LoginForm(forms.Form):
-    username = forms.CharField(
-        widget=forms.TextInput(
-            attrs={"placeholder": "Username", "class": "form-control"},
-        ),
-    )
-    password = forms.CharField(
-        widget=forms.PasswordInput(
-            attrs={"placeholder": "Password", "class": "form-control"},
+class NHHCLoginForm(LoginForm):
+    submit = Activator(
+        label="Submit",
+        widget=Button(
+            action="disable -> spinner -> delay(500) -> submit -> reload !~ scrollToError",
+            button_variant=ButtonVariant.PRIMARY,
+            icon_path="/send.svg",
         ),
     )
 
-
-class SignUpForm(UserCreationForm):
-    username = forms.CharField(
-        widget=forms.TextInput(
-            attrs={"placeholder": "Username", "class": "form-control"},
-        ),
-    )
-    email = forms.EmailField(
-        widget=forms.EmailInput(
-            attrs={"placeholder": "Email", "class": "form-control"},
-        ),
-    )
-    password1 = forms.CharField(
-        widget=forms.PasswordInput(
-            attrs={"placeholder": "Password", "class": "form-control"},
-        ),
-    )
-    password2 = forms.CharField(
-        widget=forms.PasswordInput(
-            attrs={"placeholder": "Password check", "class": "form-control"},
-        ),
-    )
-
-    class Meta:
-        model = User
-        fields = ("username", "email", "password1", "password2")
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request", None)
+        super(LoginForm, self).__init__(*args, **kwargs)

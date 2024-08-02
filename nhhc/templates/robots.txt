@@ -1,6 +1,0 @@
-User-Agent: *
-
-
-Allow: *
-
-Sitemap: https://netthandshome.care/sitemap.xml

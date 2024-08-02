@@ -1,12 +1,15 @@
 """
-Copyright (c) 2019 - present AppSeed.us
+Modeule: authentication.urls
+This module contains the URL patterns for the authentication  application.
+
+
+The URL patterns include:
+
+
+These URL patterns are used to define the routing for the views in the application.
+
 """
+from authentication.views import CustomLoginView
 from django.urls import path
 
-from . import views
-
-urlpatterns = [
-    path("login/", views.login_view, name="login"),
-    path("register/", views.register_user, name="register"),
-    path("logout/", views.logout_view, name="logout"),
-]
+urlpatterns = [path("login/", CustomLoginView.as_view(), name="account_login")]

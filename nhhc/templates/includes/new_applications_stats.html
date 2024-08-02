@@ -1,0 +1,34 @@
+{% load unreviewed_requests %}
+<h3> Adminstrator Snapshot - Recent Site Submissions</h3>
+<div class="card-stat ">
+
+    <div class="row">
+        <div class="card card-stats d-flex col-4">
+            <div class="card-body ">
+                <div class="col">
+                    <a href="{% url 'applicants-list' %}"><h5 class="card-title text-uppercase text-muted mb-0">Unreviewed Applications</h5></a>
+                    <span class="h2 font-weight-bold mb-0">{% app_count %}</span>
+                </div>
+                <div class="col-auto">
+                    <div class="icon icon-shape bg-success text-white rounded-circle shadow">
+                        <i class="fa-brands fa-wpforms"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card card-stats d-flex col-4">
+            <div class="card-body ">
+                <div class="col">
+                    <a href="{% url 'inquiries' %}"><h5 class="c%ard-title text-uppercase text-muted mb-0">Unreviewed Customer Inquiries</h5></a>
+                    <span class="h2 font-weight-bold mb-0">{% client_count %}</span>
+
+                </div>
+                <div class="col-auto">
+                    <div class="icon icon-shape bg-danger text-white rounded-circle shadow">
+                        <i class="fa-solid fa-hand-holding-hand"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

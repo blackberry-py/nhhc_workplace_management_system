@@ -1,0 +1,25 @@
+{% extends "includes/base.html" %}
+{% load static %}
+{% block title %}
+    <title>Nett Hands Home Care - Bad Request </title>
+{% endblock title %}
+{% block main %}
+
+    <!-- Breadcrumb Begin -->
+    <div class="breadcrumb-option spad set-bg" data-setbg="{% static 'img/breadcrumb-bg.jpg' %}">
+        <div  class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb__text">
+                        <h2>Oops! - Bad Request</h2>
+                        <div class="breadcrumb__links">
+                            <p>The page you are looking for might have been removed had its name changed or is temporarily unavailable.</p>
+                        </div>
+                        <a href="{% url 'homepage' %}">Go To Homepage</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock main %}

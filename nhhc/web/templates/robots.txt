@@ -1,0 +1,9 @@
+User-Agent: *
+Disallow: /private/
+Disallow: /junk/
+
+User-agent: GPTBot
+Disallow: /
+
+
+Sitemap: https://netthandshome.care/sitemap.xml

@@ -1,18 +1,20 @@
-         <div class="col-lg-10">
-                     <div class="header__nav__option">
-                         <nav class="header__nav__menu mobile-menu">
-                             <ul>
-                                 <li class="active"><a href="{% url 'index' %}">Home</a></li>
-                                 <li><a href="{% url 'about' %}">About Nett Hands</a></li>
-                                 <li><a href="#impact">Our Impact</a></li>
-                                 <li><a href="#services">Services</a>
-                                 </li>
-                                 <li><a href="#careers">Careers</a>
-                                     <ul class="dropdown">
-                                         <li><a href="{% url 'application' %}">Employee Interest Application</a></li>
-                                         <li><a href="{% url 'login' %}">Employee Portal</a></li>
-                                     </ul>
-                                 </li>
-                                 <li><a href="#contact">Contact</a></li>
-                             </ul>
-                                  </nav>
+<div class="col-lg-10">
+    <div class="header__nav__option">
+        <nav class="header__nav__menu mobile-menu">
+            <ul>
+                <li class="active"><a href="{% url 'homepage' %}">Home</a></li>
+                <li><a href="{% url 'about' %}">About Nett Hands</a></li>
+                <li><a href="#impact">Our Impact</a></li>
+                <li><a href="#services">Services</a>
+                </li>
+                <li><a href="#careers">Careers</a>
+                    <ul class="dropdown">
+                        <li><a href="{% url 'application' %}">Employee Interest Application</a></li>
+                        <li><a href="{% url 'account_login' %}" target="_blank">Employee Portal</a></li>
+                    </ul>
+                </li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>

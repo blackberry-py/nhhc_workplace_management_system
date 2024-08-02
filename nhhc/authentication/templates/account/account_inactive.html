@@ -1,0 +1,45 @@
+{% extends "layouts/base-fullscreen.html" %}
+{% load account %}
+{% user_display user %}
+{% load static %}
+{% load widget_tweaks %}
+{% load allauth %}
+{% load allauth i18n %}
+{% block title %} Email Verificatiomn Required {% endblock title %}
+
+{% block content %}
+
+  <div class="container mt--8 pb-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-5 col-md-7">
+        <div class="card bg-secondary shadow border-0">
+          <div class="card-header bg-transparent pb-5">
+            <div class="text-muted text-center mt-2 mb-3">
+              <h2>Account Locked</h2>
+            </div>
+          </div>
+          <div class="card-body px-lg-5 py-lg-5">
+
+            <div class="row justify-content-center">
+              <h3> Your Account Has Been Locked</h3>
+            </div>
+            <div class="row justify-content-center">
+              <img src="{% static 'img/locked_account.png' %}" alt="Red Do Not Enter Sign" width="164px" height="auto"/>
+            </div>
+            <div class="text-center text-muted mb-4">
+            </div>
+            <hr class-"uk-divider-icon" />
+            <p class="text-center"><strong>Please Reach Out to Nett Hands Homecare Human Resources at <a href="tel:17089917105">(708)-991-7105</a> </p></strong>
+
+            <div class="row justify-content-center">
+              <a href="{% url 'homepage' %}"><p>Return To Homepage</p></a>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}

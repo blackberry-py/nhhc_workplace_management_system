@@ -1,0 +1,2 @@
+[bandit]
+exclude_dirs: ['tests', '.venv', 'htmlcov','.vscode', '.rubberduck', 'pytest_cache', '.kolo', '.github', '.devcontainer']

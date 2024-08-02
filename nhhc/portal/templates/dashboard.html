@@ -1,0 +1,272 @@
+{% extends "layouts/base.html" %}
+{% load index %}
+
+{% block title %} Dashboard {% endblock title %}
+{% load recent_announcements %}
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+    <style>
+   /* Controls */
+        .carousel-control-next {
+            margin: 0 3em;
+        }
+
+        i.fa-arrow-right,
+        i.fa-arrow-left {
+            background: none;
+            border: 2px solid #0d6efd;
+            color: #0d6efd;
+            padding: 10px;
+            border-radius: 100%;
+            transition: background .6s ease;
+        }
+
+        i.fa-arrow-right:hover,
+        i.fa-arrow-left:hover {
+            background: #0d6efd;
+            color: white;
+        }
+
+/* Indicators */
+        .carousel-indicators {
+            justify-content: flex-start;
+            transform: translate(-40px, 50px);
+        }
+
+        .carousel-indicators [data-bs-target] {
+            width: 10px;
+            height: 10px;
+            border-radius: 100%;
+            border: 2px solid #0d6efd;
+        }
+
+        .carousel-indicators .active {
+            opacity: 1;
+            background-color:  #0d6efd;
+        }
+
+/* Control buttons */
+        .control-btn {
+            position: absolute;
+            left: 10em;
+            top: 425px;
+        }
+        .carousel-control-next,
+        .carousel-control-prev {
+            top: 1em;
+            left: 3em;
+        }
+
+        .testimonial-text {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            column-gap: 20px;
+        }
+
+        .wow {
+            position: relative;
+            grid-column: span 2;
+        }
+
+        .carousel-landmark {
+            grid-column: span 3;
+        }
+
+        @media screen and (max-width: 576px) {
+            .testimonial-text {
+                margin-top: 50px;
+                row-gap: 50px;
+
+            }
+            .wow {
+                grid-column: span 5;
+            }
+
+            .carousel-landmark {
+                grid-column: span 5;
+            }
+        }
+    </style>
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+          <!-- Card stats -->
+    {% if recent_announcements %}
+    <!-- Page content -->
+        <div class="align-content-end">
+            <div id="annoucement-container" class="container-xxl py-5">
+                <div class="container py-5">
+                    <div class="testimonial-text g-5">
+                        <div class="wow fadeIn" data-wow-delay="0.1s">
+
+                            <h1 class="mb-4">Recent Announcements</h1>
+                            <p class="text-muted fs-4 textimal-text">Snapshot of the Most Recent Announcements.</p>
+                            <div><a href="{% url 'announcements' %}">See More Announcements</a></div>
+               {% comment %} <p class="text-muted recent-annoucement-posting-date"><strong>{{ recent_announcements|index:0|index:"date_posted" }}</p></strong> {% endcomment %}
+                        </div>
+                        <div class="control-btn">
+                            <button class="carousel-control-prev" type="button" data-bs-target="#recent-announcements_carousel" data-bs-slide="prev">
+                                <i class="fa-solid fa-arrow-left"></i>
+                                <span class="carousel-control-prev-icon visually-hidden" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#recent-announcements_carousel" data-bs-slide="next">
+                                <i class="fa-solid fa-arrow-right"></i>
+
+                                <span class="carousel-control-next-icon visually-hidden" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div><!--
+            <!-- </section>End of Testimonial Here -->
+
+                        <section class="carousel-landmark wow fadeIn" data-wow-delay="0.5s">
+                            <div id="recent-announcements_carousel" class="carousel slide testimonial-carousel border-start border-primary">
+              <!-- <section>
+                <div class="control-bar"></div>
+            </section> -->
+                                <div class="carousel-indicators">
+                                    <button type="button" data-bs-target="#recent-announcements_carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Announcement 1"></button>
+                                    <button type="button" data-bs-target="#recent-announcements_carousel" data-bs-slide-to="1" aria-label="Announcement 2"></button>
+                                    <button type="button" data-bs-target="#recent-announcements_carousel" data-bs-slide-to="2" aria-label="Announcement 3"></button>
+                                    <button type="button" data-bs-target="#recent-announcements_carousel" data-bs-slide-to="3" aria-label="Announcement 4"></button>
+                                    <button type="button" data-bs-target="#recent-announcements_carousel" data-bs-slide-to="4" aria-label="Announcement 5"></button>
+                                </div>
+                                <div class="carousel-inner"><!--The Carousel Container-->
+                                    <div class="carousel-item carousel-item-1 active"><!--The Carousel item 1-->
+                                        <div class="testimonial-item ps-5">
+                                            <h1 class="mb-4">{{ recent_announcements|index:0|index:"announcement_title" }}</h1>
+
+                                            {% if recent_announcements|index:0|index:"message_type" == 'C' %}
+                                                <span class="badge rounded-pill text-bg-primary text-bg-danger">Safety</span>
+
+                                            {% elif recent_announcements|index:0|index:"message_type" == 'T' %}
+                                                <span class="badge rounded-pill text-bg-primary text-bg-info">Training</span>
+
+                                            {% elif recent_announcements|index:0|index:"message_type" == 'X' %}
+                                                <span class="badge rounded-pill text-bg-primary  text-bg-warning">Compliance</span>
+                                            {% else %}
+                                                <span class="badge rounded-pill text-bg-primary      text-bg-primary  ">General</span>
+                                            {% endif %}
+                                            <p class="fs-4 textimal-text">{{  recent_announcements|index:0|index:"message" }}</p>
+                                            <h4 class=" text-muted recent-annoucement-author">Posted by {{ recent_announcements|index:0|index:"posted_by" }}</h4>
+                                        </div>
+                                    </div>
+                                        <!-- Carousel Item 2 -->
+
+                                    {% if recent_announcements|index:1 %}
+                                        <div class="carousel-item carousel-item-2 ">
+                                            <div class="testimonial-item ps-5">
+                                                <h1 class="mb-4">{{ recent_announcements|index:1|index:"announcement_title" }}</h1>
+
+                                                {% if recent_announcements|index:1|index:"message_type" == 'C' %}
+                                                    <span class="badge rounded-pill text-bg-primary text-bg-danger">Safety</span>
+
+                                                {% elif recent_announcements|index:1|index:"message_type" == 'T' %}
+                                                    <span class="badge rounded-pill text-bg-primary text-bg-info">Training</span>
+
+                                                {% elif recent_announcements|index:1|index:"message_type" == 'X' %}
+                                                    <span class="badge rounded-pill text-bg-primary  text-bg-warning">Compliance</span>
+                                                {% else %}
+                                                    <span class="badge rounded-pill text-bg-primary      text-bg-primary  ">General</span>
+                                                {% endif %}
+                                                <p class="fs-4 textimal-text">{{  recent_announcements|index:1|index:"message" }}</p>
+                                                <h4 class=" text-muted recent-annoucement-author">Posted by {{ recent_announcements|index:1|index:"posted_by" }}</h4>
+
+                                            </div>
+                                        </div>
+
+                                    {% endif %}
+                <!-- Carousel Item 3 -->
+                                    {% if recent_announcements|index:2 %}
+                                        <div class="carousel-item carousel-item-3 ">
+
+                                            <div class="testimonial-item ps-5">
+                                                <h1 class="mb-4">{{ recent_announcements|index:2|index:"announcement_title" }}</h1>
+
+                                                {% if recent_announcements|index:2|index:"message_type" == 'C' %}
+                                                    <span class="badge rounded-pill text-bg-primary text-bg-danger">Safety</span>
+
+                                                {% elif recent_announcements|index:2|index:"message_type" == 'T' %}
+                                                    <span class="badge rounded-pill text-bg-primary text-bg-info">Training</span>
+
+                                                {% elif recent_announcements|index:2|index:"message_type" == 'X' %}
+                                                    <span class="badge rounded-pill text-bg-primary  text-bg-warning">Compliance</span>
+                                                {% else %}
+                                                    <span class="badge rounded-pill text-bg-primary      text-bg-primary  ">General</span>
+                                                {% endif %}
+                                                <p class="fs-4 textimal-text">{{  recent_announcements|index:2|index:"message" }}</p>
+                                                <h4 class=" text-muted recent-annoucement-author">Posted by {{ recent_announcements|index:2|index:"posted_by" }}</h4>
+
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                <!-- Carousel Item 4 -->
+                                    {% if recent_announcements|index:3 %}
+                                        <div class="carousel-item carousel-item-4 ">
+
+                                            <div class="testimonial-item ps-5">
+                                                <h1 class="mb-4">{{ recent_announcements|index:3|index:"announcement_title" }}</h1>
+
+                                                {% if recent_announcements|index:3|index:"message_type" == 'C' %}
+                                                    <span class="badge rounded-pill text-bg-primary text-bg-danger">Safety</span>
+
+                                                {% elif recent_announcements|index:3|index:"message_type" == 'T' %}
+                                                    <span class="badge rounded-pill text-bg-primary text-bg-info">Training</span>
+
+                                                {% elif recent_announcements|index:3|index:"message_type" == 'X' %}
+                                                    <span class="badge rounded-pill text-bg-primary  text-bg-warning">Compliance</span>
+                                                {% else %}
+                                                    <span class="badge rounded-pill text-bg-primary      text-bg-primary  ">General</span>
+                                                {% endif %}
+                                                <p class="fs-4 textimal-text">{{  recent_announcements|index:3|index:"message" }}</p>
+                                                <h4 class=" text-muted recent-annoucement-author">Posted by {{ recent_announcements|index:3|index:"posted_by" }}</h4>
+
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                                <!-- Carousel Item 3 -->
+                                    {% if recent_announcements|index:4 %}
+                                        <div class="carousel-item carousel-item-5 ">
+
+                                            <div class="testimonial-item ps-5">
+                                                <h1 class="mb-4">{{ recent_announcements|index:4|index:"announcement_title" }}</h1>
+
+                                                {% if recent_announcements|index:4|index:"message_type" == 'C' %}
+                                                    <span class="badge rounded-pill text-bg-primary text-bg-danger">Safety</span>
+
+                                                {% elif recent_announcements|index:4|index:"message_type" == 'T' %}
+                                                    <span class="badge rounded-pill text-bg-primary text-bg-info">Training</span>
+
+                                                {% elif recent_announcements|index:4|index:"message_type" == 'X' %}
+                                                    <span class="badge rounded-pill text-bg-primary  text-bg-warning">Compliance</span>
+                                                {% else %}
+                                                    <span class="badge rounded-pill text-bg-primary      text-bg-primary  ">General</span>
+                                                {% endif %}
+                                                <p class="fs-4 textimal-text">{{  recent_announcements|index:4|index:"message" }}</p>
+                                                <h4 class=" text-muted recent-annoucement-author">Posted by {{ recent_announcements|index:4|index:"posted_by" }}</h4>
+
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                    <!-- Control Buttons -->
+                                </div><!--[End of Container]-->
+
+                            </div>
+                        </section><!--End of Carousel Landmark-->
+                    </div><!--End of row g-5-->
+                </div><!-- container py-5 -->
+            </div>
+    {% else %}
+        <h3>No Recent Annoucements</h3>
+
+    {% endif %}
+    {% if request.user.is_superuser %}
+        {% include "includes/new_applications_stats.html" %}
+    {% endif %}
+    </div>
+
+    <div class="align-content-end">
+    </div>
+{% endblock content %}

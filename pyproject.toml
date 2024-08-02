@@ -1,0 +1,160 @@
+[tool.poetry]
+name = "nhhc"
+version = "0.1.0"
+description = "Front-End website and web application for Nett Hands Home care"
+authors = ["Terry Brooks, Jr. <Terry.Arthur@BrooksJr.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.12"
+Django = ">=3.2.19"
+psycopg2-binary = "^2.9.6"
+django-crispy-forms = "^2.0"
+django-phonenumber-field = {extras = ["phonenumberslite"], version = "^7.1.0"}
+django-localflavor = "^4.0"
+whitenoise = "^6.5.0"
+gunicorn = "^20.1.0"
+six = "^1.16.0"
+supervisor = "^4.2.5"
+boto3 = "^1.28.2"
+django-recaptcha = "^3.0.0"
+django-cors-headers = "^4.2.0"
+loguru = "^0.7.0"
+django-ip-restriction = "^1.1.1"
+django-ipware = "^5.0.0"
+arrow = "^1.3.0"
+logtail-python = "^0.2.9"
+highlight-io = {extras = ["django"], version = "^0.7.0"}
+django-health-check = "^3.17.0"
+django-redis = "^5.4.0"
+django-loguru = "^1.0.3"
+django-request = "^1.6.3"
+django-prometheus = "^2.3.1"
+hiredis = "^2.3.2"
+django-redis-cache = "^3.0.1"
+django-storages = "^1.14.2"
+django-allauth = "^0.60.0"
+crispy-bootstrap5 = "^2023.10"
+django-widget-tweaks = "^1.5.0"
+djangorestframework = "^3.14.0"
+markdown = "^3.5.2"
+django-filter = "^23.5"
+python-magic = "^0.4.27"
+pip = "^24.0"
+django-formset = "^1.3.8"
+django-robots = "^6.1"
+django-admin-env-notice = "^1.0"
+djlint = "^1.34.1"
+django-jazzmin = "^2.6.0"
+doppler-env = "^0.3.1"
+django-pgcrypto = "^2.0.0"
+django-appconf = "^1.0.6"
+django-bunny = "^1.1.6"
+django-pgcrypto-fields = "^2.6.0"
+django-sage-encrypt = "^0.4.4"
+prospector = {version = "^1.10.3", extras = ["with_everything"]}
+django-extensions = "^3.2.3"
+django-weasyprint = "^2.3.0"
+weasyprint = "^61.2"
+reportlab = "^4.2.0"
+python-gnupg = "^0.5.2"
+django-anymail = {extras = ["amazon-ses"], version = "^10.3"}
+django-tinymce = "^4.0.0"
+pyenchant = "^3.2.2"
+django-referrer-policy = "^1.0"
+celery = "^5.4.0"
+django-celery-results = "^2.5.1"
+flower = "^2.0.1"
+pymupdf = "^1.24.3"
+django-celery-beat = "^2.6.0"
+install = "^1.3.5"
+django-smtp-ssl = "^1.0"
+django-defender = "^0.9.8"
+werkzeug = "^3.0.3"
+pyopenssl = "^24.1.0"
+filemagic = "^1.6"
+filetype = "^1.2.0"
+django-progressbarupload = "^0.1.7"
+
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.6.0"
+black = "^23.11.0"
+djhtml = "^3.0.6"
+isort = "^5.13.2"
+djlint = "^1.31.1"
+kolo = "^2.17.0"
+django-debug-toolbar = "^4.2.0"
+poetry-plugin-export = "^1.6.0"
+bandit = "^1.7.8"
+
+[tool.poetry.group.test.dependencies]
+django-webtest = "^1.9.11"
+coverage = "^7.3.4"
+django-discover-runner = "^1.0"
+mock = "^5.1.0"
+model-bakery = "^1.17.0"
+factory-boy = "^3.3.0"
+selenium = "^4.16.0"
+faker = "^22.0.0"
+tblib = "^3.0.0"
+pytest-django = "^4.7.0"
+doppler-env = "^0.3.1"
+isort = "^5.13.2"
+
+
+
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "black"
+
+[tool.black]
+line-length = 200
+target-version = ['py37']
+extend-exclude = "nhhc/compliance/views.py, nhhc/nhhc/utils/upload.py"
+
+[tool.coverage.report]
+exclude_also = [
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+    ]
+omit = [
+    "*/migrations/*",
+    ]
+ignore_errors = true
+skip_empty = true
+
+[tool.djlint]
+ignore="H021 H006"
+
+[tool.pylint.messages_control]
+max-line-length = 300
+
+disable = [
+    "missing-module-docstring",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "too-few-public-methods",
+    "line-too-long",
+    "trailing-whitespace",
+]
+
+[tool.pytest.ini_options]
+# -- recommended but optional:
+python_files = ["test_*.py", "*_test.py", "testing/python/*.py"]
+
+[tool.kolo]
+use_rust = false

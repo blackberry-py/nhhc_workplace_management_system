@@ -1,95 +1,44 @@
 
-// SECTIION - Client Submission Filtering & Pagination
-const $submissions = $(".client-submission")
-const $page = document.querySelector('.page');
-const $pagination = document.querySelector('.pagination');
-const $paginationList = document.querySelector('.pagination__list');
-const $submissionSearch = document.getElementById('searchbar');
-const itemTotal = 10;
 
+// Preloaded Logic
 
+document.addEventListener("DOMContentLoaded", () => {
+  // Simulate an API request or any async operation
+  setTimeout(() => {
+      hideLoader();
+      showContent();
+  }, 3000); // Replace with your actual data loading logic and time
+
+  function hideLoader() {
+      $("#loader-3").fadeOut(1800)
+     // const loader = document.getElementById("loader-3");
+     // loader.style.display = "none";
+  }
+
+  function showContent() {
+      $("#body-hide").fadeIn(1600)
+    //  const content = document.getElementById("body-hide");
+    //  content.style.display = "block";
+  }
+});
 // hide all
 function hideAll() {
   $submissions.each((field) => {
     field.hidden = true
   })
 }
+function togglePaginationNavigtationVisibility() {
+  var paginationNavigation = document.getElementById("pagination-navigation")
+  if (paginationNavigation.style.display === "none") {
+    paginationNavigation.style.display = "block";
+  } else {
+    paginationNavigation.style.display = "none";
+  }
+}
+if ($submissionSearch) {
+  $submissionSearch.addEventListener('input', togglePaginationNavigtationVisibility)
+}
 
-
-// display first 10
-// function displayRange(a, b) {
-//   hideAll();
-//   // display 0 - 1 students
-//   $submissions.slice(a, b).fadeIn();
-// }
-
-// displayRange(0, itemTotal);
-
-// create pagination links
-// let pagination = '';
-// for (var i = 0; i <= $submissions.length / 10 - 1; i++) {
-//   const listItemStyleWrapper = document.createElement('li')
-//   listItemStyleWrapper.classList.add("page-item")
-//   const listItemPage = document.createElement("a")
-//   listItemPage.innerHTML = i
-//   listItemPage.classList.add("page-link")
-// //   pagination += `
-// //     <li><span class ="page-link">${i}</span></li>
-// // `;
-//   $paginationList.appendChild(listItemPage);
-// }
-
-// click on pagination num,
-// pass into display range
-// calc and show range
-// $('body').on('click', '.page-link', function () {
-
-//   hideAll();
-
-//   // get text number 1 - 5
-//   // get ranges for start and end
-//   let paginationText = Number($(this).text());
-//   let startFrom = paginationText * itemTotal + paginationText;
-//   let end = paginationText * itemTotal + paginationText + itemTotal;
-
-//   // display ranges
-//   displayRange(startFrom, end);
-
-// });
-// $submissionSearch.addEventListener('keyup', function () {
-//   hideAll();
-//   $submissions.each(() => {
-//     $(this).removeClass("result");
-//   });
-
-
-  // // value of searched
-  // var text = $(this).val().toLowerCase();
-  // // results of search
-  // var results = $("tr.client-submission td:contains('" + text.toLowerCase() + "')");
-
-  // results.addClass("result");
-
-
-  // if student has result class
-  // dispaly
-  // else hide
-
-  // if ($submissions.hasClass('result')) {
-  //   $('.result').show();
-  //   $submissions.removeClass('result');
-
-  // }
-
-// });
-
-// $submissionSearch.addEventListener('keyup', function () {
-//   if (!this.value) {
-//     hideAll();
-//     displayRange(0, itemTotal);
-//   }
-
-// });
 
 $(document).ready(function () {
   const tabs = $('.tab').click(function () {
@@ -103,44 +52,40 @@ $(document).ready(function () {
     }
   });
 });
+if ($submissionSearch) {
+  var options = {
+    valueNames: ['first-name', 'last-name', 'desired-service', 'phone']
+  };
+  var submissionList = new List('list-looker', options)
+}
 
 
-
-
-// function search_entires() {
-//   let input = document.getElementById('searchbar').value
-//   input = input.toLowerCase();
-//   let x = document.getElementsByClassName('client-submission');
-
-//   for (i = 0; i < x.length; i++) {
-//     if (!x[i].innerHTML.toLowerCase().includes(input)) {
-//       x[i].style.display = "none";
-//     }
-
-//   }
-// }
-// document.getElementById('searchbar').addEventListener('input', search_entires)
-// document.getElementById('searchbar').addEventListener('change', search_entires)
-// document.getElementById('searchbar').addEventListener('keyup', search_entires)
-// document.getElementById('searchbar').addEventListener('keydown', search_entires)
-// document.getElementById('searchbar').addEventListener('focus', search_entires)
-// document.getElementById('searchbar').addEventListener('blur', search_entires)
-
-
-
-// !SECTION
 
 // SECTION - JQUERY AJAX Post Request to update
-function ntfy(message) {
-  alert(message)
-  console.info('Getting Ready to Reload Page')
-  reloadPage()
-};
 function reloadPage() {
   document.location.reload()
   setTimeout(document.location.reload(), 3000)
 
 }
+function ntfy(message) {
+  var toast = new Toastify({
+    text: message,
+    duration: 3000,
+    close: true,
+    gravity: "top", // `top` or `bottom`
+    position: "center", // `left`, `center` or `right`
+    stopOnFocus: true, // Prevents dismissing of toast on hover
+    style: {
+      background: "linear-gradient(to right, #00b09b, #96c93d)",
+    },
+    callback: reloadPage(),
+  })
+  toast.showToast();
+  console.info('Getting Ready to Reload Page')
+};
+
+
+
 function SuccessfulUpdate() {
   notifications.snackbar('Submission Marked as Reviewed');
 }
@@ -158,18 +103,29 @@ function markSubmissionAsReviewed(pk) {
   });
 };
 
-function hireApplicant(pk) {
+
+
+function rejectApplicant(pk) {
   let data = {
     "pk": pk
   }
-  data = JSON.stringify(data)
-  $.ajax({
-    url: '/hired',
-    data: data,
-    type: 'POST',
-    success: ntfy("Applicant Hired - Email and Username Have Been Emailed")
-  }
-  )
+  console.log(`Hiring Applicant with primary key ${pk}`);
+
+  var request = $.post('/rejected', data).done((response) => {
+    if (response.success) {
+      console.log(response)
+      swal('SUCCESS!', response, 'success').then(() => {
+        window.location.reload();
+      })
+    } else {
+      console.error(`Done Response: ${response}`)
+      swal('ERROR: Applicant Not Rejected', `Applicant Not Rejected: ${response.message}`, 'error');
+    }
+  })
+    .fail((xhr, status, error) => {
+      console.error(response)
+      swal("Error: Applicant Not Rejected", `Error Rejecting Applicant:\n${error}\n \nStatus Code: ${status}`, "error");
+    });
 };
 
 
@@ -223,3 +179,107 @@ function postAnnouncement(title, message, message_type) {
 
 // SECTION - SNACKBAR Notification
 /* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
+
+function confirmTermination(pk) {
+  let sentData = {
+    "pk": pk
+  }
+  console.log(`Sending Termination Request with Employee ID ${pk}`);
+
+  Swal.fire({
+    title: "Confirm Termination",
+    html:"<p>You are about to terminate employment for this employee.\n It will lock them out of their account and archive their compliance profile.</p> <p><strong>Note: </strong>Archived profiles will still have the documents available, but cannot be modified.</p>  <br/> <p><strong>Please type \"terminate\" to confirm employment termination</strong></p> ",
+    showCancelButton: true,
+    icon: "warning",
+    input: "text",
+    confirmButtonText: "Terminate",
+    showLoaderOnConfirm: true,
+    preConfirm: (input) => {
+      if (input === "terminate"){
+        try {
+          var request = $.post("/terminate", sentData, (data, status) => {
+            Swal.fire({
+              title: "Employment Terminated!",
+              icon: "success" ,
+              text: `Employee Terminated. They have been notified via email.`,
+              didClose: () => { window.location.reload() }
+            });
+          })
+        } catch (error) {
+          Swal.showValidationMessage(`Request failed: ${error}`);
+        }
+      } else {
+        Swal.showValidationMessage('Please type "terminate" exactly to confirm')
+      }},
+    allowOutsideClick: () => !Swal.isLoading(),
+  })
+}
+
+
+
+function confirmHire(pk) {
+  let sentData = {
+    "pk": pk
+  }
+  console.log(`Hiring Applicant with primary key ${pk}`);
+
+  Swal.fire({
+    title: "Confirm Hire",
+    html:"You are about to start employment and create and employment profile.",
+    showCancelButton: true,
+    icon: "warning",
+    confirmButtonText: "Hire",
+    showLoaderOnConfirm: true,
+    preConfirm: () => {
+      try {
+        var request = $.post("/hired", sentData, (data, status) => {
+          Swal.fire({
+            title: "Success!",
+            icon: "success" ,
+            html: `<h1>Employee Hired.</h1>\n ${data}`,
+            didClose: () => { window.location.href(`/employee/${data.employee_id}`) }
+          });
+        })
+      } catch (error) {
+        Swal.showValidationMessage(`Request failed: ${error}`);
+      }
+    },
+    allowOutsideClick: () => !Swal.isLoading(),
+  })
+}
+
+function confirmRejection(pk) {
+  let sentData = {
+    "pk": pk
+  }
+  console.log(`Rejecting Applicant with primary key ${pk}`);
+
+  Swal.fire({
+    title: "Confirm Rejection",
+    text:"You are about to reject this applicant. This will send a email of notifying the applicant",
+    showCancelButton: true,
+    icon: "warning",
+    confirmButtonText: "Reject",
+    showLoaderOnConfirm: true,
+    preConfirm: () => {
+      try {
+        var request = $.post("/rejected", sentData, (data, status) => {
+          Swal.fire({
+            title: "Applicant Rejected",
+            icon: "info" ,
+            text: `Applicant rejected. \n They have been  notified by email`,
+            didClose: () => { window.location.reload() }
+          });
+        })
+      } catch (error) {
+        Swal.showValidationMessage(`Request failed: ${error}`);
+      }
+    },
+    allowOutsideClick: () => !Swal.isLoading(),
+  })
+}
+
+function dismissLoadSpinner(){
+  document.getElementById('load-cover').style.display = "none";
+  document.getElementById('body-hide').style.display = "block";
+}

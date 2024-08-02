@@ -1,10 +1,11 @@
 {% load static %}
+{% load unreviewed_requests %}
 <nav class="sidenav navbar navbar-vertical  fixed-left  navbar-expand-xs navbar-light bg-white" id="sidenav-main">
   <div class="scrollbar-inner">
     <!-- Brand -->
     <div class="sidenav-header  align-items-center">
-      <a class="navbar-brand" href="{% url 'index' %}">
-        <img height="60px" width="60px" id="sidenav-logo" src="{% static 'img/logo-dark.png' %}" alt="LOGO" class="navbar-brand-img"/>
+      <a class="navbar-brand" href="{% url 'homepage' %}">
+        <img height="120px" width="120px" id="sidenav-logo" src="{% static 'img/CareNettLogo.png' %}" alt="CareNet-LOGO" class="navbar-brand-img"/>
       </a>
     </div>
     <div class="navbar-inner">
@@ -13,68 +14,77 @@
         <!-- Nav items -->
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link {% if 'profile' in segment %} active {% endif %}" href="{% url 'dashboard' %}">
+            <a class="nav-link {% if request.path == '/dashboard' %} active {% endif %}" href="{% url 'dashboard' %}">
               <i class="ni ni-shop text-blue"></i>
               <span class="nav-link-text">Home</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if 'profile' in segment %} active {% endif %}" href="{% url 'profile' %}">
+            <a class="nav-link {% if request.path == '/profile' %} active {% endif %}" href="{% url 'profile' %}">
               <i class="ni ni-single-02 text-yellow"></i>
               <span class="nav-link-text">Personal Information</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if 'tables' in segment %} active {% endif %}" href="{% url 'profile' %}">
-              <i class="ni ni-paper-diploma text-default"></i>
+            <a class="nav-link {% if request.path == '/training' %} active {% endif %}" href="{% url 'coming-soon' %}">
+              <i class="ni ni-paper-diploma text-green"></i>
               <span class="nav-link-text">Training</span>
             </a>
           </li>
-
-        </ul>
-        <!-- Divider -->
-        {% if user.is_staff %}
-        <hr class="my-3"/>
-        <!-- Heading -->
-        <h6 class="navbar-heading p-0 text-muted">
-          <span class="docs-normal">Administrative Funtions</span>
-        </h6>
-        <!-- Navigation -->
-        <ul class="navbar-nav mb-md-3">
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'profile' %}">
-              <i class="ni ni-chart-bar-32 text-green"></i>
-              <span class="nav-link-text">Reporting</span>
+            <a class="nav-link {% if request.path == '/announcements' %} active {% endif %}" href="{% url 'announcements' %}">
+              <i class="ni ni-notification-70 text-red"></i>
+              <span class="nav-link-text">Announcements</span>
             </a>
           </li>
-                    <li class="nav-item">
-            <a class="nav-link" href="{% url 'inquiries' %}">
-              <i class="ni ni-collection text-purple"></i>
-              <span class="nav-link-text">Service Inquiries</span>
-            </a>
-          </li>
-                         <li class="nav-item">
-            <a class="nav-link" href="{% url 'applicants-list' %}">
-              <i class="ni ni-badge text-black"></i>
-              <span class="nav-link-text">Employment Applications</span>
-            </a>
-          </li>
-                          <li class="nav-item">
-            <a class="nav-link" href="{% url 'roster' %}">
-              <i class="ni ni-bullet-list-67 text-blue"></i>
-              <span class="nav-link-text">Employee Roster</span>
-            </a>
-          </li>
-          {% else %}
-          {% endif %}
-            <li class="nav-item">
-            <a class="nav-link" href="{% url 'logout' %}">
-              <i class="ni ni-curved-next text-yellow"></i>
-              <span class="nav-link-text">Log Off</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</nav>
+          <li class="nav-item">
+            <a class="nav-link    href="payroll-exception-modal" uk-toggle id="side-nav-exception-trigger">
+                                                                                                          <i class="ni ni-calendar-grid-58 text-purple"></i>
+                                                                          <span class="nav-link-text">Timesheet Exceptions</span>
+                                                        </a>
+                                                        </li>
+                                                        </ul>
+                                                        <!-- Divider -->
+                                                        {% if user.is_staff %}
+                                                          <hr class="my-3"/>
+                                           <!-- Heading -->
+                                           <h6 class="navbar-heading p-0 text-muted">
+                                                                    <span class="docs-normal">Administrative Funtions</span>
+                                                      </h6>
+                                                      <!-- Navigation -->
+                                                      <ul class="navbar-nav mb-md-3">
+                                                         <li class="nav-item">
+                                                 <a class="nav-link {% if request.path == '/reporting' %} active {% endif %}" href="{% url 'coming-soon' %}">
+                                                                                                                                          <i class="ni ni-chart-bar-32 text-green"></i>
+                                                                         <span class="nav-link-text">Reporting</span>
+                                                            </a>
+                                                            </li>
+                                                            <li class="nav-item">
+                                                 <a class="nav-link {% if request.path == '/inquiries' %} active {% endif %}" href="{% url 'inquiries' %}">
+                                                                                                                                        <i class="ni ni-collection text-purple">{% client_count %} </i>
+                                                                        <span class="nav-link-text">Service Inquiries</span>
+                                                            </a>
+                                                            </li>
+                                                            <li class="nav-item">
+                                                 <a class="nav-link" href="{% url 'applicants-list' %}">
+                                                                                     <i class="ni ni-badge text-black"> {% app_count %} </i>
+                                                                  <span class="nav-link-text">Employment Applications</span>
+                                                            </a>
+                                                            </li>
+                                                            <li class="nav-item">
+                                                 <a class="nav-link" href="{% url 'roster' %}">
+                                                                            <i class="ni ni-bullet-list-67 text-blue"></i>
+                                                                          <span class="nav-link-text">Employee Roster</span>
+                                                            </a>
+                                                            </li>
+                                                          {% else %}
+                                                          {% endif %}
+
+                                                          </ul>
+                                                          <div class="d-flex justify-content-center flex-column">
+                                                                           <iframe src="https://status.netthandshome.care/badge?theme=dark" width="250" height="30" frameborder="0" scrolling="no"></iframe>
+                                                                                                                                              </div>
+                                                                                                                                              </div>
+                                                                                                                                              </div>
+                                                                                                                                              </div>
+                                                                                                                                              </nav>

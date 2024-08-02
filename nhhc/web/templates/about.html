@@ -1,0 +1,131 @@
+{% extends "includes/base.html" %}
+{% load static %}
+{% block title %}
+    <title>Nett Hands Home Care - About Us</title>
+{% endblock title %}
+{% block main %}
+
+    <!-- Breadcrumb Begin -->
+    <div class="breadcrumb-option spad set-bg" data-setbg="{% static 'img/breadcrumb-bg.jpg' %}">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb__text">
+                        <h2>About us</h2>
+                        <div class="breadcrumb__links">
+                            <span>A Little Help, Makes a Big Difference</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- About Section Begin -->
+    <section class="about spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="about__pic">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <div class="about__pic__item about__pic__item--large set-bg"
+                                     data-setbg="{% static 'img/about-us-large.png' %}"></div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="about__pic__item set-bg" data-setbg="{% static '/img/about-us-helping.png' %}"></div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="about__pic__item set-bg" data-setbg="{% static '/img/about-heart-hands.png' %}"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="about__text">
+                        <div class="section-title">
+                            <h2>Who we are?</h2>
+                        </div>
+
+                        <div class="about__text__desc">
+                            <p>At Nett Hands we use the team approach which guarantees the best specialty care for each patient. The team may include skilled nurses, physical therapists, occupational therapists, medical social workers, speech therapists, and home health aides. Our staff delivers care under the supervision of the patient's primary physician and develops an individualized plan of care. </p>
+                            <div class="section-title">
+                                <h2>How We Work?</h2>
+                            </div>
+                            <p>We carefully screen our staff with extensive background checks, social security validation, and diligent reference checks.</p>
+                            <p>All staff are fully skilled, licensed, and or certified to administer professional health and/or social services.</p>
+                        </div>
+                        <div class="section-title">
+
+                            <h2>Accepted Insurance & Payors</h2>
+                        </div>
+                        <ul>
+                            <li>Medicare</li>
+                            <li>Medicaid</li>
+                            <li>Private Insurance</li>
+                            <li>Self-Pay</li>
+                            <li>Managed Care Organizations(MCO)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- About Section End -->
+
+    <!-- Testimonial Section Begin -->
+    <section class="testimonial spad set-bg" data-setbg="{% static 'img/about-sub-hero.png' %}">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-title center-title">
+                        <span>Loved By Clients & Employees</span>
+                        <h2>What people are saying?</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="testimonial__slider owl-carousel">
+                    <div class="col-lg-4">
+                        <div class="testimonial__item">
+                            <div class="testimonial__text">
+                                <p>Great place to work! Company has high regards & appreciative to the staff. Good pay rate & flexible work schedule.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="testimonial__item">
+                            <div class="testimonial__text">
+                                <p>Nett Hands is a singular delight. The care and concern shown to my love one was unparrelled. Highly Recommend.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="testimonial__item">
+                            <div class="testimonial__text">
+                                <p>Was so overwhelmed with how loved my family felt with the care that was giving. What a God send business.</p>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="testimonial__item">
+                            <div class="testimonial__text">
+                                <p>Nett Hands provided in-home care for my mother who had severe dementia. My family was very satisfied with the care and attention they provided her. The caregivers were very personable and cared about Mom's comfort and well-being. The owner was very accommodating to our schedule requirements and overall needs. </p>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Testimonial Section End -->
+
+{% endblock main %}

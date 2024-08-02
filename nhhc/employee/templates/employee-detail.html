@@ -1,0 +1,408 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} {{ type }} Employee - {{ submission.last_name }}, {{ submission.first_name }} {% endblock title %}
+{% load crispy_forms_tags %}
+{% load anonymize %}
+{% load humanize %}
+{% load widget_tweaks %}
+{% block content %}
+  <form class="d-none">
+
+    {% csrf_token %}
+  </form>
+
+  <script defer type="text/javascript">
+
+    function confirmTermination(pk) {
+
+
+      Swal.fire({
+        title: "Confirm Termination",
+        showCancelButton: true,
+        icon: "warning",
+        confirmButtonText: "Terminate",
+        input: "password",
+        html: `<p>Terry You are about to terminate employment for this employee.\n It will lock them out of their account and archive their compliance profile.</p> <p><strong>Note: </strong>Archived profiles will still have the documents available, but cannot be modified.</p>  <br/><br/><p>Please enter your CareNett password to confirm.</p>`,
+
+        preConfirm: (input) => {
+          console.log(`Sending Termination Request with Employee ID ${pk}`);
+          try {
+            var request = $.post("/employee/terminate/", {
+              pk: pk,
+              csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+              password: input
+            }, (data, status) => {
+              Swal.fire({
+                title: "Employment Terminated!",
+                icon: "success",
+                text: `Employee Terminated. They have been notified via email.`,
+                didClose: () => {
+                  window.location.reload();
+                },
+              });
+            });
+          } catch (error) {
+            Swal.showValidationMessage(`Request failed: ${error}`);
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      });
+    }
+
+    function confirmPromoteToAdmin(pk) {
+      let sentData =
+        console.log(`Sending Promotion Request with Employee ID ${pk}`);
+
+      Swal.fire({
+        title: "Confirm Privileges Grant",
+        html: '<p>You are about to issue enhanced CareNett Privileges for this employee.\n <strong>It will allow them to execute and access the administative functions</p></strong><br/><br/><p>Please type \"grant\" to confirm</p>',
+        showCancelButton: true,
+        icon: "warning",
+        input: "password",
+        confirmButtonText: "Grant",
+        showLoaderOnConfirm: true,
+        preConfirm: (input) => {
+          if (input) {
+            try {
+              var request = $.post("/employee/promote/", {
+                pk: pk,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                password: input
+              }, (data, status) => {
+                Swal.fire({
+                  title: "Administrtative Privileges Granted!",
+                  icon: "success",
+                  text: `The administative Privileges of this user have been granted`,
+                  didClose: () => {
+                    window.location.reload();
+                  },
+                });
+              });
+            } catch (error) {
+              Swal.showValidationMessage(`Request failed: ${error}`);
+            }
+          } else {
+            Swal.showValidationMessage(
+              'Please type CareNett  password to confirm'
+            );
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      });
+    }
+    function confirmDemoteToStandardUser(pk) {
+      let sentData = {
+        pk: pk,
+        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+      };
+      console.log(`Send=ing Promotion Request with Employee ID ${pk}`);
+
+      Swal.fire({
+        title: "Confirm Privileges Revocation",
+        html: '<p>You are about to revoke enhanced CareNett Privileges for this employee.\n <strong>It will disallow them to execute and access the administative functions</p></strong><br/><br/><p>Please enter your CareNett password to confirm.</p>',
+        showCancelButton: true,
+        icon: "warning",
+        input: "password",
+        confirmButtonText: "Revoke",
+        showLoaderOnConfirm: true,
+        preConfirm: (input) => {
+          if (input) {
+            try {
+              var request = $.post("/employee/demote/", {
+                pk: pk,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                password: input
+              }, (data, status) => {
+                Swal.fire({
+                  title: "Administrtative Privileges Revoked!",
+                  icon: "success",
+                  text: `The administative Privileges of this user have been revoked`,
+                  didClose: () => {
+                    window.location.reload();
+                  },
+                });
+              });
+            } catch (error) {
+              Swal.showValidationMessage(`Request failed: ${error}`);
+            }
+          } else {
+            Swal.showValidationMessage(
+              'Please type enter CareNett Password'
+            );
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      });
+    }
+  </script>
+  {% if employee.termination_date is not None %}
+    <div id="terminated-notice" class="w-100 p-3 text-center sticky-top "><strong>Notice:</strong>This Profile is for a Terminated Employee</div>
+  {% endif %}
+  <div class="col-xl-8 order-xl-1">
+    <div class="card">
+      <div class="card-header">
+        <div class="row align-items-center">
+          <div class="col-8">
+            <h3 class="mb-0">Employee Details - {{ employee.last_name }}, {{ employee.first_name }}
+            </h3>
+            <div class=-"col-2">
+              <button class="btn btn-info" disabled>Print Employee Profile</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-12 mb-0 text-center">
+
+                <u><h1>Personal Information</h1></u>
+              </div>
+            </div>
+            <ul class="nav nav-tabs">
+              <li class="nav-item">
+                <a id="profile-tab" class="nav-link active" aria-current="page" href="{% url 'employee' pk=employee.employee_id %}">Profile</a>
+              </li>
+              <li class="nav-item">
+                <a id="compliance-tab" class="nav-link" href="{% url 'staff_update_compliance' pk=employee.employee_id %}">Compliance</a>
+              </li>
+            </ul>
+            <div class="row">
+              <div class="col-4">
+                <h3><strong>First Name:<br/> </strong></h3>
+                <p>{{ employee.first_name }}</p>
+              </div>
+              <div class="col-4">
+                <h3><strong>Middle Name:<br/> </strong></h3>
+                <p>{{ employee.middle_name }}</p>
+              </div>
+              <div class="col-4">
+                <h3><strong>Last Name:</strong></h3>
+                <p>{{ employee.last_name }}</p>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-4">
+                <h3><strong>Gender Identity:</strong></h3>
+                <p>{{ employee.get_gender_display }}</p>
+              </div>
+              <div class="col-4">
+                <h3><strong>Preferred Language:</strong></h3>
+                <p>{{ employee.get_language_display }}</p>
+              </div>
+              <div class="col-4">
+                <h3><strong>Social Security<sub>(Masked)</sub>:</strong></h3>
+                <p>{{ employee.social_security | anonymize }}</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-4">
+                <h3><strong>Racial Identity:</strong></h3>
+                <p>{{ employee.get_race_display }}</p>
+              </div>
+              <div class="col-4">
+                <h3><strong>Marital Status:</strong></h3>
+                <p>{{ employee.get_marital_status_display }}</p>
+              </div>
+              <div class="col-4">
+                <h3><strong>Education/Qualifications:</strong></h3>
+                <p>{{ employee.get_qualifications_display }}</p>
+              </div>
+            </div>
+            <hr class="my-4" />
+            <div class="row">
+              <div class="col-12 txt-center">
+                <u><h1>Contact Information</h1></u>
+
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-9">
+                <h3><strong>Street Address:</strong></h3>
+                <p>{{ employee.street_address1 }}</p>
+              </div>
+              <div class="col-3">
+                <h3><strong>Unit:</strong></h3>
+                <p>{{ employee.street_address2 }}</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-5">
+                <h3><strong>City:</strong></h3>
+                <p>{{ employee.city }}</p>
+              </div>
+              <div class="col-3">
+                <h3><strong>State:</strong></h3>
+                <p>{{ employee.state }}</p>
+              </div>
+              <div class="col-4">
+                <h3><strong>Zipcode:</strong></h3>
+                <p>{{ employee.zipcode }}</p>
+              </div>
+            </div>
+            <hr class="my-4" />
+
+            <div class="row text-center">
+              <u><h2>Emergency Contact Information</h2></u>
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <h3><strong>First Name:</strong></h3>
+                <p>{{ employee.emergency_contact_first_name }}</p>
+              </div>
+              <div class="col-6">
+                <h3><strong>Last Name:</strong></h3>
+                <p>{{ employee.emergency_contact_last_name }}</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <h3><strong>Relationship:</strong></h3>
+                <p>{{ employee.emergency_contact_relationship }}</p>
+              </div>
+              <div class="col-6">
+                <h3><strong>Phone:</strong></h3>
+                <p>{{ employee.emergency_contact_phone }}</p>
+              </div>
+            </div>
+            <hr class="my-4" />
+            <div class="row">
+              <h2>Position Details</h2>
+            </div>
+            <div class="row">
+              <div class="col-4">
+                <h3><strong>Position:</strong></h3>
+                <p>{{ compliance.get_job_title_display }}</p>
+              </div>
+              <div class="col-4">
+                <h3><strong>Hire Date:</strong></h3>
+                <p>{{ employee.hire_date }}</p>
+              </div>
+              <div class="col-4">
+                <h3><strong>Length of Employment:</strong></h3>
+                {% if employee.termination_date is None %}
+                  <p>{{ employee.hire_date | timesince  }}</p><em class="text-muted"><sub>- Current - </sub></em>
+                {% else %}
+                  <p>{{ employee.hire_date | timesince:employee.termination_date   }}</p><em class="text-danger"><sub>- Final - </sub></em>
+                {% endif %}
+              </div>
+              {% if employee.termination_date is not None %}
+                <div class="col-4">
+                  <h3><strong>Termination Date:</strong></h3>
+                  <p>{{ employee.termination_date }}</p>
+                </div>
+              {% endif %}
+            </div>
+            <div class="row">
+              <div class="col-4">
+                <h3><strong>Related to Client:</strong></h3>
+                <p>{{ employee.family_hca }}</p>
+              </div>
+            </div>
+            <div class="row text-center">
+              <h1><u>Supporting Documents</u></h1>
+              <div class="col-6 mx-auto">
+                <button class="btn btn-warning" disabled> Export All Signed Documentation </button>
+              </div>
+              <div class="row">
+                <div class="col-4">
+                  <h3><strong>GED/High School Diploma/Resume:</strong></h3>
+                  {% if employee.qualifications_verification != "NONE"%}
+                    <a href="{{ employee.qualifications_verification.url }}" target="_blank"><i class="fa-solid fa-file-pdf-o fa-2xl"></i></a>
+                  {% else %}
+                    <p>No File Available</p>
+                  {% endif %}
+                </div>
+                <div class="col-4">
+                  <h3><strong>CPR Verification:</strong></h3>
+                  {% if employee.cpr_verification != "NONE" %}
+                    <a href="{{ employee.cpr_verification.url }}" target="_blank"><i class="fa-solid fa-file-pdf-o fa-2xl"></i></a>
+                    </div>
+                  {% else %}
+                    <p>No File Available</p>
+                  {% endif %}
+                </div>
+                <div class="col-4">
+                  <h3><strong>Tax Witholding (w4 - Federal)</strong></h3>
+                  {% if employee.irs_w4_attestation != "NONE" %}
+                    <a href="{{ employee.irs_w4_attestation.url }}" target="_blank"><i class="fa-solid fa-file-pdf-o fa-2xl"></i></a>
+                  {% else %}
+                    <p>No Signed Document Available</p>
+                  {% endif %}
+                </div>
+                <div class="row">
+                  <div class="col-4">
+                    <h3><strong>I-9</strong></h3>
+                    {% if  employee.dhs_i9 != "NONE" %}
+                      <a href="{{ employee.dhs_i9.url }}" target="_blank"><i class="fa-solid fa-file-pdf-o fa-2xl"></i></a>
+                    {% else %}
+                      <p>No Signed Document Available</p>
+                    {% endif %}
+                  </div>
+                  <div class="col-4">
+                    <h3><strong>Do Not Drive Agreement</strong></h3>
+                    {% if employee.do_not_drive_agreement_attestation != "NONE" %}
+                      <a href="{{ employee.do_not_drive_agreement_attestation.url }}" target="_blank"><i class="fa-solid fa-file-pdf-o fa-2xl"></i></a>
+                    {% else %}
+                      <p>No Signed Document Available</p>
+                    {% endif %}
+                  </div>
+                  <div class="col-4">
+                    <h3><strong>IDPH Signed Background Authorization</strong></h3>
+                    {% if employee.idph_background_check_authorization != "NONE" %}
+                      <a href="{{ employee.idph_background_check_authorization.url }}" target="_blank"><i class="fa-solid fa-file-pdf-o fa-2xl"></i></a>
+                    {% else %}
+                      <p>No Signed Document Available</p>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="row">
+
+                  <div class="col-4">
+                    <h3><strong>IDOA General Policies</strong></h3>
+                    {% if employee.idoa_agency_policies_attestation != "NONE" %}
+                      <a href="{{ employee.idoa_agency_policies_attestation.url }}" target="_blank"><i class="fa-solid fa-file-pdf-o fa-2xl"></i></a>
+                    {% else %}
+                      <p>No Signed Document Available</p>
+                    {% endif %}
+                  </div>
+                  <div class="col-4">
+                    <h3><strong>HCA Job Duties </strong></h3>
+                    {% if employee.job_duties_attestation  != "NONE" %}
+                      <a href="{{ employee.job_duties_attestation.url }}" target="_blank"><i class="fa-solid fa-file-pdf-o fa-2xl"></i></a>
+                    {% else %}
+                      <p>No Signed Document Available</p>
+                    {% endif %}
+                  </div>
+
+                  <div class="col-4">
+                    <h3><strong>Tax Witholding (w4 - State) </strong></h3>
+                    {% if employee.state_w4_attestation != "NONE" %}
+                      <a href="{{ employee.state_w4_attestation.url }}" target="_blank"><i class="fa-solid fa-file-pdf-o fa-2xl"></i></a>
+                    {% else %}
+                      <p>No Signed Document Available</p>
+                    {% endif %}
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="w-full text-center">
+                {% if not employee.termination_date %}
+                  {% if request.user.is_superuser %}
+                    {% if employee.is_superuser %}
+                      <button id="demote-employee-btn" onclick="confirmDemoteToStandardUser({{ employee.employee_id }})" class="btn btn-warning" >Revoke Administrtative Privileges </button>
+
+                    {% else %}
+                      <button id="promote-employee-btn" onclick="confirmPromoteToAdmin({{ employee.employee_id }})" class="btn btn-warning" >Grant Administrtative Privileges </button>
+                    {% endif %}
+                  {% endif %}
+                  <button id="terminate-employee-btn" onclick="confirmTermination({{ employee.employee_id }})" class="btn btn-danger">Terminate Employment</button>
+                {% endif %}
+                <a  class="btn btn-secondary" href="{% url 'roster' %}">Back to Employee Roster</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+{% endblock content %}

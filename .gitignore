@@ -1,4 +1,5 @@
 # Django #
+# Django #
 *.log
 *.pot
 *.pyc
@@ -62,6 +63,7 @@ parts/
 sdist/
 var/
 wheels/
+*.whl
 *.egg-info/
 .installed.cfg
 *.egg
@@ -83,7 +85,7 @@ nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
-
+.rubberduck/*
 # Jupyter Notebook
 .ipynb_checkpoints
 
@@ -134,11 +136,34 @@ GitHub.sublime-settings
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-.historypoet
-.env*
-.flaskenv*
-!.env.project
-!.env.vault
-NettHandsHomeCare/node_modules/*
-NettHandsHomeCare/static/vendor/jvectormap-next/jquery-jvectormap.min.js.map
-*/credentials.json
+.history
+https:/*
+htmlcov/*
+.kolo/*
+nhhc/staticfiles/*
+.devcontainer/devcontainer.json
+.devcontainer/devcontainer.env
+.devcontainer/devcontainer.json
+.devcontainer/devcontainer.json
+nhhc/prospector_results_*
+nhhc/mediafiles/*
+nhhc/prospector.json
+/workspaces/NettHands/mypy-html.css
+
+mypy-html.css
+celeryd
+/workspaces/NettHands/nhhc/docs/node_modules/*
+/nhhc/docs/node_modules
+/.aws/*
+.devcontainer/devcontainer_init.sh
+/.aws
+nohup.out
+
+nhhc/attestations/*
+nhhc/restricted/attestations/do_not_drive_agreement_attestation/brooks_terry.pdf
+nhhc/restricted/attestations/idoa_agency_policies_attestation/brooks_terry.pdf
+
+nhhc/restricted/*
+.envrc
+
+postgres_ssl.crt
