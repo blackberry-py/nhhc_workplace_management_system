@@ -1,0 +1,14 @@
+inputSet:
+  name: Build_NettHandsHomeCare_Portal_NettHands_1717122866762-pr-trigger-input-set
+  identifier: Build_NettHandsHomeCare_Portal_NettHands_1717122866762prtriggerinputset
+  orgIdentifier: default
+  projectIdentifier: default_project
+  pipeline:
+    identifier: Build_NettHandsHomeCare_Portal_NettHands_1717122866762
+    properties:
+      ci:
+        codebase:
+          build:
+            type: PR
+            spec:
+              number: <+trigger.prNumber>

@@ -1,9 +1,9 @@
 name: Render Deploy
 
 on:
-  workflow_call: 
+  workflow_call:
     inputs:
-      render-api-key:  
+      render-api-key:
         type: string
 
 jobs:

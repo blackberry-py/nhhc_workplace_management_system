@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "netthandshomecare"
+version = "0.1.0"
+description = "Front-End website and web application for Nett Hands Home care"
+authors = ["Terry Brooks, Jr. <Terry.Arthur@BrooksJr.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+Django = ">=3.2.19"
+python-dotenv = "^1.0.0"
+psycopg2-binary = "^2.9.6"
+django-crispy-forms = "^2.0"
+crispy-bootstrap4 = "^2022.1"
+pendulum = "^2.1.2"
+django-phonenumber-field = {extras = ["phonenumberslite"], version = "^7.1.0"}
+django-localflavor = "^4.0"
+whitenoise = "^6.5.0"
+gunicorn = "^22.0.0"
+djlint = "^1.31.1"
+six = "^1.16.0"
+supervisor = "^4.2.5"
+boto3 = "^1.28.2"
+google-api-python-client = "^2.93.0"
+google-cloud-storage = "^2.10.0"
+django-recaptcha = "^3.0.0"
+django-cors-headers = "^4.2.0"
+django-admin-env-notice = "^1.0"
+loguru = "^0.7.0"
+django-ip-restriction = "^1.1.1"
+django-ipware = "^5.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
