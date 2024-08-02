@@ -4,7 +4,7 @@ global:
 #   - url: https://prometheus-prod-10-prod-us-central-0.grafana.net/api/prom/push
 #     basic_auth:
 #       username: 390644
-#       password: glc_eyJvIjoiNjI5NDg1IiwibiI6InN0YWNrLTM0NTE1Mi1pbnRlZ3JhdGlvbi00dWhuODRtOG85IiwiayI6IlU3YW02WVE0MnhRMDRyanBjNFEwd0cxNiIsIm0iOnsiciI6InVzIn19
+#       password: ${GRAFANA_TOKEN}
 scrape_configs:
 #  - job_name: server-hardware
 #    scrape_interval: 4m
