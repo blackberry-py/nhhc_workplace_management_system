@@ -65,3 +65,59 @@
 <script src="{% static 'js/argon.js' %}" defer></script>
 <script src="{% static 'js/pagination.js' %}" defer></script>
 <script type="module" src="{% static 'js/main.js' %}" ></script>
+
+ 
+
+    <script defer>
+        $(document).ready(function () {
+            function  setSideBNavToActive(){
+                $('.nav-link').each(function () {
+                    is_prop = $(this).prop('active', true);
+                    is_attr = $(this).attr('active', true);
+                    is_attr2 = $(this).is(":active")
+                    if (is_prop){
+                        console.log(`${this.id} is a Prop`)
+                    }
+                    else if (is_attr) {
+                        console.log(`${this.id} is a attr 1`)
+                    }
+                    else if (is_attr) {
+                        console.log(`${this.id} is a attr`)
+                    }
+                    else {
+                        console.error('Keep Looking')
+                    }
+                })
+            }
+    
+            function calculateExceptionHours(start, end) {
+            /**
+             * Calculates the difference in hours between two time values.
+             *
+             * Args:
+             *     start: The starting time value in the format 'HH:MM:SS'.
+             *     end: The ending time value in the format 'HH:MM:SS'.
+             *
+             * Returns:
+             *     int: The difference in hours between the two time values.
+             */
+    
+            // Parse the start and end times
+                const startTime = new Date(`1970-01-01T${start}Z`);
+                const endTime = new Date(`1970-01-01T${end}Z`);
+    
+            // Calculate the difference in milliseconds
+                const diff = endTime - startTime;
+    
+            // Convert milliseconds to hours
+                const diffInHours = diff / (1000 * 60 * 60);
+    
+                return Math.floor(diffInHours);
+            }
+            $('#exception-start').change(() => {calculateExceptionHours($('#exception-start').val, $('#exception-end').val)})
+            $('#exception-end').change(() => {calculateExceptionHours($('#exception-start').val, $('#exception-end').val)})
+        })
+    </script>
+    
+
+ 

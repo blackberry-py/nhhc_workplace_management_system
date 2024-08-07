@@ -190,6 +190,7 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
     "defender.middleware.FailedLoginMiddleware",
     "django.middleware.cache.FetchFromCacheMiddleware",
+    "django_require_login.middleware.LoginRequiredMiddleware",
     "django_prometheus.middleware.PrometheusAfterMiddleware",
 ]
 # SECTION - Database and Caching
@@ -280,6 +281,9 @@ ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 LOGIN_REDIRECT_URL = "/dashboard"
 LOGIN_URL = "/login"
 LOGOUT_REDIRECT_URL = LOGIN_URL
+REQUIRE_LOGIN_PUBLIC_URLS = (LOGIN_URL, LOGOUT_REDIRECT_URL)
+REQUIRE_LOGIN_PUBLIC_URLS = (r"^/api/.*", r"^/metrics")
+
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = False
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"

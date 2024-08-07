@@ -1,10 +1,10 @@
 global:
   scrape_interval: 60s
-# remote_write:
-#   - url: https://prometheus-prod-10-prod-us-central-0.grafana.net/api/prom/push
-#     basic_auth:
-#       username: 390644
-#       password: ${GRAFANA_TOKEN}
+remote_write:
+  - url: https://prometheus-prod-10-prod-us-central-0.grafana.net/api/prom/push
+    basic_auth:
+      username: 390644
+      password: ${GRAFANA_TOKENS}
 scrape_configs:
 #  - job_name: server-hardware
 #    scrape_interval: 4m
@@ -23,6 +23,13 @@ scrape_configs:
    static_configs:
       - targets:
           - localhost:8000
+ - job_name: "healthchecks"
+   scrape_interval: 60s
+   scheme: https
+   metrics_path: https://healthchecks.io/projects/36178f1d-0a06-4617-aad7-da10203686ae/metrics/PRMhpe46xOe43JSY2zVNb9iKoLboEzJE
+   static_configs:
+      - targets: ["healthchecks.io"]
+
 storage:
   tsdb:
     out_of_order_time_window: 30m

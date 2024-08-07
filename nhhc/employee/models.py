@@ -436,3 +436,7 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
         verbose_name = "Agency Employee"
         verbose_name_plural = "Agency Employees"
         get_latest_by = "-hire_date"
+        indexes = [
+            models.Index(fields=["username"], name="username_idx"),
+            models.Index(fields=["first_name"], name="first_name_idx"),
+        ]

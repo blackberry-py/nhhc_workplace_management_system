@@ -13,10 +13,10 @@ from django.utils.translation import gettext_lazy as _
 from formset.fields import Activator
 from formset.ranges import DateTimeRangeField, DateTimeRangePicker
 from formset.renderers import ButtonVariant
-from formset.widgets import Button, DateCalendar, UploadedFileInput
+from formset.widgets import Button, DatePicker, UploadedFileInput
 from portal.models import PayrollException
-
-
+from arrow import now
+from datetime import timedelta
 def calculateExceptionHours(start: int, end: int) -> int:
     """
     Calculates the difference in hours between two time values.
@@ -61,10 +61,13 @@ class HoursExceptionField(FormsField):
 
 class PayrollExceptionForm(ModelForm):
     captcha = ReCaptchaField()
-    exception_date = DateField(widget=DateCalendar)
+    exception_date = DateField(widget=DatePicker(attrs={
+            'min': now().isoformat(),
+            'max': (now() + timedelta(weeks=4)).isoformat(), "date-format": "iso"}))
     exception_start_time = TimeField(widget=widgets.TimeInput)
     exception_end_time = TimeField(widget=widgets.TimeInput)
-
+    
+    
     class Meta:
         model = PayrollException
         fields = ("exception_date", "exception_start_time", "exception_end_time", "reason")
@@ -94,21 +97,19 @@ class PayrollExceptionForm(ModelForm):
             Row(Column("exception_date", css_class="form-group col-12"), css_class="form-row"),
             Row(Column("reason", css_class="form-group col-12"), css_class="form-row"),
             Row(
-                Column("exception_start_time", css_id="exception-start", css_class="form-group col-4"),
-                Column("exception_end_time", css_id="exception-end", css_class="form-group col-4"),
-                Column("exception_hours", css_id="exception-hours", css_class="form-group col-4"),
+                Column("exception_start_time", css_id="exception-start-time", css_class="form-group col-4"),
+                Column("exception_end_time", css_id="exception-end-time", css_class="form-group col-4"),
                 css_class="form-row",
             ),
             Row(
-                Column("captcha", css_class="form-group col-8"),
+                Column("captcha", css_class="form-group col-6"),
                 HTML(
-                    '''                  <div class="form-group col-4 mb-0">
-                 <label class="form-label">Number of Hours</label>
-                 </div>
-                 <div class="col-6">
+                    '''                  
+                <div class="form-group col-6 mb-0">
+                 <label class="form-label">Number of Hours<em>Auto-Calulated</em></label>
                  <h5 class="textinput form-control" id="exception-hours" readonly>0</h5>
                  </div>
-                 </div> """
+                 </div>
                     ),'''
                 ),
                 css_class="form-row",
