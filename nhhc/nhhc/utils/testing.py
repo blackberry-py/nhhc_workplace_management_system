@@ -55,7 +55,7 @@ def generate_mock_ZipCodeField() -> str:
     postal_code = str(random.randint(10000, 99999))
 
     # Checks if the generated zip code is either "10000" or "99999" and recureively regenerates a nw random 5 digit sequence.
-    if postal_code in ["10000", "99999"]:
+    if postal_code in {"10000", "99999"}:
         return generate_mock_ZipCodeField()
 
     return postal_code
@@ -136,7 +136,7 @@ def generate_mock_ZipCodeField() -> str:
     postal_code = str(random.randint(10000, 99999))
 
     # Checks if the generated zip code is either "10000" or "99999" and recureively regenerates a nw random 5 digit sequence.
-    if postal_code in ["10000", "99999"]:
+    if postal_code in {"10000", "99999"}:
         return generate_mock_ZipCodeField()
 
     return postal_code
@@ -190,9 +190,8 @@ def generate_random_encrypted_email():
 
     if ciphertext.ok:
         return ciphertext.data
-    else:
-        logger.error("Error: Encryption failed.")
-        raise RuntimeError("Value Not Encrypted")
+    logger.error("Error: Encryption failed.")
+    raise RuntimeError("Value Not Encrypted")
 
 
 def generate_random_encrypted_char():
@@ -201,7 +200,7 @@ def generate_random_encrypted_char():
     gpg = gnupg.GPG()
     chars = string.ascii_lowercase + string.ascii_uppercase
     length = random.randint(1, 60)
-    raw_char = "".join(random.choice(chars) for i in range(length))
+    raw_char = "".join(random.choice(chars) for _ in range(length))
     private_key = settings.ENCRYPT_PRIVATE_KEY
     public_key = settings.ENCRYPT_PUBLIC_KEY
     import_result = gpg.import_keys(public_key)
@@ -215,6 +214,5 @@ def generate_random_encrypted_char():
 
     if ciphertext.ok:
         return ciphertext.data
-    else:
-        logger.error("Error: Encryption failed.")
-        raise RuntimeError("Value Not Encrypted")
+    logger.error("Error: Encryption failed.")
+    raise RuntimeError("Value Not Encrypted")

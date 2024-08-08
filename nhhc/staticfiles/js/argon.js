@@ -50,7 +50,7 @@ var Layout = (function() {
 
     // Set sidenav state from cookie
 
-    var $sidenavState = Cookies.get('sidenav-state') ? Cookies.get('sidenav-state') : 'pinned';
+    var $sidenavState = Cookies.get('sidenav-state') || 'pinned';
 
     if($(window).width() > 1200) {
         if($sidenavState == 'pinned') {
@@ -402,8 +402,8 @@ var Charts = (function() {
     function toggleTicks(elem, $chart) {
 
         if (elem.data('prefix') !== undefined || elem.data('prefix') !== undefined) {
-            var prefix = elem.data('prefix') ? elem.data('prefix') : '';
-            var suffix = elem.data('suffix') ? elem.data('suffix') : '';
+            var prefix = elem.data('prefix') || '';
+            var suffix = elem.data('suffix') || '';
 
 			// Update ticks
             $chart.options.scales.yAxes[0].ticks.callback = function(value) {
@@ -688,7 +688,7 @@ var ScrollTo = (function() {
 
     function scrollTo($this) {
         var $el = $this.attr('href');
-        var offset = $this.data('scroll-to-offset') ? $this.data('scroll-to-offset') : 0;
+        var offset = $this.data('scroll-to-offset') || 0;
         var options = {
             scrollTop: $($el).offset().top - offset
         };

@@ -23,7 +23,7 @@
             'yy': [number + ' aasta', number + ' aastat']
         };
         if (withoutSuffix) {
-            return format[key][2] ? format[key][2] : format[key][1];
+            return format[key][2] || format[key][1];
         }
         return isFuture ? format[key][0] : format[key][1];
     }

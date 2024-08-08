@@ -11,17 +11,14 @@ def tenure(context):
     print(context)
     start_date = arrow.get(context["hire_date"])
     current_date = arrow.now()
-    tenure = start_date.humanize(current_date, granularity=["year", "month", "day"])
-    return tenure
+    return start_date.humanize(current_date, granularity=["year", "month", "day"])
 
 
 @register.inclusion_tag("includes/_total_tenure.html", takes_context=True)
 def total_tenure(context):
     start_date = arrow.get(context["hire_date"])
     end_date = arrow.get(context["termination_date"])
-    # tenure = current_date - start_date
-    total_tenure = start_date.humanize(end_date, granularity=["year", "month", "day"])
-    return total_tenure
+    return start_date.humanize(end_date, granularity=["year", "month", "day"])
 
 
 # @register.filter()

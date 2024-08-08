@@ -266,8 +266,7 @@ const djdt = {
         window.removeEventListener("resize", djdt.ensureHandleVisibility);
     },
     updateOnAjax() {
-        const sidebarUrl =
-            document.getElementById("djDebug").dataset.sidebarUrl;
+        const {sidebarUrl} = document.getElementById("djDebug").dataset;
         const slowjax = debounce(ajax, 200);
 
         function handleAjaxResponse(storeId) {

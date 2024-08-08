@@ -172,10 +172,11 @@
 
                 // wrap item text with tag and add classes unless we are separating parent links
                 if ((!settings.allowParentLinks || settings.nestedParentLinks) || !containsAnchor) {
-                    var $wrap = $(nodes).wrapAll(wrapElement).parent();
-                    $wrap.addClass(prefix+'_row');
-                } else
-                    $(nodes).wrapAll('<span class="'+prefix+'_parent-link '+prefix+'_row"/>').parent();
+                  var $wrap = $(nodes).wrapAll(wrapElement).parent();
+                  $wrap.addClass(prefix+'_row');
+                } else {
+                  $(nodes).wrapAll('<span class="'+prefix+'_parent-link '+prefix+'_row"/>').parent();
+                }
 
                 if (!settings.showChildren) {
                     item.addClass(prefix+'_collapsed');
@@ -188,8 +189,9 @@
                 // create parent arrow. wrap with link if parent links and separating
                 var arrowElement = $('<span class="'+prefix+'_arrow">'+(settings.showChildren?settings.openedSymbol:settings.closedSymbol)+'</span>');
 
-                if (settings.allowParentLinks && !settings.nestedParentLinks && containsAnchor)
-                    arrowElement = arrowElement.wrap(wrapElement).parent();
+                if (settings.allowParentLinks && !settings.nestedParentLinks && containsAnchor) {
+                  arrowElement = arrowElement.wrap(wrapElement).parent();
+                }
 
                 //append arrow
                 $(nodes).last().after(arrowElement);

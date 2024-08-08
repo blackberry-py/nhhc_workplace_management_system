@@ -35,8 +35,4 @@ class RandomPasswordGenerator:
         # Generate a random password length between min_length and max_length
         password_length = random.randint(RandomPasswordGenerator.min_length, RandomPasswordGenerator.max_length)
 
-        # Generate a random password by randomly selecting a character from the character set
-        # and repeating this process until the desired password length is reached
-        random_password = "".join(random.choice(chars) for i in range(password_length))
-
-        return random_password
+        return "".join(random.choice(chars) for _ in range(password_length))

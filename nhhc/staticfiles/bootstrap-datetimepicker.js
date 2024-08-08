@@ -692,7 +692,7 @@
         }
 
         while (!startYear.isAfter(endYear, 'y')) {
-          html += '<span data-action="selectYear" class="year' + (startYear.isSame(date, 'y') && !unset ? ' active' : '') + (!isValid(startYear, 'y') ? ' disabled' : '') + '">' + startYear.year() + '</span>';
+          html += '<span data-action="selectYear" class="year' + (startYear.isSame(date, 'y') && !unset ? ' active' : '') + (isValid(startYear, 'y') ? '' : ' disabled') + '">' + startYear.year() + '</span>';
           startYear.add(1, 'y');
         }
 
@@ -835,7 +835,7 @@
             html.push(row);
           }
           // Creative Tim - we added a div inside each class hour for design purposes
-          row.append('<td data-action="selectHour" class="hour' + (!isValid(currentHour, 'h') ? ' disabled' : '') + '"><div>' + currentHour.format(use24Hours ? 'HH' : 'hh') + '</div></td>');
+          row.append('<td data-action="selectHour" class="hour' + (isValid(currentHour, 'h') ? '' : ' disabled') + '"><div>' + currentHour.format(use24Hours ? 'HH' : 'hh') + '</div></td>');
           currentHour.add(1, 'h');
         }
         table.empty().append(html);
@@ -854,7 +854,7 @@
             html.push(row);
           }
           // Creative Tim - we added a div inside each class minute for design purposes
-          row.append('<td data-action="selectMinute" class="minute' + (!isValid(currentMinute, 'm') ? ' disabled' : '') + '"><div>' + currentMinute.format('mm') + '</div></td>');
+          row.append('<td data-action="selectMinute" class="minute' + (isValid(currentMinute, 'm') ? '' : ' disabled') + '"><div>' + currentMinute.format('mm') + '</div></td>');
           currentMinute.add(step, 'm');
         }
         table.empty().append(html);
@@ -872,7 +872,7 @@
             html.push(row);
           }
           // Creative Tim - we added a div inside each class seconds for design purposes
-          row.append('<td data-action="selectSecond" class="second' + (!isValid(currentSecond, 's') ? ' disabled' : '') + '"><div>' + currentSecond.format('ss') + '</div></td>');
+          row.append('<td data-action="selectSecond" class="second' + (isValid(currentSecond, 's') ? '' : ' disabled') + '"><div>' + currentSecond.format('ss') + '</div></td>');
           currentSecond.add(5, 's');
         }
 
@@ -1226,14 +1226,13 @@
 
           if (!use24Hours) {
             if (date.hours() >= 12) {
-              if (hour !== 12) {
-                hour += 12;
-              }
-            } else {
-              if (hour === 12) {
-                hour = 0;
-              }
-            }
+                          if (hour !== 12) {
+                            hour += 12;
+                          }
+                        }
+            else if (hour === 12) {
+                            hour = 0;
+                          }
           }
           setValue(date.clone().hours(hour));
           actions.showPicker.call(picker);
@@ -1767,10 +1766,8 @@
         return picker;
       }
 
-      if (typeof maxDate === 'string') {
-        if (maxDate === 'now' || maxDate === 'moment') {
-          maxDate = getMoment();
-        }
+      if (typeof maxDate === 'string' && (maxDate === 'now' || maxDate === 'moment')) {
+            maxDate = getMoment();
       }
 
       var parsedDate = parseInputDate(maxDate);
@@ -1803,10 +1800,8 @@
         return picker;
       }
 
-      if (typeof minDate === 'string') {
-        if (minDate === 'now' || minDate === 'moment') {
-          minDate = getMoment();
-        }
+      if (typeof minDate === 'string' && (minDate === 'now' || minDate === 'moment')) {
+            minDate = getMoment();
       }
 
       var parsedDate = parseInputDate(minDate);

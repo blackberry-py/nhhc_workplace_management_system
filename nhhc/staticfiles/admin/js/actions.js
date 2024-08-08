@@ -138,13 +138,12 @@
             const lastCheckedIndex = checkboxes.findIndex(el => el === lastChecked);
             const startIndex = Math.min(targetIndex, lastCheckedIndex);
             const endIndex = Math.max(targetIndex, lastCheckedIndex);
-            const filtered = checkboxes.filter((el, index) => (startIndex <= index) && (index <= endIndex));
-            return filtered;
+            return checkboxes.filter((el, index) => (startIndex <= index) && (index <= endIndex));
         };
 
         Array.from(document.getElementById('result_list').tBodies).forEach(function(el) {
             el.addEventListener('change', function(event) {
-                const target = event.target;
+                const {target} = event;
                 if (target.classList.contains('action-select')) {
                     const checkboxes = affectedCheckboxes(target, shiftPressed);
                     checker(checkboxes, options, target.checked);

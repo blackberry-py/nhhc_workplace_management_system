@@ -120,7 +120,7 @@ Requires core.js and SelectBox.js.
             const clear_all = quickElement('a', selector_chosen, gettext('Remove all'), 'title', interpolate(gettext('Click to remove all chosen %s at once.'), [field_name]), 'href', '#', 'id', field_id + '_remove_all_link');
             clear_all.className = 'selector-clearall';
 
-            from_box.name = from_box.name + '_old';
+            from_box.name += '_old';
 
             // Set up the JavaScript event handlers for the select box filter interface
             const move_selection = function(e, elem, move_func, from, to) {

@@ -960,30 +960,30 @@
         }
 
         if (strict) {
-            if (format === 'MMM') {
-                ii = indexOf.call(this._shortMonthsParse, llc);
-                return ii !== -1 ? ii : null;
-            } else {
-                ii = indexOf.call(this._longMonthsParse, llc);
-                return ii !== -1 ? ii : null;
-            }
-        } else {
-            if (format === 'MMM') {
-                ii = indexOf.call(this._shortMonthsParse, llc);
-                if (ii !== -1) {
-                    return ii;
+                    if (format === 'MMM') {
+                        ii = indexOf.call(this._shortMonthsParse, llc);
+                        return ii !== -1 ? ii : null;
+                    } else {
+                        ii = indexOf.call(this._longMonthsParse, llc);
+                        return ii !== -1 ? ii : null;
+                    }
                 }
-                ii = indexOf.call(this._longMonthsParse, llc);
-                return ii !== -1 ? ii : null;
-            } else {
-                ii = indexOf.call(this._longMonthsParse, llc);
-                if (ii !== -1) {
-                    return ii;
-                }
-                ii = indexOf.call(this._shortMonthsParse, llc);
-                return ii !== -1 ? ii : null;
-            }
-        }
+        else if (format === 'MMM') {
+                        ii = indexOf.call(this._shortMonthsParse, llc);
+                        if (ii !== -1) {
+                            return ii;
+                        }
+                        ii = indexOf.call(this._longMonthsParse, llc);
+                        return ii !== -1 ? ii : null;
+                    }
+        else {
+                        ii = indexOf.call(this._longMonthsParse, llc);
+                        if (ii !== -1) {
+                            return ii;
+                        }
+                        ii = indexOf.call(this._shortMonthsParse, llc);
+                        return ii !== -1 ? ii : null;
+                    }
     }
 
     function localeMonthsParse (monthName, format, strict) {
@@ -1422,52 +1422,52 @@
         }
 
         if (strict) {
-            if (format === 'dddd') {
-                ii = indexOf.call(this._weekdaysParse, llc);
-                return ii !== -1 ? ii : null;
-            } else if (format === 'ddd') {
-                ii = indexOf.call(this._shortWeekdaysParse, llc);
-                return ii !== -1 ? ii : null;
-            } else {
-                ii = indexOf.call(this._minWeekdaysParse, llc);
-                return ii !== -1 ? ii : null;
-            }
-        } else {
-            if (format === 'dddd') {
-                ii = indexOf.call(this._weekdaysParse, llc);
-                if (ii !== -1) {
-                    return ii;
+                    if (format === 'dddd') {
+                        ii = indexOf.call(this._weekdaysParse, llc);
+                        return ii !== -1 ? ii : null;
+                    } else if (format === 'ddd') {
+                        ii = indexOf.call(this._shortWeekdaysParse, llc);
+                        return ii !== -1 ? ii : null;
+                    } else {
+                        ii = indexOf.call(this._minWeekdaysParse, llc);
+                        return ii !== -1 ? ii : null;
+                    }
                 }
-                ii = indexOf.call(this._shortWeekdaysParse, llc);
-                if (ii !== -1) {
-                    return ii;
-                }
-                ii = indexOf.call(this._minWeekdaysParse, llc);
-                return ii !== -1 ? ii : null;
-            } else if (format === 'ddd') {
-                ii = indexOf.call(this._shortWeekdaysParse, llc);
-                if (ii !== -1) {
-                    return ii;
-                }
-                ii = indexOf.call(this._weekdaysParse, llc);
-                if (ii !== -1) {
-                    return ii;
-                }
-                ii = indexOf.call(this._minWeekdaysParse, llc);
-                return ii !== -1 ? ii : null;
-            } else {
-                ii = indexOf.call(this._minWeekdaysParse, llc);
-                if (ii !== -1) {
-                    return ii;
-                }
-                ii = indexOf.call(this._weekdaysParse, llc);
-                if (ii !== -1) {
-                    return ii;
-                }
-                ii = indexOf.call(this._shortWeekdaysParse, llc);
-                return ii !== -1 ? ii : null;
-            }
-        }
+        else if (format === 'dddd') {
+                        ii = indexOf.call(this._weekdaysParse, llc);
+                        if (ii !== -1) {
+                            return ii;
+                        }
+                        ii = indexOf.call(this._shortWeekdaysParse, llc);
+                        if (ii !== -1) {
+                            return ii;
+                        }
+                        ii = indexOf.call(this._minWeekdaysParse, llc);
+                        return ii !== -1 ? ii : null;
+                    }
+        else if (format === 'ddd') {
+                        ii = indexOf.call(this._shortWeekdaysParse, llc);
+                        if (ii !== -1) {
+                            return ii;
+                        }
+                        ii = indexOf.call(this._weekdaysParse, llc);
+                        if (ii !== -1) {
+                            return ii;
+                        }
+                        ii = indexOf.call(this._minWeekdaysParse, llc);
+                        return ii !== -1 ? ii : null;
+                    } else {
+                        ii = indexOf.call(this._minWeekdaysParse, llc);
+                        if (ii !== -1) {
+                            return ii;
+                        }
+                        ii = indexOf.call(this._weekdaysParse, llc);
+                        if (ii !== -1) {
+                            return ii;
+                        }
+                        ii = indexOf.call(this._shortWeekdaysParse, llc);
+                        return ii !== -1 ? ii : null;
+                    }
     }
 
     function localeWeekdaysParse (weekdayName, format, strict) {
@@ -1871,15 +1871,13 @@
             }
 
             if (data) {
-                // moment.duration._locale = moment._locale = data;
-                globalLocale = data;
-            }
-            else {
-                if ((typeof console !==  'undefined') && console.warn) {
-                    //warn user if arguments are passed but the locale could not be set
-                    console.warn('Locale ' + key +  ' not found. Did you forget to load it?');
-                }
-            }
+                            // moment.duration._locale = moment._locale = data;
+                            globalLocale = data;
+                        }
+            else if ((typeof console !==  'undefined') && console.warn) {
+                                //warn user if arguments are passed but the locale could not be set
+                                console.warn('Locale ' + key +  ' not found. Did you forget to load it?');
+                            }
         }
 
         return globalLocale._abbr;
@@ -1939,29 +1937,27 @@
 
     function updateLocale(name, config) {
         if (config != null) {
-            var locale, tmpLocale, parentConfig = baseConfig;
-            // MERGE
-            tmpLocale = loadLocale(name);
-            if (tmpLocale != null) {
-                parentConfig = tmpLocale._config;
-            }
-            config = mergeConfigs(parentConfig, config);
-            locale = new Locale(config);
-            locale.parentLocale = locales[name];
-            locales[name] = locale;
-
-            // backwards compat for now: also set the locale
-            getSetGlobalLocale(name);
-        } else {
-            // pass null for config to unupdate, useful for tests
-            if (locales[name] != null) {
-                if (locales[name].parentLocale != null) {
-                    locales[name] = locales[name].parentLocale;
-                } else if (locales[name] != null) {
-                    delete locales[name];
+                    var locale, tmpLocale, parentConfig = baseConfig;
+                    // MERGE
+                    tmpLocale = loadLocale(name);
+                    if (tmpLocale != null) {
+                        parentConfig = tmpLocale._config;
+                    }
+                    config = mergeConfigs(parentConfig, config);
+                    locale = new Locale(config);
+                    locale.parentLocale = locales[name];
+                    locales[name] = locale;
+        
+                    // backwards compat for now: also set the locale
+                    getSetGlobalLocale(name);
                 }
-            }
-        }
+        else if (locales[name] != null) {
+                        if (locales[name].parentLocale != null) {
+                            locales[name] = locales[name].parentLocale;
+                        } else if (locales[name] != null) {
+                            delete locales[name];
+                        }
+                    }
         return locales[name];
     }
 
@@ -2464,7 +2460,7 @@
             getParsingFlags(config).bigHour = undefined;
         }
 
-        getParsingFlags(config).parsedDateParts = config._a.slice(0);
+        getParsingFlags(config).parsedDateParts = config._a.slice();
         getParsingFlags(config).meridiem = config._meridiem;
         // handle meridiem
         config._a[HOUR] = meridiemFixWrap(config._locale, config._a[HOUR], config._meridiem);
@@ -2610,7 +2606,7 @@
         } else if (typeof input === 'string') {
             configFromString(config);
         } else if (isArray(input)) {
-            config._a = map(input.slice(0), function (obj) {
+            config._a = map(input.slice(), function (obj) {
                 return parseInt(obj, 10);
             });
             configFromArray(config);
@@ -2897,7 +2893,7 @@
                     return this;
                 }
             } else if (Math.abs(input) < 16 && !keepMinutes) {
-                input = input * 60;
+                input *= 60;
             }
             if (!this._isUTC && keepLocalTime) {
                 localAdjust = getDateOffset(this);
@@ -3361,7 +3357,7 @@
             zone = 'Z';
         }
         var prefix = '[' + func + '("]';
-        var year = (0 <= this.year() && this.year() <= 9999) ? 'YYYY' : 'YYYYYY';
+        var year = (this.year() >= 0 && this.year() <= 9999) ? 'YYYY' : 'YYYYYY';
         var datetime = '-MM-DD[T]HH:mm:ss.SSS';
         var suffix = zone + '[")]';
 
@@ -3699,9 +3695,7 @@
             return weekOfYear(this, dow, doy).year;
         } else {
             weeksTarget = weeksInYear(input, dow, doy);
-            if (week > weeksTarget) {
-                week = weeksTarget;
-            }
+            week = Math.min(week, weeksTarget);
             return setWeekAll.call(this, input, week, weekday, dow, doy);
         }
     }

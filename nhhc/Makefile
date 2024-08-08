@@ -18,22 +18,22 @@ venv: ## Make a new virtual environment
 
 .PHONY: collect
 collect:
-	doppler -t dp.st.prod.PefnDyHvsR1qF82MyAi422RYu8LpMfxruyCgp7y1yaR run -- python  /src/app/manage.py collectstatic --no-input
+	doppler -t $(TOKEN) run -- python  /src/app/manage.py collectstatic --no-input
 
 .PHONY: install
 install: ## Make venv and install requirements
-	doppler  -t dp.st.prod.PefnDyHvsR1qF82MyAi422RYu8LpMfxruyCgp7y1yaR run  -- pip install -r ./requirements.txt
+	doppler  -t $(TOKEN) run  -- pip install -r ./requirements.txt
 	
 	
 freeze: ## Pin current dependencies
 	$(BIN)/pip freeze > ../requirements.txt
 
 migrate: ## Make and run migrations
-	doppler -t dp.st.prod.PefnDyHvsR1qF82MyAi422RYu8LpMfxruyCgp7y1yaR  run  --  	$(PYTHON_INTERPRETER) manage.py makemigrations
-	doppler -t dp.st.prod.PefnDyHvsR1qF82MyAi422RYu8LpMfxruyCgp7y1yaR  run  --  	$(PYTHON_INTERPRETER) manage.py migrate
+	doppler -t $(TOKEN)  run  --  	$(PYTHON_INTERPRETER) manage.py makemigrations
+	doppler -t $(TOKEN)  run  --  	$(PYTHON_INTERPRETER) manage.py migrate
 
 lint:
-	doppler -t dp.st.prod.PefnDyHvsR1qF82MyAi422RYu8LpMfxruyCgp7y1yaR  run  --  prospector  -w  pylint pyroma mypy dodgy mccabe bandit profile-validator > prospector_results_${CURRENTDATE}.json
+	doppler -t $(TOKEN)  run  --  prospector  -w  pylint pyroma mypy dodgy mccabe bandit profile-validator > prospector_results_${CURRENTDATE}.json
 
 db-shell: ## Access the Postgres Docker database interactively with psql. Pass in DBNAME=<name>.
 	docker exec -it container_name psql -d $(DBNAME)
@@ -41,7 +41,7 @@ db-shell: ## Access the Postgres Docker database interactively with psql. Pass i
 .PHONY: workers
 workers:
 	cd nhhc/
-	doppler run -t dp.st.prod.PefnDyHvsR1qF82MyAi422RYu8LpMfxruyCgp7y1yaR  --  celery -A nhhc worker --without-heartbeat --without-gossip --without-mingle -D --loglevel debug
+	doppler run -t $(TOKEN)  --  celery -A nhhc worker --without-heartbeat --without-gossip --without-mingle -D --loglevel debug
 
 .PHONY: test
 test: ## Run tests
@@ -54,7 +54,7 @@ pipeline-test: ## Run tests
 
 .PHONY: flower
 flower:
-	nohup doppler -t dp.st.prod.PefnDyHvsR1qF82MyAi422RYu8LpMfxruyCgp7y1yaR  run  --  celery -A nhhc flower --port=9005
+	nohup doppler -t $(TOKEN)  run  --  celery -A nhhc flower --port=9005
 
 .PHONY: 	docs
 docs:
@@ -62,16 +62,16 @@ docs:
 
 .PHONY: run
 run:
-	doppler -t dp.st.prod.PefnDyHvsR1qF82MyAi422RYu8LpMfxruyCgp7y1yaR  run  --  	$(PYTHON_INTERPRETER) manage.py runserver 9555
+	doppler -t $(TOKEN)  run  --  	$(PYTHON_INTERPRETER) manage.py runserver 9555
 
 .PHONY: debug
 debug: ## Run the Django server
-	doppler -t dp.st.prod.PefnDyHvsR1qF82MyAi422RYu8LpMfxruyCgp7y1yaR  run  --  	kolo run manage.py runserver --noreload --nothreading
+	doppler -t $(TOKEN)  run  --  	kolo run manage.py runserver --noreload --nothreading
 
 .PHONY: admin
 admin:
-	doppler -t dp.st.prod.PefnDyHvsR1qF82MyAi422RYu8LpMfxruyCgp7y1yaR  run  --   $(PYTHON_INTERPRETER) manage.py createsuperuser --no-input
+	doppler -t $(TOKEN)  run  --   $(PYTHON_INTERPRETER) manage.py createsuperuser --no-input
 
 .PHONY: start
 start:
-	doppler -t dp.st.prod.PefnDyHvsR1qF82MyAi422RYu8LpMfxruyCgp7y1yaR  run  --  gunicorn --workers=2  --threads=2 nhhc.wsgi:application -b :7772
+	doppler -t $(TOKEN)  run  --  gunicorn --workers=2  --threads=2 nhhc.wsgi:application -b :7772

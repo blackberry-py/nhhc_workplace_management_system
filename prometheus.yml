@@ -6,23 +6,17 @@ remote_write:
       username: 390644
       password: ${GRAFANA_TOKENS}
 scrape_configs:
-#  - job_name: server-hardware
-#    scrape_interval: 4m
-#    scrape_timeout: 2m
-#    static_configs:
-#     - targets:
-#         - metrics.netthandshome.care
- - job_name: prometheus
-   scrape_interval: 30s
-   scheme: http
+ - job_name: server-hardware
+   scrape_interval: 4m
+   scrape_timeout: 2m
    static_configs:
     - targets:
-       - localhost:9090
+        - $(HARDWARE_EXPORTER_URL)
  - job_name: django
    scrape_interval: 30s
    static_configs:
       - targets:
-          - localhost:8000
+          - $(DJANGO_EXPORTER_URL) 
  - job_name: "healthchecks"
    scrape_interval: 60s
    scheme: https

@@ -28,12 +28,7 @@
           var endMinutes = options.endtimeMinutes;
           var endSeconds = options.endtimeSeconds;
 
-          if(tZ == "") {
-            var deadline = new Date(endYear, endMonth - 1, endDate, endHours, endMinutes, endSeconds);
-          } 
-          else {
-            var deadline = moment.tz([endYear, endMonth - 1, endDate, endHours, endMinutes, endSeconds], tZ).format();
-          }
+          var deadline = tZ == "" ? new Date(endYear, endMonth - 1, endDate, endHours, endMinutes, endSeconds) : moment.tz([endYear, endMonth - 1, endDate, endHours, endMinutes, endSeconds], tZ).format();
 
           if(Date.parse(deadline) < Date.parse(timeNow)) {
             var deadline = new Date(Date.parse(new Date()) + endDate * 24 * 60 * 60 * 1000 + endHours * 60 * 60 * 1000); 

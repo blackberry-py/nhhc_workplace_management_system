@@ -314,33 +314,32 @@ $.fn.loading = function(options) {
     var loading = $.data(this, dataAttr);
 
     if (!loading) {
-      // First call. Initialize and save plugin object
-      if (
-        options === undefined ||
-        typeof options === "object" ||
-        options === "start" ||
-        options === "toggle"
-      ) {
-        // Initialize it just if argument is undefined, a config object
-        // or a direct call to 'start' or 'toggle' methods
-        $.data(this, dataAttr, new Loading($(this), options));
-      }
-    } else {
-      // Already initialized
-      if (options === undefined) {
-        // $(...).loading() call. Call the 'start' by default
-        loading.start();
-      } else if (typeof options === "string") {
-        // $(...).loading('method') call. Execute 'method'
-        loading[options].apply(loading);
-      } else {
-        // $(...).loading({...}) call. New configurations. Reinitialize
-        // plugin object with new config options and start the plugin
-        // Also, destroy the old overlay instance
-        loading.destroy();
-        $.data(this, dataAttr, new Loading($(this), options));
-      }
-    }
+          // First call. Initialize and save plugin object
+          if (
+            options === undefined ||
+            typeof options === "object" ||
+            options === "start" ||
+            options === "toggle"
+          ) {
+            // Initialize it just if argument is undefined, a config object
+            // or a direct call to 'start' or 'toggle' methods
+            $.data(this, dataAttr, new Loading($(this), options));
+          }
+        }
+    else if (options === undefined) {
+            // $(...).loading() call. Call the 'start' by default
+            loading.start();
+          }
+    else if (typeof options === "string") {
+            // $(...).loading('method') call. Execute 'method'
+            loading[options].apply(loading);
+          } else {
+            // $(...).loading({...}) call. New configurations. Reinitialize
+            // plugin object with new config options and start the plugin
+            // Also, destroy the old overlay instance
+            loading.destroy();
+            $.data(this, dataAttr, new Loading($(this), options));
+          }
   });
 };
 

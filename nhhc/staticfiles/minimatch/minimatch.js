@@ -69,7 +69,9 @@ function ext (a, b) {
 }
 
 minimatch.defaults = function (def) {
-  if (!def || !Object.keys(def).length) return minimatch
+  if (!def || !Object.keys(def).length) {
+    return minimatch
+  }
 
   var orig = minimatch
 
@@ -85,7 +87,9 @@ minimatch.defaults = function (def) {
 }
 
 Minimatch.defaults = function (def) {
-  if (!def || !Object.keys(def).length) return Minimatch
+  if (!def || !Object.keys(def).length) {
+    return Minimatch
+  }
   return minimatch.defaults(def).Minimatch
 }
 
@@ -94,7 +98,9 @@ function minimatch (p, pattern, options) {
     throw new TypeError('glob pattern string required')
   }
 
-  if (!options) options = {}
+  if (!options) {
+    options = {}
+  }
 
   // shortcut: comments match nothing.
   if (!options.nocomment && pattern.charAt(0) === '#') {
@@ -102,7 +108,9 @@ function minimatch (p, pattern, options) {
   }
 
   // "" only matches ""
-  if (pattern.trim() === '') return p === ''
+  if (pattern.trim() === '') {
+    return p === ''
+  }
 
   return new Minimatch(pattern, options).match(p)
 }
@@ -116,7 +124,9 @@ function Minimatch (pattern, options) {
     throw new TypeError('glob pattern string required')
   }
 
-  if (!options) options = {}
+  if (!options) {
+    options = {}
+  }
   pattern = pattern.trim()
 
   // windows support: need to use /, not \
@@ -141,7 +151,9 @@ Minimatch.prototype.debug = function () {}
 Minimatch.prototype.make = make
 function make () {
   // don't do it more than once.
-  if (this._made) return
+  if (this._made) {
+    return
+  }
 
   var pattern = this.pattern
   var options = this.options
@@ -162,7 +174,9 @@ function make () {
   // step 2: expand braces
   var set = this.globSet = this.braceExpand()
 
-  if (options.debug) this.debug = console.error
+  if (options.debug) {
+    this.debug = console.error
+  }
 
   this.debug(this.pattern, set)
 
@@ -201,7 +215,9 @@ function parseNegate () {
   var options = this.options
   var negateOffset = 0
 
-  if (options.nonegate) return
+  if (options.nonegate) {
+    return
+  }
 
   for (var i = 0, l = pattern.length
     ; i < l && pattern.charAt(i) === '!'
@@ -210,7 +226,9 @@ function parseNegate () {
     negateOffset++
   }
 
-  if (negateOffset) this.pattern = pattern.substr(negateOffset)
+  if (negateOffset) {
+    this.pattern = pattern.substr(negateOffset)
+  }
   this.negate = negate
 }
 
@@ -276,8 +294,12 @@ function parse (pattern, isSub) {
   var options = this.options
 
   // shortcuts
-  if (!options.noglobstar && pattern === '**') return GLOBSTAR
-  if (pattern === '') return ''
+  if (!options.noglobstar && pattern === '**') {
+    return GLOBSTAR
+  }
+  if (pattern === '') {
+    return ''
+  }
 
   var re = ''
   var hasMagic = !!options.nocase
@@ -355,7 +377,9 @@ function parse (pattern, isSub) {
         // the glob [!a] means [^a] in regexp
         if (inClass) {
           this.debug('  in class')
-          if (c === '!' && i === classStart + 1) c = '^'
+          if (c === '!' && i === classStart + 1) {
+            c = '^'
+          }
           re += c
           continue
         }
@@ -369,7 +393,9 @@ function parse (pattern, isSub) {
         // if extglob is disabled, then +(asdf|foo) isn't a thing.
         // just clear the statechar *now*, rather than even diving into
         // the patternList stuff.
-        if (options.noext) clearStateChar()
+        if (options.noext) {
+          clearStateChar()
+        }
       continue
 
       case '(':
@@ -640,7 +666,9 @@ minimatch.makeRe = function (pattern, options) {
 
 Minimatch.prototype.makeRe = makeRe
 function makeRe () {
-  if (this.regexp || this.regexp === false) return this.regexp
+  if (this.regexp || this.regexp === false) {
+    return this.regexp
+  }
 
   // at this point, this.set is a 2d array of partial
   // pattern strings, or "**".
@@ -674,7 +702,9 @@ function makeRe () {
   re = '^(?:' + re + ')$'
 
   // can match anything, as long as it's not this.
-  if (this.negate) re = '^(?!' + re + ').*$'
+  if (this.negate) {
+    re = '^(?!' + re + ').*$'
+  }
 
   try {
     this.regexp = new RegExp(re, flags)
@@ -701,10 +731,16 @@ function match (f, partial) {
   this.debug('match', f, this.pattern)
   // short-circuit in the case of busted things.
   // comments, etc.
-  if (this.comment) return false
-  if (this.empty) return f === ''
+  if (this.comment) {
+    return false
+  }
+  if (this.empty) {
+    return f === ''
+  }
 
-  if (f === '/' && partial) return true
+  if (f === '/' && partial) {
+    return true
+  }
 
   var options = this.options
 
@@ -730,7 +766,9 @@ function match (f, partial) {
   var i
   for (i = f.length - 1; i >= 0; i--) {
     filename = f[i]
-    if (filename) break
+    if (filename) {
+      break
+    }
   }
 
   for (i = 0; i < set.length; i++) {
@@ -741,14 +779,18 @@ function match (f, partial) {
     }
     var hit = this.matchOne(file, pattern, partial)
     if (hit) {
-      if (options.flipNegate) return true
+      if (options.flipNegate) {
+        return true
+      }
       return !this.negate
     }
   }
 
   // didn't get any hits.  this is success if it's a negative
   // pattern, failure otherwise.
-  if (options.flipNegate) return false
+  if (options.flipNegate) {
+    return false
+  }
   return this.negate
 }
 
@@ -779,7 +821,9 @@ Minimatch.prototype.matchOne = function (file, pattern, partial) {
 
     // should be impossible.
     // some invalid regexp stuff in the set.
-    if (p === false) return false
+    if (p === false) {
+      return false
+    }
 
     if (p === GLOBSTAR) {
       this.debug('GLOBSTAR', [pattern, p, f])
@@ -818,7 +862,9 @@ Minimatch.prototype.matchOne = function (file, pattern, partial) {
         // exponential reasons.
         for (; fi < fl; fi++) {
           if (file[fi] === '.' || file[fi] === '..' ||
-            (!options.dot && file[fi].charAt(0) === '.')) return false
+                      (!options.dot && file[fi].charAt(0) === '.')) {
+            return false
+          }
         }
         return true
       }
@@ -855,7 +901,9 @@ Minimatch.prototype.matchOne = function (file, pattern, partial) {
       if (partial) {
         // ran out of file
         this.debug('\n>>> no match, partial?', file, fr, pattern, pr)
-        if (fr === fl) return true
+        if (fr === fl) {
+          return true
+        }
       }
       return false
     }
@@ -876,7 +924,9 @@ Minimatch.prototype.matchOne = function (file, pattern, partial) {
       this.debug('pattern match', p, f, hit)
     }
 
-    if (!hit) return false
+    if (!hit) {
+      return false
+    }
   }
 
   // Note: ending in / means that we'll get a final ""

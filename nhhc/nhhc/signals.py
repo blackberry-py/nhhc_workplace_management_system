@@ -61,7 +61,7 @@ def password_change_signal(sender, instance, **kwargs) -> None:
     """
     try:
         user = Employee.objects.get(username=instance.username)
-        if not user.password == instance.password:
+        if user.password != instance.password:
             profile = UserProfile.objects.get(user=instance)
             profile.force_password_change = False
             profile.save()
