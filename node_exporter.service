@@ -6,9 +6,8 @@ After=network-online.target
 [Service]
 Type=simple
 User=nodeExportrer
-Group=nodeExportrer
-EnvironmentFile=/etc/default/node_exporterd
-ExecStart=/opt/node_exporter/node_exporter $OPTIONS
+Group=workerGroup
+ExecStart=/usr/bin/node_exporter
 Restart=on-failure
 RestartSec=5
 

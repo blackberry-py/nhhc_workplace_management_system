@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     cron \
     libmagic1 \
+    libssl-dev \
     libenchant-2-dev \
     make \
     git && \
@@ -27,7 +28,7 @@ WORKDIR /src/app
 EXPOSE 7772
 
 # Set environment variables
-ARG TOKEN=dp.st.prod.PefnDyHvsR1qF82MyAi422RYu8LpMfxruyCgp7y1yaR
+ARG TOKEN=${NHHC_DT}
 ARG DOPPLER_PROJECT='nhhc'
 ARG DOPPLER_CONFIG='prod'
 ENV DOPPLER_TOKEN=${TOKEN}

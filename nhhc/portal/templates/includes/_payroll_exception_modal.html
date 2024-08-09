@@ -1,9 +1,4 @@
 
-
-{% load static %}
-{% load crispy_forms_tags %}
-{% load widget_tweaks %}
-
 <div  id="payroll-exception-modal" uk-modal bg-close="false">
     <div class="uk-modal-dialog"  uk-overflow-auto>
         <button class="uk-modal-close-outside" type="button" uk-close></button>
@@ -11,7 +6,6 @@
             <div class="text-center">
                 <h2 class="uk-modal-title"Create A Payroll Exception</h2>
                 <sub class="text-muted">Use the Escape Key to Close Window</sub>
-                {% crispy ExceptionForm %}
             </div>
         </div>
     </div>

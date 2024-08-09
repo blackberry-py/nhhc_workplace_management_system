@@ -395,7 +395,6 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "nhhc.utils.context_processors.from_settings",
-                "nhhc.utils.context_processors.global_forms",
             ],
         },
     },

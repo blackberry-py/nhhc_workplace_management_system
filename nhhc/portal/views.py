@@ -30,7 +30,7 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import UpdateView
+from django.views.generic.edit import UpdateView, FormView
 from django.views.generic.list import ListView
 from django_filters.rest_framework import DjangoFilterBackend
 from employee.forms import EmployeeForm
@@ -89,8 +89,11 @@ class ProfileFormView( UpdateView, FileUploadMixin):
 
     def get_success_url(self):
         return reverse("profile")
-
-
+    
+class PayrollExceptionView(FormView):
+    template_name = "exception.html"
+    form_class = PayrollExceptionForm
+    
 class Profile(NeverCacheMixin, View):
     def get(self, request, *args, **kwargs):
         view = ProfileDetailView.as_view()

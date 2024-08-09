@@ -38,7 +38,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link"    href="#payroll-exception-modal" data-target="#payroll-exception-modal" uk-toggle id="side-nav-exception-trigger">
+            <a class="nav-link {% if request.path == '/exceptions' %} active {% endif %}" href="{% url 'exceptions' %}">
                                                                                                           <i class="ni ni-calendar-grid-58 text-purple"></i>
                                                                           <span class="nav-link-text">Timesheet Exceptions</span>
                                                         </a>

@@ -6,7 +6,7 @@ BIN := $(VENV_DIR)/bin
 PYTHON_INTERPRETER := $(BIN)/$(PYTHON)
 SHELL := /bin/bash
 CURRENT_DATE := $(shell date +"%Y-%m-%d-%T")
-TOKEN := $(NHHC_DT)
+TOKEN := ${NHHC_DT}
 
 .PHONY: help
 help: ## Show this help
@@ -22,7 +22,7 @@ collect:
 
 .PHONY: install
 install: ## Make venv and install requirements
-	doppler  -t $(TOKEN) run  -- pip install -r ./requirements.txt
+	pip install -r ./requirements.txt
 	
 	
 freeze: ## Pin current dependencies
