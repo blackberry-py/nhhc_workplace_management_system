@@ -42,15 +42,14 @@ RUN groupadd --system celery && \
     useradd --home-dir /src/app --no-create-home -g nhhc nhhc_app
 
 # Copy and install requirementsN
-COPY --chown=nhhc_app:nhhc ./requirements.txt ./requirements.txt
+COPY --chown=nhhc_app:nhhc ./docker_requirements.txt ./requirements.txt
 COPY --chown=nhhc_app:nhhc ./nhhc/Makefile /src/app/Makefile
 
 # Copy the application code
 COPY --chown=nhhc_app:nhhc nhhc/ /src/app/
 RUN touch /src/.attestation_sweeper.log && chmod 777 /src/.attestation_sweeper.log
 ADD --chown=nhhc_app:nhhc ./attestation_sweeper.sh /src/attestation_sweeper.sh
-RUN chmod 0644 /src/attestation_sweeper.sh && \
-crontab -l | { cat; echo "0 23 * * sat bash /src/attestation_sweeper.sh"; } | crontab -
+RUN chmod 0644 /src/attestation_sweeper.sh
 # Install application dependencies
 RUN make install
 
@@ -65,6 +64,7 @@ USER nhhc_app
 
 # Set the shell to bash
 SHELL ["/bin/bash", "-c"]
+RUN crontab -l | { cat; echo "0 23 * * sat bash /src/attestation_sweeper.sh"; } | crontab -
 
 # Command to run the Gunicorn server
 CMD ["gunicorn", "--workers=3", "--threads=2", "nhhc.wsgi:application", "-b", ":7772"]

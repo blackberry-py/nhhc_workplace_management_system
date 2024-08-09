@@ -7,6 +7,7 @@ PYTHON_INTERPRETER := $(BIN)/$(PYTHON)
 SHELL := /bin/bash
 CURRENT_DATE := $(shell date +"%Y-%m-%d-%T")
 TOKEN := ${NHHC_DT}
+DOCKER_PATH :="/src/app/"
 
 .PHONY: help
 help: ## Show this help
@@ -18,7 +19,7 @@ venv: ## Make a new virtual environment
 
 .PHONY: collect
 collect:
-	doppler -t $(TOKEN) run -- python  /src/app/manage.py collectstatic --no-input
+	doppler -t $(TOKEN) run -- python  $(DOCKER_PATH)manage.py collectstatic --no-input
 
 .PHONY: install
 install: ## Make venv and install requirements
@@ -29,11 +30,11 @@ freeze: ## Pin current dependencies
 	$(BIN)/pip freeze > ../requirements.txt
 
 migrate: ## Make and run migrations
-	doppler -t $(TOKEN)  run  --  	$(PYTHON_INTERPRETER) manage.py makemigrations
-	doppler -t $(TOKEN)  run  --  	$(PYTHON_INTERPRETER) manage.py migrate
+	doppler run -t $(TOKEN)  --  	$(PYTHON_INTERPRETER) $(DOCKER_PATH)manage.py makemigrations
+	doppler run -t $(TOKEN)  --  	$(PYTHON_INTERPRETER) $(DOCKER_PATH)manage.py migrate
 
 lint:
-	doppler -t $(TOKEN)  run  --  prospector  -w  pylint pyroma mypy dodgy mccabe bandit profile-validator > prospector_results_${CURRENTDATE}.json
+	doppler run -t $(TOKEN)  --  prospector  -w  pylint pyroma mypy dodgy mccabe bandit profile-validator > prospector_results_${CURRENTDATE}.json
 
 db-shell: ## Access the Postgres Docker database interactively with psql. Pass in DBNAME=<name>.
 	docker exec -it container_name psql -d $(DBNAME)
@@ -45,16 +46,16 @@ workers:
 
 .PHONY: test
 test: ## Run tests
-	doppler run -- coverage run manage.py test web employee portal  --verbosity=2 --keepdb   --failfast  --force-color
+	doppler run -- coverage run $(DOCKER_PATH)manage.py test web employee portal  --verbosity=2 --keepdb   --failfast  --force-color
 
 .PHONY: test
 pipeline-test: ## Run tests
-	${VIRTUAL_ENV}/bin/python manage.py test web employee portal  --verbosity=2  --keepdb   --force-color
+	${VIRTUAL_ENV}/bin/python $(DOCKER_PATH)manage.py test web employee portal  --verbosity=2  --keepdb   --force-color
 
 
 .PHONY: flower
 flower:
-	nohup doppler -t $(TOKEN)  run  --  celery -A nhhc flower --port=9005
+	nohup doppler run -t $(TOKEN)  --  celery -A nhhc flower --port=9005
 
 .PHONY: 	docs
 docs:
@@ -62,16 +63,16 @@ docs:
 
 .PHONY: run
 run:
-	doppler -t $(TOKEN)  run  --  	$(PYTHON_INTERPRETER) manage.py runserver 9555
+	doppler run -t $(TOKEN)  --  	$(PYTHON_INTERPRETER) $(DOCKER_PATH)manage.py runserver 9555
 
 .PHONY: debug
 debug: ## Run the Django server
-	doppler -t $(TOKEN)  run  --  	kolo run manage.py runserver --noreload --nothreading
+	doppler run -t $(TOKEN)  --  	kolo run $(DOCKER_PATH)manage.py runserver --noreload --nothreading
 
 .PHONY: admin
 admin:
-	doppler -t $(TOKEN)  run  --   $(PYTHON_INTERPRETER) manage.py createsuperuser --no-input
+	doppler run -t $(TOKEN)  --   $(PYTHON_INTERPRETER) manage.py createsuperuser --no-input
 
 .PHONY: start
 start:
-	doppler -t $(TOKEN)  run  --  gunicorn --workers=2  --threads=2 nhhc.wsgi:application -b :7772
+	doppler run -t $(TOKEN)  --  gunicorn --workers=2  --threads=2 nhhc.wsgi:application -b :7772
