@@ -24,7 +24,7 @@ def get_status_code_for_unauthorized_or_forbidden(request: HttpRequest) -> int:
     Returns:
         int: The HTTP status code to be returned based on the authentication status of the user.
     """
-    return status.HTTP_401_UNAUTHORIZED if not request.user.is_authenticated else status.HTTP_403_FORBIDDEN
+    return status.HTTP_403_FORBIDDEN if request.user.is_authenticated else status.HTTP_401_UNAUTHORIZED
 
 
 def get_content_for_unauthorized_or_forbidden(request: HttpRequest) -> bytes:
@@ -37,7 +37,7 @@ def get_content_for_unauthorized_or_forbidden(request: HttpRequest) -> bytes:
     Returns:
         bytes: A message indicating whether the user must be logged in or an admin to complete the request.
     """
-    return bytes("You Must Be Logged In To Complete This Request", "utf-8") if not request.user.is_authenticated else bytes("You Must Be An Admin In To Complete This Request", "utf-8")
+    return bytes("You Must Be An Admin In To Complete This Request", "utf-8") if request.user.is_authenticated else bytes("You Must Be Logged In To Complete This Request", "utf-8")
 
 
 def send_new_user_credentials(new_user_email: str, new_user_first_name: str, password, username) -> HttpResponse:

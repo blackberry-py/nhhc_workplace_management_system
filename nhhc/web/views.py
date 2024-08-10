@@ -17,32 +17,32 @@ from prometheus_client import Counter
 from web.forms import ClientInterestForm, EmploymentApplicationForm
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
 from web.tasks import process_new_application, process_new_client_interest
-
 from nhhc.utils.helpers import CachedTemplateView
+from django_require_login.mixins import PublicViewMixin, public
 
 CACHE_TTL: int = settings.CACHE_TTL
 
 
 # SECTION - Page Rendering Views
 @method_decorator(require_safe, name="dispatch")
-class HomePageView(CachedTemplateView):
+class HomePageView(PublicViewMixin, CachedTemplateView):
     template_name = "index.html"
     extra_context = {"title": "Home"}
 
 
 @method_decorator(require_safe, name="dispatch")
-class AboutUsView(CachedTemplateView):
+class AboutUsView(PublicViewMixin, CachedTemplateView):
     template_name = "about.html"
     extra_context = {"title": "About Nett Hands"}
 
 
 @method_decorator(require_safe, name="dispatch")
-class SuccessfulSubmission(CachedTemplateView):
+class SuccessfulSubmission(PublicViewMixin, CachedTemplateView):
     template_name = "submission.html"
     extra_context = {"title": "About Nett Hands"}
 
 
-class ClientInterestFormView(FormView):
+class ClientInterestFormView(PublicViewMixin, FormView):
     form_class = ClientInterestForm
     model = ClientInterestSubmission
     template_name = "client-interest.html"
@@ -62,13 +62,13 @@ class ClientInterestFormView(FormView):
             failed_submission_attempts_client.inc()
             logger.error("Form Is Invalid")
             return HttpResponsePermanentRedirect(reverse("client_interest"), {"errors": form.errors.as_data()})
-
+    @public
     def get(self, request):
         form = ClientInterestForm()
         context = {"form": form}
         logger.debug(context)
         return render(request, "client-interest.html", context)
-
+    @public
     def post(self, request):
         context = {}
         form = ClientInterestForm(request.POST)
@@ -80,7 +80,7 @@ class ClientInterestFormView(FormView):
             return render(request, "client-interest.html", context)
 
 
-class EmploymentApplicationFormView(FormView):
+class EmploymentApplicationFormView(PublicViewMixin, FormView):
     model = EmploymentApplicationModel
     template_name = "employee-interest.html"
     success_url = reversed("submitted")
@@ -109,13 +109,13 @@ class EmploymentApplicationFormView(FormView):
             return EmploymentApplicationForm(self.request.POST)
         else:
             return EmploymentApplicationForm()
-
+    @public
     def get(self, request):
         form = EmploymentApplicationForm()
         context = {"form": form}
         logger.debug(context)
         return render(request, "client-interest.html", context)
-
+    @public
     def post(self, request):
         context = {}
         form = EmploymentApplicationForm(request.POST)

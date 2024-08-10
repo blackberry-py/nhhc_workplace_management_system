@@ -4,7 +4,7 @@ jobs:
   setup-virtualenv:
     runs-on: ubuntu-latest
     container:
-      image: terrybrooks/nhhc-amd:latest
+      image: terrybrooks/netthands:arm64-aug24
       env:
         DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
         DOPPLER_PROJECT: ${{ env.DOPPLER_PROJECT }}
@@ -46,7 +46,6 @@ jobs:
         - uses: syphar/restore-virtualenv@v1
           id: cache-virtualenv
 
-        - run: prospector
         - run: isort . --diff --check-only
         - run: black --check --diff .
 

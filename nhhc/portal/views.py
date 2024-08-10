@@ -20,7 +20,6 @@ from typing import Any, Dict
 
 from announcements.models import Announcements
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
@@ -31,7 +30,7 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import UpdateView
+from django.views.generic.edit import UpdateView, FormView
 from django.views.generic.list import ListView
 from django_filters.rest_framework import DjangoFilterBackend
 from employee.forms import EmployeeForm
@@ -43,30 +42,12 @@ from portal.serializers import ClientInquiriesSerializer
 from rest_framework import generics, mixins, permissions, status
 from rest_framework.response import Response
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
-
+from formset.calendar import CalendarResponseMixin
 from nhhc.utils.helpers import NeverCacheMixin
 
 
-@login_required(login_url="/login/")
-def portal_dashboard(request: HttpRequest) -> HttpResponse:
-    """
-    Renders the portal dashboard page.
 
-    Retrieves new applications, client requests, and announcements to display on the dashboard.
-
-    Args:
-    - request: HTTP request object
-
-    Returns:
-    - HttpResponse: Rendered HTML template
-    """
-    context = {}
-
-    html_template = loader.get_template("dashboard.html")
-    return render(request, "dashboard.html", context)
-
-
-class Dashboard(TemplateView):
+class Dashboard(CalendarResponseMixin, TemplateView):
     template_name = "dashboard.html"
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
@@ -82,7 +63,7 @@ class Dashboard(TemplateView):
         return context
 
 
-class ProfileDetailView(LoginRequiredMixin, DetailView):
+class ProfileDetailView(DetailView):
     model = Employee
     template_name = "profile_main.html"
 
@@ -97,7 +78,7 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class ProfileFormView(LoginRequiredMixin, UpdateView, FileUploadMixin):
+class ProfileFormView( UpdateView, FileUploadMixin):
     form_class = EmployeeForm
     model = Employee
     template_name = "profile_main.html"
@@ -108,9 +89,12 @@ class ProfileFormView(LoginRequiredMixin, UpdateView, FileUploadMixin):
 
     def get_success_url(self):
         return reverse("profile")
-
-
-class Profile(NeverCacheMixin, LoginRequiredMixin, View):
+    
+class PayrollExceptionView(FormView):
+    template_name = "exception.html"
+    form_class = PayrollExceptionForm
+    
+class Profile(NeverCacheMixin, View):
     def get(self, request, *args, **kwargs):
         view = ProfileDetailView.as_view()
         return view(request, *args, **kwargs)
@@ -183,7 +167,7 @@ class ClientInquiriesAPIListView(generics.ListCreateAPIView):
 
 
 # SECTION - Class-Based Views
-class ClientInquiriesListView(LoginRequiredMixin, ListView):
+class ClientInquiriesListView( ListView):
     """
     Renders a list of client inquiries.
     """
@@ -205,7 +189,7 @@ class ClientInquiriesListView(LoginRequiredMixin, ListView):
         return context
 
 
-class ClientInquiriesDetailView(LoginRequiredMixin, DetailView):
+class ClientInquiriesDetailView( DetailView):
     """
     Renders details of a specific client inquiry.
     """
@@ -216,7 +200,7 @@ class ClientInquiriesDetailView(LoginRequiredMixin, DetailView):
     pk_url_kwarg = "pk"
 
 
-class EmploymentApplicationListView(LoginRequiredMixin, ListView):
+class EmploymentApplicationListView( ListView):
     """
     Renders a list of submitted employment applications.
     """
@@ -237,7 +221,7 @@ class EmploymentApplicationListView(LoginRequiredMixin, ListView):
         return context
 
 
-class EmploymentApplicationDetailView(LoginRequiredMixin, DetailView):
+class EmploymentApplicationDetailView( DetailView):
     """
     Renders details of a specific employment application.
     """

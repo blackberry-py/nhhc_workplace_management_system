@@ -7,7 +7,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from employee.models import Employee
 from formset.widgets import UploadedFileInput
-
+from django.contrib.auth import hashers
 
 class EmployeeForm(ModelForm):
     phone_sms_identical = BooleanField(required=False, widget=CheckboxInput, label="Same as Contact")

@@ -38,8 +38,11 @@ from django.utils.deconstruct import deconstructible
 from django.utils.translation import gettext_lazy as _
 from filetype import guess
 from loguru import logger
+from prometheus_client import Histogram
+from nhhc.utils.metrics import MetricsRecorder
 
-
+s3_upload_recorder = Histogram("s3_upload_duration", "Metric of the Durtation of S3 upload of Compliance Documents from the application's /tmp to AWS S3 block storage.")
+docuseal_download_recorder = Histogram("docuseal_download_duration", "Metric of the Durtation of downloading singed  Compliance Documents from the DocSeal External Signing Service to /tmp storage.")
 class FileValidationError(AttributeError):
     """Custom exception for file validation errors."""
 
@@ -133,6 +136,7 @@ class ProgressPercentage(object):
 
 class S3HANDLER:
     @staticmethod
+    @s3_upload_recorder.time()
     def upload_file_to_s3(file_name,
                       bucket: str = settings.AWS_STORAGE_BUCKET_NAME,
                       object_name=None) -> bool:
@@ -185,8 +189,9 @@ class S3HANDLER:
         path = os.path.join("restricted", "attestations", doc_type_prefix)
         os.makedirs(path, exist_ok=True)
         return os.path.join(path, f"{doc_type_prefix}_{employee_upload_suffix}")
-
+    
     @staticmethod
+    @docuseal_download_recorder.time()
     def download_pdf_file(payload: dict) -> bool:
         """Download PDF from given URL to local directory.
 

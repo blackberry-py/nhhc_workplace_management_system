@@ -452,11 +452,13 @@ var _ = {
 
 					Array.prototype.splice.apply(strarr, args);
 
-					if (delNum != 1)
-						_.matchGrammar(text, strarr, grammar, i, pos, true, token + ',' + j);
+					if (delNum != 1) {
+       _.matchGrammar(text, strarr, grammar, i, pos, true, token + ',' + j);
+     }
 
-					if (oneshot)
-						break;
+					if (oneshot) {
+       break;
+     }
 				}
 			}
 		}
@@ -602,14 +604,14 @@ if (!_.manual) {
 	// See https://github.com/PrismJS/prism/issues/2102
 	var readyState = document.readyState;
 	if (readyState === 'loading' || readyState === 'interactive' && script && script.defer) {
-		document.addEventListener('DOMContentLoaded', highlightAutomaticallyCallback);
-	} else {
-		if (window.requestAnimationFrame) {
-			window.requestAnimationFrame(highlightAutomaticallyCallback);
-		} else {
-			window.setTimeout(highlightAutomaticallyCallback, 16);
-		}
-	}
+ 		document.addEventListener('DOMContentLoaded', highlightAutomaticallyCallback);
+ 	}
+ else if (window.requestAnimationFrame) {
+ 			window.requestAnimationFrame(highlightAutomaticallyCallback);
+ 		}
+ else {
+ 			window.setTimeout(highlightAutomaticallyCallback, 16);
+ 		}
 }
 
 return _;

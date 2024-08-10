@@ -162,8 +162,10 @@ nohup.out
 nhhc/attestations/*
 nhhc/restricted/attestations/do_not_drive_agreement_attestation/brooks_terry.pdf
 nhhc/restricted/attestations/idoa_agency_policies_attestation/brooks_terry.pdf
+/Users/terry-brooks/GitHub/NettHands/nhhc/restricted/*
 
 nhhc/restricted/*
 .envrc
 
 postgres_ssl.crt
+.kolo/

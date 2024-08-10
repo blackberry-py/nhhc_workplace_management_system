@@ -76,11 +76,9 @@
       var $l = this.settings.strings;
       var prefix = $l.prefixAgo;
       var suffix = $l.suffixAgo;
-      if (this.settings.allowFuture) {
-        if (distanceMillis < 0) {
-          prefix = $l.prefixFromNow;
-          suffix = $l.suffixFromNow;
-        }
+      if (this.settings.allowFuture && distanceMillis < 0) {
+            prefix = $l.prefixFromNow;
+            suffix = $l.suffixFromNow;
       }
 
       if (!this.settings.allowPast && distanceMillis >= 0) {
@@ -192,13 +190,12 @@
     var data = prepareData(this);
 
     if (!isNaN(data.datetime)) {
-      if ( $s.cutoff === 0 || Math.abs(distance(data.datetime)) < $s.cutoff) {
-        $(this).text(inWords(data.datetime));
-      } else {
-        if ($(this).attr('title').length > 0) {
-            $(this).text($(this).attr('title'));
-        }
-      }
+      if ($s.cutoff === 0 || Math.abs(distance(data.datetime)) < $s.cutoff) {
+              $(this).text(inWords(data.datetime));
+            }
+      else if ($(this).attr('title').length > 0) {
+                  $(this).text($(this).attr('title'));
+              }
     }
     return this;
   }

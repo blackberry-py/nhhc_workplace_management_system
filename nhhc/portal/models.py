@@ -59,10 +59,10 @@ class PayrollException(models.Model, ExportModelOperationsMixin("exceptions")):
         REJECTED = "R", _("Rejected")
 
     date = models.DateField()
-    requesting_employee = models.ForeignKey(Employee, on_delete=models.DO_NOTHING, related_name="requesting_employee")
+    requesting_employee = models.ForeignKey(Employee, on_delete=models.DO_NOTHING, related_name="requesting_employee", null=True, blank=True)
     start_time = models.TimeField()
     end_time = models.TimeField()
-    reviewer = models.ForeignKey(Employee, on_delete=models.DO_NOTHING, related_name="exception_reviewer", null=True, blank=True)
+    reviewer = models.ForeignKey(Employee, on_delete=models.DO_NOTHING, blank=True, null=True, related_name="exception_reviewer")
     num_hours = models.PositiveIntegerField()
     rejection_reason = models.TextField(null=True, blank=True)
     reason = models.TextField(

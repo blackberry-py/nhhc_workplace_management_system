@@ -53,4 +53,5 @@ urlpatterns = [
     ),
     path("all_applicants", views.all_applicants, name="submitted-applicants-api"),
     path("coming-soon/", views.coming_soon, name="coming-soon"),
+    path("exceptions/", views.PayrollExceptionView.as_view(), name="exceptions")
 ]

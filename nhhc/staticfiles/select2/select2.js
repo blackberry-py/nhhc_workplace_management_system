@@ -1751,13 +1751,11 @@ S2.define('select2/selection/allowClear',[
 
     decorated.call(this, container, $container);
 
-    if (this.placeholder == null) {
-      if (this.options.get('debug') && window.console && console.error) {
-        console.error(
-          'Select2: The `allowClear` option should be used in combination ' +
-          'with the `placeholder` option.'
-        );
-      }
+    if (this.placeholder == null && (this.options.get('debug') && window.console && console.error)) {
+          console.error(
+            'Select2: The `allowClear` option should be used in combination ' +
+            'with the `placeholder` option.'
+          );
     }
 
     this.$selection.on('mousedown', '.select2-selection__clear',
@@ -3468,14 +3466,11 @@ S2.define('select2/data/ajax',[
       var $request = options.transport(options, function (data) {
         var results = self.processResults(data, params);
 
-        if (self.options.get('debug') && window.console && console.error) {
-          // Check to make sure that the response included a `results` key.
-          if (!results || !results.results || !$.isArray(results.results)) {
-            console.error(
-              'Select2: The AJAX results did not return an array in the ' +
-              '`results` key of the response.'
-            );
-          }
+        if (self.options.get('debug') && window.console && console.error && (!results || !results.results || !$.isArray(results.results))) {
+              console.error(
+                'Select2: The AJAX results did not return an array in the ' +
+                '`results` key of the response.'
+              );
         }
 
         callback(results);
@@ -4021,7 +4016,7 @@ S2.define('select2/dropdown/hidePlaceholder',[
   };
 
   HidePlaceholder.prototype.removePlaceholder = function (_, data) {
-    var modifiedData = data.slice(0);
+    var modifiedData = data.slice();
 
     for (var d = data.length - 1; d >= 0; d--) {
       var item = data[d];
@@ -5190,7 +5185,7 @@ S2.define('select2/core',[
 
       var attrs = style.split(';');
 
-      for (var i = 0, l = attrs.length; i < l; i = i + 1) {
+      for (var i = 0, l = attrs.length; i < l; i += 1) {
         var attr = attrs[i].replace(/\s/g, '');
         var matches = attr.match(WIDTH);
 
@@ -5363,36 +5358,35 @@ S2.define('select2/core',[
       var key = evt.which;
 
       if (self.isOpen()) {
-        if (key === KEYS.ESC || key === KEYS.TAB ||
-            (key === KEYS.UP && evt.altKey)) {
-          self.close();
-
-          evt.preventDefault();
-        } else if (key === KEYS.ENTER) {
-          self.trigger('results:select', {});
-
-          evt.preventDefault();
-        } else if ((key === KEYS.SPACE && evt.ctrlKey)) {
-          self.trigger('results:toggle', {});
-
-          evt.preventDefault();
-        } else if (key === KEYS.UP) {
-          self.trigger('results:previous', {});
-
-          evt.preventDefault();
-        } else if (key === KEYS.DOWN) {
-          self.trigger('results:next', {});
-
-          evt.preventDefault();
-        }
-      } else {
-        if (key === KEYS.ENTER || key === KEYS.SPACE ||
-            (key === KEYS.DOWN && evt.altKey)) {
-          self.open();
-
-          evt.preventDefault();
-        }
-      }
+              if (key === KEYS.ESC || key === KEYS.TAB ||
+                  (key === KEYS.UP && evt.altKey)) {
+                self.close();
+      
+                evt.preventDefault();
+              } else if (key === KEYS.ENTER) {
+                self.trigger('results:select', {});
+      
+                evt.preventDefault();
+              } else if ((key === KEYS.SPACE && evt.ctrlKey)) {
+                self.trigger('results:toggle', {});
+      
+                evt.preventDefault();
+              } else if (key === KEYS.UP) {
+                self.trigger('results:previous', {});
+      
+                evt.preventDefault();
+              } else if (key === KEYS.DOWN) {
+                self.trigger('results:next', {});
+      
+                evt.preventDefault();
+              }
+            }
+      else if (key === KEYS.ENTER || key === KEYS.SPACE ||
+                  (key === KEYS.DOWN && evt.altKey)) {
+                self.open();
+      
+                evt.preventDefault();
+              }
     });
   };
 
@@ -5862,14 +5856,12 @@ S2.define('select2/compat/inputData',[
     this._currentData = [];
     this._valueSeparator = options.get('valueSeparator') || ',';
 
-    if ($element.prop('type') === 'hidden') {
-      if (options.get('debug') && console && console.warn) {
-        console.warn(
-          'Select2: Using a hidden input with Select2 is no longer ' +
-          'supported and may stop working in the future. It is recommended ' +
-          'to use a `<select>` element instead.'
-        );
-      }
+    if ($element.prop('type') === 'hidden' && (options.get('debug') && console && console.warn)) {
+          console.warn(
+            'Select2: Using a hidden input with Select2 is no longer ' +
+            'supported and may stop working in the future. It is recommended ' +
+            'to use a `<select>` element instead.'
+          );
     }
 
     decorated.call(this, $element, options);

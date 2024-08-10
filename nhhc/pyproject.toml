@@ -29,6 +29,7 @@ django-admin-env-notice = "^1.0"
 loguru = "^0.7.0"
 django-ip-restriction = "^1.1.1"
 django-ipware = "^5.0.0"
+dj-database-url = "^2.2.0"
 
 [build-system]
 requires = ["poetry-core"]

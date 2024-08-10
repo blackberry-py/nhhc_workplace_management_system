@@ -7,7 +7,9 @@ from loguru import logger
 
 
 class CachedQuerySet(QuerySet):
-    def queryset_from_cache(self, filterdict={}):
+    def queryset_from_cache(self, filterdict=None):
+        if filterdict is None:
+            filterdict = {}
         # Generate a cache key based on the model name
         cachekey = str(self.model.__name__).lower()
 
@@ -32,12 +34,6 @@ class CachedQuerySet(QuerySet):
             # If the queryset is not found in the cache, generate it from the database and store it in the cache
             fresh_query = self.model.objects.filter(**filterdict)
             cache.set(cachekey, pickle.dumps(fresh_query), settings.QUERYSET_TTL)
-            # data = {
-            #     'in_cache': False,
-            #     'queryset': queryset
-            #     }
-            # query = qself.data['ps']
-            cache_miss_queryset = fresh_query
-            return cache_miss_queryset
+            return fresh_query
 
     queryset_from_cache.queryset_only = False

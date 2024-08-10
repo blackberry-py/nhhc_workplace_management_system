@@ -19,7 +19,7 @@ var ScrollTo = (function() {
 
 	function scrollTo($this) {
 		var $el = $this.attr('href');
-        var offset = $this.data('scroll-to-offset') ? $this.data('scroll-to-offset') : 0;
+        var offset = $this.data('scroll-to-offset') || 0;
 		var options = {
 			scrollTop: $($el).offset().top - offset
 		};

@@ -1,0 +1,27 @@
+[entryPoints]
+    [entryPoints.web]
+        address = ":80"
+        [entryPoints.web.http.redirections.entryPoint]
+            to = "websecure"
+            scheme = "https"
+     [entryPoints.websecure]
+        address = ":443"
+[api]
+dashboard = true
+
+[providers.docker]
+watch = true
+network = "traefik"
+
+[providers.file]
+  filename = "traefik_dynamic.toml"
+
+[log]
+  level = "DEBUG"
+  filePath = "/otp/traefk/traefik.log"
+  format = "json"
+
+[certificatesResolvers.myresolver.acme]
+  email = "postmaster@netthandshome.care"
+  storage = "acme.json"
+  [certificatesResolvers.myresolver.acme.tlsChallenge]
