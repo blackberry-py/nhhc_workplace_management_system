@@ -6,8 +6,7 @@ BIN := $(VENV_DIR)/bin
 PYTHON_INTERPRETER := $(BIN)/$(PYTHON)
 SHELL := /bin/bash
 CURRENT_DATE := $(shell date +"%Y-%m-%d-%T")
-TOKEN := ${NHHC_DT}
-DOCKER_PATH :="/src/app/"
+TOKEN := ${DOPPLER_TOKEN}
 
 .PHONY: help
 help: ## Show this help
@@ -63,7 +62,7 @@ docs:
 
 .PHONY: run
 run:
-	doppler run -t $(TOKEN)  --  	$(PYTHON_INTERPRETER) $(DOCKER_PATH)manage.py runserver 9555
+	doppler run -t $(TOKEN)  --  	$(PYTHON_INTERPRETER) $(DOCKER_PATH)manage.py runserver 8080
 
 .PHONY: debug
 debug: ## Run the Django server
