@@ -7,7 +7,7 @@ PYTHON_INTERPRETER := $(BIN)/$(PYTHON)
 SHELL := /bin/bash
 CURRENT_DATE := $(shell date +"%Y-%m-%d-%T")
 TOKEN := ${NHHC_DT}
-DOCKER_PATH :="/src/app/"
+DOCKER_PATH := $(CONTAINER_PATH_EX)
 
 .PHONY: help
 help: ## Show this help
@@ -24,8 +24,8 @@ collect:
 .PHONY: install
 install: ## Make venv and install requirements
 	pip install -r ./requirements.txt
-	
-	
+
+
 freeze: ## Pin current dependencies
 	$(BIN)/pip freeze > ../requirements.txt
 
