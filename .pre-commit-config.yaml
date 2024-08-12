@@ -18,6 +18,8 @@ repos:
     -   id: poetry-check
     -   id: poetry-lock
     -   id: poetry-export
+        args: ["--without-hashes", "--without-urls", "-f", "requirements.txt"]
+
 
   - repo: https://github.com/rtts/djhtml
     rev: '3.0.6'  # replace with the latest tag on GitHub
