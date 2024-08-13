@@ -1220,6 +1220,17 @@ celery = ">=5.2.7,<6.0"
 Django = ">=3.2.18"
 
 [[package]]
+name = "django-cockroachdb"
+version = "5.0"
+description = "Django backend for CockroachDB"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "django-cockroachdb-5.0.tar.gz", hash = "sha256:60f93aea894ef2fad9bc8623004263533f31f71b3abf108ef94e2bd55ca0db25"},
+    {file = "django_cockroachdb-5.0-py3-none-any.whl", hash = "sha256:9d43f9ee4daf050b5e9b25cf200693187c446d8c3c8785db10bff41ef1b4bf3e"},
+]
+
+[[package]]
 name = "django-cors-headers"
 version = "4.4.0"
 description = "django-cors-headers is a Django application for handling the server headers required for Cross-Origin Resource Sharing (CORS)."
@@ -5840,5 +5851,5 @@ test = ["pytest"]
 
 [metadata]
 lock-version = "2.0"
-python-versions = ">=3.11,<3.12"
-content-hash = "f5ca0394662c2f5e7765e41561479cdcc4d1f867fec87e2582171315f385d047"
+python-versions = ">=3.11,<=3.12.5"
+content-hash = "265c650cce121d6debcfe42da9d8b98a140ba771160e9101950f2398231af570"

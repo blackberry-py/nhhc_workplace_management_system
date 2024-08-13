@@ -4,27 +4,361 @@ MAINTAINER Terry Brooks, Jr.
 
 # Install necessary dependencies and Doppler CLI
 RUN apt-get update && apt-get install -y \
-    apt-transport-https \
-    ca-certificates \
-    apache2-utils \
-    curl \
-    gnupg \
-    cron \
-    libmagic1 \
-    libssl-dev \
-    libenchant-2-dev \
-    make \
-    git && \
+    apt-transport-https=2.6.1 \ca-certificates=20230311 \apache2-utils=2.4.61-1~deb12u1 \
+    curl=7.88.1-10+deb12u6 \
+    gnupg=2.2.40-1.1 \
+    cron=3.0pl1-162 \
+    libmagic1=1:5.44-3 \
+    libssl-dev=3.0.13-1~deb12u1 \
+    libenchant-2-dev=2.3.3-2 \
+    make=4.3-4.1 \
+    git= 1:2.39.2-1.1 && \
     curl -sLf --retry 3 --tlsv1.2 --proto "=https" 'https://packages.doppler.com/public/cli/gpg.DE2A7741A397C129.key' | gpg --dearmor -o /usr/share/keyrings/doppler-archive-keyring.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/doppler-archive-keyring.gpg] https://packages.doppler.com/public/cli/deb/debian any-version main" | tee /etc/apt/sources.list.d/doppler-cli.list && \
     apt-get update && \
-    apt-get -y install doppler && \
+    apt-get -y install doppler=3.69.0 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-WORKDIR /src/app
 
-# Expose necessary ports
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    essary ports
 EXPOSE 7772
 
 # Set environment variables

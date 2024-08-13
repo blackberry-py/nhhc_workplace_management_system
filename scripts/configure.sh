@@ -7,7 +7,7 @@ usage() {
     cat << EOF
 Automatically Configure a VM with Apache2, a Node Exporter, and all the goodies for an application server behind a reverse proxy.
 
-Syntax: configureServer [options] doppler_project doppler_config doppler_token
+Syntax: configureServer [options] doppler_project doppler_config doppler_token 
 
 Arguments:
   doppler_project   The name of the project in the Doppler Secret Management Platform.
@@ -46,7 +46,7 @@ EXPORTER_FILE="node_exporter-1.8.2.linux-amd64.tar.gz"
 # Function to install Python and related packages
 install_python() {
     echo "🛠️ Installing Python and dependencies..."
-
+    
     sudo apt-get update
     sudo apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -60,59 +60,57 @@ install_python() {
         gnupg \
         make \
         git
-
+    
     # Add Doppler repository
     curl -sLf --retry 3 --tlsv1.2 --proto "=https" 'https://packages.doppler.com/public/cli/gpg.DE2A7741A397C129.key' | \
         sudo gpg --dearmor -o /usr/share/keyrings/doppler-archive-keyring.gpg
-
+    
     echo "deb [signed-by=/usr/share/keyrings/doppler-archive-keyring.gpg] https://packages.doppler.com/public/cli/deb/debian any-version main" | \
         sudo tee /etc/apt/sources.list.d/doppler-cli.list
-
+    
     sudo apt-get update
     sudo apt-get install -y --no-install-recommends doppler=3.68.0 build-essential
     sudo apt-get clean
     sudo rm -rf /var/lib/apt/lists/*
-
+    
     {
         echo "export DOPPLER_TOKEN=${TOKEN}"
         echo "export DOPPLER_CONFIG=${CONFIG}"
         echo "export DOPPLER_PROJECT=${PROJECT}"
-        echo "export CONTAINER_PATH_EXC="/src/app/"
-
     } >> ~/.bashrc
-
+    
     echo "🐍 Successfully installed Python3 and dependencies."
 }
 
 # Function to install Docker
 install_docker() {
     echo "🛠️ Installing Docker..."
-
+    
     curl -fsSL https://get.docker.com -o get-docker.sh
     sudo sh ./get-docker.sh >/dev/null
-
+    
     if ! getent group docker >/dev/null; then
         sudo groupadd docker
     fi
 
     sudo usermod -aG docker "$USER"
     newgrp docker
-
+    
     docker pull terrybrooks/netthands:amd64-aug24
-
+    
     echo '🐳 Successfully installed Docker. Configuring it to be rootless...'
 }
 
 # Function to configure Apache
 configure_apache() {
     echo "🛠️ Configuring Apache..."
-
+    
     sudo a2enmod proxy proxy_http proxy_balancer lbmethod_byrequests >/dev/null 2>&1
     sudo ufw allow 'Apache Full' >/dev/null 2>&1
     sudo ufw delete allow 'Apache' >/dev/null 2>&1
     sudo ufw allow 'OpenSSH' >/dev/null 2>&1
     sudo ufw enable >/dev/null 2>&1
-
+    
     cat <<EOF | sudo tee /etc/apache2/sites-available/000-default.conf >/dev/null
 <VirtualHost *:80>
     ProxyPreserveHost On
@@ -124,7 +122,7 @@ configure_apache() {
 </VirtualHost>
 EOF
 
-    cat <<EOF | sudo tee /etc/apache2/sites-available/default-ssl.conf >/dev/null
+    cat <<EOF | sudo tee /etc/apache2/sites-available/default-ssl.conf >/dev/null 
 <IfModule mod_ssl.c>
     <VirtualHost *:443>
         ServerName netthandshome.care
@@ -147,9 +145,9 @@ EOF
     sudo systemctl reload apache2 >/dev/null 2>&1
     sudo systemctl enable apache2 >/dev/null 2>&1
     sudo systemctl start apache2 >/dev/null 2>&1
-
+    
     # shellcheck source=/dev/null
-    source ~/.bashrc
+    source ~/.bashrc 
     echo '✅ Apache2 configured successfully.'
 }
 
@@ -229,7 +227,7 @@ setup() {
     if [ "$bypass_prometheus" = false ]; then
         install_prometheus
     fi
-
+    
     if [ "$bypass_docker" = false ]; then
         install_docker
     fi
