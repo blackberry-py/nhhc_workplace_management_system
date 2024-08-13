@@ -1,7 +1,3 @@
-Here's a README file for the `nhhc_workplace_management_system` repository based on the template provided:
-
----
-
 <a id="readme-top"></a>
 
 <!-- PROJECT SHIELDS -->
