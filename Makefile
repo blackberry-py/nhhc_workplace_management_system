@@ -6,7 +6,8 @@ BIN := $(VENV_DIR)/bin
 PYTHON_INTERPRETER := $(BIN)/$(PYTHON)
 SHELL := /bin/bash
 CURRENT_DATE := $(shell date +"%Y-%m-%d-%T")
-TOKEN := ${DOPPLER_TOKEN}
+TOKEN := ${NHHC_DT}
+DOCKER_PATH := $(CONTAINER_PATH_EX)
 
 .PHONY: help
 help: ## Show this help
@@ -23,8 +24,8 @@ collect:
 .PHONY: install
 install: ## Make venv and install requirements
 	pip install -r ./requirements.txt
-	
-	
+
+
 freeze: ## Pin current dependencies
 	$(BIN)/pip freeze > ../requirements.txt
 
@@ -62,7 +63,7 @@ docs:
 
 .PHONY: run
 run:
-	doppler run -t $(TOKEN)  --  	$(PYTHON_INTERPRETER) $(DOCKER_PATH)manage.py runserver 8080
+	doppler run -t $(TOKEN)  --  	$(PYTHON_INTERPRETER) $(DOCKER_PATH)manage.py runserver 9555
 
 .PHONY: debug
 debug: ## Run the Django server
