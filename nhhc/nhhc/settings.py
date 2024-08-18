@@ -24,6 +24,7 @@ logger.remove()  # Remove all handlers added so far, including the default one.
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ["SECRET_KEY"]
 DEBUG = True
+MAINTENANCE_MODE = os.environ["Enablez"]
 KOLO_DISABLE = not DEBUG
 DATETIME_FORMAT: str = "m/d/yyyy h:mm A"
 ADMINS = [("Terry Brooks", "Terry@BrooksJr.com")]
@@ -61,7 +62,7 @@ SESSION_COOKIE_SECURE = False
 CORS_ORIGIN_ALLOW_ALL = True
 SESSION_COOKIE_HTTPONLY = False
 CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = ["http://localhost"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:9555"]
 
 
 # !SECTION
@@ -132,6 +133,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
     ## Installed 3rd Apps
+    "maintenance_mode",
     "crispy_forms",
     "crispy_bootstrap5",
     "storages",
@@ -191,6 +193,7 @@ MIDDLEWARE = [
     "defender.middleware.FailedLoginMiddleware",
     "django.middleware.cache.FetchFromCacheMiddleware",
     "django_require_login.middleware.LoginRequiredMiddleware",
+    "maintenance_mode.middleware.MaintenanceModeMiddleware",
     "django_prometheus.middleware.PrometheusAfterMiddleware",
 ]
 # SECTION - Database and Caching
