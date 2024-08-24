@@ -29,4 +29,32 @@
     "CodeGPT.apiKey": "CodeGPT Plus Beta",
     "doppler.autocomplete.enable": true,
     "doppler.hover.enable": true,
+    "makefile.configureOnOpen": false,
+    "cSpell.words": [
+        "ADMINRESTRICT",
+        "authtoken",
+        "customscripts",
+        "customstyles",
+        "docuseal",
+        "gunicorn",
+        "healthcheck",
+        "IDOA",
+        "idph",
+        "jdkmrpog",
+        "jobdesc",
+        "jsonifed",
+        "jsonified",
+        "multiprocess",
+        "Nett",
+        "netthands",
+        "nhhc",
+        "nostatic",
+        "phonenumber",
+        "setbg",
+        "TINYMCE",
+        "usermenu"
+    ],
+    "python.analysis.extraPaths": [
+        "./nhhc"
+    ],
 }
