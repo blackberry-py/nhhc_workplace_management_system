@@ -217,7 +217,7 @@ class EmploymentApplicationForm(ModelForm):
 
         if True not in seven_day_availability:
             error = forms.ValidationError(_("You Must be Available at least 1 day a week. Please review the Work Availability Section"), code="invalid")
-            self.add_error(error=errors)
+            self.add_error(field=None,      error=error)
 
     class Meta:
         """Meta definition for EmploymentApplicationModelForm."""

@@ -124,5 +124,7 @@ urlpatterns: List[Union[RoutePattern, RegexPattern]] = [
     re_path(r"^sitemap.xml$\/?", cache_page(60)(sitemaps), {"sitemaps": sitemaps}, name="cached-sitemap"),
     re_path(r"^robots\.txt\/?", include("robots.urls")),
     re_path("", include("django_prometheus.urls")),
+    re_path(r"^maintenance-mode/", include("maintenance_mode.urls")),
+
 ]
 #!SECTION

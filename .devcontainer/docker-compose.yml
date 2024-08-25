@@ -1,0 +1,24 @@
+services:
+  dragonfly:
+    image: docker.dragonflydb.io/dragonflydb/dragonfly
+    ulimits:
+      memlock: -1
+    ports:
+      - "6379:6379"
+    volumes:
+      - offline_data:/dragonfly/data
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_USER=django
+      - POSTGRES_PASSWORD=Qu33nL@dy
+      - POSTGRES_DB=carenett
+    ports:
+      - "5432:5432"
+    volumes:
+      - offline_data:/var/lib/postgresql/data
+volumes:
+  offline_data:
+
+
+  

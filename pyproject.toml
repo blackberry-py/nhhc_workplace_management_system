@@ -13,7 +13,6 @@ django-crispy-forms = "^2.0"
 django-phonenumber-field = {extras = ["phonenumberslite"], version = "^7.1.0"}
 django-localflavor = "^4.0"
 whitenoise = "^6.5.0"
-gunicorn = "^20.1.0"
 six = "^1.16.0"
 supervisor = "^4.2.5"
 boto3 = "^1.28.2"
@@ -80,6 +79,9 @@ guardian = "^0.2.2"
 django-mail-panel = "^4.0.4"
 django-require-login = "^1.1.4"
 django-cockroachdb = "^5.0"
+django-maintenance-mode = "^0.21.1"
+uwsgi = "^2.0.26"
+gunicorn = "^23.0.0"
 
 
 [tool.poetry.group.dev.dependencies]

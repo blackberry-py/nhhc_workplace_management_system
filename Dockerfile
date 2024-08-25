@@ -1,6 +1,6 @@
 # Use a Python 3.12 base image
 FROM python:3.12-slim
-LABEL "author.name":"Terry Brooks"
+LABEL "author.name"="Terry Brooks"
 LABEL "author.email"="Terry.Arthur@BrooksJr.com"
 
 # Install necessary dependencies and Doppler CLI
@@ -31,7 +31,7 @@ ARG DOPPLER_CONFIG='prod'
 ENV DOPPLER_TOKEN=${TOKEN}
 ENV DOPPLER_PROJECT=${DOPPLER_PROJECT}
 ENV DOPPLER_CONFIG=${DOPPLER_CONFIG}
-
+ENV CONTAINER_PATH_EX='/src/app/'
 # Create necessary groups and users
 RUN groupadd --system celery && \
     useradd -g celery celery && \

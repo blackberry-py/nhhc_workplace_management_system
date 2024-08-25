@@ -1,116 +1,104 @@
 import json
+import os
 from django.conf import settings
 from django.forms import model_to_dict
 from django.http import FileResponse, HttpRequest, HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
-from django.shortcuts import render, reverse
+from django.shortcuts import render
 from django.templatetags.static import static
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_safe
+from django.urls import reverse_lazy
 from formset.views import FormView
 from loguru import logger
-from prometheus_client import Counter
 from web.forms import ClientInterestForm, EmploymentApplicationForm
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
 from web.tasks import process_new_application, process_new_client_interest
 from nhhc.utils.helpers import CachedTemplateView
 from django_require_login.mixins import PublicViewMixin, public
 from django.core.exceptions import ValidationError
-
+from nhhc.utils.metrics import INVALID_APPLICATIONS, FAILED_SUBMISSIONS
 CACHE_TTL: int = settings.CACHE_TTL
-failed_submission_attempts_client: Counter = Counter("failed_submission_attempts_client", "Metric Counter for the Number of Failed Submission attempts that failed validation")
-failed_submission_attempts_application: Counter = Counter("failed_submission_attempts_application", "Metric Counter for the Number of Failed Employment Application Submissions")
 
-
-# SECTION - Page Rendering Views
 @method_decorator(require_safe, name="dispatch")
 class HomePageView(PublicViewMixin, CachedTemplateView):
     template_name = "index.html"
     extra_context = {"title": "Home"}
-
 
 @method_decorator(require_safe, name="dispatch")
 class AboutUsView(PublicViewMixin, CachedTemplateView):
     template_name = "about.html"
     extra_context = {"title": "About Nett Hands"}
 
-
 @method_decorator(require_safe, name="dispatch")
 class SuccessfulSubmission(PublicViewMixin, CachedTemplateView):
     template_name = "submission.html"
     extra_context = {"title": "Submission Successful"}
 
-
 class ClientInterestFormView(PublicViewMixin, FormView):
     form_class = ClientInterestForm
     model = ClientInterestSubmission
     template_name = "client-interest.html"
-    success_url = reverse("submitted")
-    extra_context = {"title": "Client Services Request"}
-    
-    def form_valid(self, form: ClientInterestForm) -> HttpResponse:
-        """If the form is valid, redirect to the supplied URL."""
-        if form.is_valid():
-            logger.debug("Form is valid")
+    success_url = reverse_lazy("submitted")
+    extra_context = {"title": "Client Services Request", "GOOGLE_MAPS_API_KEY": os.environ['GOOGLE_MAPS_API_KEY']}
+
+    def process_submitted_client_interest(self, form: ClientInterestForm):
+        logger.debug("ClientInterestForm is valid")
+        if form.cleaned_data["contact_number"]:
+            form.cleaned_data["contact_number"] = str(form.cleaned_data["contact_number"])
+        try:        
             form.save()
-            process_new_client_interest(form.cleaned_data)
-            return HttpResponsePermanentRedirect(reverse("submitted"), {"type": "Client Interest Form"})
-        elif not form.is_valid():
-            logger.error(f"Form is invalid. Errors: {form.errors}")
-            failed_submission_attempts_client.inc()
-            return HttpResponseRedirect(reverse("client_interest"), {"errors": form.errors.as_data()})
-   
+            processed_form = form.cleaned_data
+            process_new_application(processed_form)
+            return HttpResponseRedirect(self.success_url)
+        except Exception as e:
+            logger.error(f"Error processing client interest form: {e}")
+            return self.render_to_response(self.get_context_data(form=form, form_errors=e, **self.extra_context))
+
+    def form_valid(self, form: ClientInterestForm):
+        return self.process_submitted_client_interest(form)
+    def form_invalid(self, form):
+        logger.error(f"ClientInterestForm is invalid. Errors: {form.errors.as_json()}")
+        FAILED_SUBMISSIONS.inc()
+        return self.render_to_response(self.get_context_data(form=form, form_errors=form.errors,  **self.extra_context))
 
     @public
     def get(self, request):
-        form = ClientInterestForm()
+        form = ClientInterestForm()                                    
         context = {"form": form}
-        return render(request, "client-interest.html", context)
-
-    @public
-    def post(self, request):
-        form = ClientInterestForm(request.POST)
-        if form.is_valid():
-            return self.form_valid(form)
-        context = {"jsonified": False, "form": form}
-        try:
-            context["form_errors"] = json.dumps(form.errors)
-            context["jsonified"] = True
-        except Exception as e:
-            logger.error(f"Serialization error: {e}")
-            context["form_errors"] = form.errors.as_data()
         return render(request, "client-interest.html", context)
 
 
 class EmploymentApplicationFormView(PublicViewMixin, FormView):
+    form_class = EmploymentApplicationForm
     model = EmploymentApplicationModel
     template_name = "employee-interest.html"
-    success_url = reverse("submitted")
-    extra_context = {"title": "Employment Application"}
-
-    @failed_submission_attempts_application.count_exceptions(ValidationError)
-    def form_valid(self, form: EmploymentApplicationForm) -> HttpResponse:
-        """If the form is valid, redirect to the supplied URL."""
-        if form.is_valid():
-            return self.process_submitted_application(form)
-        failed_submission_attempts_application.inc()
-        logger.error(f"Form is invalid. Errors: {form.errors}")
-        return HttpResponseRedirect(reverse("application"), {"errors": form.errors.as_data()})
+    success_url = reverse_lazy("submitted")
+    extra_context = {"title": "Employment Application", "GOOGLE_MAPS_API_KEY": os.environ['GOOGLE_MAPS_API_KEY']}
 
     def process_submitted_application(self, form):
-        logger.debug("Form is valid")
-        form.cleaned_data["contact_number"] = str(form.cleaned_data["contact_number"])
-        form.save()
-        processed_form = form.cleaned_data
-        del processed_form["resume_cv"]
-        process_new_application(processed_form)
-        return HttpResponsePermanentRedirect(reverse("submitted"), {"type": "Employment Interest Form"})
+        logger.debug("EmploymentApplicationForm is valid")
+        # if form.data["contact_number"]:
+        #     form.data["contact_number"] = str(form.data["contact_number"])
+        try:
+            form.save()
+            processed_form = form.cleaned_data
+            if processed_form["resume_cv"]:
+                del processed_form["resume_cv"]
+            process_new_application(processed_form)
+            return HttpResponseRedirect(self.success_url)
 
-    def get_form(self, form_class=None):
-        if self.request.POST:
-            return EmploymentApplicationForm(self.request.POST)
-        else:
-            return EmploymentApplicationForm()
+        except Exception as e:
+            logger.error(f"Error processing form: {e}")
+            return self.form_invalid(form)
+
+    def form_invalid(self, form):
+        logger.error(f"EmploymentApplicationForm is invalid. Errors: {form.errors.as_json()}")
+        INVALID_APPLICATIONS.inc()
+        return self.render_to_response(self.get_context_data(form=form, form_errors=form.errors,  **self.extra_context))
+
+    def form_valid(self, form: EmploymentApplicationForm):
+        return self.process_submitted_application(form)
 
     @public
     def get(self, request):
@@ -118,29 +106,9 @@ class EmploymentApplicationFormView(PublicViewMixin, FormView):
         context = {"form": form}
         return render(request, "employee-interest.html", context)
 
-    @public
-    def post(self, request):
-        context = {}
-        form = EmploymentApplicationForm(request.POST)
-        if form.is_valid():
-            return self.form_valid(form)
-        else:
-            logger.error(f"Form is invalid. Errors: {json.dumps(form.errors)}")
-            context["form"] = form
-            context["form_errors"] = form.errors
-            return render(request, "employee-interest.html", context)
 
-
+@public
 @cache_page(CACHE_TTL)
 def favicon(request: HttpRequest) -> HttpResponse:
-    """
-    This function returns the favicon file as a response.
-
-    Parameters:
-    - request: HttpRequest object
-
-    Returns:
-    - HttpResponse object
-    """
     favicon_file = static("img/favicon.ico")
     return FileResponse(favicon_file)
