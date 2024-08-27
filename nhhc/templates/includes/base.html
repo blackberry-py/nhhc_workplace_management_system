@@ -73,11 +73,14 @@
                                                     <li><a href="{% url 'about' %}">About Nett Hands</a></li>
                                                     <li><a href="#impact">Our Impact</a></li>
                                                     <li><a href="#services">Services</a>
+                                                        <ul class="dropdown">
+                                                            <li><a href="{% url 'client_interest' %}">Enroll</a></li>
+                                                        </ul>
                                                     </li>
                                                     <li><a href="#careers">Careers</a>
                                                         <ul class="dropdown">
                                                             <li><a href="{% url 'application' %}">Employee Interest Application</a></li>
-                                                            <li><a href="{% url 'account_login' %}">Employee Portal</a></li>
+                                                            <li><a href="{% url 'account_login' %}">CareNett Employee Portal</a></li>
                                                         </ul>
                                                     </li>
                                                     <li><a href="#contact">Contact</a></li>
@@ -91,9 +94,9 @@
                                         <div class="header__nav__option">
                                             <nav class="header__nav__menu mobile-menu">
                                                 {% if exception != 'http503' %}
-                                                <ul>
-                                                    <li class="active"><a href="{% url 'homepage' %}"><span class="back-to-home">Back to Home</span></a></li>
-                                                </ul>
+                                                    <ul>
+                                                        <li class="active"><a href="{% url 'homepage' %}"><span class="back-to-home">Back to Home</span></a></li>
+                                                    </ul>
                                                 {% endif %}
 
                                 {% endif %}

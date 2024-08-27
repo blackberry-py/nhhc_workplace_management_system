@@ -1,6 +1,6 @@
 # Define constants
 # DEV_ENV_RUNNING_IN_CONTAINER ?= false
-VENV_DIR := $(if $(DEV_ENV_RUNNING_IN_CONTAINER), /workspaces/nhhc_workplace_management_system/.venv, /Users/terry-brooks/Documents/GitHub/nhhc_workplace_management_system/.venv)
+VENV_DIR := $(if $(DEV_ENV_RUNNING_IN_CONTAINER), /workspaces/NettHands/.venv, /Users/terry-brooks/GitHub/NettHands/.venv)
 PYTHON := python3
 BIN := $(VENV_DIR)/bin
 PYTHON_INTERPRETER := $(BIN)/$(PYTHON)
