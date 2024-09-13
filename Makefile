@@ -6,7 +6,7 @@ BIN := $(VENV_DIR)/bin
 PYTHON_INTERPRETER := $(BIN)/$(PYTHON)
 SHELL := /bin/bash
 CURRENT_DATE := $(shell date +"%Y-%m-%d-%T")
-TOKEN := ${NHHC_DT}
+TOKEN := ${DOPPLER_TOKEN}
 DOCKER_PATH := $(CONTAINER_PATH_EX)
 
 .PHONY: help
