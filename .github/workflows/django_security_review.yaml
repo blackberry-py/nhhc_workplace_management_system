@@ -1,5 +1,6 @@
 name: Django Security Check
-
+permissions:
+  contents: write
 on:
    push:
    merge_group:

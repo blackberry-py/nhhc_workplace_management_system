@@ -1,14 +1,16 @@
 name: General Test and Deploy
 on: push
+permissions:
+  contents: write
 jobs:
   setup-virtualenv:
     runs-on: ubuntu-latest
-    container:
-      image: terrybrooks/netthands:amd64-aug24
-      env:
-        DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
-        DOPPLER_PROJECT: ${{ env.DOPPLER_PROJECT }}
-        DOPPLER_CONFIG: ${{ env.DOPPLER_CONFIG }}
+    # container:
+    #   image: terrybrooks/netthands:amd64-aug24
+    env:
+      DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+      DOPPLER_PROJECT: ${{ vars.DOPPLER_PROJECT }}
+      DOPPLER_CONFIG: ${{ vars.DOPPLER_CONFIG }}
     steps:
       - name: Get Code Checkout
         uses: 'Actions/Checkout@v3'
@@ -18,8 +20,8 @@ jobs:
         with:
           doppler-token: ${{ secrets.DOPPLER_TOKEN }}
           inject-env-vars: true
-          doppler-project: ${{ env.DOPPLER_PROJECT }}
-          doppler-config: ${{ env.DOPPLER_CONFIG }}
+          doppler-project: ${{ vars.DOPPLER_PROJECT }}
+          doppler-config: ${{ vars.DOPPLER_CONFIG }}
       - uses: actions/checkout@v1
       - uses: actions/setup-python@v2
       - uses: syphar/restore-virtualenv@v1
