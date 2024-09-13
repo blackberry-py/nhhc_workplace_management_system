@@ -3,7 +3,6 @@ name: General Test and Deploy
 on: push
 permissions:
   contents: write
-
 jobs:
   setup-virtualenv:
     runs-on: ubuntu-latest
