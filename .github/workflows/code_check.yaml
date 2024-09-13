@@ -1,7 +1,8 @@
 
-Copy code
 name: General Test and Deploy
 on: push
+permissions:
+  contents: write
 permissions:
   contents: write
 jobs:
