@@ -20,7 +20,7 @@ jobs:
           doppler-token: ${{ secrets.DOPPLER_TOKEN }}
           inject-env-vars: true
           doppler-project: ${{ vars.DOPPLER_PROJECT }}
-          doppler-config: ${{ vars.DOPPLER_CONFIG }}
+          doppler-config:                                                                        ${{ vars.DOPPLER_CONFIG }}
       - name: Set Up Correct Python Version and Virtual Env
         id: vversion-and-venversion-and-venv
         uses: actions/setup-python@v5
@@ -42,12 +42,9 @@ jobs:
           inject-env-vars: true
           doppler-project: ${{ env.DOPPLER_PROJECT }}
           doppler-config: ${{ env.DOPPLER_CONFIG }}
-      - uses: actions/setup-python@v4
-      - uses: syphar/restore-virtualenv@v1
-        id: cache-virtualenv
       - run: |
-          black --check --diff . && \
-          isort . --diff --check-only
+          python3 -m black --check --diff . && \
+          python3 -m b isort . --diff --check-only
 
   tests:
     needs: setup-virtualenv
@@ -63,8 +60,6 @@ jobs:
           inject-env-vars: true
           doppler-project: ${{ env.DOPPLER_PROJECT }}
           doppler-config: ${{ env.DOPPLER_CONFIG }}
-      - uses: syphar/restore-virtualenv@v1
-        id: cache-virtualenv
       - run: |
           if [! -d /data  ];then
           sudo mkdir /data
@@ -73,4 +68,3 @@ jobs:
           sudo chmod 777 && \
           cd nhhc && \
           exit 0;
-          else
