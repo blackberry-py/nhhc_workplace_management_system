@@ -3,7 +3,6 @@ name: General Test and Deploy
 on: push
 permissions:
   contents: write
-
 jobs:
   setup-virtualenv:
     runs-on: ubuntu-latest
@@ -67,8 +66,11 @@ jobs:
       - uses: syphar/restore-virtualenv@v1
         id: cache-virtualenv
       - run: |
-          sudo mkdir /data && \
+          if [! -d /data  ];then
+          sudo mkdir /data
+          fi
           sudo chown -R $USER:$USER /data && \
           sudo chmod 777 && \
           cd nhhc && \
           exit 0;
+          else
