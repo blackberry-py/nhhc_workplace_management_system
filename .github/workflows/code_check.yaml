@@ -1,17 +1,41 @@
+
+Copy code
 name: General Test and Deploy
 on: push
+permissions:
+  contents: write
 jobs:
   setup-virtualenv:
     runs-on: ubuntu-latest
-    container:
-      image: terrybrooks/netthands:amd64-aug24
-      env:
-        DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
-        DOPPLER_PROJECT: ${{ env.DOPPLER_PROJECT }}
-        DOPPLER_CONFIG: ${{ env.DOPPLER_CONFIG }}
+    env:
+      DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+      DOPPLER_PROJECT: ${{ vars.DOPPLER_PROJECT }}
+      DOPPLER_CONFIG: ${{ vars.DOPPLER_CONFIG }}
     steps:
       - name: Get Code Checkout
-        uses: 'Actions/Checkout@v3'
+        uses: actions/checkout@v3
+      - name: Fetch Env Vars From Doppler
+        uses: dopplerhq/secrets-fetch-action@v1.1.3
+        id: secrets
+        with:
+          doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+          inject-env-vars: true
+          doppler-project: ${{ vars.DOPPLER_PROJECT }}
+          doppler-config: ${{ vars.DOPPLER_CONFIG }}
+      - uses: actions/setup-python@v4
+      - uses: syphar/restore-virtualenv@v1
+        id: cache-virtualenv
+      - uses: syphar/restore-pip-download-cache@v1
+        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+        if: steps.cache-virtualenv.outputs.cache-hit != 'false
+
+  linter:
+    needs: setup-virtualenv
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
       - name: Fetch Env Vars From Doppler
         uses: dopplerhq/secrets-fetch-action@v1.1.3
         id: secrets
@@ -20,54 +44,32 @@ jobs:
           inject-env-vars: true
           doppler-project: ${{ env.DOPPLER_PROJECT }}
           doppler-config: ${{ env.DOPPLER_CONFIG }}
-      - uses: actions/checkout@v1
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
       - uses: syphar/restore-virtualenv@v1
         id: cache-virtualenv
-      - uses: syphar/restore-pip-download-cache@v1
-        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
-      - run: pip install -r requirements.txt
-        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
-  linter:
-        needs: setup-virtualenv
-        runs-on: ubuntu-latest
-        steps:
-        - uses: actions/checkout@v1
-        - name: Fetch Env Vars From Doppler
-          uses: dopplerhq/secrets-fetch-action@v1.1.3
-          id: secrets
-          with:
-            doppler-token: ${{ secrets.DOPPLER_TOKEN }}
-            inject-env-vars: true
-            doppler-project: ${{ env.DOPPLER_PROJECT }}
-            doppler-config: ${{ env.DOPPLER_CONFIG }}
-        - uses: actions/setup-python@v2
-        - uses: syphar/restore-virtualenv@v1
-          id: cache-virtualenv
-
-        - run: isort . --diff --check-only
-        - run: black --check --diff .
+      - run: |
+          black --check --diff . && \
+          isort . --diff --check-only
 
   tests:
-          needs: setup-virtualenv
-          runs-on: ubuntu-latest
-          steps:
-          - uses: actions/checkout@v1
-          - uses: actions/setup-python@v2
-          - name: Fetch Env Vars From Doppler
-            uses: dopplerhq/secrets-fetch-action@v1.1.3
-            id: secrets
-            with:
-              doppler-token: ${{ secrets.DOPPLER_TOKEN }}
-              inject-env-vars: true
-              doppler-project: ${{ env.DOPPLER_PROJECT }}
-              doppler-config: ${{ env.DOPPLER_CONFIG }}
-          - uses: syphar/restore-virtualenv@v1
-            id: cache-virtualenv
-
-          - run: |
-              sudo mkdir /data && \
-              sudo chown -R $USER:$USER /data && \
-              sudo chmod 777v && \
-              cd nhhc && \
-              exit 0;
+    needs: setup-virtualenv
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+      - name: Fetch Env Vars From Doppler
+        uses: dopplerhq/secrets-fetch-action@v1.1.3
+        id: secrets
+        with:
+          doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+          inject-env-vars: true
+          doppler-project: ${{ env.DOPPLER_PROJECT }}
+          doppler-config: ${{ env.DOPPLER_CONFIG }}
+      - uses: syphar/restore-virtualenv@v1
+        id: cache-virtualenv
+      - run: |
+          sudo mkdir /data && \
+          sudo chown -R $USER:$USER /data && \
+          sudo chmod 777 && \
+          cd nhhc && \
+          exit 0;
