@@ -12,6 +12,10 @@ jobs:
           doppler-config: prod
           python-version: 3.12.5
           cache-type: pip
+          doppler-project: nhhc
+          doppler-config: prod
+          python-version: 3.12.5
+          cache-type: pip
       - run: |
           python3 -m black --check --diff . && \
           python3 -m isort . --diff --check-only
@@ -22,6 +26,10 @@ jobs:
     steps:
       - uses: ./.github/generic.yml
         with:
+          doppler-project: nhhc
+          doppler-config: prod
+          python-version: 3.12.5
+          cache-type: pip
           doppler-project: nhhc
           doppler-config: prod
           python-version: 3.12.5
