@@ -4,36 +4,19 @@ permissions:
   contents: write
 jobs:
   linter:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: ./.github/generic.yml
-        with:
-          doppler-project: nhhc
-          doppler-config: prod
-          python-version: 3.12.5
-          cache-type: pip
-      - run: |
-          python3 -m black --check --diff . && \
-          python3 -m isort . --diff --check-only
-          python3 -m isort . --diff --check-only
+    # Reusable workflows must be referenced at the job level
+    uses: terry-brooksjr/nhhc_workplace_management_system/.github/workflows/generic.yml@feat_ADDS-MAINTENCE-MODE
+    with:
+      doppler-project: nhhc
+      doppler-config: prod
+      python-version: 3.12.5
+      cache-type: pip
 
   tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: ./.github/generic.yml
-        with:
-          doppler-project: nhhc
-          doppler-config: prod
-          python-version: 3.12.5
-          cache-type: pip
-      - run: |
-          if [ ! -d /data ]; then
-            sudo mkdir /data
-          if [ ! -d /data ]; then
-            sudo mkdir /data
-          fi
-          sudo chown -R $USER:$USER /data && \
-          sudo chmod -R 777 /data && \
-          sudo chmod -R 777 /data && \
-          cd nhhc && \
-          exit 0;
+    # Reusable workflows must be referenced at the job level
+    uses: terry-brooksjr/nhhc_workplace_management_system/.github/workflows/generic.yml@feat_ADDS-MAINTENCE-MODE
+    with:
+      doppler-project: nhhc
+      doppler-config: prod
+      python-version: 3.12.5
+      cache-type: pip
