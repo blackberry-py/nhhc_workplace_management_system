@@ -12,8 +12,13 @@ jobs:
           doppler-config: prod
           python-version: 3.12.5
           cache-type: pip
+          doppler-project: nhhc
+          doppler-config: prod
+          python-version: 3.12.5
+          cache-type: pip
       - run: |
           python3 -m black --check --diff . && \
+          python3 -m isort . --diff --check-only
           python3 -m isort . --diff --check-only
 
   tests:
@@ -25,11 +30,18 @@ jobs:
           doppler-config: prod
           python-version: 3.12.5
           cache-type: pip
+          doppler-project: nhhc
+          doppler-config: prod
+          python-version: 3.12.5
+          cache-type: pip
       - run: |
+          if [ ! -d /data ]; then
+            sudo mkdir /data
           if [ ! -d /data ]; then
             sudo mkdir /data
           fi
           sudo chown -R $USER:$USER /data && \
+          sudo chmod -R 777 /data && \
           sudo chmod -R 777 /data && \
           cd nhhc && \
           exit 0;
