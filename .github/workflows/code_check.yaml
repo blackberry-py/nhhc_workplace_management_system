@@ -4,19 +4,60 @@ permissions:
   contents: write
 jobs:
   linter:
-    # Reusable workflows must be referenced at the job level
-    uses: terry-brooksjr/nhhc_workplace_management_system/.github/workflows/generic.yml@feat_ADDS-MAINTENCE-MODE
-    with:
-      doppler-project: nhhc
-      doppler-config: prod
-      python-version: 3.12.5
-      cache-type: pip
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/generic.yml
+        with:
+          doppler-project: nhhc
+          doppler-config: prod
+          python-version: 3.12.5
+          cache-type: pip
+      - run: |
+          python3 -m black --check --diff . && \
+          python3 -m isort . --diff --check-only
+          python3 -m isort . --diff --check-only
 
   tests:
-    # Reusable workflows must be referenced at the job level
-    uses: terry-brooksjr/nhhc_workplace_management_system/.github/workflows/generic.yml@feat_ADDS-MAINTENCE-MODE
-    with:
-      doppler-project: nhhc
-      doppler-config: prod
-      python-version: 3.12.5
-      cache-type: pip
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Code Checkout
+        uses: actions/checkout@v3
+
+      - name: Fetch Env Vars From Doppler
+        id: secret
+        uses: dopplerhq/secrets-fetch-action@v1.1.3
+        with:
+          doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+          doppler-project: ${{ vars.doppler-project }}
+          doppler-config: ${{ vars.doppler-config }}
+
+      - name: Set Up Correct Python Version and Cache Virtual Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12.5
+          cache: pip
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: pip install -r requirements.txt
+
+      - run: |
+          if [ ! -d /data ]; then
+            sudo mkdir /data
+          if [ ! -d /data ]; then
+            sudo mkdir /data
+          fi
+          sudo chown -R $USER:$USER /data && \
+          sudo chmod -R 777 /data && \
+          sudo chmod -R 777 /data && \
+          cd nhhc && \
+          exit 0;
