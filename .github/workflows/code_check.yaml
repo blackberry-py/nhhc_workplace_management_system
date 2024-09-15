@@ -6,7 +6,8 @@ jobs:
   linter:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/generic.yml
+      - name: Call reusable workflow
+        uses: terry-brooksjr/nhhc_workplace_management_system/.github/workflows/generic.yml@feat_ADDS-MAINTENCE-MODE
         with:
           doppler-project: nhhc
           doppler-config: prod
@@ -15,12 +16,12 @@ jobs:
       - run: |
           python3 -m black --check --diff . && \
           python3 -m isort . --diff --check-only
-          python3 -m isort . --diff --check-only
 
   tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/generic.yml
+      - name: Call reusable workflow
+        uses: terry-brooksjr/nhhc_workplace_management_system/.github/workflows/generic.yml@feat_ADDS-MAINTENCE-MODE
         with:
           doppler-project: nhhc
           doppler-config: prod
@@ -29,11 +30,8 @@ jobs:
       - run: |
           if [ ! -d /data ]; then
             sudo mkdir /data
-          if [ ! -d /data ]; then
-            sudo mkdir /data
           fi
           sudo chown -R $USER:$USER /data && \
-          sudo chmod -R 777 /data && \
           sudo chmod -R 777 /data && \
           cd nhhc && \
           exit 0;
