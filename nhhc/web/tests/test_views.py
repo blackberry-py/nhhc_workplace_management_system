@@ -1,106 +1,80 @@
-import pytest
 from django.urls import reverse
-from django.test import RequestFactory, TestCase
-from django.http import HttpRequest
+from django.test import TestCase, RequestFactory
+from unittest.mock import patch, MagicMock
 from web.views import HomePageView, AboutUsView, SuccessfulSubmission, ClientInterestFormView, EmploymentApplicationFormView, favicon
 from web.forms import ClientInterestForm, EmploymentApplicationForm
-from web.models import ClientInterestSubmission, EmploymentApplicationModel
-from unittest.mock import patch, MagicMock
 
-@pytest.mark.django_db
+
 class TestViews(TestCase):
-    @pytest.fixture
-    def request_factory(self):
-        return RequestFactory()
+    @classmethod
+    def setUpTestData(cls):
+        cls.factory = RequestFactory()
+        cls.fake_api_key = "fake-api-key"
 
-    @pytest.fixture
-    def mock_google_maps_api_key(self, monkeypatch):
-        monkeypatch.setenv('GOOGLE_MAPS_API_KEY', 'fake-api-key')
+    def setUp(self):
+        self.factory = RequestFactory()
 
-    @pytest.mark.parametrize("view_class, template_name, extra_context", [
-        (HomePageView, "index.html", {"title": "Home"}),
-        (AboutUsView, "about.html", {"title": "About Nett Hands"}),
-        (SuccessfulSubmission, "submission.html", {"title": "Submission Successful"}),
-    ], ids=["HomePageView", "AboutUsView", "SuccessfulSubmission"])
-    def test_public_views_get(self, request_factory, view_class, template_name, extra_context):
-        # Arrange
-        request = request_factory.get(reverse(view_class.__name__.lower()))
+    def test_public_views_get(self):
+        views = [
+            (HomePageView, "index.html", {"title": "Home"}),
+            (AboutUsView, "about.html", {"title": "About Nett Hands"}),
+            (SuccessfulSubmission, "submission.html", {"title": "Submission Successful"}),
+        ]
 
-        # Act
-        response = view_class.as_view()(request)
+        for view_class, template_name, extra_context in views:
+            with self.subTest(view=view_class):
+                request = self.factory.get(reverse(view_class.__name__.lower()))
+                response = view_class.as_view()(request)
 
-        # Assert
-        assert response.status_code == 200
-        assert template_name in response.template_name
-        assert response.context_data['extra_context'] == extra_context
+                self.assertEqual(response.status_code, 200)
+                self.assertIn(template_name, response.template_name)
+                self.assertEqual(response.context_data["extra_context"], extra_context)
 
-    @pytest.mark.parametrize("form_data, expected_status_code", [
-        ({"contact_number": "1234567890"}, 302),
-        ({}, 200),
-    ], ids=["valid_form", "invalid_form"])
-    def test_client_interest_form_view_post(self, request_factory, mock_google_maps_api_key, form_data, expected_status_code):
-        # Arrange
-        request = request_factory.post(reverse('client_interest'), data=form_data)
-        view = ClientInterestFormView()
+    def test_client_interest_form_view_post(self):
+        form_data_cases = [({"contact_number": "1234567890"}, 302), ({}, 200)]  # Valid form  # Invalid form
 
-        # Act
-        response = view.post(request)
+        for form_data, expected_status_code in form_data_cases:
+            with self.subTest(form_data=form_data):
+                request = self.factory.post(reverse("client_interest"), data=form_data)
+                response = ClientInterestFormView.as_view()(request)
 
-        # Assert
-        assert response.status_code == expected_status_code
+                self.assertEqual(response.status_code, expected_status_code)
 
-    @pytest.mark.parametrize("form_data, expected_status_code", [
-        ({"contact_number": "1234567890"}, 302),
-        ({}, 200),
-    ], ids=["valid_form", "invalid_form"])
-    def test_employment_application_form_view_post(self, request_factory, mock_google_maps_api_key, form_data, expected_status_code):
-        # Arrange
-        request = request_factory.post(reverse('application'), data=form_data)
-        view = EmploymentApplicationFormView()
+    def test_employment_application_form_view_post(self):
+        form_data_cases = [({"contact_number": "1234567890"}, 302), ({}, 200)]  # Valid form  # Invalid form
 
-        # Act
-        response = view.post(request)
+        for form_data, expected_status_code in form_data_cases:
+            with self.subTest(form_data=form_data):
+                request = self.factory.post(reverse("application"), data=form_data)
+                response = EmploymentApplicationFormView.as_view()(request)
 
-        # Assert
-        assert response.status_code == expected_status_code
+                self.assertEqual(response.status_code, expected_status_code)
 
-    def test_favicon(self, request_factory):
-        # Arrange
-        request = request_factory.get(reverse('favicon'))
-
-        # Act
+    def test_favicon(self):
+        request = self.factory.get(reverse("favicon"))
         response = favicon(request)
 
-        # Assert
-        assert response.status_code == 200
-        assert response['Content-Type'] == 'image/x-icon'
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "image/x-icon")
 
-    @patch('web.views.process_new_application')
-    def test_client_interest_form_view_process_submitted_client_interest(self, mock_process_new_application, request_factory, mock_google_maps_api_key):
-        # Arrange
+    @patch("web.views.process_new_application")
+    def test_client_interest_form_view_process_submitted_client_interest(self, mock_process_new_application):
         form_data = {"contact_number": "1234567890"}
         form = ClientInterestForm(data=form_data)
-        form.is_valid()
-        view = ClientInterestFormView()
+        self.assertTrue(form.is_valid())
 
-        # Act
-        response = view.process_submitted_client_interest(form)
+        response = ClientInterestFormView().process_submitted_client_interest(form)
 
-        # Assert
-        assert response.status_code == 302
+        self.assertEqual(response.status_code, 302)
         mock_process_new_application.assert_called_once()
 
-    @patch('web.views.process_new_application')
-    def test_employment_application_form_view_process_submitted_application(self, mock_process_new_application, request_factory, mock_google_maps_api_key):
-        # Arrange
+    @patch("web.views.process_new_application")
+    def test_employment_application_form_view_process_submitted_application(self, mock_process_new_application):
         form_data = {"contact_number": "1234567890"}
         form = EmploymentApplicationForm(data=form_data)
-        form.is_valid()
-        view = EmploymentApplicationFormView()
+        self.assertTrue(form.is_valid())
 
-        # Act
-        response = view.process_submitted_application(form)
+        response = EmploymentApplicationFormView().process_submitted_application(form)
 
-        # Assert
-        assert response.status_code == 302
+        self.assertEqual(response.status_code, 302)
         mock_process_new_application.assert_called_once()

@@ -51,6 +51,7 @@ class CachedTemplateView(TemplateView):
     Methods:
         as_view(cls, **initkwargs): Returns a cached version of the template view.
     """
+
     @classmethod
     def as_view(cls, **initkwargs):  # @NoSelf
         return cache_page(settings.CACHE_TTL)(super(CachedTemplateView, cls).as_view(**initkwargs))
@@ -65,15 +66,17 @@ class NeverCacheMixin(object):
     def dispatch(self, *args, **kwargs):
         """
         Dispatch method that applies the never_cache decorator to prevent caching.
-        
+
         Args:
         *args: Variable length argument list.
         **kwargs: Arbitrary keyword arguments.
-        
+
         Returns:
         The result of calling the dispatch method of the superclass with the provided arguments and keyword arguments.
         """
         return super(NeverCacheMixin, self).dispatch(*args, **kwargs)
+
+
 # Decorator to Exponetiually Retry Certain Failures.
 def exponentially_retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None) -> None:
     """Retry calling the decorated function using an exponential backoff.
@@ -120,4 +123,4 @@ def internet_connection() -> bool:
         response = requests.get("https://www.google.com", timeout=5)
         return True
     except requests.ConnectionError:
-        return False   
+        return False

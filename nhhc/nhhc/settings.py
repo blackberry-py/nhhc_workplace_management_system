@@ -17,14 +17,15 @@ from highlight_io.integrations.django import DjangoIntegration
 from logtail import LogtailHandler
 from loguru import logger
 from nhhc.utils.helpers import internet_connection
+
 # SECTION: **********************OPERATIONAL SETTINGS*********************************
 # The Settings in this section modify the entire operations of the application. Change with Caution
 # ************************************************************************************
 DEBUG = os.getenv("ENABLE_DEBUGGING", False)
-MAINTENANCE_MODE = False # os.getenv("ENABLE_MAINTENANCE_MODE", None)
+MAINTENANCE_MODE = True  # os.getenv("ENABLE_MAINTENANCE_MODE", None)
 OFFLINE = not internet_connection()
 # ************************************************************************************
-    #!SECTION  
+#!SECTION
 
 TESTING = "test" in sys.argv
 logger.remove()  # Remove all handlers added so far, including the default one.
@@ -211,12 +212,12 @@ QUERYSET_TTL: int = int(os.environ["QUERYSET_TTL"])
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 if OFFLINE:
     DATABASES = {
-    "default": dj_database_url.config(
-        default=f'postgresql://{os.environ["POSTGRES_USER"]}:{os.environ["POSTGRES_PASSWORD"]}@localhost:5432',
-        conn_max_age=600,
-        conn_health_checks=True,
-    ),
-}
+        "default": dj_database_url.config(
+            default=f'postgresql://{os.environ["POSTGRES_USER"]}:{os.environ["POSTGRES_PASSWORD"]}@localhost:5432',
+            conn_max_age=600,
+            conn_health_checks=True,
+        ),
+    }
 else:
     DATABASES = {
         "default": dj_database_url.config(
@@ -240,47 +241,47 @@ HEALTHCHECK_CACHE_KEY = "healthcheck_key"
 if OFFLINE:
     REDIS_URL = os.environ["OFFLINE_REDIS_CACHE_URI_TOKEN"]
     CACHES = {
-            "default": {
-                "BACKEND": os.environ["CACHE_ENGINE"],
-                "LOCATION": REDIS_URL,
-                "OPTIONS": {
-                    "PARSER_CLASS": os.environ["CACHE_PARSER"],
-                    "CONNECTION_POOL_CLASS": "redis.BlockingConnectionPool",
-                    "CONNECTION_POOL_CLASS_KWARGS": {"max_connections": 50, "timeout": 200},
-                    "KEY_PREFIX": "NHHC-NATIVE",
-                },
+        "default": {
+            "BACKEND": os.environ["CACHE_ENGINE"],
+            "LOCATION": REDIS_URL,
+            "OPTIONS": {
+                "PARSER_CLASS": os.environ["CACHE_PARSER"],
+                "CONNECTION_POOL_CLASS": "redis.BlockingConnectionPool",
+                "CONNECTION_POOL_CLASS_KWARGS": {"max_connections": 50, "timeout": 200},
+                "KEY_PREFIX": "NHHC-NATIVE",
             },
-            "celery": {
-                "BACKEND": os.environ["CACHE_ENGINE"],
-                "LOCATION": os.environ["OFFLINE_CELERY_BROKER_URL"],
-                "OPTIONS": {
-                    "PARSER_CLASS": os.environ["CACHE_PARSER"],
-                },
-                "KEY_PREFIX": "C-TASK",
+        },
+        "celery": {
+            "BACKEND": os.environ["CACHE_ENGINE"],
+            "LOCATION": os.environ["OFFLINE_CELERY_BROKER_URL"],
+            "OPTIONS": {
+                "PARSER_CLASS": os.environ["CACHE_PARSER"],
             },
-        }
+            "KEY_PREFIX": "C-TASK",
+        },
+    }
 else:
-        REDIS_URL = os.environ["REDIS_CACHE_URI_TOKEN"]
-        CACHES = {
-            "default": {
-                "BACKEND": os.environ["CACHE_ENGINE"],
-                "LOCATION": os.environ["CACHE_DB_REDIS"],
-                "OPTIONS": {
-                    "PARSER_CLASS": os.environ["CACHE_PARSER"],
-                    "CONNECTION_POOL_CLASS": "redis.BlockingConnectionPool",
-                    "CONNECTION_POOL_CLASS_KWARGS": {"max_connections": 50, "timeout": 200},
-                    "KEY_PREFIX": "NHHC-NATIVE",
-                },
+    REDIS_URL = os.environ["REDIS_CACHE_URI_TOKEN"]
+    CACHES = {
+        "default": {
+            "BACKEND": os.environ["CACHE_ENGINE"],
+            "LOCATION": os.environ["CACHE_DB_REDIS"],
+            "OPTIONS": {
+                "PARSER_CLASS": os.environ["CACHE_PARSER"],
+                "CONNECTION_POOL_CLASS": "redis.BlockingConnectionPool",
+                "CONNECTION_POOL_CLASS_KWARGS": {"max_connections": 50, "timeout": 200},
+                "KEY_PREFIX": "NHHC-NATIVE",
             },
-            "celery": {
-                "BACKEND": os.environ["CACHE_ENGINE"],
-                "LOCATION": os.environ["CELERY_BROKER_URL"],
-                "OPTIONS": {
-                    "PARSER_CLASS": os.environ["CACHE_PARSER"],
-                },
-                "KEY_PREFIX": "C-TASK",
+        },
+        "celery": {
+            "BACKEND": os.environ["CACHE_ENGINE"],
+            "LOCATION": os.environ["CELERY_BROKER_URL"],
+            "OPTIONS": {
+                "PARSER_CLASS": os.environ["CACHE_PARSER"],
             },
-        }
+            "KEY_PREFIX": "C-TASK",
+        },
+    }
 ROBOTS_CACHE_TIMEOUT = 60 * 60 * 24
 
 
@@ -327,7 +328,12 @@ LOGIN_REDIRECT_URL = "/dashboard"
 LOGIN_URL = "/login"
 LOGOUT_REDIRECT_URL = LOGIN_URL
 REQUIRE_LOGIN_PUBLIC_URLS = (LOGIN_URL, LOGOUT_REDIRECT_URL, r"^/api/.*", r"^/metrics", r"^/control-center")
-REQUIRE_LOGIN_PUBLIC_NAMED_URLS = ("account_reset_password","account_email","account_set_password","account_change_password", )
+REQUIRE_LOGIN_PUBLIC_NAMED_URLS = (
+    "account_reset_password",
+    "account_email",
+    "account_set_password",
+    "account_change_password",
+)
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.ScryptPasswordHasher",
     "django.contrib.auth.hashers.PBKDF2PasswordHasher",
@@ -462,12 +468,12 @@ if not OFFLINE:
         environment=str(os.environ["HIGHLIGHT_ENV"]),
     )
     logger.add(
-    HIGHLIGHT_MONITORING.logging_handler,
-    format=LOG_FORMAT,
-    level="DEBUG",
-    backtrace=True,
-    serialize=True,
-)
+        HIGHLIGHT_MONITORING.logging_handler,
+        format=LOG_FORMAT,
+        level="DEBUG",
+        backtrace=True,
+        serialize=True,
+    )
 PRIMARY_LOG_FILE = os.path.join(os.environ.get("LOG_FILE_DIRECTORY"), "primary_ops.log")
 CRITICAL_LOG_FILE = os.path.join(os.environ.get("LOG_FILE_DIRECTORY"), "fatal.log")
 DEBUG_LOG_FILE = os.path.join(os.environ.get("LOG_FILE_DIRECTORY"), "debug.log")
@@ -674,11 +680,24 @@ CELERY_RESULT_EXTENDED = True
 # DEBUG SETTINGS
 if DEBUG:
     EMAIL_BACKEND = "mail_panel.backend.MailToolbarBackend"
-    MIDDLEWARE.insert(0, "kolo.middleware.KoloMiddleware")
+    MIDDLEWARE.insert(6, "kolo.middleware.KoloMiddleware")
     INSTALLED_APPS.insert(0, "kolo")
 
 else:
     EMAIL_BACKEND = "django_smtp_ssl.SSLEmailBackend"
+if TESTING:
+    DATABASES["default"] = {
+        "ENGINE": "django_prometheus.db.backends.postgresql",
+        "USER": os.environ["POSTGRES_USER"],
+        "HOST": os.environ["POSTGRES_HOST"],
+        "PORT": 25060,
+        "NAME": os.environ["POSTGRES_DATABASE"],
+        "PASSWORD": os.environ["POSTGRES_PASSWORD"],
+        "OPTIONS": {
+            "sslmode": "require",
+            "sslrootcert": "/Users/terry-brooks/GitHub/nhhc_workplace_management_system/ca-certificate.crt",
+        },
+    }
 
 if not TESTING:
     INSTALLED_APPS = [

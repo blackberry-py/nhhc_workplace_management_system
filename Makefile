@@ -1,6 +1,6 @@
 # Define constants
 # DEV_ENV_RUNNING_IN_CONTAINER ?= false
-VENV_DIR := $(if $(DEV_ENV_RUNNING_IN_CONTAINER), /workspaces/NettHands/.venv, /Users/terry-brooks/GitHub/NettHands/.venv)
+VENV_DIR := .venv
 PYTHON := python3
 BIN := $(VENV_DIR)/bin
 PYTHON_INTERPRETER := $(BIN)/$(PYTHON)
@@ -19,7 +19,7 @@ venv: ## Make a new virtual environment
 
 .PHONY: collect
 collect:
-	doppler -t $(TOKEN) run -- python  $(PYTHON_INTERPRETER) $(DOCKER_PATH)***manage.py collectstatic --no-input
+	doppler -t $(TOKEN) run -- python nhhc/manage.py collectstatic --no-input
 
 .PHONY: install
 install: ## Make venv and install requirements
@@ -30,8 +30,8 @@ freeze: ## Pin current dependencies
 	$(BIN)/pip freeze > ../requirements.txt
 
 migrate: ## Make and run migrations
-	doppler run -t $(TOKEN)  --  	$(PYTHON_INTERPRETER) $(DOCKER_PATH)manage.py makemigrations
-	doppler run -t $(TOKEN)  --  	$(PYTHON_INTERPRETER) $(DOCKER_PATH)manage.py migrate
+	doppler run -t $(TOKEN)  --  	$(PYTHON_INTERPRETER) nhhc/manage.py makemigrations
+	doppler run -t $(TOKEN)  --  	$(PYTHON_INTERPRETER) nhhc/manage.py migrate
 
 lint:
 	doppler run -t $(TOKEN)  --  prospector  -w  pylint pyroma mypy dodgy mccabe bandit profile-validator > prospector_results_${CURRENTDATE}.json
@@ -46,7 +46,7 @@ workers:
 
 .PHONY: test
 test: ## Run tests
-	doppler run -- coverage run $(DOCKER_PATH)manage.py test web employee portal  --verbosity=2 --keepdb   --failfast  --force-color
+	doppler run -- coverage run $(DOCKER_PATH)nhhc/manage.py test web employee portal  --verbosity=3 --keepdb    --force-color
 
 .PHONY: test
 pipeline-test: ## Run tests
@@ -59,7 +59,7 @@ flower:
 
 .PHONY: run
 run:
-	doppler run -t $(TOKEN)  --  	$(PYTHON_INTERPRETER) $(DOCKER_PATH)manage.py runserver 9555
+	doppler run -t $(TOKEN)  --  	$(PYTHON_INTERPRETER) nhhc/manage.py runserver 9555
 
 .PHONY: debug
 debug: ## Run the Django server
@@ -67,7 +67,7 @@ debug: ## Run the Django server
 
 .PHONY: admin
 admin:
-	doppler run -t $(TOKEN)  --   $(PYTHON_INTERPRETER) manage.py createsuperuser --no-input
+	doppler run -t $(TOKEN)  --   $(PYTHON_INTERPRETER) nhhc/manage.py createsuperuser --no-input
 
 .PHONY: start
 start:

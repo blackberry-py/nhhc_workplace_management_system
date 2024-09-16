@@ -46,7 +46,6 @@ from formset.calendar import CalendarResponseMixin
 from nhhc.utils.helpers import NeverCacheMixin
 
 
-
 class Dashboard(CalendarResponseMixin, TemplateView):
     template_name = "dashboard.html"
 
@@ -78,7 +77,7 @@ class ProfileDetailView(DetailView):
         return context
 
 
-class ProfileFormView( UpdateView, FileUploadMixin):
+class ProfileFormView(UpdateView, FileUploadMixin):
     form_class = EmployeeForm
     model = Employee
     template_name = "profile_main.html"
@@ -89,11 +88,13 @@ class ProfileFormView( UpdateView, FileUploadMixin):
 
     def get_success_url(self):
         return reverse("profile")
-    
+
+
 class PayrollExceptionView(FormView):
     template_name = "exception.html"
     form_class = PayrollExceptionForm
-    
+
+
 class Profile(NeverCacheMixin, View):
     def get(self, request, *args, **kwargs):
         view = ProfileDetailView.as_view()
@@ -167,7 +168,7 @@ class ClientInquiriesAPIListView(generics.ListCreateAPIView):
 
 
 # SECTION - Class-Based Views
-class ClientInquiriesListView( ListView):
+class ClientInquiriesListView(ListView):
     """
     Renders a list of client inquiries.
     """
@@ -189,7 +190,7 @@ class ClientInquiriesListView( ListView):
         return context
 
 
-class ClientInquiriesDetailView( DetailView):
+class ClientInquiriesDetailView(DetailView):
     """
     Renders details of a specific client inquiry.
     """
@@ -200,7 +201,7 @@ class ClientInquiriesDetailView( DetailView):
     pk_url_kwarg = "pk"
 
 
-class EmploymentApplicationListView( ListView):
+class EmploymentApplicationListView(ListView):
     """
     Renders a list of submitted employment applications.
     """
@@ -221,7 +222,7 @@ class EmploymentApplicationListView( ListView):
         return context
 
 
-class EmploymentApplicationDetailView( DetailView):
+class EmploymentApplicationDetailView(DetailView):
     """
     Renders details of a specific employment application.
     """

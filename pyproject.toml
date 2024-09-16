@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "nhhc"
-version = "1.0.0
+version = "1.0.0"
 license = "GNU3"
 description = "Front-End website and web application for Nett Hands Home care"
 authors = ["Terry Brooks, Jr. <Terry.Arthur@BrooksJr.com>"]
+package-mode = false
 
 [tool.poetry.dependencies]
 python = ">=3.11,<=3.12.5"
