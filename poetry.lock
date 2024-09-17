@@ -1444,18 +1444,24 @@ files = [
 django-debug-toolbar = ">=1.0"
 
 [[package]]
-name = "django-maintenance-mode"
-version = "0.21.1"
-description = "shows a 503 error page when maintenance-mode is on."
+name = "django-maintenancemode"
+version = "0.11.7"
+description = "django-maintenancemode allows you to temporary shutdown your site for maintenance work"
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-maintenance-mode-0.21.1.tar.gz", hash = "sha256:b79afddb671c59972ae542e4fafbc99117d2d37991843eaaa837e328eed12b1b"},
-    {file = "django_maintenance_mode-0.21.1-py3-none-any.whl", hash = "sha256:c02fff0e386b7f8b2ab54479d3a0d336ae34014da22a7a2365ca96d5a2c1db94"},
+    {file = "django-maintenancemode-0.11.7.tar.gz", hash = "sha256:a0b6e27cb0751996720eac48d1d1dd0294773d8d3583f31fdbd84c78f2df1c74"},
+    {file = "django_maintenancemode-0.11.7-py3-none-any.whl", hash = "sha256:7351f78a674505f9cadc45310c8aa8e58690e561d396c505de932eacc63bf3d2"},
 ]
 
 [package.dependencies]
-python-fsutil = ">=0.13.1,<1.0.0"
+django-appconf = "*"
+ipy = "*"
+six = ">=1.9.0"
+
+[package.extras]
+develop = ["django", "pytest", "pytest-django", "tox"]
+test = ["pytest", "pytest-cov", "pytest-django"]
 
 [[package]]
 name = "django-pgcrypto"
@@ -2586,6 +2592,16 @@ python-versions = ">=3.7"
 files = [
     {file = "installer-0.7.0-py3-none-any.whl", hash = "sha256:05d1933f0a5ba7d8d6296bb6d5018e7c94fa473ceb10cf198a92ccea19c27b53"},
     {file = "installer-0.7.0.tar.gz", hash = "sha256:a26d3e3116289bb08216e0d0f7d925fcef0b0194eedfa0c944bcaaa106c4b631"},
+]
+
+[[package]]
+name = "ipy"
+version = "1.01"
+description = "Class and tools for handling of IPv4 and IPv6 addresses and networks"
+optional = false
+python-versions = "*"
+files = [
+    {file = "IPy-1.01.tar.gz", hash = "sha256:edeca741dea2d54aca568fa23740288c3fe86c0f3ea700344571e9ef14a7cc1a"},
 ]
 
 [[package]]
@@ -4428,17 +4444,6 @@ files = [
 cli = ["click (>=5.0)"]
 
 [[package]]
-name = "python-fsutil"
-version = "0.14.1"
-description = "high-level file-system operations for lazy devs."
-optional = false
-python-versions = "*"
-files = [
-    {file = "python-fsutil-0.14.1.tar.gz", hash = "sha256:8fb204fa8059f37bdeee8a1dc0fff010170202ea47c4225ee71bb3c26f3997be"},
-    {file = "python_fsutil-0.14.1-py3-none-any.whl", hash = "sha256:0d45e623f0f4403f674bdd8ae7aa7d24a4b3132ea45c65416bd2865e6b20b035"},
-]
-
-[[package]]
 name = "python-gnupg"
 version = "0.5.2"
 description = "A wrapper for the Gnu Privacy Guard (GPG or GnuPG)"
@@ -5865,4 +5870,4 @@ test = ["pytest"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<=3.12.5"
-content-hash = "eb0e8753ae5f2016c77b20f921cf1fccdff463a0bc2ce0d8f9bb5ec5394e4efc"
+content-hash = "6b840cb3288603fd675f1efc459496953ef33165a5a976c2ec26a7e67f048703"

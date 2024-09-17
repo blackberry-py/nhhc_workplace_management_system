@@ -31,14 +31,22 @@
     "doppler.hover.enable": true,
     "makefile.configureOnOpen": false,
     "cSpell.words": [
+        "ADMINRESTRICT",
         "customscripts",
         "customstyles",
         "docuseal",
+        "IDOA",
+        "idph",
+        "jobdesc",
         "jsonifed",
         "jsonified",
         "multiprocess",
         "Nett",
         "nhhc",
-        "setbg"
+        "setbg",
+        "TINYMCE"
+    ],
+    "python.analysis.extraPaths": [
+        "./nhhc"
     ],
 }

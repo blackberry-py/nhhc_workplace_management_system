@@ -61,14 +61,13 @@ class ClientInterestFormView(PublicViewMixin, FormView):
             return HttpResponseRedirect(reverse_lazy("submitted"), {"type": "Client Interest Form"})
         else:
             failed_submission_attempts_client.inc()
-            logger.error("Form Is Invalid")
+            logger.error(f"Form Is Invalid: {form.errors.as_text()}")
             return HttpResponseRedirect(reverse_lazy("client_interest"), {"errors": form.errors.as_data()})
 
     @public
     def get(self, request):
         form = ClientInterestForm()
         context = {"form": form}
-        logger.debug(context)
         return render(request, "client-interest.html", context)
 
     @public
@@ -145,3 +144,4 @@ def favicon(request: HttpRequest) -> HttpResponse:
     """
     favicon_file = static("img/favicon.ico")
     return FileResponse(filename=favicon_file)
+

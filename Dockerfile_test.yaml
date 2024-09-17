@@ -1,0 +1,65 @@
+schemaVersion: "2.0.0"  # Defines the version of the YAML schema used for testing.
+
+# Global Environment Variables
+globalEnvVars:
+  - key: "DOPPLER_TOKEN"
+    value: $DOPPLER_TOKEN  # Sets the DOPPLER_TOKEN environment variable globally.
+
+commandTests:
+
+  # Python Installation Test
+  # This test checks if the Python binary is located in the correct path.
+  - name: "python installation"
+    command: "which"
+    args: ["python"]
+    expectedOutput: ["/usr/local/bin/python\n"]  # Expected path to the Python binary.
+  # Gunicorn Installation Test
+  - name: "gunicorn "
+    setup: [["python","-m", "venv", ".venv"],
+            ["pip", "install", "gunicorn", "flask"]]
+    command: "which"
+    args: ["gunicorn"]
+    expectedOutput: ["/usr/local/bin/gunicorn"]
+
+  # Django Integration Test
+  # Modified test to correctly run the Django system check.
+  - name: "django integration"
+    command: "doppler"  # Ensures the environment is set up properly using Doppler.
+    args: ["run", "-t", "dp.st.prod.S9bbkWpTPrG8QhqWlAVIOdLxM1PgV4u8degMIP5sjTx", "--", "python", "src/app/manage.py", "check"]  # Corrected the command to directly call the manage.py script.
+    expectedOutput: [
+      "RuntimeWarning: Accessing the database during app initialization is discouraged. ",
+      "To fix this warning, avoid executing queries in AppConfig.ready() or when your app modules are imported. ",
+      "warnings.warn(self.APPS_NOT_READY_WARNING_MSG, category=RuntimeWarning) ",
+      "system check identified no issues (1 silenced)."
+    ]  # Expected warnings and system check output.
+
+fileExistenceTests:
+
+  # Crontab File Test
+  # This test checks if the crontab file exists in the /etc directory.
+  - name: 'crontab'
+    path: '/etc/crontab'
+    shouldExist: true  # Asserts that the crontab file should exist.
+
+  # Django Source Code Test
+  # This test verifies the existence of the manage.py file in the source directory.
+  - name: 'source code'
+    path: '/src/app/manage.py'
+    shouldExist: true  # Asserts that the manage.py file should exist.
+
+  # Sweeper Script Test
+  # This test ensures that the attestation_sweeper.sh script exists and has the correct permissions.
+  - name: 'sweeper script'
+    path: '/src/attestation_sweeper.sh'
+    uid: 1001  # Checks that the file's owner ID is 1001.
+    gid: 998  # Checks that the file's group ID is 998.
+    shouldExist: true  # Asserts that the file should exist.
+
+  # PostgreSQL SSL Certificate Test
+  # This test checks for the existence of the postgres_ssl.crt file and verifies its permissions.
+  - name: 'postgres SSL certification test'
+    path: '/src/postgres_ssl.crt'
+    uid: 1001  # Checks that the file's owner ID is 1001.
+    gid: 998  # Checks that the file's group ID is 998.
+    permissions: '-rw-r--r--'  # Ensures the file has read and write permissions for the owner and read-only permissions for others.
+    shouldExist: true  # Asserts that the file should exist.

@@ -77,9 +77,9 @@ guardian = "^0.2.2"
 django-mail-panel = "^4.0.4"
 django-require-login = "^1.1.4"
 django-cockroachdb = "^5.0"
-django-maintenance-mode = "^0.21.1"
 uwsgi = "^2.0.26"
 gunicorn = "^23.0.0"
+django-maintenancemode = "^0.11.7"
 
 
 [tool.poetry.group.dev.dependencies]

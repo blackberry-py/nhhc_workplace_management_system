@@ -20,3 +20,7 @@ def from_settings(request):
         "ENVIRONMENT_NAME": settings.ENVIRONMENT_NAME,
         "ENVIRONMENT_COLOR": settings.ENVIRONMENT_COLOR,
     }
+
+def maintenance_mode(request):
+    if settings.MAINTENANCE_MODE:
+        return {"MAINTENANCE_MODE": True}

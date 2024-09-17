@@ -10,6 +10,14 @@ import compliance.urls
 import employee.urls
 import portal.urls
 import web.urls
+import defender.urls
+import robots.urls
+import django_prometheus.urls
+import tinymce.urls
+import health_check.urls
+# import maintenance_mode.urls
+import rest_framework.urls
+import allauth.urls
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.contrib.sitemaps import Sitemap
@@ -20,6 +28,8 @@ from django.urls.resolvers import RegexPattern, RoutePattern
 from django.views.decorators.cache import cache_page
 from loguru import logger
 from web.sitemaps import StaticViewSitemap
+from django.conf import settings
+from django_require_login.mixins import public
 
 # SECTION - Sitemap
 sitemaps: Dict[str, Sitemap] = {"static": StaticViewSitemap}
@@ -35,7 +45,23 @@ HEALTH_CHECK: Dict[str, int] = {
 #!SECTION
 
 
-# SECTION - Sitewide Errort Handlers
+# SECTION - Sitewide Error Handlers
+@public
+def maintenance_handler(request: HttpRequest, exception=None) -> HttpResponse:
+    """
+    Handle bad requests by logging the exception and rendering a 400.html template.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        exception (Exception, optional): The exception that caused the bad request. Defaults to None.
+
+    Returns:
+        HttpResponse: A response with status code 400 and the 400.html template rendered.
+    """
+
+    return render(request, "503.html", status=503)
+
+
 def bad_request_handler(request: HttpRequest, exception=None) -> HttpResponse:
     """
     Handle bad requests by logging the exception and rendering a 400.html template.
@@ -78,18 +104,18 @@ def page_not_found_handler(request: HttpRequest, exception=None) -> HttpResponse
     Returns:
         HttpResponse: A response with status code 404 and the 404.html template rendered.
     """
-    logger.warning(f"PAGE NOT FOUND ERROR: {exceptions}")
+    logger.warning(f"PAGE NOT FOUND ERROR: {exception}")
     return render(request, "404.html", status=404)
 
 
 def server_error_handler(request: HttpRequest, exception=None) -> HttpResponse:
     """
-        Handle requests that result in servererros by logging the exception and rendering a 500.html template.
+        Handle requests that result in server errors by logging the exception and rendering a 500.html template.
 
         Args:
             request (HttpRequest): The HTTP request object.
             exception (Exception, optional): The exception that caused the bad request. Defaults to None.
-    S
+    
         Returns:
             HttpResponse: A response with status code 400 and the 400.html template rendered.
     """
@@ -101,29 +127,31 @@ handler400: Callable = bad_request_handler
 handler403: Callable = permission_denied_handler
 handler404: Callable = page_not_found_handler
 handler500: Callable = server_error_handler
+handler503: Callable = maintenance_handler
 #!SECTION
 
 # SECTION - Master URL Route Patterns
 
 urlpatterns: List[Union[RoutePattern, RegexPattern]] = [
-    path("control-center/defender/", include("defender.urls")),  # defender admin
-    path("__debug__/", include("debug_toolbar.urls")),
+    path("control-center/defender/", include(defender.urls)),  # defender admin
     path("control-center/", admin.site.urls, name="admin"),
+    re_path(r"^sitemap.xml$\/?", cache_page(60)(sitemaps), {"sitemaps": sitemaps}, name="cached-sitemap"),
+    re_path(r"^robots\.txt\/?", include(robots.urls)),
+    re_path("", include(django_prometheus.urls), name="metric_scrape"),
+    re_path(r"^status/", include(health_check.urls)),
+    path("maintenance/", maintenance_handler, name="maintenance_mode"),
+    path("tinymce/", include(tinymce.urls)),
     path("", include(portal.urls)),
     path("", include(web.urls)),
-    path("", include("allauth.urls")),
-    re_path(
-        r"^status/",
-        include("health_check.urls"),
-    ),
+    path("", include(allauth.urls)),
     path("", include(employee.urls)),
-    path("tinymce/", include("tinymce.urls")),
-    path("", include(compliance.urls)),
-    path("api-auth/", include("rest_framework.urls")),
     path("", include(announcements.urls)),
-    re_path(r"^sitemap.xml$\/?", cache_page(60)(sitemaps), {"sitemaps": sitemaps}, name="cached-sitemap"),
-    re_path(r"^robots\.txt\/?", include("robots.urls")),
-    re_path("", include("django_prometheus.urls")),
-    re_path(r"^maintenance-mode/", include("maintenance_mode.urls")),
+    path("", include(compliance.urls)),
+    path("api-auth/", include(rest_framework.urls)),
+
 ]
 #!SECTION
+if settings.DEBUG:
+    import debug_toolbar
+
+    urlpatterns.insert(0, re_path(r'^__debug__/', include(debug_toolbar.urls)) )

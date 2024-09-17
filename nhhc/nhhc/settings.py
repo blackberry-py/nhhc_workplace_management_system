@@ -40,6 +40,8 @@ MANAGERS = ADMINS
 WSGI_APPLICATION = "nhhc.wsgi.application"
 ROBOTS_USE_HOST = False
 FIRST_DAY_OF_WEEK = 1
+MAINTENANCE_MODE_IGNORE_URLS = ("/metrics")
+
 MAINTENANCE_MODE_IGNORE_ADMIN_SITE = True
 RECAPTCHA_PUBLIC_KEY = os.environ["RECAPTCHA_PUBLIC_KEY"]
 RECAPTCHA_PRIVATE_KEY = os.environ["RECAPTCHA_PRIVATE_KEY"]
@@ -57,7 +59,7 @@ IGNORABLE_404_URLS = [
     re.compile(r"^/robots\.txt$"),
     re.compile(r"\.(php|cgi|php7)$"),
 ]
-# SECTION - CORS and CSFR Settings
+# SECTION - CORS and CSRF Settings
 REFERRER_POLICY = "strict-origin-when-cross-origin"
 CSRF_COOKIE_NAME = "nhhc-csrf"
 CSRF_FAILURE_VIEW = "nhhc.urls.permission_denied_handler"
@@ -142,7 +144,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
     ## Installed 3rd Apps
-    "maintenance_mode",
     "crispy_forms",
     "crispy_bootstrap5",
     "storages",
@@ -160,7 +161,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "tinymce",
     "robots",
-    # "IpWhitelister",
     "health_check",
     "health_check.db",
     "health_check.cache",
@@ -202,8 +202,8 @@ MIDDLEWARE = [
     "defender.middleware.FailedLoginMiddleware",
     "django.middleware.cache.FetchFromCacheMiddleware",
     "django_require_login.middleware.LoginRequiredMiddleware",
-    "maintenance_mode.middleware.MaintenanceModeMiddleware",
     "django_prometheus.middleware.PrometheusAfterMiddleware",
+    "nhhc.middleware.maintenance.MaintenanceModeMiddleware",
 ]
 # SECTION - Database and Caching
 CACHE_TTL: int = int(os.environ["TIME_TO_LIVE_MINUTES"]) * 60

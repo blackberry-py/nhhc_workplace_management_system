@@ -28,7 +28,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django_filters.rest_framework import DjangoFilterBackend
 from employee.models import Employee
-from employee.tasks import send_async_onboarding_email, send_async_temrination_email
+from employee.tasks import send_async_onboarding_email, send_async_termination_email
 from loguru import logger
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView
@@ -191,9 +191,9 @@ def hire(request: HttpRequest) -> HttpResponse:
     # Condition Checked: POST REQUEST  is vaild with a interger PK in body in key `pk`
     try:
         pk = int(request.POST.get("pk"))  # type: ignore
-        logger.debug(f"Hire Request Initated for Employee ID: {pk}")
+        logger.debug(f"Hire Request Initiated for Employee ID: {pk}")
     except (ValueError, TypeError):
-        logger.warning("Bad Request to Hire Applicant, Invalid or NO Applcation PK Submitted")
+        logger.warning("Bad Request to Hire Applicant, Invalid or NO Application PK Submitted")
         return HttpResponse(
             status=status.HTTP_400_BAD_REQUEST,
             content=bytes(
@@ -202,7 +202,7 @@ def hire(request: HttpRequest) -> HttpResponse:
             ),
         )
 
-    # Condition Checked: Provided PK id associated with a vaild ID of an Submitted EmploymentApplicationModel
+    # Condition Checked: Provided PK id associated with a valid ID of an Submitted EmploymentApplicationModel
     try:
         applicant = EmploymentApplicationModel.objects.get(pk=pk)
         logger.debug(f"Hire Request Resolving to {applicant.last_name}, {applicant.first_name}")
@@ -212,7 +212,7 @@ def hire(request: HttpRequest) -> HttpResponse:
             status=status.HTTP_404_NOT_FOUND,
             content=bytes("Failed to hire applicant. Employment application not found.", "utf-8"),
         )
-    # Condition Checked: An Corrosponding Employee Model Instance is created via the .hire_applicant method on the EmploymentApplicationModel class
+    # Condition Checked: An Corresponding Employee Model Instance is created via the .hire_applicant method on the EmploymentApplicationModel class
     try:
         hired_user = applicant.hire_applicant(hired_by=request.user)  # type: ignore
         logger.debug(f"Created User Account. Returning: {hired_user}")
@@ -222,7 +222,7 @@ def hire(request: HttpRequest) -> HttpResponse:
             status=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content=bytes(f"Failed to hire applicant. Error: {e}.", "utf-8"),
         )
-    # Condition Checked: New User Creds are Sent VIA email and Frontend has been provided confirmation
+    # Condition Checked: New User Cred are Sent VIA email and Frontend has been provided confirmation
     try:
         applicant.save()
         new_user_credentials = {

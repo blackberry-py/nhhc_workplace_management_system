@@ -51,9 +51,9 @@ class Dashboard(CalendarResponseMixin, TemplateView):
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        recent_annoucements = list(Announcements.objects.all().filter(status="A").order_by("-date_posted")[:5])
+        recent_Announcements = list(Announcements.objects.all().filter(status="A").order_by("-date_posted")[:5])
         listed_amnnoucements = []
-        for announcement in list(recent_annoucements):
+        for announcement in list(recent_Announcements):
             announcement = model_to_dict(announcement)
             announcement["posted_by"] = Employee.objects.get(employee_id=announcement["posted_by"]).first_name
             listed_amnnoucements.append(announcement)
@@ -181,7 +181,7 @@ class ClientInquiriesListView(ListView):
 
     def get_context_data(self, **kwargs) -> Dict[str, str]:
         context = super().get_context_data(**kwargs)
-        context["unresponsed"] = ClientInterestSubmission.objects.filter(reviewed=False).count()
+        context["unresolved"] = ClientInterestSubmission.objects.filter(reviewed=False).count()
         context["showSearch"] = True
         context["reviewed"] = ClientInterestSubmission.objects.filter(
             reviewed=True,
@@ -214,7 +214,7 @@ class EmploymentApplicationListView(ListView):
 
     def get_context_data(self, **kwargs) -> Dict[str, str]:
         context = super().get_context_data(**kwargs)
-        context["unresponsed"] = EmploymentApplicationModel.objects.filter(reviewed=False).count()
+        context["unresolved"] = EmploymentApplicationModel.objects.filter(reviewed=False).count()
         context["reviewed"] = EmploymentApplicationModel.objects.filter(
             reviewed=True,
         ).count()
