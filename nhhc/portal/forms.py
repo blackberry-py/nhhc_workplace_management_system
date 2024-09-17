@@ -32,7 +32,7 @@ def calculateExceptionHours(start: int, end: int) -> int:
     """
     start_time = datetime.strptime(start, "%H:%M:%S")
     end_time = datetime.strptime(end, "%H:%M:%S")
-    timedelta = self.end_time - self.start_time
+    timedelta = end_time - start_time
     seconds_in_day = 24 * 60 * 60
     return divmod(timedelta.total_seconds(), 3600)[0]
 
@@ -58,7 +58,7 @@ class HoursExceptionField(FormsField):
         self.end_time = end_time
 
     def get_bound_field(self, form, field_name):
-        return HoursExceptionBoundField(form, self, exception_hours)
+        return HoursExceptionBoundField(form, self, "exception_hours")
 
 
 class PayrollExceptionForm(ModelForm):
@@ -73,15 +73,15 @@ class PayrollExceptionForm(ModelForm):
 
     def save(self):
         super().save()
-        formated_exception_date = get(self.exception_date).format("YYYY-mm-dd")
-        formated_exception_start_time = get(self.exception_start_time).format("HH:mm")
-        formated_exception_end_time = get(self.exception_end_time).format("HH:mm")
+        formatted_exception_date = get(self.exception_date).format("YYYY-mm-dd")
+        formatted_exception_start_time = get(self.exception_start_time).format("HH:mm")
+        formatted_exception_end_time = get(self.exception_end_time).format("HH:mm")
 
         PayrollException(
-            date=formated_exception_date,
-            start_time=formated_exception_start_time,
-            end_time=formated_exception_end_time,
-            num_hours=calculateExceptionHours(formated_exception_start_time, formated_exception_end_time),
+            date=formatted_exception_date,
+            start_time=formatted_exception_start_time,
+            end_time=formatted_exception_end_time,
+            num_hours=calculateExceptionHours(formatted_exception_start_time, formatted_exception_end_time),
             reason=self.reason,
             requesting_employee=self.request.user.pk,
         )

@@ -1108,3 +1108,5 @@ package-lock.json
 nhhc/async_worker_log
 nhhc/flower
 nhhc/monkeytype.sqlite3
+
+.fake

@@ -40,6 +40,8 @@ MANAGERS = ADMINS
 WSGI_APPLICATION = "nhhc.wsgi.application"
 ROBOTS_USE_HOST = False
 FIRST_DAY_OF_WEEK = 1
+MAINTENANCE_MODE_IGNORE_URLS = ("/metrics")
+
 MAINTENANCE_MODE_IGNORE_ADMIN_SITE = True
 RECAPTCHA_PUBLIC_KEY = os.environ["RECAPTCHA_PUBLIC_KEY"]
 RECAPTCHA_PRIVATE_KEY = os.environ["RECAPTCHA_PRIVATE_KEY"]
@@ -57,7 +59,7 @@ IGNORABLE_404_URLS = [
     re.compile(r"^/robots\.txt$"),
     re.compile(r"\.(php|cgi|php7)$"),
 ]
-# SECTION - CORS and CSFR Settings
+# SECTION - CORS and CSRF Settings
 REFERRER_POLICY = "strict-origin-when-cross-origin"
 CSRF_COOKIE_NAME = "nhhc-csrf"
 CSRF_FAILURE_VIEW = "nhhc.urls.permission_denied_handler"

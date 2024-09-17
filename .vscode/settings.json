@@ -34,11 +34,17 @@
         "customscripts",
         "customstyles",
         "docuseal",
+        "IDOA",
+        "idph",
+        "jobdesc",
         "jsonifed",
         "jsonified",
         "multiprocess",
         "Nett",
         "nhhc",
         "setbg"
+    ],
+    "python.analysis.extraPaths": [
+        "./nhhc"
     ],
 }

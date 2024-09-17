@@ -70,6 +70,7 @@ class FileValidator(object):
             params = {"min_size": filesizeformat(self.min_size), "size": filesizeformat(data.size)}
             raise FileValidationError(self.error_messages["min_size"], "min_size", params)
 
+        file_type = None
         if self.content_types:
             file = guess(data)
             file_type = file.mime
@@ -152,6 +153,7 @@ class S3HANDLER:
             return True
         except ClientError as e:
             return False
+        # fmt: off
     @staticmethod
     def get_doc_type(document_id: int):
         match document_id:
@@ -171,6 +173,7 @@ class S3HANDLER:
                 return  "idph_background_check_authorization"
             case _:
                 return "unknown"
+# fmt: on
 
     @staticmethod
     def generate_filename(payload: dict):
