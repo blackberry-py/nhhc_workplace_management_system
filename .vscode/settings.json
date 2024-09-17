@@ -49,4 +49,7 @@
     "python.analysis.extraPaths": [
         "./nhhc"
     ],
+    "python.analysis.extraPaths": [
+        "./nhhc"
+    ],
 }
