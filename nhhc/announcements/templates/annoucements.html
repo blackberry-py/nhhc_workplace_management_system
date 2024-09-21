@@ -52,7 +52,7 @@
           <!-- Search Bar -->
             {% if request.user.is_staff %}
               <div class="popOver col-lg-3 text-right">
-                <button uk-toggle="target: #new-announcement-modal" id="btn-create-announcement" data-target="#new-announcement-modal" class="btn btn-lg btn-neutral">Create New Announcement</button>
+                <button uk-toggle="target: #new-annoucement-modal" id="btn-create-annoucement" data-target="#new-annoucement-modal" class="btn btn-lg btn-neutral">Create New Announcement</button>
               </div>
             {% endif %}
           </div>
@@ -175,9 +175,9 @@
   <script defer>
 
     function toggleCreateBtn(){
-      $('#btn-create-announcement').toggleClass('hide-me')
+      $('#btn-create-annoucement').toggleClass('hide-me')
     }
-    $('#new-announcement-modal').on('show', toggleCreateBtn).on('hidden', toggleCreateBtn)
+    $('#new-annoucement-modal').on('show', toggleCreateBtn).on('hidden', toggleCreateBtn)
 
 
     function confirmSaveAsADraft  (title, message, message_type) {
@@ -191,7 +191,7 @@
       data = JSON.stringify(data);
       Swal.fire({
         title: "Confirm Save as A Draft",
-        html: '<p>You are about to save this announcement as <strong>Draft</strong>.\n It will <strong>Not Be Seen</strong> by anyone who is not a CareNett Admin User. </p> ',
+        html: '<p>You are about to save this annoucement as <strong>Draft</strong>.\n It will <strong>Not Be Seen</strong> by anyone who is not a CareNett Admin User. </p> ',
         showCancelButton: true,
         icon: "warning",
         confirmButtonText: "Save Draft",
@@ -214,7 +214,7 @@
       })
     }
 
-    const all = document.querySelectorAll('.Announcements')
+    const all = document.querySelectorAll('.annoucements')
     const tabs = document.querySelectorAll('.tab')
 
     const allArray = Array.from(all)

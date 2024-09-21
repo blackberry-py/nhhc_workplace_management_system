@@ -38,7 +38,11 @@ from django.utils.deconstruct import deconstructible
 from django.utils.translation import gettext_lazy as _
 from filetype import guess
 from loguru import logger
-from nhhc.utils.metrics import S3_UPLOAD, DOCUSEAL_DOWNLOAD
+from prometheus_client import Histogram
+from nhhc.utils.metrics import MetricsRecorder
+
+s3_upload_recorder = Histogram("s3_upload_duration", "Metric of the Durtation of S3 upload of Compliance Documents from the application's /tmp to AWS S3 block storage.")
+docuseal_download_recorder = Histogram("docuseal_download_duration", "Metric of the Durtation of downloading singed  Compliance Documents from the DocSeal External Signing Service to /tmp storage.")
 class FileValidationError(AttributeError):
     """Custom exception for file validation errors."""
 
@@ -70,7 +74,6 @@ class FileValidator(object):
             params = {"min_size": filesizeformat(self.min_size), "size": filesizeformat(data.size)}
             raise FileValidationError(self.error_messages["min_size"], "min_size", params)
 
-        file_type = None
         if self.content_types:
             file = guess(data)
             file_type = file.mime
@@ -87,7 +90,11 @@ class UploadHandler:
     def __init__(self, upload_type):
         self.s3_path = upload_type
 
-    def generate_randomized_file_name(self, instance, filename: str):
+    def generate_randomized_file_name(
+        self,
+        instance,
+        filename: str,
+    ) -> typing.Union[os.PathLike, str]:
         """
         Static  method that Generate a randomized file name based on the uploader's information.
 
@@ -129,10 +136,10 @@ class ProgressPercentage(object):
 
 class S3HANDLER:
     @staticmethod
-    @S3_UPLOAD.time()
+    @s3_upload_recorder.time()
     def upload_file_to_s3(file_name,
                       bucket: str = settings.AWS_STORAGE_BUCKET_NAME,
-                      object_name=None):
+                      object_name=None) -> bool:
         """Upload a file to an S3 bucket
         Args:
             file_name: File to upload
@@ -153,9 +160,8 @@ class S3HANDLER:
             return True
         except ClientError as e:
             return False
-        # fmt: off
     @staticmethod
-    def get_doc_type(document_id: int):
+    def get_doc_type(document_id: int) -> str:
         match document_id:
             case 90907:
                 return "do_not_drive_agreement_attestation"
@@ -173,10 +179,9 @@ class S3HANDLER:
                 return  "idph_background_check_authorization"
             case _:
                 return "unknown"
-# fmt: on
 
     @staticmethod
-    def generate_filename(payload: dict):
+    def generate_filename(payload: dict) -> str:
         employee_upload_suffix = f"{payload['data']['metadata']['last_name'].lower()}_{payload['data']['metadata']['first_name'].lower()}.pdf"
         document_id = payload['data']['template']['id']
         doc_type_prefix = S3HANDLER.get_doc_type(document_id)
@@ -186,8 +191,8 @@ class S3HANDLER:
         return os.path.join(path, f"{doc_type_prefix}_{employee_upload_suffix}")
     
     @staticmethod
-    @DOCUSEAL_DOWNLOAD.time()
-    def download_pdf_file(payload: dict):
+    @docuseal_download_recorder.time()
+    def download_pdf_file(payload: dict) -> bool:
         """Download PDF from given URL to local directory.
 
         :param url: The url of the PDF file to be downloaded

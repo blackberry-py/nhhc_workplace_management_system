@@ -12,7 +12,7 @@ from nhhc.utils.email_templates import (
     PLAIN_TEXT_APPLICATION_BODY,
     PLAIN_TEXT_CLIENT_BODY,
     PLAIN_TEXT_NEW_HIRE_ONBOARDING_EMAIL_TEMPLATE,
-    PLAIN_TEXT_REJECTION_EMAIL_TEMPLATE,
+    PLAIN_TEXT_REJECTION_EMAI_TEMPLATE,
     PLAIN_TEXT_TERMINATION_EMAIL_TEMPLATE,
     REJECTION_TEMPLATE_BODY,
 )
@@ -66,7 +66,7 @@ class PostOffice(EmailMultiAlternatives):
         sent_emails: int = msg.send()
         if sent_emails <= 0:
             logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
-            raise RuntimeError("Email Not Sent")
+            raise RuntimeError("Email Not Sents")
         logger.info(f"Number of External Emails Sent:{sent_emails}")
         return sent_emails
 
@@ -75,7 +75,7 @@ class PostOffice(EmailMultiAlternatives):
         Sends a confirmation email for a new client interest submission.
 
         Args:
-            interested_client (dict) Dictionary representation  of the Instance of thr Client Submission
+            interested_client (dict) Dictornary representation  of the Instance of thr Client Submission
         Returns:
             None
 
@@ -85,32 +85,29 @@ class PostOffice(EmailMultiAlternatives):
         if not isinstance(interested_client, dict):
             interested_client = model_to_dict(interested_client)
         try:
-            return self.configure_external_client_submission_confirmation(interested_client)
+            subject: str = f"We Are On It, {interested_client['first_name']}!"
+            to: list = interested_client["email"].lower()
+            content_subtype = "text/html"
+            html_content = CLIENT_BODY.substitute(first_name=interested_client["first_name"])
+            text_content = PLAIN_TEXT_CLIENT_BODY.substitute(first_name=interested_client["first_name"])
+
+            msg = EmailMultiAlternatives(subject=subject, to=[to], from_email=self.from_email, reply_to=[self.reply_to], body=text_content)
+            msg.attach_alternative(html_content, content_subtype)
+            sent_emails = msg.send()
+            if sent_emails <= 0:
+                logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
+                raise RuntimeError("Email Not Sents")
+            return sent_emails
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
             settings.HIGHLIGHT_MONITORING.record_exception(f"ERROR: Unable to Send Email - {e}")
 
-    def configure_external_client_submission_confirmation(self, interested_client):
-        subject: str = f"We Are On It, {interested_client['first_name']}!"
-        to: list = interested_client["email"].lower()
-        content_subtype = "text/html"
-        html_content = CLIENT_BODY.substitute(first_name=interested_client["first_name"])
-        text_content = PLAIN_TEXT_CLIENT_BODY.substitute(first_name=interested_client["first_name"])
-
-        msg = EmailMultiAlternatives(subject=subject, to=[to], from_email=self.from_email, reply_to=[self.reply_to], body=text_content)
-        msg.attach_alternative(html_content, content_subtype)
-        sent_emails = msg.send()
-        if sent_emails <= 0:
-            logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
-            raise RuntimeError("Email Not Sent")
-        return sent_emails
-
     def send_external_applicant_rejection_email(self, rejected_applicant: dict) -> int:
         """
-        Sends email rejecting the application for employment of the recipient
+        Sends email rerjecting the application for employment of the reciepent
 
         Args:
-            new_applicant (dict) Dictionary representation  of the Instance of the submitted application
+            new_applicant (dict) Dictornary representation  of the Instance of the submitted application
         Returns:
             None
 
@@ -127,23 +124,23 @@ class PostOffice(EmailMultiAlternatives):
             to: list = rejected_applicant["email"].lower()
             content_subtype = "text/html"
             html_content = REJECTION_TEMPLATE_BODY.substitute(first_name=rejected_applicant["first_name"])
-            text_content = PLAIN_TEXT_REJECTION_EMAIL_TEMPLATE.substitute(first_name=rejected_applicant["first_name"])
+            text_content = PLAIN_TEXT_REJECTION_EMAI_TEMPLATE.substitute(first_name=rejected_applicant["first_name"])
             msg = EmailMultiAlternatives(subject=subject, to=[to], from_email=self.from_email, reply_to=self.reply_to, body=text_content)
             msg.attach_alternative(html_content, content_subtype)
             sent_emails = msg.send()
             if sent_emails <= 0:
                 logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
-                raise RuntimeError("Email Not Sent")
+                raise RuntimeError("Email Not Sents")
             return sent_emails
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
 
     def send_external_applicant_termination_email(self, terminated_employee: dict) -> int:
         """
-        Sends email terminating  employment of the recipient
+        Sends email terminating  employment of the reciepent
 
         Args:
-            new_applicant (dict) Dictionary representation  of the Instance of the submitted application
+            new_applicant (dict) Dictornary representation  of the Instance of the submitted application
         Returns:
             None
 
@@ -164,17 +161,17 @@ class PostOffice(EmailMultiAlternatives):
             sent_emails = msg.send()
             if sent_emails <= 0:
                 logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
-                raise RuntimeError("Email Not Sent")
+                raise RuntimeError("Email Not Sents")
             return sent_emails
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
 
     def send_external_applicant_new_hire_onboarding_email(self, new_hire: dict) -> int:
         """
-        Sends email informing the application of their Login Credentials and the start of their employment
+        Sends email informing the application of their Login Creidntals and the start of their emoployment
 
         Args:
-            interested_client (dict) Dictionary representation of the newly hired Applicant's employee model instance
+            interested_client (dict) Dictornary representation of the newly hired Applicant's employee model instance
         Returns:
             int
 
@@ -184,33 +181,29 @@ class PostOffice(EmailMultiAlternatives):
         if not isinstance(new_hire, dict):
             new_hire = model_to_dict(new_hire)
         try:
-            return self.configure_new_hire_onboarding_email(new_hire)
+            subject: str = f"Welcome to Nett Hands, {new_hire['first_name']}!"
+            to: list = new_hire["email"].lower()
+            content_subtype = "text/html"
+            html_content = NEW_HIRE_ONBOARDING_TEMPLATE_BODY.substitute(first_name=new_hire["first_name"], username=new_hire["username"], plaintext_password=new_hire["plaintext_temp_password"])
+            text_content = PLAIN_TEXT_NEW_HIRE_ONBOARDING_EMAIL_TEMPLATE.substitute(
+                first_name=new_hire["first_name"], username=new_hire["username"], plaintext_password=new_hire["plaintext_temp_password"]
+            )
+            msg = EmailMultiAlternatives(subject=subject, to=[to], from_email=self.from_email, reply_to=[self.reply_to], body=text_content)
+            msg.attach_alternative(html_content, content_subtype)
+            sent_emails = msg.send()
+            if sent_emails <= 0:
+                logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
+                raise RuntimeError("Email Not Sents")
+            return sent_emails
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
 
-    # TODO Rename this here and in `send_external_applicant_new_hire_onboarding_email`
-    def configure_new_hire_onboarding_email(self, new_hire):
-        subject: str = f"Welcome to Nett Hands, {new_hire['first_name']}!"
-        to: list = new_hire["email"].lower()
-        content_subtype = "text/html"
-        html_content = NEW_HIRE_ONBOARDING_TEMPLATE_BODY.substitute(first_name=new_hire["first_name"], username=new_hire["username"], plaintext_password=new_hire["plaintext_temp_password"])
-        text_content = PLAIN_TEXT_NEW_HIRE_ONBOARDING_EMAIL_TEMPLATE.substitute(
-            first_name=new_hire["first_name"], username=new_hire["username"], plaintext_password=new_hire["plaintext_temp_password"]
-        )
-        msg = EmailMultiAlternatives(subject=subject, to=[to], from_email=self.from_email, reply_to=[self.reply_to], body=text_content)
-        msg.attach_alternative(html_content, content_subtype)
-        sent_emails = msg.send()
-        if sent_emails <= 0:
-            logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
-            raise RuntimeError("Email Not Sent")
-        return sent_emails
-
     def send_internal_new_applicant_notification(self, applicant: dict) -> int:
         """
-        Trigger Internal Notification of a New Application
+        Trigger Intrernal Notification of a New Application
 
         Args:
-            interested_client (dict) Dictionary representation of the newly hired Applicant's employee model instance
+            interested_client (dict) Dictornary representation of the newly hired Applicant's employee model instance
 
         Returns:
             int Number of emails successfully send
@@ -222,46 +215,42 @@ class PostOffice(EmailMultiAlternatives):
         if not isinstance(applicant, dict):
             applicant = model_to_dict(applicant)
         try:
-            return self.configure_internal_application_notice(applicant)
+            subject: str = f"NOTICE: New Application For Employment - {applicant['last_name']}, {applicant['first_name']}!"
+            to: list = settings.INTERNAL_SUBMISSION_NOTIFICATION_EMAILS
+            body = INTERNAL_APPLICATION_NOTIFICATION.substitute(
+                first_name=applicant["first_name"],
+                last_name=applicant["last_name"],
+                email=applicant["email"],
+                contact_number=applicant["contact_number"],
+                home_address=applicant["home_address"],
+                city=applicant["city"],
+                state=applicant["state"],
+                zipcode=applicant["zipcode"],
+                mobility=applicant["mobility"],
+                prior_experience=applicant["prior_experience"],
+                availability_monday=applicant["availability_monday"],
+                availability_tuesday=applicant["availability_tuesday"],
+                availability_wednesday=applicant["availability_wednesday"],
+                availability_thursday=applicant["availability_thursday"],
+                availability_friday=applicant["availability_friday"],
+                availability_saturday=applicant["availability_saturday"],
+                availability_sunday=applicant["availability_sunday"],
+            )
+            msg = EmailMessage(subject=subject, from_email=self.from_email, reply_to=self.reply_to, to=[to], body=body)
+            sent_emails = msg.send()
+            if sent_emails <= 0:
+                logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
+                raise RuntimeError("Email Not Sents")
+            return sent_emails
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
 
-    # TODO Rename this here and in `send_internal_new_applicant_notification`
-    def configure_internal_application_notice(self, applicant):
-        subject: str = f"NOTICE: New Application For Employment - {applicant['last_name']}, {applicant['first_name']}!"
-        to: list = settings.INTERNAL_SUBMISSION_NOTIFICATION_EMAILS
-        body = INTERNAL_APPLICATION_NOTIFICATION.substitute(
-            first_name=applicant["first_name"],
-            last_name=applicant["last_name"],
-            email=applicant["email"],
-            contact_number=applicant["contact_number"],
-            home_address=applicant["home_address"],
-            city=applicant["city"],
-            state=applicant["state"],
-            zipcode=applicant["zipcode"],
-            mobility=applicant["mobility"],
-            prior_experience=applicant["prior_experience"],
-            availability_monday=applicant["availability_monday"],
-            availability_tuesday=applicant["availability_tuesday"],
-            availability_wednesday=applicant["availability_wednesday"],
-            availability_thursday=applicant["availability_thursday"],
-            availability_friday=applicant["availability_friday"],
-            availability_saturday=applicant["availability_saturday"],
-            availability_sunday=applicant["availability_sunday"],
-        )
-        msg = EmailMessage(subject=subject, from_email=self.from_email, reply_to=self.reply_to, to=[to], body=body)
-        sent_emails = msg.send()
-        if sent_emails <= 0:
-            logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
-            raise RuntimeError("Email Not Sent")
-        return sent_emails
-
     def send_internal_new_client_service_request_notification(self, interested_client: dict) -> int:
         """
-        Trigger Internal Notification of a New Application
+        Trigger Intrernal Notification of a New Application
 
         Args:
-            interested_client (dict) Dictionary representation of the newly hired Applicant's employee model instance
+            interested_client (dict) Dictornary representation of the newly hired Applicant's employee model instance
         Returns:
             int Number of emails successfully send
 
@@ -271,28 +260,24 @@ class PostOffice(EmailMultiAlternatives):
         if not isinstance(interested_client, dict):
             interested_client = model_to_dict(interested_client)
         try:
-            return self.configure_internal_client_service_notice(interested_client)
+            subject: str = f"NOTICE: New Client Service Request - {interested_client['last_name']}, {interested_client['first_name']}!"
+            to: list = settings.INTERNAL_SUBMISSION_NOTIFICATION_EMAILS
+            body = INTERNAL_CLIENT_SERVICE_REQUEST_NOTIFICATION.substitute(
+                first_name=interested_client["first_name"],
+                last_name=interested_client["last_name"],
+                email=interested_client["email"],
+                desired_service=interested_client["desired_service"],
+                contact_number=interested_client["contact_number"],
+                zipcode=interested_client["zipcode"],
+                insurance_carrier=interested_client["insurance_carrier"],
+            )
+            msg = EmailMessage(subject=subject, from_email=self.from_email, reply_to=self.reply_to, to=[to], body=body)
+            sent_emails = msg.send()
+            if sent_emails <= 0:
+                logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
+                settings.HIGHLIGHT_MONITORING.record_exception(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
+                raise RuntimeError("Email Not Sents")
+            return sent_emails
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
             settings.HIGHLIGHT_MONITORING.record_exception("ERROR: Unable to Send Email - {e}")
-
-    # TODO Rename this here and in `send_internal_new_client_service_request_notification`
-    def configure_internal_client_service_notice(self, interested_client):
-        subject: str = f"NOTICE: New Client Service Request - {interested_client['last_name']}, {interested_client['first_name']}!"
-        to: list = settings.INTERNAL_SUBMISSION_NOTIFICATION_EMAILS
-        body = INTERNAL_CLIENT_SERVICE_REQUEST_NOTIFICATION.substitute(
-            first_name=interested_client["first_name"],
-            last_name=interested_client["last_name"],
-            email=interested_client["email"],
-            desired_service=interested_client["desired_service"],
-            contact_number=interested_client["contact_number"],
-            zipcode=interested_client["zipcode"],
-            insurance_carrier=interested_client["insurance_carrier"],
-        )
-        msg = EmailMessage(subject=subject, from_email=self.from_email, reply_to=self.reply_to, to=[to], body=body)
-        sent_emails = msg.send()
-        if sent_emails <= 0:
-            logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
-            settings.HIGHLIGHT_MONITORING.record_exception(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
-            raise RuntimeError("Email Not Sent")
-        return sent_emails

@@ -41,21 +41,21 @@ def post_announcement(request: HttpRequest, pk: int) -> HttpResponse:
         return HttpResponse(status=204)
 
 
-class AnnouncementsListView(FormMixin, ListView):
+class AnnoucementsListView(FormMixin, ListView):
     model = Announcements
     queryset = Announcements.objects.all()
-    template_name = "Announcements.html"
+    template_name = "annoucements.html"
     context_object_name = "announcements"
-    success_url = "/announcements"
+    success_url = "/announcments"
     form_class = AnnouncementForm
     paginate_by = 25
-    extra_context = {"modal_title": "Create New announcement", "sort_entity_selector": '".Announcements"'}
+    extra_context = {"modal_title": "Create New Annoucement", "sort_entity_selector": '".annoucements"'}
 
     def post(self, request):
-        return redirect(to=reverse("create-announcement"))
+        return redirect(to=reverse("create-annoucement"))
 
 
-class AnnouncementsUpdateView(UpdateView):
+class AnnoucementsUpdateView(UpdateView):
     form_class = AnnouncementDetailsForm
     queryset = Announcements.objects.all()
     model = Announcements
@@ -92,5 +92,5 @@ def delete_announcement(request: HttpRequest) -> HttpResponse:
         archived_announcement.archive()
         return HttpResponse(status=204)
     else:
-        logger.error("No Announcements Found")
+        logger.error("No Annoiucement Found")
         return HttpResponse(status=404)
