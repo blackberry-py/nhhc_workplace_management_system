@@ -26,9 +26,10 @@
 
     <!-- Css Styles Partial Import -->
         {% include "includes/styles.html" %}
-
-        {% block customstyles %}
-        {% endblock customstyles %}
+        <style>
+            {% block customstyles %}
+            {% endblock customstyles %}
+        </style>
         {% block custom_js %}
         {% endblock custom_js %}
     </head>
