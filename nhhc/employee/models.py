@@ -55,12 +55,12 @@ class EmployeeMethodUtility:
             next_username = username + str(max_num)
 
             # Return the next available username
-            logger.debug(f"Initial Username Unavailable. Next Available Username: {next_username}")
+            logger.debug(f"Inital Username Unavailable. Next Available Username: {next_username}")
             return next_username
 
         except ObjectDoesNotExist:
             # If no IntegrityError is raised, return the original username
-            logger.debug("Initial Username Available")
+            logger.debug("Inital Username Available")
             return username
 
 
@@ -231,7 +231,7 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
         NON_HISPANIC = "NON-HISPANIC", _("Non-Hispanic/Latino")
         HISPANIC = "HISPANIC", _("Hispanic/Latino")
         UNKNOWN = "UNKNOWN", _("Unknown")
-        REFUSED = "REFUSED", _("Prefer Not To Disclose")
+        REFUSED = "REFUSED", _("Perfer Not To Disclose")
 
     class QUALIFICATIONS(models.TextChoices):
         HS_GED = "HIGH_SCHOOL_GED", _("High School Diploma/GED")
@@ -252,7 +252,7 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
         OTHER = "OTHER", _("Other Race")
         BI_RACIAL = "BI_RACIAL", _("Two or More Races")
         UNKNOWN = "UNKNOWN", _("Unknown")
-        REFUSED = "REFUSED", _("Prefer Not To Disclose")
+        REFUSED = "REFUSED", _("Perfer Not To Disclose")
 
     class LANGUAGE(models.TextChoices):
         ENGLISH = "ENGLISH", _("English")
@@ -269,7 +269,7 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
         JAPANESE = "JAPANESE", _("Japanese")
         LITHUANIAN = "LITHUANIAN", _("Lithuanian")
         RUSSIAN = "RUSSIAN", _("Russian")
-        UKRANIAN = "UKRAINIAN", _("Ukrainian")
+        UKRANIAN = "UKRANIAN", _("Ukranian")
         YUGOSLAVIAN = "YUGOSLAVIAN", _("Yugoslavian")
         ASSYRIAN = "ASSYRIAN", _("Assyrian")
         FRENCH = "FRENCH", _("French")
@@ -304,7 +304,7 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
         default=LANGUAGE.ENGLISH,
     )
     email = EncryptedEmailField(unique=True, null=True, blank=True)
-    social_security = EncryptedCharField(unique=True, null=True, blank=True, max_length=11)
+    social_security = EncryptedCharField(unique=True, null=True, blank=True)
     date_of_birth = EncryptedDateField(null=True, blank=True)
     first_name = EncryptedCharField(max_length=10485760, null=True, blank=True)
     middle_name = EncryptedCharField(max_length=10485760, null=True, blank=True)

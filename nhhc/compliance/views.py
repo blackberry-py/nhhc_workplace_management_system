@@ -7,7 +7,7 @@ Classes:
 - CreateContractFormView: A view for creating a new contract form.
 - ComplianceProfileDetailView: A DetailView for displaying Compliance object details.
 - ComplianceProfileFormView: A view for updating compliance profiles.
-- DocusealComplianceDocsSigningView: A generic view for displaying and signing compliance documents using Docuseal.
+- DocusealCompliaceDocsSigning_*: Views for displaying and signing compliance documents using Docuseal.
 
 Functions:
 - signed_attestations: Handles signed attestation forms.
@@ -20,6 +20,7 @@ Note: The module structure is organized into sections for Contract Related Views
 For more detailed information on each class and function, refer to the individual docstrings within the code.
 
 """
+
 
 import json
 import os
@@ -45,7 +46,7 @@ from rest_framework import status
 
 from nhhc.utils.upload import S3HANDLER
 
-# SECTION - Contract Related Views
+# SECTION - Contract Related Viewws
 
 class SuccessfulUpdate(TemplateView):
     template_name = "successful_update.html"
@@ -131,25 +132,39 @@ def signed_attestations(request: HttpRequest) -> HttpResponse:
         document_id = docuseal_payload['data']['template']['id']
         doc_type_prefix = S3HANDLER.get_doc_type(document_id)
         employee_upload_suffix = f"{uploading_employee.last_name.lower()}_{uploading_employee.first_name.lower()}.pdf"
-        filepath = os.path.join("attestations", doc_type_prefix, f"{doc_type_prefix}_{employee_upload_suffix}")
+        filepath = os.path.join("attestations",doc_type_prefix,f"{doc_type_prefix}_{employee_upload_suffix}" )
 
-        document_type_mapping = {
-            "Nett Hands - Do Not Drive Agreement - 2024": "do_not_drive_agreement_attestation",
-            "State of Illinois - Department of Revenue - Withholding Worksheet (W4)": "state_w4_attestation",
-            "US Internal Revenue Services - Withholding Certificate (W4) - 2024": "state_w4_attestation",
-            "US Department of Homeland Security - Employment Eligibility Verification (I-9)": "dha_i9",
-            "Nett Hands HCA Policy - 2024": "hca_policy_attestation",
-            "Nett Hands & Illinois Department of Aging General Policies": "idoa_agency_policies_attestation",
-            "Nett Hands Homehealth Care Aide (HCA)  Job Desc - 2024": "job_duties_attestation",
-            "IDPH - Health Care Worker Background Check Authorization": "idph_background_check_authorization",
-        }
+# fmt: off
 
-        if document_type in document_type_mapping:
-            setattr(uploading_employee, document_type_mapping[document_type], filepath)
-            uploading_employee.save()
-        else:
-            logger.error(f'Invalid Document Type: {document_type} - {document_id}')
-            return HttpResponse(content='Invalid Document Type', status=status.HTTP_406_NOT_ACCEPTABLE)
+        match document_type:
+            case "Nett Hands - Do Not Drive Agreement - 2024":
+                uploading_employee.do_not_drive_agreement_attestation = filepath
+                uploading_employee.save()
+            case "State of Illinois - Department of Revenue - Withholding Worksheet (W4)":
+                uploading_employee.state_w4_attestation = filepath
+                uploading_employee.save()
+            case "US Internal Revenue Services - Withholding Certificate (W4) - 2024":
+                uploading_employee.state_w4_attestation = filepath
+                uploading_employee.save()
+            case "US Department of Homeland Security - Employment Eligibility Verification (I-9)":
+                uploading_employee.dha_i9 = filepath
+                uploading_employee.save()
+            case "Nett Hands HCA Policy - 2024":
+                uploading_employee.hca_policy_attestation = filepath
+                uploading_employee.save()
+            case "Nett Hands & Illinois Department of Aging General Policies":
+                uploading_employee.idoa_agency_policies_attestation = filepath
+                uploading_employee.save()
+            case "Nett Hands Homehealth Care Aide (HCA)  Job Desc - 2024":
+                uploading_employee.job_duties_attestation = filepath
+                uploading_employee.save()
+            case "IDPH - Health Care Worker Background Check Authorization":
+                uploading_employee.idph_background_check_authorization = filepath
+                uploading_employee.save()
+            case _:
+                logger.error(f'Invaild Document Type: {document_type} - {document_id}')
+                return HttpResponse(content='Invaild Document Type', status=status.HTTP_406_NOT_ACCEPTABLE)
+    # fmt: on
 
         if S3HANDLER.download_pdf_file(docuseal_payload):
             return HttpResponse(content="Processed File Path", status=status.HTTP_201_CREATED)
@@ -159,72 +174,201 @@ def signed_attestations(request: HttpRequest) -> HttpResponse:
         logger.error(f'Unable to Assign FilePath: {e}')
         return HttpResponse(content="Unable to Assign FilePath", status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
-
-class DocusealComplianceDocsSigningView(TemplateView):
+class DocusealCompliaceDocsSigning_IDOA(TemplateView):
     """
-    A generic view for displaying and signing compliance documents using Docuseal.
-      
+    A view for displaying and signing compliance documents using Docuseal.
+
     Attributes:
     - template_name (str): The name of the template to be rendered.
-    - doc_url (str): The URL of the document to be signed.
-    - title (str): The title of the document.
+
+    Methods:
+    - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
     """
 
     template_name = "docuseal.html"
-    doc_url = ""
-    title = ""
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
-        context["doc_url"] = self.doc_url
-        context['title'] = self.title
+        context["doc_url"] = "https://docuseal.co/d/r5UbQeVsQgkwUp"
+        context['title'] = "Nett Hands & Illinois Department of Aging General Policies"
         return context
-
     def dispatch(self, *args, **kwargs):
-        response = super().dispatch(*args, **kwargs)
-        response['Access-Control-Allow-Origin'] = "*"
-        return response
+            response = super(DocusealCompliaceDocsSigning_IDOA, self).dispatch(*args, **kwargs)
+            response['Access-Control-Allow-Origin'] = "*"
+            return response
 
 
-# Specific instances of DocusealComplianceDocsSigningView
-class DocusealComplianceDocsSigning_IDOA(DocusealComplianceDocsSigningView):
-    doc_url = "https://docuseal.co/d/r5UbQeVsQgkwUp"
-    title = "Nett Hands & Illinois Department of Aging General Policies"
+
+class DocusealCompliaceDocsSigning_HCA(TemplateView):
+    """
+    A view for displaying and signing compliance documents using Docuseal.
+
+    Attributes:
+    - template_name (str): The name of the template to be rendered.
+
+    Methods:
+    - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+    """
+
+    template_name = "docuseal.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
+        context["doc_url"] = "https://docuseal.co/d/3KA4PP4CEjpy4r"
+        context['title'] = "US Department of Homeland Security - Employment Eligibility Verification"
+        return context
+    def dispatch(self, *args, **kwargs):
+            response = super(DocusealCompliaceDocsSigning_HCA, self).dispatch(*args, **kwargs)
+            response['Access-Control-Allow-Origin'] = "*"
+            return response
+
+class DocusealCompliaceDocsSigning_DoNotDrive(TemplateView):
+    """
+    A view for displaying and signing compliance documents using Docuseal.
+
+    Attributes:
+    - template_name (str): The name of the template to be rendered.
+
+    Methods:
+    - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+    """
+
+    template_name = "docuseal.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
+        context["doc_url"] = "https://docuseal.co/d/v1FPgz9xgBJVgH"
+        context['title'] = "Nett Hands - Do Not Drive Agreement"
+        return context
+    def dispatch(self, *args, **kwargs):
+            response = super(DocusealCompliaceDocsSigning_DoNotDrive, self).dispatch(*args, **kwargs)
+            response['Access-Control-Allow-Origin'] = "*"
+            return response
 
 
-class DocusealComplianceDocsSigning_HCA(DocusealComplianceDocsSigningView):
-    doc_url = "https://docuseal.co/d/3KA4PP4CEjpy4r"
-    title = "US Department of Homeland Security - Employment Eligibility Verification"
+class DocusealCompliaceDocsSigning_JobDesc(TemplateView):
+    """
+    A view for displaying and signing compliance documents using Docuseal.
+
+    Attributes:
+    - template_name (str): The name of the template to be rendered.
+
+    Methods:
+    - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+    """
+
+    template_name = "docuseal.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
+        context["doc_url"] = "https://docuseal.co/d/KQUEkomQZr1ddD"
+        context['title'] = "Nett Hands Homehealth Care Aide (HCA) Job Desc"
+        return context
+    def dispatch(self, *args, **kwargs):
+            response = super(DocusealCompliaceDocsSigning_JobDesc, self).dispatch(*args, **kwargs)
+            response['Access-Control-Allow-Origin'] = "*"
+            return response
+
+class DocusealCompliaceDocsSigning_i9(TemplateView):
+    """
+    A view for displaying and signing compliance documents using Docuseal.
+
+    Attributes:
+    - template_name (str): The name of the template to be rendered.
+
+    Methods:
+    - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+    """
+
+    template_name = "docuseal.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
+        context["doc_url"] = "https://docuseal.co/d/ovQk6ACHqajQvC"
+        context['title'] = "US Department of Homeland Security - Employment Eligibility Verification"
+        return context
+    def dispatch(self, *args, **kwargs):
+            response = super(DocusealCompliaceDocsSigning_i9, self).dispatch(*args, **kwargs)
+            response['Access-Control-Allow-Origin'] = "*"
+            return response
+
+class DocusealCompliaceDocsSigning_irs_w4(TemplateView):
+    """
+    A view for displaying and signing compliance documents using Docuseal.
+
+    Attributes:
+    - template_name (str): The name of the template to be rendered.
+
+    Methods:
+    - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+    """
+
+    template_name = "docuseal.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
+        context["doc_url"] = "https://docuseal.co/d/wmJGUH3wU2GrUJ"
+        context['title'] = "US Internal Revenue Services - Withholding Certificate"
+        return context
+    def dispatch(self, *args, **kwargs):
+            response = super(DocusealCompliaceDocsSigning_irs_w4, self).dispatch(*args, **kwargs)
+            response['Access-Control-Allow-Origin'] = "*"
+            return response
 
 
-class DocusealComplianceDocsSigning_DoNotDrive(DocusealComplianceDocsSigningView):
-    doc_url = "https://docuseal.co/d/v1FPgz9xgBJVgH"
-    title = "Nett Hands - Do Not Drive Agreement"
+class DocusealCompliaceDocsSigning_il_w4(TemplateView):
+    """
+    A view for displaying and signing compliance documents using Docuseal.
 
+    Attributes:
+    - template_name (str): The name of the template to be rendered.
 
-class DocusealComplianceDocsSigning_JobDesc(DocusealComplianceDocsSigningView):
-    doc_url = "https://docuseal.co/d/KQUEkomQZr1ddD"
-    title = "Nett Hands Homehealth Care Aide (HCA) Job Desc"
+    Methods:
+    - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+    """
 
+    template_name = "docuseal.html"
 
-class DocusealComplianceDocsSigning_i9(DocusealComplianceDocsSigningView):
-    doc_url = "https://docuseal.co/d/ovQk6ACHqajQvC"
-    title = "US Department of Homeland Security - Employment Eligibility Verification"
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
+        context["doc_url"] = "https://docuseal.co/d/M6o9cZ4528yk4L"
+        context['title'] = "State of Illinois - Department of Revenue - Withholding Worksheet"
+        return context
+    def dispatch(self, *args, **kwargs):
+            response = super(DocusealCompliaceDocsSigning_il_w4, self).dispatch(*args, **kwargs)
+            response['Access-Control-Allow-Origin'] = "*"
+            return response
 
+class DocusealCompliaceDocsSigning_idph_bg_auth(TemplateView):
+    """
+    A view for displaying and signing compliance documents using Docuseal.
 
-class DocusealComplianceDocsSigning_irs_w4(DocusealComplianceDocsSigningView):
-    doc_url = "https://docuseal.co/d/wmJGUH3wU2GrUJ"
-    title = "US Internal Revenue Services - Withholding Certificate"
+    Attributes:
+    - template_name (str): The name of the template to be rendered.
 
+    Methods:
+    - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+    """
 
-class DocusealComplianceDocsSigning_il_w4(DocusealComplianceDocsSigningView):
-    doc_url = "https://docuseal.co/d/M6o9cZ4528yk4L"
-    title = "State of Illinois - Department of Revenue - Withholding Worksheet"
+    template_name = "docuseal.html"
 
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
+        context["doc_url"] = "https://docuseal.co/d/RiVYseBYUpvrxD"
+        context['title'] = "Health Care Worker Background Check Authorization"
+        return context
+    def dispatch(self, *args, **kwargs):
+            response = super(DocusealCompliaceDocsSigning_idph_bg_auth, self).dispatch(*args, **kwargs)
+            response['Access-Control-Allow-Origin'] = "*"
+            return response
 
-class DocusealComplianceDocsSigning_idph_bg_auth(DocusealComplianceDocsSigningView):
-    doc_url = "https://docuseal.co/d/RiVYseBYUpvrxD"
-    title = "Health Care Worker Background Check Authorization"
 
 # !SECTION
