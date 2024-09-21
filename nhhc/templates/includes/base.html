@@ -26,10 +26,9 @@
 
     <!-- Css Styles Partial Import -->
         {% include "includes/styles.html" %}
-        <style>
-            {% block customstyles %}
-            {% endblock customstyles %}
-        </style>
+
+        {% block customstyles %}
+        {% endblock customstyles %}
         {% block custom_js %}
         {% endblock custom_js %}
     </head>
@@ -82,7 +81,7 @@
                                                     <li><a href="#contact">Contact</a></li>
                                                 </ul>
                                             </nav>
-                                            
+
                                 {% else %}
                                     <a href="{% url 'homepage' %}"><img src="{% static 'img/logo-light.png' %}" alt=""></a>
                                     </div>

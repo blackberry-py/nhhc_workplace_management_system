@@ -15,6 +15,7 @@ import robots.urls
 import django_prometheus.urls
 import tinymce.urls
 import health_check.urls
+
 # import maintenance_mode.urls
 import rest_framework.urls
 import allauth.urls
@@ -110,14 +111,14 @@ def page_not_found_handler(request: HttpRequest, exception=None) -> HttpResponse
 
 def server_error_handler(request: HttpRequest, exception=None) -> HttpResponse:
     """
-        Handle requests that result in server errors by logging the exception and rendering a 500.html template.
+    Handle requests that result in server errors by logging the exception and rendering a 500.html template.
 
-        Args:
-            request (HttpRequest): The HTTP request object.
-            exception (Exception, optional): The exception that caused the bad request. Defaults to None.
-    
-        Returns:
-            HttpResponse: A response with status code 400 and the 400.html template rendered.
+    Args:
+        request (HttpRequest): The HTTP request object.
+        exception (Exception, optional): The exception that caused the bad request. Defaults to None.
+
+    Returns:
+        HttpResponse: A response with status code 400 and the 400.html template rendered.
     """
     logger.error(f"SERVER ERROR: {exception}")
     return render(request, "500.html", status=500)
@@ -146,12 +147,9 @@ urlpatterns: List[Union[RoutePattern, RegexPattern]] = [
     path("", include(allauth.urls)),
     path("", include(employee.urls)),
     path("", include(announcements.urls)),
-    path("", include(compliance.urls)),
-    path("api-auth/", include(rest_framework.urls)),
-
 ]
 #!SECTION
 if settings.DEBUG:
     import debug_toolbar
 
-    urlpatterns.insert(0, re_path(r'^__debug__/', include(debug_toolbar.urls)) )
+    urlpatterns.insert(0, re_path(r"^__debug__/", include(debug_toolbar.urls)))
