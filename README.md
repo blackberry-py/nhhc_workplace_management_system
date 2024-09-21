@@ -210,7 +210,7 @@ Project Link: [https://github.com/Terry-BrooksJr/nhhc_workplace_management_syste
 [product-screenshot]: images/screenshot.png
 [PostgreSQL]: https://img.shields.io/badge/Postgres-DBMS?style=for-the-badge&logo=postgresql&logoColor=white&logoSize=auto&label=V.16&labelColor=%230064a5&color=%23d24b03&cacheSeconds=3600
 [Django]: https://img.shields.io/badge/Django-DBMS?style=for-the-badge&logo=django&logoColor=white&logoSize=auto&label=V.5.1.1&labelColor=%23092E20&color=%23092E20&cacheSeconds=3600
-[Doppler]: 
+[Doppler]:
 [Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [Next-url]: https://nextjs.org/
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
