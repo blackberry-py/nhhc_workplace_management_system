@@ -291,7 +291,7 @@ $(document).ready(function () {
     //     data = JSON.stringify(data);
     //     Swal.fire({
     //         title: "Confirm Save as A Draft",
-    //         html: '<p>You are about to save this annoucement as <strong>Draft</strong>.\n It will <strong>Not Be Seen</strong> by anyone who is not a CareNett Admin User. </p> ',
+    //         html: '<p>You are about to save this announcement as <strong>Draft</strong>.\n It will <strong>Not Be Seen</strong> by anyone who is not a CareNett Admin User. </p> ',
     //         showCancelButton: true,
     //         icon: "warning",
     //         input: "text",

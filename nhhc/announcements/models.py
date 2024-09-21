@@ -107,7 +107,7 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
 
     def post(self, request: HttpRequest) -> None:
         """
-        Method to post an annoucement instance.
+        Method to post an announcement instance.
 
         Args:
         - request: HttpRequest object containing the request data
@@ -130,7 +130,7 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
 
     def create_draft(self, request: HttpRequest) -> None:
         """
-        Method to create a draft version of an annoucement instance.
+        Method to create a draft version of an announcement instance.
 
         Args:
         - request: HttpRequest object containing the request data
@@ -155,7 +155,7 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
 
     def archive(self) -> None:
         """
-        Method to delete an annoucement instance.
+        Method to delete an announcement instance.
 
         This method sets the status of the object to 'ARCHIVE', saves the object, and logs a success message if successful.
         If an exception occurs during the deletion process, an error message is logged.

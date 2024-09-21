@@ -2,7 +2,7 @@
 {% load humanize %}
 
 <div class="align-content-end">
-    <div id="annoucement-container" class="container-xxl py-5">
+    <div id="announcement-container" class="container-xxl py-5">
         <div class="container py-5">
             <div class="testimonial-text g-5">
                 <div class="wow fadeIn" data-wow-delay="0.1s">
@@ -10,7 +10,7 @@
                     <h1 class="mb-4">Recent Announcements</h1>
                     <p class="text-muted fs-4 textimal-text">Snapshot of the Most Recent Announcements.</p>
                     <div><a href="{% url 'announcements' %}">See More Announcements</a></div>
-               {% comment %} <p class="text-muted recent-annoucement-posting-date"><strong>{{ recent_announcements|index:0|index:"date_posted" }}</p></strong> {% endcomment %}
+               {% comment %} <p class="text-muted recent-announcement-posting-date"><strong>{{ recent_announcements|index:0|index:"date_posted" }}</p></strong> {% endcomment %}
                 </div>
                 <div class="control-btn">
                     <button class="carousel-control-prev" type="button" data-bs-target="#recent-announcements_carousel" data-bs-slide="prev">
@@ -58,7 +58,7 @@
                                             <span class="badge rounded-pill text-bg-primary      text-bg-primary">General</span>
                                         {% endif %}
                                         <p class="fs-4 textimal-text">{{  announcement.message }}</p>
-                                        <h4 class=" text-muted recent-annoucement-date">Posted by {{ announcement.date_posted |timesince }}</h4>
+                                        <h4 class=" text-muted recent-announcement-date">Posted by {{ announcement.date_posted |timesince }}</h4>
                                     </div>
                                 </div>
                             {% endfor %}

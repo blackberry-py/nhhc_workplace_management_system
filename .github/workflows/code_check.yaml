@@ -1,73 +1,84 @@
 name: General Test and Deploy
 on: push
+permissions:
+  contents: write
 jobs:
-  setup-virtualenv:
+  linter:
     runs-on: ubuntu-latest
-    container:
-      image: terrybrooks/netthands:amd64-aug24
-      env:
-        DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
-        DOPPLER_PROJECT: ${{ env.DOPPLER_PROJECT }}
-        DOPPLER_CONFIG: ${{ env.DOPPLER_CONFIG }}
     steps:
       - name: Get Code Checkout
-        uses: 'Actions/Checkout@v3'
+        uses: actions/checkout@v3
+
       - name: Fetch Env Vars From Doppler
+        id: secret
         uses: dopplerhq/secrets-fetch-action@v1.1.3
-        id: secrets
         with:
           doppler-token: ${{ secrets.DOPPLER_TOKEN }}
-          inject-env-vars: true
-          doppler-project: ${{ env.DOPPLER_PROJECT }}
-          doppler-config: ${{ env.DOPPLER_CONFIG }}
-      - uses: actions/checkout@v1
-      - uses: actions/setup-python@v2
-      - uses: syphar/restore-virtualenv@v1
-        id: cache-virtualenv
-      - uses: syphar/restore-pip-download-cache@v1
-        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
-      - run: pip install -r requirements.txt
-        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
-  linter:
-        needs: setup-virtualenv
-        runs-on: ubuntu-latest
-        steps:
-        - uses: actions/checkout@v1
-        - name: Fetch Env Vars From Doppler
-          uses: dopplerhq/secrets-fetch-action@v1.1.3
-          id: secrets
-          with:
-            doppler-token: ${{ secrets.DOPPLER_TOKEN }}
-            inject-env-vars: true
-            doppler-project: ${{ env.DOPPLER_PROJECT }}
-            doppler-config: ${{ env.DOPPLER_CONFIG }}
-        - uses: actions/setup-python@v2
-        - uses: syphar/restore-virtualenv@v1
-          id: cache-virtualenv
+          doppler-project: ${{ vars.doppler-project }}
+          doppler-config: ${{ vars.doppler-config }}
 
-        - run: isort . --diff --check-only
-        - run: black --check --diff .
+      - name: Set Up Correct Python Version and Cache Virtual Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12.5
+          cache: pip
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: pip install -r requirements.txt
+
+      - run: |
+          python3 -m black --check --diff . && \
+          python3 -m isort . --diff --check-only
 
   tests:
-          needs: setup-virtualenv
-          runs-on: ubuntu-latest
-          steps:
-          - uses: actions/checkout@v1
-          - uses: actions/setup-python@v2
-          - name: Fetch Env Vars From Doppler
-            uses: dopplerhq/secrets-fetch-action@v1.1.3
-            id: secrets
-            with:
-              doppler-token: ${{ secrets.DOPPLER_TOKEN }}
-              inject-env-vars: true
-              doppler-project: ${{ env.DOPPLER_PROJECT }}
-              doppler-config: ${{ env.DOPPLER_CONFIG }}
-          - uses: syphar/restore-virtualenv@v1
-            id: cache-virtualenv
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Code Checkout
+        uses: actions/checkout@v3
 
-          - run: |
-              sudo mkdir /data && \
-              sudo chown -R $USER:$USER /data && \
-              sudo chmod 777v && \
-              cd nhhc && \
-              exit 0;
+      - name: Fetch Env Vars From Doppler
+        id: secret
+        uses: dopplerhq/secrets-fetch-action@v1.1.3
+        with:
+          doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+          doppler-project: ${{ vars.doppler-project }}
+          doppler-config: ${{ vars.doppler-config }}
+
+      - name: Set Up Correct Python Version and Cache Virtual Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12.5
+          cache: pip
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: pip install -r requirements.txt
+
+
+      - run: |
+         if [ ! -d /data ]; then
+          sudo mkdir /data
+          fi
+          sudo chown -R $USER:$USER /data
+          sudo chmod -R 777 /data
+          cd nhhc
+          exit 0
