@@ -5,7 +5,7 @@ Description: This module contains views for rendering web pages, processing form
 
 from django.conf import settings
 from django.forms import model_to_dict
-from django.http import FileResponse, HttpRequest, HttpResponse
+from django.http import FileResponse, HttpRequest, HttpResponse, HttpResponsePermanentRedirect
 from django.shortcuts import render, reverse
 from django.templatetags.static import static
 from django.utils.decorators import method_decorator
@@ -127,6 +127,7 @@ class EmploymentApplicationFormView(PublicViewMixin, FormView):
             return render(request, "client-interest.html", context)
 
 
+@public
 @cache_page(CACHE_TTL)
 def favicon(request: HttpRequest) -> HttpResponse:
     """

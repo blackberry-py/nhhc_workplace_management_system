@@ -35,7 +35,7 @@ HEALTH_CHECK: Dict[str, int] = {
 #!SECTION
 
 
-# SECTION - Sitewide Errort Handlers
+# SECTION - Site-wide Error Handlers
 def bad_request_handler(request: HttpRequest, exception=None) -> HttpResponse:
     """
     Handle bad requests by logging the exception and rendering a 400.html template.
