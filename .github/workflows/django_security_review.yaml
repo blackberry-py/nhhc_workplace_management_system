@@ -9,7 +9,7 @@ env:
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
   FAIL_LEVEL: WARNING
   ENV_TYPE: venv
-  DEP_PATH: requirements.txt
+  DEP_PATH: docker_requirement.txt
   APP_PATH: nhhc/
 
 jobs:

@@ -1,18 +1,22 @@
-from prometheus_client import (
-    CollectorRegistry,
-    Counter,
-    Histogram,
-    generate_latest,
-    multiprocess,
-)
+from prometheus_client import Histogram, start_http_server
+from time import time
 
-registry = CollectorRegistry()
-multiprocess.MultiProcessCollector(registry)
+class MetricsRecorder:
+    def __init__(self, name, description, port=8000):
+        # Initialize the Histogram metric
+        self.histogram = Histogram(name, description)
+        # Start the Prometheus HTTP server to expose metrics
+        start_http_server(port)
 
-FAILED_SUBMISSIONS: Counter = Counter(name="failed_submissions", documentation="Metric Counter for the Number of Failed Submission attempts that failed validation", namespace="nhhc_web")
-INVALID_APPLICATIONS: Counter = Counter(name="invalid_applications", documentation="Metric Counter for the Number of Failed Employment Application Submissions", namespace="nhhc_web")
-S3_UPLOAD = Histogram(name="s3_upload_duration_seconds", documentation="Metric of the Duration of S3 upload of Compliance Documents from the application's /tmp to AWS S3 block storage.", unit="seconds", namespace="nhhc_compliance")
-DOCUSEAL_DOWNLOAD = Histogram(name="docuseal_download_duration_seconds", documentation="Metric of the Duration of downloading singed  Compliance Documents from the DocSeal External Signing Service to /tmp storage.", unit="seconds", namespace="nhhc_compliance")
+    def record_operation_duration(self, operation, ctx=None):
+        t1 = time()
+        operation(ctx)
+        dur = time() - t1
+        self.histogram.observe(dur)
 
-def registry_to_text():
-    return generate_latest(registry)
+# Example operation
+def example_operation(ctx):
+    # Your operation logic here
+    pass
+
+

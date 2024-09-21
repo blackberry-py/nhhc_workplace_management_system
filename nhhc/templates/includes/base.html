@@ -26,10 +26,9 @@
 
     <!-- Css Styles Partial Import -->
         {% include "includes/styles.html" %}
-        <style>
-            {% block customstyles %}
-            {% endblock customstyles %}
-        </style>
+
+        {% block customstyles %}
+        {% endblock customstyles %}
         {% block custom_js %}
         {% endblock custom_js %}
     </head>
@@ -90,11 +89,9 @@
                                     <div class="col-lg-10">
                                         <div class="header__nav__option">
                                             <nav class="header__nav__menu mobile-menu">
-                                                {% if exception != 'http503' %}
                                                 <ul>
                                                     <li class="active"><a href="{% url 'homepage' %}"><span class="back-to-home">Back to Home</span></a></li>
                                                 </ul>
-                                                {% endif %}
 
                                 {% endif %}
 

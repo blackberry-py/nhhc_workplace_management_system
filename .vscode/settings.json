@@ -29,16 +29,4 @@
     "CodeGPT.apiKey": "CodeGPT Plus Beta",
     "doppler.autocomplete.enable": true,
     "doppler.hover.enable": true,
-    "makefile.configureOnOpen": false,
-    "cSpell.words": [
-        "customscripts",
-        "customstyles",
-        "docuseal",
-        "jsonifed",
-        "jsonified",
-        "multiprocess",
-        "Nett",
-        "nhhc",
-        "setbg"
-    ],
 }

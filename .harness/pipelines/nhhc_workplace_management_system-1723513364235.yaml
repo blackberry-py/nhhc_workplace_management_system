@@ -1,14 +1,14 @@
 pipeline:
-  identifier: Build_NettHandsHomeCare_Portal_NettHands_1717122866762
-  name: Build NettHands
+  identifier: Build_Terry_BrooksJr_nhhc_workplace_management_system_1723513369363
+  name: Build nhhc_workplace_management_system
   orgIdentifier: default
-  projectIdentifier: default_project
+  projectIdentifier: NHHC
   properties:
     ci:
       codebase:
         build: <+input>
-        connectorRef: account.Github_OAuth_1717122829269
-        repoName: NettHandsHomeCare-Portal/NettHands
+        connectorRef: account.Github_OAuth_1718693998562
+        repoName: Terry-BrooksJr/nhhc_workplace_management_system
   stages:
     - stage:
         identifier: build
@@ -19,6 +19,13 @@ pipeline:
           cloneCodebase: true
           execution:
             steps:
+              - step:
+                  identifier: installdependencies
+                  name: install dependencies
+                  spec:
+                    command: npm install
+                  timeout: ""
+                  type: Run
               - step:
                   identifier: runlinter
                   name: run linter
@@ -39,10 +46,21 @@ pipeline:
                       python3 -m pip install -e .
                   timeout: ""
                   type: Run
+              - step:
+                  identifier: dockerbuild
+                  name: docker_build
+                  spec:
+                    caching: true
+                    connectorRef: <+input>
+                    repo: hello/world
+                    tags:
+                      - latest
+                  timeout: ""
+                  type: BuildAndPushDockerRegistry
           platform:
-            arch: Arm64
-            os: MacOS
+            arch: Amd64
+            os: Linux
           runtime:
             spec: {}
-            type: Docker
+            type: Cloud
         type: CI
