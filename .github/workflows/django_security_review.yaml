@@ -1,5 +1,6 @@
 name: Django Security Check
-
+permissions:
+  contents: write
 on:
    push:
    merge_group:
@@ -9,7 +10,7 @@ env:
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
   FAIL_LEVEL: WARNING
   ENV_TYPE: venv
-  DEP_PATH: docker_requirement.txt
+  DEP_PATH: requirements.txt
   APP_PATH: nhhc/
 
 jobs:

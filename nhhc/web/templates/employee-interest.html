@@ -71,11 +71,11 @@
 {% endblock main %}
 
 {% block customscripts %}
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAcVC3cpOlGII6mN-jDumKeUMt8914j-GA&loading=async&callback=initAutocomplete&libraries=places&v=weekly" defer></script>
-    <script defer>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY|safe}}&loading=async&callback=initAutocomplete&libraries=places&v=weekly" defer></script>
+    <script>
         function openLoader() {
             document.getElementById("btn-submit").style.display = "none";
             document.getElementById("loading-btn-submit").style.display = "block";
         }
-    </script>
+    </script>/
 {% endblock customscripts %}

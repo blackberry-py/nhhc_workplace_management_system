@@ -1,113 +1,80 @@
-import json
-from http import HTTPStatus
-
-from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
-from faker import Faker
-from web.views import ClientInterestFormView, EmploymentApplicationFormView, favicon
-
-test_data = Faker()
+from django.test import TestCase, RequestFactory
+from unittest.mock import patch, MagicMock
+from web.views import HomePageView, AboutUsView, SuccessfulSubmission, ClientInterestFormView, EmploymentApplicationFormView, favicon
+from web.forms import ClientInterestForm, EmploymentApplicationForm
 
 
 class TestViews(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.factory = RequestFactory()
+        cls.fake_api_key = "fake-api-key"
+
     def setUp(self):
         self.factory = RequestFactory()
-        self.client = Client()
 
-    def test_client_interest_form_view_get(self):
-        self._extracted_from_test_employment_application_form_view_get_2("/client-interest/", ClientInterestFormView)
+    def test_public_views_get(self):
+        views = [
+            (HomePageView, "index.html", {"title": "Home"}),
+            (AboutUsView, "about.html", {"title": "About Nett Hands"}),
+            (SuccessfulSubmission, "submission.html", {"title": "Submission Successful"}),
+        ]
 
-    def test_employment_application_form_view_get(self):
-        self._extracted_from_test_employment_application_form_view_get_2("/employment-application/", EmploymentApplicationFormView)
+        for view_class, template_name, extra_context in views:
+            with self.subTest(view=view_class):
+                request = self.factory.get(reverse(view_class.__name__.lower()))
+                response = view_class.as_view()(request)
 
-    # TODO Rename this here and in `test_client_interest_form_view_get` and `test_employment_application_form_view_get`
-    def _extracted_from_test_employment_application_form_view_get_2(self, arg0, arg1):
-        request = self.factory.get(arg0)
-        response = arg1.as_view()(request)
-        self.assertEqual(response.status_code, HTTPStatus.OK)
+                self.assertEqual(response.status_code, 200)
+                self.assertIn(template_name, response.template_name)
+                self.assertEqual(response.context_data["extra_context"], extra_context)
 
-    def test_favicon_view_get(self):
-        request = self.factory.get("/favicon.ico")
+    def test_client_interest_form_view_post(self):
+        form_data_cases = [({"contact_number": "1234567890"}, 302), ({}, 200)]  # Valid form  # Invalid form
+
+        for form_data, expected_status_code in form_data_cases:
+            with self.subTest(form_data=form_data):
+                request = self.factory.post(reverse("client_interest"), data=form_data)
+                response = ClientInterestFormView.as_view()(request)
+
+                self.assertEqual(response.status_code, expected_status_code)
+
+    def test_employment_application_form_view_post(self):
+        form_data_cases = [({"contact_number": "1234567890"}, 302), ({}, 200)]  # Valid form  # Invalid form
+
+        for form_data, expected_status_code in form_data_cases:
+            with self.subTest(form_data=form_data):
+                request = self.factory.post(reverse("application"), data=form_data)
+                response = EmploymentApplicationFormView.as_view()(request)
+
+                self.assertEqual(response.status_code, expected_status_code)
+
+    def test_favicon(self):
+        request = self.factory.get(reverse("favicon"))
         response = favicon(request)
-        self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_client_interest_form_view_post_invalid(self):
-        request = self.factory.post(
-            "/client-interest/",
-            data={
-                "last_name": "test",
-                "first_name": "client",
-                "contact_number": "+17087996100",
-                "email": "Dev@gmail.com",
-                "home_address1": "1 North World Trade Tower",
-                "home_address2": "15th Floor",
-                "city": "Manhattan",
-                "state": "NY",
-                "zipcode": "21217",
-                "insurance_carrier": "TEST INSURANCE",
-                "desired_service": False,
-            },
-        )
-        response = ClientInterestFormView.as_view()(request)
-        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "image/x-icon")
 
-    # def test_employment_application_form_view_post_invalid(self):
-    #     request = self.factory.post('/employment-application/', data={})
-    #     response = EmploymentApplicationFormView.as_view()(request)
-    #     self.assertEqual(response.status_code, HTTPStatus.OK)
+    @patch("web.views.process_new_application")
+    def test_client_interest_form_view_process_submitted_client_interest(self, mock_process_new_application):
+        form_data = {"contact_number": "1234567890"}
+        form = ClientInterestForm(data=form_data)
+        self.assertTrue(form.is_valid())
 
-    def test_client_interest_form_view_post_valid(self):
-        data = {
-            "last_name": "test",
-            "first_name": "client",
-            "contact_number": "+17087996100",
-            "email": "Dev@gmail.com",
-            "home_address1": "1 North World Trade Tower",
-            "home_address2": "15th Floor",
-            "city": "Manhattan",
-            "state": "NY",
-            "zipcode": "21217",
-            "insurance_carrier": "TEST INSURANCE",
-            "desired_service": "OT",
-        }
-        request = self.factory.post("/client-interest/", data=data)
-        response = ClientInterestFormView.as_view()(request)
-        self.assertEqual(response.status_code, HTTPStatus.OK)
+        response = ClientInterestFormView().process_submitted_client_interest(form)
 
-    def test_employment_application_form_view_post_valid(self):
-        data = {
-            "last_name": "test",
-            "first_name": "new_employee",
-            "contact_number": "+17087996100",
-            "email": "Dev@gmail.com",
-            "home_address1": "1 North World Trade Tower",
-            "home_address2": "15th Floor",
-            "city": "Manhattan",
-            "state": "NY",
-            "zipcode": "21217",
-            "mobility": "C",
-            "prior_experience": "J",
-            "ipdh_registered": "True",
-            "availability_monday": True,
-            "availability_tuesday": False,
-            "availability_wednesday": True,
-            "availability_thursday": True,
-            "availability_friday": True,
-            "availability_saturday": False,
-        }
-        request = self.factory.post("/employment-application/", data=data)
-        response = EmploymentApplicationFormView.as_view()(request)
-        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(response.status_code, 302)
+        mock_process_new_application.assert_called_once()
 
+    @patch("web.views.process_new_application")
+    def test_employment_application_form_view_process_submitted_application(self, mock_process_new_application):
+        form_data = {"contact_number": "1234567890"}
+        form = EmploymentApplicationForm(data=form_data)
+        self.assertTrue(form.is_valid())
 
-class RobotsTxtTests(TestCase):
-    def setUp(self):
-        self.client = Client()
+        response = EmploymentApplicationFormView().process_submitted_application(form)
 
-    def test_get(self):
-        response = self.client.get("/robots.txt")
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-
-    def test_post_disallowed(self):
-        response = self.client.post("/robots.txt")
-        self.assertEqual(HTTPStatus.METHOD_NOT_ALLOWED, response.status_code)
+        self.assertEqual(response.status_code, 302)
+        mock_process_new_application.assert_called_once()

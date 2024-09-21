@@ -9,6 +9,7 @@ from employee.models import Employee
 from formset.widgets import UploadedFileInput
 from django.contrib.auth import hashers
 
+
 class EmployeeForm(ModelForm):
     phone_sms_identical = BooleanField(required=False, widget=CheckboxInput, label="Same as Contact")
     sms_contact_agreement = BooleanField(required=True, widget=CheckboxInput, label="I AGREE")

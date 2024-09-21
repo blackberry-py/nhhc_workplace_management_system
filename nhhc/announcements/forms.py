@@ -1,5 +1,5 @@
 """
-Module: annoucements.forms
+Module: Announcements.forms
 
 This module defines the AnnouncementForm class, which is a form used to create new announcements in the system.
 
@@ -120,7 +120,7 @@ class AnnouncementDetailsForm(forms.ModelForm):
                 HTML(""" <a href="{% url 'announcements' %}" class="btn btn-dark">Cancel</a>"""),
                 HTML(
                     """
-                         <button class="btn btn-danger" onClick="confirmPostArchival({{ announcement.pk }})">Archive Annoucement</button>
+                         <button class="btn btn-danger" onClick="confirmPostArchival({{ announcement.pk }})">Archive announcement</button>
                          """
                 ),
                 css_class="uk-text-right uk-modal-footer",

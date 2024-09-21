@@ -46,15 +46,14 @@ from formset.calendar import CalendarResponseMixin
 from nhhc.utils.helpers import NeverCacheMixin
 
 
-
 class Dashboard(CalendarResponseMixin, TemplateView):
     template_name = "dashboard.html"
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        recent_annoucements = list(Announcements.objects.all().filter(status="A").order_by("-date_posted")[:5])
+        recent_Announcements = list(Announcements.objects.all().filter(status="A").order_by("-date_posted")[:5])
         listed_amnnoucements = []
-        for announcement in list(recent_annoucements):
+        for announcement in list(recent_Announcements):
             announcement = model_to_dict(announcement)
             announcement["posted_by"] = Employee.objects.get(employee_id=announcement["posted_by"]).first_name
             listed_amnnoucements.append(announcement)
@@ -78,7 +77,7 @@ class ProfileDetailView(DetailView):
         return context
 
 
-class ProfileFormView( UpdateView, FileUploadMixin):
+class ProfileFormView(UpdateView, FileUploadMixin):
     form_class = EmployeeForm
     model = Employee
     template_name = "profile_main.html"
@@ -89,11 +88,13 @@ class ProfileFormView( UpdateView, FileUploadMixin):
 
     def get_success_url(self):
         return reverse("profile")
-    
+
+
 class PayrollExceptionView(FormView):
     template_name = "exception.html"
     form_class = PayrollExceptionForm
-    
+
+
 class Profile(NeverCacheMixin, View):
     def get(self, request, *args, **kwargs):
         view = ProfileDetailView.as_view()
@@ -167,7 +168,7 @@ class ClientInquiriesAPIListView(generics.ListCreateAPIView):
 
 
 # SECTION - Class-Based Views
-class ClientInquiriesListView( ListView):
+class ClientInquiriesListView(ListView):
     """
     Renders a list of client inquiries.
     """
@@ -180,7 +181,7 @@ class ClientInquiriesListView( ListView):
 
     def get_context_data(self, **kwargs) -> Dict[str, str]:
         context = super().get_context_data(**kwargs)
-        context["unresponsed"] = ClientInterestSubmission.objects.filter(reviewed=False).count()
+        context["unresolved"] = ClientInterestSubmission.objects.filter(reviewed=False).count()
         context["showSearch"] = True
         context["reviewed"] = ClientInterestSubmission.objects.filter(
             reviewed=True,
@@ -189,7 +190,7 @@ class ClientInquiriesListView( ListView):
         return context
 
 
-class ClientInquiriesDetailView( DetailView):
+class ClientInquiriesDetailView(DetailView):
     """
     Renders details of a specific client inquiry.
     """
@@ -200,7 +201,7 @@ class ClientInquiriesDetailView( DetailView):
     pk_url_kwarg = "pk"
 
 
-class EmploymentApplicationListView( ListView):
+class EmploymentApplicationListView(ListView):
     """
     Renders a list of submitted employment applications.
     """
@@ -213,7 +214,7 @@ class EmploymentApplicationListView( ListView):
 
     def get_context_data(self, **kwargs) -> Dict[str, str]:
         context = super().get_context_data(**kwargs)
-        context["unresponsed"] = EmploymentApplicationModel.objects.filter(reviewed=False).count()
+        context["unresolved"] = EmploymentApplicationModel.objects.filter(reviewed=False).count()
         context["reviewed"] = EmploymentApplicationModel.objects.filter(
             reviewed=True,
         ).count()
@@ -221,7 +222,7 @@ class EmploymentApplicationListView( ListView):
         return context
 
 
-class EmploymentApplicationDetailView( DetailView):
+class EmploymentApplicationDetailView(DetailView):
     """
     Renders details of a specific employment application.
     """
