@@ -20,8 +20,8 @@ from nhhc.utils.helpers import internet_connection
 # SECTION: **********************OPERATIONAL SETTINGS*********************************
 # The Settings in this section modify the entire operations of the application. Change with Caution
 # ************************************************************************************
-DEBUG = os.getenv("ENABLE_DEBUGGING", False)
-MAINTENANCE_MODE = False # os.getenv("ENABLE_MAINTENANCE_MODE", None)
+DEBUG = bool(os.getenv("ENABLE_DEBUGGING", False))
+MAINTENANCE_MODE = bool(os.getenv("ENABLE_MAINTENANCE_MODE", None))
 OFFLINE = not internet_connection()
 # ************************************************************************************
     #!SECTION  

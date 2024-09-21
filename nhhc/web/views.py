@@ -106,7 +106,7 @@ class EmploymentApplicationFormView(PublicViewMixin, FormView):
         context = {"form": form}
         return render(request, "employee-interest.html", context)
 
-
+[]
 @public
 @cache_page(CACHE_TTL)
 def favicon(request: HttpRequest) -> HttpResponse:
