@@ -1,37 +1,37 @@
 <a id="readme-top"></a>
 
 <!-- PROJECT SHIELDS -->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
+<div align="center">
 
+[![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/Terry-BrooksJr/nhhc_workplace_management_system.svg?style=for-the-badge)](issues-url)  [![Static Badge](https://img.shields.io/github/license/Terry-BrooksJr/nhhc_workplace_management_system.svg?style=for-the-badge)](license-url)    [![Static Badge](https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555)](linkedin-url)
+
+`</div>
 <!-- PROJECT LOGO -->
+
 <br />
 <div align="center">
   <a href="https://github.com/Terry-BrooksJr/nhhc_workplace_management_system">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="https://nhhc.b-cdn.net/staticfiles/img/CareNettLogo.png" alt="Logo" width="580" height="380">
   </a>
 
-  <h3 align="center">NHHC Workplace Management System</h3>
+<h3 align="center">NHHC Workplace Management System</h3>
 
-  <p align="center">
-    A comprehensive system for managing workplace operations at the NHHC.
-    <br />
-    <a href="https://github.com/Terry-BrooksJr/nhhc_workplace_management_system"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/Terry-BrooksJr/nhhc_workplace_management_system">View Demo</a>
-    ·
-    <a href="https://github.com/Terry-BrooksJr/nhhc_workplace_management_system/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
-    ·
-    <a href="https://github.com/Terry-BrooksJr/nhhc_workplace_management_system/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
-  </p>
+<p align="center">
+    The NHHC Workplace Management System is a custom comprehensive tool designed to streamline workplace operations by managing resources, employees, and daily tasks in a centralized system. Built with Python, Django, and PostgreSQL, it facilitates efficient operations, performance tracking, and resource allocation.
+
+<br />
+<a href="http://docs.netthandshome.care"><strong>Read the Admin User's Manual »</strong></a>
+<br />
+<br />
+
+<a href="https://github.com/Terry-BrooksJr/nhhc_workplace_management_system/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+
+<a href="https://github.com/Terry-BrooksJr/nhhc_workplace_management_system/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+</p>
 </div>
 
 <!-- TABLE OF CONTENTS -->
+
 <details>
   <summary>Table of Contents</summary>
   <ol>
@@ -58,31 +58,42 @@
 </details>
 
 <!-- ABOUT THE PROJECT -->
+
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+[!
 
-The NHHC Workplace Management System is a powerful tool designed to streamline and enhance workplace operations. It helps organizations efficiently manage resources, employees, and daily tasks within a centralized system.
+![](assets/20240921_174958_readme_project_image.png)
+
+[Product Name Screen Shot][product-screenshot]](http://netthandshome.care)
+
+The NHHC Workplace Management System is a custom comprehensive tool designed to streamline workplace operations by managing resources, employees, and daily tasks in a centralized system. Built with Python, Django, and PostgreSQL, it facilitates efficient operations, performance tracking, and resource allocation.
+
+It is a bespoke HRIS system that is customized around contractual requirements set forth by Partner of the Illinois Department of Aging. At the time of this writing, any client or patient information has been excluded.
+
+This application makes no claims to be HIPPA compliant. While it's design does follow the core precepts of data privacy and security in the United States, it does require individualized production harding.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Built With
 
-* [![Python][Python.com]][Python-url]
-* [![Django][Django.com]][Django-url]
-* [![PostgreSQL][PostgreSQL.com]][PostgreSQL-url]
-* [![PostgreSQL][PostgreSQL.com]][PostgreSQL-url]
+* Primary Coding Language: Python (V3.12.5)
+* Frameworks: [![Static Badge](https://img.shields.io/badge/Django-DBMS?style=for-the-badge&logo=django&logoColor=white&logoSize=auto&label=V.5.1.1&labelColor=%23092E20&color=%23092E20&cacheSeconds=3600)](https://www.djangoproject.com/https://www.django.org)
+* Database/DBMS: Relational - [![Static Badge](https://img.shields.io/badge/Postgres-DBMS?style=for-the-badge&logo=postgresql&logoColor=white&logoSize=auto&label=V.16&labelColor=%230064a5&color=%23d24b03&cacheSeconds=3600)](https://www.postgresql.org/)
+* Cache Data Store: DragonFly DB [![PostgreSQL][PostgreSQL.com]][PostgreSQL-url]
+* Secrets Management: Doppler
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- GETTING STARTED -->
+
 ## Getting Started
 
 To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
 
-* Python 3.8+
+* Python 3.11+
   ```sh
   sudo apt-get install python3
   ```
@@ -109,27 +120,31 @@ To get a local copy up and running follow these simple steps.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- USAGE EXAMPLES -->
+
 ## Usage
 
 This system can be used for managing daily operations, tracking employee performance, and handling resource allocation within the workplace.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+_For more examples, please refer to the [User Manual](http://docs.netthandshome.care)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ROADMAP -->
+
 ## Roadmap
 
-- [ ] Implement User Authentication
+- [ ] Printing Employee Profiles For Auditing
+- [ ] Enhancing Announcements to also send SMS announcements campaigns
 - [ ] Develop Resource Management Module
 - [ ] Add Employee Performance Tracking
-    - [ ] Integrate with third-party tools
+- [ ] Integrate with third-party tools
 
 See the [open issues](https://github.com/Terry-BrooksJr/nhhc_workplace_management_system/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- CONTRIBUTING -->
+
 ## Contributing
 
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
@@ -152,22 +167,25 @@ Don't forget to give the project a star! Thanks again!
 </a>
 
 <!-- LICENSE -->
+
 ## License
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+Distributed under the GNU General Public License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- CONTACT -->
+
 ## Contact
 
-Terry Brooks Jr - [@twitter_handle](https://twitter.com/twitter_handle) - terry.brooks@example.com
+Terry Brooks Jr - [@twitter_handle](https://twitter.com/NomadicSaaS_PM) - terry.brooks@brooksjr.com
 
 Project Link: [https://github.com/Terry-BrooksJr/nhhc_workplace_management_system](https://github.com/Terry-BrooksJr/nhhc_workplace_management_system)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ACKNOWLEDGMENTS -->
+
 ## Acknowledgments
 
 * [Best-README-Template](https://github.com/othneildrew/Best-README-Template)
@@ -190,7 +208,9 @@ Project Link: [https://github.com/Terry-BrooksJr/nhhc_workplace_management_syste
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/terryabrooks
 [product-screenshot]: images/screenshot.png
-[PostgreSQL]:
+[PostgreSQL]: https://img.shields.io/badge/Postgres-DBMS?style=for-the-badge&logo=postgresql&logoColor=white&logoSize=auto&label=V.16&labelColor=%230064a5&color=%23d24b03&cacheSeconds=3600
+[Django]: https://img.shields.io/badge/Django-DBMS?style=for-the-badge&logo=django&logoColor=white&logoSize=auto&label=V.5.1.1&labelColor=%23092E20&color=%23092E20&cacheSeconds=3600
+[Doppler]: 
 [Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [Next-url]: https://nextjs.org/
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB

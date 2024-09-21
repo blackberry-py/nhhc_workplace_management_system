@@ -1,0 +1,39 @@
+{% extends "includes/base.html" %}
+{% load static %}
+{% block title %}
+    <title>Nett Hands Home Care - Site Maintenance in Progress - Check Back Soon!</title>
+{% endblock title %}
+{% block customstyles %}
+    <styles>
+        .img-fluid {
+        width: 100%;
+        max-width: 350px;
+        height: auto;
+        display: block;
+        }
+    </style>
+{% endblock customstyles %}
+{% block main %}
+
+    <!-- Breadcrumb Begin -->
+    <div class="breadcrumb-option spad set-bg" data-setbg="{% static 'img/breadcrumb-bg.jpg' %}">
+        <div  class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb__text">
+                        <h2>Oops! We're Just Giving Our Site a Check-Up</h2>
+                        <div class="breadcrumb__links">
+                            <div id="maintence_gif d-flex align-items-center">
+                                <img src="{% static 'img/maintence.gif' %}" alt="animatedCHECK-UP" class="img-fluid mx-auto"/>
+                            </div>
+                            <p>Our site is currently undergoing some routine maintenance to ensure everything is in top shape.</p>
+                            <p>Just like we care for our patients, we're caring for our website to keep it healthy and strong.</p>
+                            <h3 class="text-light">Please check back soon!</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock main %}
