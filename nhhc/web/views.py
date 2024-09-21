@@ -1,18 +1,17 @@
 """
-Module: web.views.py
+Module: web_views.py
 Description: This module contains views for rendering web pages, processing form data, and sending email notifications.
 """
 
 from django.conf import settings
 from django.forms import model_to_dict
-from django.http import FileResponse, HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import FileResponse, HttpRequest, HttpResponse
 from django.shortcuts import render, reverse
 from django.templatetags.static import static
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_safe
 from formset.views import FormView
-from django.urls import reverse_lazy
 from loguru import logger
 from prometheus_client import Counter
 from web.forms import ClientInterestForm, EmploymentApplicationForm
@@ -47,7 +46,7 @@ class ClientInterestFormView(PublicViewMixin, FormView):
     form_class = ClientInterestForm
     model = ClientInterestSubmission
     template_name = "client-interest.html"
-    success_url = reverse_lazy("submitted")
+    success_url = reversed("submitted")
     extra_context = {"title": "Client Services Request"}
 
     def form_valid(self, form: ClientInterestForm) -> HttpResponse:
@@ -58,19 +57,17 @@ class ClientInterestFormView(PublicViewMixin, FormView):
             logger.debug("Form Is Valid")
             form.save()
             process_new_client_interest(form.cleaned_data)
-            return HttpResponseRedirect(reverse_lazy("submitted"), {"type": "Client Interest Form"})
+            return HttpResponsePermanentRedirect(reverse("submitted"), {"type": "Client Interest Form"})
         else:
             failed_submission_attempts_client.inc()
             logger.error("Form Is Invalid")
-            return HttpResponseRedirect(reverse_lazy("client_interest"), {"errors": form.errors.as_data()})
-
+            return HttpResponsePermanentRedirect(reverse("client_interest"), {"errors": form.errors.as_data()})
     @public
     def get(self, request):
         form = ClientInterestForm()
         context = {"form": form}
         logger.debug(context)
         return render(request, "client-interest.html", context)
-
     @public
     def post(self, request):
         context = {}
@@ -90,13 +87,13 @@ class EmploymentApplicationFormView(PublicViewMixin, FormView):
     extra_context = {"title": "Employment Application"}
 
     def form_valid(self, form: EmploymentApplicationForm) -> HttpResponse:
-        failed_submission_attempts_application = Counter("failed_submission_attempts_application", "Metric Counter for the Number of Application Submission attempts that failed validation")
+        failed_submission_attempts_application = Counter("failed_submission_attempts_application", "Metric Counter for the Number of Applicatioin Submission attempts that failed validation")
         """If the form is valid, redirect to the supplied URL."""
         if form.is_valid():
             return self.process_submitted_application(form)
         failed_submission_attempts_application.inc()
         logger.error("Form Is Invalid")
-        return HttpResponseRedirect(reverse("application"), {"errors": form.errors.as_data()})
+        return HttpResponsePermanentRedirect(reverse("application"), {"errors": form.errors.as_data()})
 
     def process_submitted_application(self, form):
         logger.debug("Form Is Valid")
@@ -105,21 +102,19 @@ class EmploymentApplicationFormView(PublicViewMixin, FormView):
         processed_form = form.cleaned_data
         del processed_form["resume_cv"]
         process_new_application(processed_form)
-        return HttpResponseRedirect(reverse("submitted"), {"type": "Employment Interest Form"})
+        return HttpResponsePermanentRedirect(reverse("submitted"), {"type": "Employment Interest Form"})
 
     def get_form(self, form_class=None):
         if self.request.POST:
             return EmploymentApplicationForm(self.request.POST)
         else:
             return EmploymentApplicationForm()
-
     @public
     def get(self, request):
         form = EmploymentApplicationForm()
         context = {"form": form}
         logger.debug(context)
         return render(request, "client-interest.html", context)
-
     @public
     def post(self, request):
         context = {}
