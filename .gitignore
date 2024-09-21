@@ -163,7 +163,7 @@ nohup.out
 nhhc/attestations/*
 nhhc/restricted/attestations/do_not_drive_agreement_attestation/brooks_terry.pdf
 nhhc/restricted/attestations/idoa_agency_policies_attestation/brooks_terry.pdf
-//Users/terry-brooks/Documents/GitHub/nhhc_workplace_management_system/nhhc/restricted/*
+/Users/terry-brooks/GitHub/NettHands/nhhc/restricted/*
 
 nhhc/restricted/*
 .envrc
@@ -1108,5 +1108,3 @@ package-lock.json
 nhhc/async_worker_log
 nhhc/flower
 nhhc/monkeytype.sqlite3
-
-.fake
