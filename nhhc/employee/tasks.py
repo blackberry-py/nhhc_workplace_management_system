@@ -28,7 +28,7 @@ def send_async_rejection_email(applicant: dict) -> int:
         logger.error(f"Async Rejection Email Failed - {e}")
 
 
-def send_async_temrination_email(applicant: dict) -> int:
+def send_async_termination_email(applicant: dict) -> int:
     try:
         task = hr_mailroom.send_external_applicant_termination_email(terminated_employee=applicant)
         logger.info("sending Applicant Rejection")

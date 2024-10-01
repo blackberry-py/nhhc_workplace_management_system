@@ -1,0 +1,29 @@
+schemaVersion: "2.0.0"
+
+globalEnvVars:
+  - key: "DOPPLER_TOKEN"
+    value: $DOPPLER_TOKEN"
+
+
+commandTests:
+
+# check that the python binary is in the correct location
+  - name: "python installation"
+    command: "which"
+    args: ["python"]
+    expectedOutput: ["/usr/bin/python\n"]
+
+
+
+# setup a virtualenv, install gunicorn, and verify the installation
+  - name: "gunicorn flask"
+    setup: [["virtualenv", "/env"],
+            ["pip", "install", "gunicorn", "flask"]]
+    command: "which"
+    args: ["gunicorn"]
+    expectedOutput: ["/env/bin/gunicorn"]
+
+# run an integration test to ensure importing flask in python works correctly
+  - name: "django integration"
+    command: "python"
+    args: ["-c",  nhhc/manage.py", "check"]

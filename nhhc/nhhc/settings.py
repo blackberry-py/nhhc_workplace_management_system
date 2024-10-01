@@ -15,6 +15,16 @@ import highlight_io
 from highlight_io.integrations.django import DjangoIntegration
 from logtail import LogtailHandler
 from loguru import logger
+from nhhc.utils.helpers import internet_connection
+
+# SECTION: **********************OPERATIONAL SETTINGS*********************************
+# The Settings in this section modify the entire operations of the application. Change with Caution
+# ************************************************************************************
+DEBUG = bool(os.getenv("ENABLE_DEBUGGING", False))
+MAINTENANCE_MODE = bool(os.getenv("ENABLE_MAINTENANCE_MODE", None))
+OFFLINE = not internet_connection()
+# ************************************************************************************
+#!SECTION
 
 TESTING = "test" in sys.argv
 
@@ -149,7 +159,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "tinymce",
     "robots",
-    # "IpWhitelister",
     "health_check",
     "health_check.db",
     "health_check.cache",
@@ -192,6 +201,7 @@ MIDDLEWARE = [
     "django.middleware.cache.FetchFromCacheMiddleware",
     "django_require_login.middleware.LoginRequiredMiddleware",
     "django_prometheus.middleware.PrometheusAfterMiddleware",
+    "nhhc.middleware.maintenance.MaintenanceModeMiddleware",
 ]
 # SECTION - Database and Caching
 CACHE_TTL: int = int(os.environ["TIME_TO_LIVE_MINUTES"]) * 60
@@ -282,7 +292,12 @@ LOGIN_REDIRECT_URL = "/dashboard"
 LOGIN_URL = "/login"
 LOGOUT_REDIRECT_URL = LOGIN_URL
 REQUIRE_LOGIN_PUBLIC_URLS = (LOGIN_URL, LOGOUT_REDIRECT_URL, r"^/api/.*", r"^/metrics", r"^/control-center")
-REQUIRE_LOGIN_PUBLIC_NAMED_URLS = ("account_reset_password","account_email","account_set_password","account_change_password", )
+REQUIRE_LOGIN_PUBLIC_NAMED_URLS = (
+    "account_reset_password",
+    "account_email",
+    "account_set_password",
+    "account_change_password",
+)
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.ScryptPasswordHasher",
     "django.contrib.auth.hashers.PBKDF2PasswordHasher",
