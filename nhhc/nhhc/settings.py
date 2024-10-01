@@ -15,14 +15,12 @@ import highlight_io
 from highlight_io.integrations.django import DjangoIntegration
 from logtail import LogtailHandler
 from loguru import logger
-from nhhc.utils.helpers import internet_connection
 
 # SECTION: **********************OPERATIONAL SETTINGS*********************************
 # The Settings in this section modify the entire operations of the application. Change with Caution
 # ************************************************************************************
 DEBUG = bool(os.getenv("ENABLE_DEBUGGING", False))
 MAINTENANCE_MODE = bool(os.getenv("ENABLE_MAINTENANCE_MODE", None))
-OFFLINE = not internet_connection()
 # ************************************************************************************
 #!SECTION
 

@@ -1,19 +1,6 @@
 # Define constants
 # DEV_ENV_RUNNING_IN_CONTAINER ?= false
-VENV_DIR := $(if $(DEV_ENV_RUNNING_IN_CONTAINER), /workspaces/NettHands/.venv, /Users/terry-brooks/GitHub/NettHands/.venv)
-PYTHON := python3
-BIN := $(VENV_DIR)/bin
-PYTHON_INTERPRETER := $(BIN)/$(PYTHON)
-SHELL := /bin/bash
-CURRENT_DATE := $(shell date +"%Y-%m-%d-%T")
-TOKEN := ${NHHC_DT}
-DOCKER_PATH := $(CONTAINER_PATH_EX)
-
-.PHONY: help
-help: ## Show this help
-	@egrep -h '\s##\s' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
-
-.PHONY:
+VENV_DIR=.venvy
 venv: ## Make a new virtual environment
 	python3 -m venv $(VENV) && source $(BIN)/activate
 
@@ -23,8 +10,7 @@ collect:
 
 .PHONY: install
 install: ## Make venv and install requirements
-	pip install -r ./requirements.txt
-
+	pip install -r ./requirements.txtnhh
 
 freeze: ## Pin current dependencies
 	$(BIN)/pip freeze > ../requirements.txt
@@ -63,7 +49,7 @@ docs:
 
 .PHONY: run
 run:
-	doppler run -t $(TOKEN)  --  	$(PYTHON_INTERPRETER) $(DOCKER_PATH)manage.py runserver 9555
+	doppler run -t dp.st.prod.tzlzucONGjZqzA8yWrQxcYruK5DJInVfgOXAxrqfJsQ  --  python3  nhhc/manage.py runserver 9555
 
 .PHONY: debug
 debug: ## Run the Django server
