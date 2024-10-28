@@ -14,7 +14,7 @@ def send_async_onboarding_email(applicant: dict) -> int:
     """
     Sends an asynchronous onboarding email to a new hire.
 
-    This function attempts to send an onboarding email to the specified applicant using the HR mailroom service. 
+    This function attempts to send an onboarding email to the specified applicant using the HR mailroom service.
     It logs the process and returns the task identifier if successful, or logs an error if the operation fails.
 
     Args:
@@ -38,7 +38,7 @@ def send_async_rejection_email(applicant: dict) -> int:
     """
     Sends an asynchronous rejection email to an applicant.
 
-    This function attempts to send a rejection email to the specified applicant using the HR mailroom service. 
+    This function attempts to send a rejection email to the specified applicant using the HR mailroom service.
     It logs the process and returns the task identifier if successful, or logs an error if the operation fails.
 
     Args:
@@ -62,7 +62,7 @@ def send_async_termination_email(applicant: dict) -> int:
     """
     Sends an asynchronous termination email to a terminated employee.
 
-    This function attempts to send a termination email to the specified applicant using the HR mailroom service. 
+    This function attempts to send a termination email to the specified applicant using the HR mailroom service.
     It logs the process and returns the task identifier if successful, or logs an error if the operation fails.
 
     Args:

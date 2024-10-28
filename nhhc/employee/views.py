@@ -183,6 +183,7 @@ class Hire:
         ValueError: If the 'pk' value is invalid or not provided in the request.
         DoesNotExist: If the employment application with the provided 'pk' does not exist.
     """
+
     @staticmethod
     @require_POST
     @login_required
@@ -209,14 +210,17 @@ class Hire:
             return pk
         else:
             raise ValueError("Missing or invalid PK.")
+
     @staticmethod
     def get_applicant(pk: int) -> EmploymentApplicationModel:
         return EmploymentApplicationModel.objects.get(pk=pk)
+
     @staticmethod
     def process_hiring(applicant, user):
         applicant.hire_applicant(hired_by=user)
         applicant.save()
         return applicant
+
     @staticmethod
     def send_hiring_notification(hired_user):
         credentials = {
@@ -229,25 +233,28 @@ class Hire:
         if notice != 1:
             logger.error(f"Email not sent: {notice}")
         return notice
+
     @staticmethod
     def prepare_success_content(hired_user):
         return f"username: {hired_user['username']}, password: {hired_user['plain_text_password']}, employee_id: {hired_user['employee_id']}"
+
     @staticmethod
     def invalid_pk_response():
         logger.warning("Invalid or missing application PK submitted.")
         return HttpResponse(status=400, content="Failed to hire applicant. Invalid or no 'pk' value provided.")
+
     @staticmethod
     def applicant_not_found_response():
         logger.error("Employment application not found.")
         return HttpResponse(status=404, content="Failed to hire applicant. Employment application not found.")
+
     @staticmethod
     def handle_general_exception(e):
         logger.exception(f"Failed to hire applicant or send new user credentials. Error: {e}")
         return HttpResponse(
-            status=422 if 'hire_applicant' in str(e) else 424,
+            status=422 if "hire_applicant" in str(e) else 424,
             content=f"Failed to hire applicant or send new user credentials. Error: {e}.",
         )
-
 
 
 @require_POST

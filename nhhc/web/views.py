@@ -124,7 +124,7 @@ class EmploymentApplicationFormView(PublicViewMixin, FormView):
         context = {}
         form = EmploymentApplicationForm(request.POST)
         if form.is_valid():
-            return  self.form_valid(form)
+            return self.form_valid(form)
         elif not form.is_valid():
             context["form"] = form
             context["form_errors"] = form.errors

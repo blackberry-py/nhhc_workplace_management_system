@@ -3,19 +3,23 @@ from health_check.storage.backends import StorageHealthCheck
 from faker import Faker
 import json
 import datetime
-import os 
+import os
 import time
 import requests
 from health_check.exceptions import ServiceUnavailable
 import random
 from loguru import logger
-from  nhhc.backends.storage_backends import PrivateMediaStorage
+from nhhc.backends.storage_backends import PrivateMediaStorage
+
 Faker.seed(time.time())
 mock_data = Faker()
+
+
 class DocSealSigningServiceHealthCheck(BaseHealthCheckBackend):
     critical_service = True
     base_url = "https://api.docuseal.co"
-    submission_format = json.loads("""{
+    submission_format = json.loads(
+        """{
   "template_id": 340013,
   "send_email": false,
   "send_sms": false,
@@ -52,8 +56,9 @@ class DocSealSigningServiceHealthCheck(BaseHealthCheckBackend):
       ]
     }
   ]
-}""")
-    
+}"""
+    )
+
     def randomize_data(self) -> str:
         """
         Randomizes the data for a submission in the DocSealSigningServiceHealthCheck.
@@ -70,10 +75,10 @@ class DocSealSigningServiceHealthCheck(BaseHealthCheckBackend):
         submitter_details = submission["submitters"][0]
         submitter_details["name"] = mock_data.name()
         submitter_details["email"] = mock_data.email()
-        submitter_details["phone"] = mock_data.country_calling_code()+mock_data.phone_number(),
-        submitter_details["external_id"] = random.randint(8000,12124445555444)
+        submitter_details["phone"] = (mock_data.country_calling_code() + mock_data.phone_number(),)
+        submitter_details["external_id"] = random.randint(8000, 12124445555444)
         return submission
-    
+
     def create_docseal_submission(self) -> str:
         """
         Creates a submission in the DocuSeal service using randomized data.
@@ -86,17 +91,13 @@ class DocSealSigningServiceHealthCheck(BaseHealthCheckBackend):
         Raises:
             KeyError: If the environment variable "DOCSEAL_TEST_API_KEY" is not set.
         """
-        headers = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-Auth-Token': os.environ["DOCSEAL_TEST_API_KEY"]
-        }
+        headers = {"Content-Type": "application/json", "Accept": "application/json", "X-Auth-Token": os.environ["DOCSEAL_TEST_API_KEY"]}
         payload = json.dumps(self.randomize_data())
         response = (requests.request("POST", os.path.join(DocSealSigningServiceHealthCheck.base_url, "submissions"), headers=headers, data=payload)).json()
         logger.debug(response)
         return response.text if response.status_code == 200 else None
-    
-    def archive_submission(self, submission_id:int) -> bool:
+
+    def archive_submission(self, submission_id: int) -> bool:
         """
         Archives a submission in the DocuSeal service using its submission ID.
 
@@ -111,7 +112,7 @@ class DocSealSigningServiceHealthCheck(BaseHealthCheckBackend):
         Raises:
             KeyError: If the environment variable "DOCSEAL_TEST_API_KEY" is not set.
         """
-        headers = { 'X-Auth-Token': os.environ["DOCSEAL_TEST_API_KEY"] }
+        headers = {"X-Auth-Token": os.environ["DOCSEAL_TEST_API_KEY"]}
         response = (requests.request("DELETE", os.path.join(DocSealSigningServiceHealthCheck.base_url, "submissions", submission_id), headers=headers)).json()
         logger.debug(response)
         return response.status_code == 200
@@ -133,7 +134,7 @@ class DocSealSigningServiceHealthCheck(BaseHealthCheckBackend):
                 return self.archive_submission(created_submission[0]["submission_id"])
         except Exception as e:
             logger.exception(str(e))
-            raise ServiceUnavailable(message=f"Docuseal Service Is Offline. Unable to Create or Archive Submissions - {str(e)}") from e    
+            raise ServiceUnavailable(message=f"Docuseal Service Is Offline. Unable to Create or Archive Submissions - {str(e)}") from e
 
     def identifier(self):
         return self.__class__.__name__

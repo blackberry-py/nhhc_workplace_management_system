@@ -9,5 +9,6 @@ class WebConfig(AppConfig):
     def ready(self) -> None:
         super().ready()
         from nhhc.status import DigitalOceanSpacesHeathCheck, DocSealSigningServiceHealthCheck
+
         plugin_dir.register(DigitalOceanSpacesHeathCheck)
         plugin_dir.register(DocSealSigningServiceHealthCheck)

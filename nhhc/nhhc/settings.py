@@ -16,11 +16,12 @@ from highlight_io.integrations.django import DjangoIntegration
 from logtail import LogtailHandler
 from loguru import logger
 import warnings
+
 # SECTION: **********************OPERATIONAL SETTINGS*********************************
 # The Settings in this section modify the entire operations of the application. Change with Caution
 # ************************************************************************************
 DEBUG = bool(os.getenv("ENABLE_DEBUGGING", False))
-MAINTENANCE_MODE = False #  bool(os.getenv("ENABLE_MAINTENANCE_MODE", None))
+MAINTENANCE_MODE = False  #  bool(os.getenv("ENABLE_MAINTENANCE_MODE", None))
 # ************************************************************************************
 #!SECTION
 
@@ -163,8 +164,8 @@ INSTALLED_APPS = [
     "health_check.contrib.s3boto3_storage",
     "health_check.contrib.redis",
     "health_check.contrib.psutil",
-    'health_check.contrib.celery',              
-    'health_check.contrib.celery_ping',
+    "health_check.contrib.celery",
+    "health_check.contrib.celery_ping",
     "sage_encrypt",
     "anymail",
     "defender",
@@ -338,7 +339,7 @@ AWS_ACCESS_KEY_ID = os.environ["SPACES_KEY"]
 AWS_SECRET_ACCESS_KEY = os.environ["SPACES_SECRET"]
 AWS_STORAGE_BUCKET_NAME = os.environ["AWS_STORAGE_BUCKET_NAME"]
 AWS_DEFAULT_ACL = "private"
-AWS_S3_CUSTOM_DOMAIN = os.environ['DIGITAL_OCEAN_SPACES_ENDPOINT']
+AWS_S3_CUSTOM_DOMAIN = os.environ["DIGITAL_OCEAN_SPACES_ENDPOINT"]
 AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
 AWS_S3_SIGNATURE_VERSION = "s3v4"
 AWS_QUERYSTRING_EXPIRE = 3600
@@ -355,7 +356,7 @@ STATIC_ROOT = STATIC_URL
 
 # SECTION -  S3 public media settings
 PUBLIC_MEDIA_LOCATION = "media/"
-MEDIA_URL = os.path.join(AWS_S3_CUSTOM_DOMAIN,PUBLIC_MEDIA_LOCATION)
+MEDIA_URL = os.path.join(AWS_S3_CUSTOM_DOMAIN, PUBLIC_MEDIA_LOCATION)
 # !SECTION
 
 # SECTION - S3 private media settings
