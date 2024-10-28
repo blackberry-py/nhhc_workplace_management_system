@@ -1,8 +1,10 @@
 from django.core import mail
 from django.test import TestCase
 from model_bakery import baker
+from employee.models import Employee
+from employee.views import Hire
 from web.forms import EmploymentApplicationForm
-
+from django.conf import settings
 from nhhc.utils.mailer import PostOffice
 from nhhc.utils.testing import (
     generate_random_encrypted_char,
@@ -12,35 +14,18 @@ from nhhc.utils.testing import (
 baker.generators.add("sage_encrypt.fields.asymmetric.EncryptedCharField", generate_random_encrypted_char)
 baker.generators.add("sage_encrypt.fields.asymmetric.EncryptedEmailField", generate_random_encrypted_email)
 
-
 class TestPostOffice(TestCase):
-    def test_send_external_application_submission_confirmation_happy_path(self) -> None:
-        inital_values = {
-            "first_name": "Test",
-            "last_name": "Case",
-            "contact_number": "+14439835591",
-            "email": "Terry@BrooksJr.com",
-            "home_address1": "16643 S. Kedzie",
-            "city": "Baltimore",
-            "state": "MD",
-            "zipcode:": 60411,
-            "mobility": "C",
-            "prior_experience": "J",
-            "ipdh_registered": False,
-            "availability_monday": False,
-            "availability_tuesday": True,
-            "availability_wednesday": False,
-            "availability_thursday": False,
-            "availability_friday": True,
-            "availability_saturday": True,
-            "availability_sunday": False,
-        }
-        form = EmploymentApplicationForm(initial=inital_values)
-        if form.is_valid():
-            form.save()
-            test = PostOffice.send_external_application_submission_confirmation(form)
-        else:
-            print(form.errors)
-            raise RuntimeError(f"{form.errors}")
-        # Test that one message has been sent.
-        self.assertEqual(test["external"], 1)
+    def setUp(self) -> None:
+        self.post_office = PostOffice("Tests@netthandshome.care")
+        self.recipient = settings.ADMINS
+        self.hired_applicant = baker.make(EmploymentApplicationForm, email="Terry@BrooksJr.com" )
+        self.rejected_applicant = baker.make(EmploymentApplicationForm, email="Terry@BrooksJr.com" )
+        self.terminated_employee = baker.make(Employee, email="Terry@BrooksJr.com" )
+        return super().setUp()
+    def test_send_email(self):
+        self.post_office.send_external_application_submission_confirmation(self.hired_applicant)
+        mail.send_mail('Subject here', 'Here is the message.',
+            'from@example.com', ['to@example.com'],
+            fail_silently=False)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, 'Subject here')

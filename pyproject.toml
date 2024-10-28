@@ -81,6 +81,7 @@ django-mail-panel = "^4.0.4"
 django-require-login = "^1.1.4"
 django-cockroachdb = "^5.0"
 cherrypy = "^18.10.0"
+psutil = "^6.1.0"
 
 
 [tool.poetry.group.dev.dependencies]

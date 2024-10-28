@@ -26,9 +26,11 @@ def process_new_application(form: Union[EmploymentApplicationForm, Dict[str, Any
         Dict[str,int]: A dictionary containing the results of the notification tasks. The values represent the number of notifications succesful sent.
     """
     try:
-        internal_notify_task = career_web_mailer.send_internal_new_applicant_notification(form)
-        external_notify_task = career_web_mailer.send_external_application_submission_confirmation(form)
-        return {"internal": internal_notify_task, "external": external_notify_task}
+        logger.debug('Processing New Application - Sending EMAILS')
+        if internal_notify_task := career_web_mailer.send_internal_new_applicant_notification(form):
+            logger.debug('Successfully Sent Internal Notification Email')
+            if external_notify_task := career_web_mailer.send_external_application_submission_confirmation(form):
+                return {"internal": internal_notify_task, "external": external_notify_task}
     except Exception as e:
         logger.error(f"UNABLE TO SEND: {e}")
         return {"internal": 0, "external": 0}
