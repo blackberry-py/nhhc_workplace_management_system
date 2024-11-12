@@ -20,7 +20,7 @@ import warnings
 # SECTION: **********************OPERATIONAL SETTINGS*********************************
 # The Settings in this section modify the entire operations of the application. Change with Caution
 # ************************************************************************************
-DEBUG = bool(os.getenv("ENABLE_DEBUGGING", False))
+DEBUG = False
 MAINTENANCE_MODE = False  #  bool(os.getenv("ENABLE_MAINTENANCE_MODE", None))
 # ************************************************************************************
 #!SECTION
@@ -32,7 +32,6 @@ logger.remove()  # Remove all handlers added so far, including the default one.
 # SECTION - Basic Application Definition
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ["SECRET_KEY"]
-DEBUG = True
 KOLO_DISABLE = not DEBUG
 DATETIME_FORMAT: str = "m/d/yyyy h:mm A"
 ADMINS = [("Terry Brooks", "Terry@BrooksJr.com")]
@@ -86,7 +85,7 @@ INTERNAL_IPS = ["127.0.0.1"]
 
 
 # SECTION - Email Communication
-
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.environ["EMAIL_SERVER"]
 EMAIL_SUBJECT_PREFIX = "NHHC Django Server -"
 EMAIL_USE_TLS = False
@@ -352,6 +351,7 @@ AWS_CLOUDFRONT_KEY = os.environ["AWS_CLOUDFRONT_PRIVATE_KEY"]
 STATIC_LOCATION = "staticfiles/"
 STATIC_URL = f"https://cdn.netthandshome.care/{STATIC_LOCATION}/"
 STATIC_ROOT = STATIC_URL
+STATIC_HOST = "" if DEBUG else STATIC_URL
 # !SECTION
 
 # SECTION -  S3 public media settings
@@ -420,7 +420,18 @@ TEMPLATES = [
 
 # SECTION - Logging
 logger.remove()
-warnings.showwarning = logger.warning
+
+
+def log_warning(message, category, filename, lineno, file=None, line=None):
+    logger.warning(f" {message}")
+
+
+warnings.filterwarnings(
+    action="ignore",
+    message=r"w+",
+)
+
+warnings.showwarning = log_warning
 LOG_FORMAT = "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <magenta>{name}</magenta>:<cyan>Function: {function}</cyan>:<white>File: {file}</white>:<blue> Line: {line}</blue> - <level>{message}</level>'"
 
 HIGHLIGHT_MONITORING = highlight_io.H(
@@ -645,12 +656,9 @@ CELERY_RESULT_EXTENDED = True
 
 # DEBUG SETTINGS
 if DEBUG:
-    EMAIL_BACKEND = "django_smtp_ssl.SSLEmailBackend"
     MIDDLEWARE.insert(0, "kolo.middleware.KoloMiddleware")
     INSTALLED_APPS.insert(0, "kolo")
 
-else:
-    EMAIL_BACKEND = "django_smtp_ssl.SSLEmailBackend"
 
 if not TESTING:
     INSTALLED_APPS = [

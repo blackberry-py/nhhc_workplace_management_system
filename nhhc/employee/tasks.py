@@ -10,6 +10,7 @@ celery_logger = get_task_logger(__name__)
 hr_mailroom = PostOffice("HR@netthandshome.care")
 
 
+@shared_task
 def send_async_onboarding_email(applicant: dict) -> int:
     """
     Sends an asynchronous onboarding email to a new hire.
@@ -34,6 +35,7 @@ def send_async_onboarding_email(applicant: dict) -> int:
         logger.error(f"Async Onboarding Email Failed: {e}")
 
 
+@shared_task
 def send_async_rejection_email(applicant: dict) -> int:
     """
     Sends an asynchronous rejection email to an applicant.
@@ -58,6 +60,7 @@ def send_async_rejection_email(applicant: dict) -> int:
         logger.error(f"Async Rejection Email Failed - {e}")
 
 
+@shared_task
 def send_async_termination_email(applicant: dict) -> int:
     """
     Sends an asynchronous termination email to a terminated employee.

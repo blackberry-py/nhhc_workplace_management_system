@@ -15,6 +15,7 @@ career_web_mailer = PostOffice(
 )
 
 
+@shared_task
 def process_new_application(form: Union[EmploymentApplicationForm, Dict[str, Any]], **kwargs) -> Dict[str, int]:
     """
     Async Celery task to Process new employment interest by sending internal and external notifications.
@@ -23,7 +24,7 @@ def process_new_application(form: Union[EmploymentApplicationForm, Dict[str, Any
         form (Union[EmploymentApplicationForm,Dict[str,Any]]): The form submitted by the client.
 
     Returns:
-        Dict[str,int]: A dictionary containing the results of the notification tasks. The values represent the number of notifications succesful sent.
+        Dict[str,int]: A dictionary containing the results of the notification tasks. The values represent the number of notifications successful sent.
     """
     try:
         logger.debug("Processing New Application - Sending EMAILS")
@@ -44,6 +45,7 @@ client_web_mailer = PostOffice(
 )
 
 
+@shared_task
 def process_new_client_interest(form: Union[ClientInterestSubmission, Dict[str, Any]], **kwargs) -> Dict[str, int]:
     """
     Async Celery task to Process new client interest by sending internal and external notifications.
