@@ -31,7 +31,7 @@ logger.remove()  # Remove all handlers added so far, including the default one.
 # SECTION - Basic Application Defintion
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ["SECRET_KEY"]
-DEBUG = True
+DEBUG = False
 KOLO_DISABLE = not DEBUG
 DATETIME_FORMAT: str = "m/d/yyyy h:mm A"
 ADMINS = [("Terry Brooks", "Terry@BrooksJr.com")]
@@ -65,11 +65,11 @@ CSRF_HEADER_NAME = "X_CSRFToken"
 CSRF_COOKIE_SECURE = False
 CORS_ALLOW_PRIVATE_NETWORK = True
 CSRF_COOKIE_DOMAIN = None
-SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = True
 CORS_ORIGIN_ALLOW_ALL = True
-SESSION_COOKIE_HTTPONLY = False
+SESSION_COOKIE_HTTPONLY = True
 CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = ["http://localhost"]
+CSRF_TRUSTED_ORIGINS = ["http://netthandshome.care", "cdn.netthandshome.care"]
 
 
 # !SECTION
@@ -156,7 +156,6 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "corsheaders",
     "tinymce",
-    "robots",
     "health_check",
     "health_check.db",
     "health_check.cache",

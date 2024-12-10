@@ -10,6 +10,7 @@ from django.conf import settings
 from django.db import migrations, models
 
 import nhhc.utils.upload
+from django.contrib.postgres.operations import CryptoExtension
 
 
 class Migration(migrations.Migration):
@@ -20,7 +21,7 @@ class Migration(migrations.Migration):
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
-    operations = [
+    operations = [CryptoExtension(),
         migrations.CreateModel(
             name="ClientInterestSubmission",
             fields=[
