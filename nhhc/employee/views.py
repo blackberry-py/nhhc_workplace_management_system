@@ -14,7 +14,6 @@ Usage:
 To use the functions in this module, import the module and call the desired function with the appropriate parameters.
 """
 
-
 from typing import Any
 
 from compliance.models import Compliance

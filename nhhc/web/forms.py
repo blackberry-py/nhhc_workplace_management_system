@@ -14,7 +14,6 @@ Both forms utilize the ReCaptchaField for added security.
 
 """
 
-
 from captcha.fields import ReCaptchaField
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Column, Field, Layout, Row, Submit

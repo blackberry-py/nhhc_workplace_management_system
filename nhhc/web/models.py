@@ -17,7 +17,6 @@ Note: The module also includes choices for services, mobility, and prior experie
 
 """
 
-
 from datetime import datetime
 from typing import Any, Dict
 

@@ -12,6 +12,7 @@ The URL patterns include:
 These URL patterns are used to define the routing for the views in the application.
 
 """
+
 from django.contrib.auth.decorators import login_required
 from django.urls import include, path, re_path
 from django.views.decorators.csrf import csrf_exempt

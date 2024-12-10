@@ -1,6 +1,7 @@
 import datetime
+from datetime import timedelta
 
-from arrow import get
+from arrow import get, now
 from captcha.fields import ReCaptchaField
 from crispy_forms.bootstrap import Modal
 from crispy_forms.helper import FormHelper
@@ -15,8 +16,8 @@ from formset.ranges import DateTimeRangeField, DateTimeRangePicker
 from formset.renderers import ButtonVariant
 from formset.widgets import Button, DatePicker, UploadedFileInput
 from portal.models import PayrollException
-from arrow import now
-from datetime import timedelta
+
+
 def calculateExceptionHours(start: int, end: int) -> int:
     """
     Calculates the difference in hours between two time values.
@@ -61,13 +62,10 @@ class HoursExceptionField(FormsField):
 
 class PayrollExceptionForm(ModelForm):
     captcha = ReCaptchaField()
-    exception_date = DateField(widget=DatePicker(attrs={
-            'min': now().isoformat(),
-            'max': (now() + timedelta(weeks=4)).isoformat(), "date-format": "iso"}))
+    exception_date = DateField(widget=DatePicker(attrs={"min": now().isoformat(), "max": (now() + timedelta(weeks=4)).isoformat(), "date-format": "iso"}))
     exception_start_time = TimeField(widget=widgets.TimeInput)
     exception_end_time = TimeField(widget=widgets.TimeInput)
-    
-    
+
     class Meta:
         model = PayrollException
         fields = ("exception_date", "exception_start_time", "exception_end_time", "reason")
@@ -104,13 +102,13 @@ class PayrollExceptionForm(ModelForm):
             Row(
                 Column("captcha", css_class="form-group col-6"),
                 HTML(
-                    '''                  
+                    """                  
                 <div class="form-group col-6 mb-0">
                  <label class="form-label">Number of Hours<em>Auto-Calulated</em></label>
                  <h5 class="textinput form-control" id="exception-hours" readonly>0</h5>
                  </div>
                  </div>
-                    ),'''
+                    ),"""
                 ),
                 css_class="form-row",
             ),

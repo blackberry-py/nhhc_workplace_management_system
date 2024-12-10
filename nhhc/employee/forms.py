@@ -1,13 +1,14 @@
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Button, Column, Field, Layout, Reset, Row, Submit
+from django.contrib.auth import hashers
 from django.forms import BooleanField, CheckboxInput, ModelForm, fields
 from django.forms.widgets import DateInput
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from employee.models import Employee
 from formset.widgets import UploadedFileInput
-from django.contrib.auth import hashers
+
 
 class EmployeeForm(ModelForm):
     phone_sms_identical = BooleanField(required=False, widget=CheckboxInput, label="Same as Contact")

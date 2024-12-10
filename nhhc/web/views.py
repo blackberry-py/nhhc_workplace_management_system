@@ -11,14 +11,15 @@ from django.templatetags.static import static
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_safe
+from django_require_login.mixins import PublicViewMixin, public
 from formset.views import FormView
 from loguru import logger
 from prometheus_client import Counter
 from web.forms import ClientInterestForm, EmploymentApplicationForm
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
 from web.tasks import process_new_application, process_new_client_interest
+
 from nhhc.utils.helpers import CachedTemplateView
-from django_require_login.mixins import PublicViewMixin, public
 
 CACHE_TTL: int = settings.CACHE_TTL
 
@@ -62,12 +63,14 @@ class ClientInterestFormView(PublicViewMixin, FormView):
             failed_submission_attempts_client.inc()
             logger.error("Form Is Invalid")
             return HttpResponsePermanentRedirect(reverse("client_interest"), {"errors": form.errors.as_data()})
+
     @public
     def get(self, request):
         form = ClientInterestForm()
         context = {"form": form}
         logger.debug(context)
         return render(request, "client-interest.html", context)
+
     @public
     def post(self, request):
         context = {}
@@ -109,6 +112,7 @@ class EmploymentApplicationFormView(PublicViewMixin, FormView):
             return EmploymentApplicationForm(self.request.POST)
         else:
             return EmploymentApplicationForm()
+
     @public
     def get(self, request):
         form = EmploymentApplicationForm()

@@ -12,6 +12,7 @@ Functions:
     - Description: Renders the number of unreviewed client requests.
     - Returns: A dictionary containing the count of unreviewed client requests.
 """
+
 from typing import Dict
 
 from django import template

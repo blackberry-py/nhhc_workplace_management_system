@@ -17,6 +17,7 @@ Templates:
     APPLICATION_BODY:str
 		A f-string containing the HTML of the  application submission email
 """
+
 from string import Template
 
 # SECTION - External Email Templates
