@@ -7,6 +7,7 @@ import localflavor.us.models
 import phonenumber_field.modelfields
 import sage_encrypt.fields.asymmetric
 from django.conf import settings
+from django.contrib.postgres.operations import CryptoExtension
 from django.db import migrations, models
 
 import nhhc.utils.upload
@@ -21,7 +22,8 @@ class Migration(migrations.Migration):
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
-    operations = [CryptoExtension(),
+    operations = [
+        CryptoExtension(),
         migrations.CreateModel(
             name="ClientInterestSubmission",
             fields=[

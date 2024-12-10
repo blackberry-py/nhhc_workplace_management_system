@@ -5,7 +5,7 @@ Description: This module contains views for rendering web pages, processing form
 
 from django.conf import settings
 from django.forms import model_to_dict
-from django.http import FileResponse, HttpRequest, HttpResponse
+from django.http import FileResponse, HttpRequest, HttpResponseRedirect, HttpResponse, HttpResponsePermanentRedirect
 from django.shortcuts import render, reverse
 from django.templatetags.static import static
 from django.utils.decorators import method_decorator
@@ -62,7 +62,7 @@ class ClientInterestFormView(PublicViewMixin, FormView):
         else:
             failed_submission_attempts_client.inc()
             logger.error("Form Is Invalid")
-            return HttpResponsePermanentRedirect(reverse("client_interest"), {"errors": form.errors.as_data()})
+            return HttpResponseRedirect(reverse("client_interest"), {"errors": form.errors})
 
     @public
     def get(self, request):
@@ -93,10 +93,13 @@ class EmploymentApplicationFormView(PublicViewMixin, FormView):
         failed_submission_attempts_application = Counter("failed_submission_attempts_application", "Metric Counter for the Number of Applicatioin Submission attempts that failed validation")
         """If the form is valid, redirect to the supplied URL."""
         if form.is_valid():
-            return self.process_submitted_application(form)
+            return self.process_submitted_application(form) 
+        context = {}
+        context["form"] = form
+        context["form_errors"] = form.errors
         failed_submission_attempts_application.inc()
         logger.error("Form Is Invalid")
-        return HttpResponsePermanentRedirect(reverse("application"), {"errors": form.errors.as_data()})
+        return HttpResponseRedirect(reverse("application"), context)
 
     def process_submitted_application(self, form):
         logger.debug("Form Is Valid")
