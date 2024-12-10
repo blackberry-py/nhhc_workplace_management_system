@@ -54,7 +54,8 @@ install_python() {
         apache2-utils \
         certbot \
         python3-certbot-apache \
-        libmagic1 \
+        direnv \
+        python3-pip\
         curl \
         libenchant-2-dev \
         gnupg \
@@ -75,8 +76,6 @@ install_python() {
     
     {
         echo "export DOPPLER_TOKEN=${TOKEN}"
-        echo "export DOPPLER_CONFIG=${CONFIG}"
-        echo "export DOPPLER_PROJECT=${PROJECT}"
     } >> ~/.bashrc
     
     echo "🐍 Successfully installed Python3 and dependencies."
