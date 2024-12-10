@@ -15,14 +15,12 @@ import highlight_io
 from highlight_io.integrations.django import DjangoIntegration
 from logtail import LogtailHandler
 from loguru import logger
-from nhhc.utils.helpers import internet_connection
 
 # SECTION: **********************OPERATIONAL SETTINGS*********************************
 # The Settings in this section modify the entire operations of the application. Change with Caution
 # ************************************************************************************
 DEBUG = bool(os.getenv("ENABLE_DEBUGGING", False))
 MAINTENANCE_MODE = bool(os.getenv("ENABLE_MAINTENANCE_MODE", None))
-OFFLINE = not internet_connection()
 # ************************************************************************************
 #!SECTION
 
@@ -201,7 +199,7 @@ MIDDLEWARE = [
     "django.middleware.cache.FetchFromCacheMiddleware",
     "django_require_login.middleware.LoginRequiredMiddleware",
     "django_prometheus.middleware.PrometheusAfterMiddleware",
-    "nhhc.middleware.maintenance.MaintenanceModeMiddleware",
+    # "nhhc.middleware.maintenance.MaintenanceModeMiddleware",
 ]
 # SECTION - Database and Caching
 CACHE_TTL: int = int(os.environ["TIME_TO_LIVE_MINUTES"]) * 60
@@ -330,7 +328,6 @@ BUNNY_REGION = os.environ["BUNNY_REGION"]
 BUNNY_HOSTNAME = os.environ["BUNNY_HOSTNAME"]
 BUNNY_BASE_DIR = os.environ["BUNNY_BASE_DIR"]
 # !SECTION
-STORAGE_DESTINATION = os.environ["STORAGE_DESTINATION"]
 FILE_UPLOAD_TEMP_DIR = os.environ["FILE_UPLOAD_TEMP_DIR"]
 
 
@@ -640,13 +637,7 @@ CELERY_RESULT_EXTENDED = True
 
 
 # DEBUG SETTINGS
-if DEBUG:
-    EMAIL_BACKEND = "mail_panel.backend.MailToolbarBackend"
-    MIDDLEWARE.insert(0, "kolo.middleware.KoloMiddleware")
-    INSTALLED_APPS.insert(0, "kolo")
-
-else:
-    EMAIL_BACKEND = "django_smtp_ssl.SSLEmailBackend"
+EMAIL_BACKEND = "django_smtp_ssl.SSLEmailBackend"
 
 if not TESTING:
     INSTALLED_APPS = [
