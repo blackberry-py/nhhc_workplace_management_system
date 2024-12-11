@@ -7,7 +7,6 @@ from django.conf import settings
 from django.forms import model_to_dict
 from django.http import FileResponse, HttpRequest, HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.shortcuts import render, reverse
-from django.urls import reverse_lazy
 from django.templatetags.static import static
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -61,15 +60,14 @@ class ClientInterestFormView(PublicViewMixin, FormView):
             return HttpResponsePermanentRedirect(reverse("submitted"), {"type": "Client Interest Form"})
         else:
             failed_submission_attempts_client.inc()
-            logger.error(f"Form Is Invalid: {form.errors.as_text()}")
-            return HttpResponseRedirect(reverse_lazy("client_interest"), {"errors": form.errors.as_data()})
-
+            logger.error("Form Is Invalid")
+            return HttpResponsePermanentRedirect(reverse("client_interest"), {"errors": form.errors.as_data()})
     @public
     def get(self, request):
         form = ClientInterestForm()
         context = {"form": form}
+        logger.debug(context)
         return render(request, "client-interest.html", context)
-
     @public
     def post(self, request):
         context = {}
@@ -111,7 +109,6 @@ class EmploymentApplicationFormView(PublicViewMixin, FormView):
             return EmploymentApplicationForm(self.request.POST)
         else:
             return EmploymentApplicationForm()
-
     @public
     def get(self, request):
         form = EmploymentApplicationForm()
