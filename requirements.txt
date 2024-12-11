@@ -44,7 +44,7 @@ Deprecated==1.2.14
 dill==0.3.8
 distlib==0.3.8
 dj-database-url==2.2.0
-Django==5.1.1
+Django==5.1.4
 django-admin-env-notice==1.0
 django-allauth==0.60.1
 django-anymail==10.3
@@ -273,7 +273,7 @@ uWSGI==2.0.26
 vine==5.1.0
 virtualenv==20.26.5
 vulture==2.12
-waitress==3.0.0
+waitress==3.0.1
 wcwidth==0.2.13
 weasyprint==61.2
 webencodings==0.5.1
