@@ -4,6 +4,7 @@ import django_extensions.db.fields
 import django_prometheus.models
 import employee.models
 import localflavor.us.models
+import nhhc.utils.upload
 import phonenumber_field.modelfields
 import sage_encrypt.fields.asymmetric
 from django.db import migrations, models
@@ -12,6 +13,7 @@ import nhhc.utils.upload
 
 
 class Migration(migrations.Migration):
+
 
     initial = True
 
@@ -130,6 +132,17 @@ class Migration(migrations.Migration):
                 ("idph_background_check_authorization", models.FileField(blank=True, default="NONE", upload_to="idph_bg_check_auth")),
                 ("qualifications_verification", models.FileField(blank=True, default="NONE", upload_to=nhhc.utils.upload.UploadHandler("resume"))),
                 ("cpr_verification", models.FileField(blank=True, default="NONE", upload_to=nhhc.utils.upload.UploadHandler("cpr_verification"))),
+                ("idoa_agency_policies_attestation", models.FileField(blank=True, default="NONE", upload_to="idoa_agency_policies")),
+                ("dhs_i9", models.FileField(blank=True, default="NONE", upload_to="i9")),
+                ("marketing_recruiting_limitations_attestation", models.FileField(blank=True, default="NONE", upload_to="marketing_recruiting_limitations")),
+                ("do_not_drive_agreement_attestation", models.FileField(blank=True, default="NONE", upload_to="do_not_drive_agreement")),
+                ("job_duties_attestation", models.FileField(blank=True, default="NONE", upload_to="job_duties")),
+                ("hca_policy_attestation", models.FileField(blank=True, default="NONE", upload_to="hca_policy")),
+                ("irs_w4_attestation", models.FileField(blank=True, default="NONE", upload_to="irs_w4")),
+                ("state_w4_attestation", models.FileField(blank=True, default="NONE", upload_to="state_w4")),
+                ("idph_background_check_authorization", models.FileField(blank=True, default="NONE", upload_to="idph_bg_check_auth")),
+                ("qualifications_verification", models.FileField(blank=True, default="NONE", upload_to=nhhc.utils.upload.UploadHandler("resume"))),
+                ("cpr_verification", models.FileField(blank=True, default="NONE", upload_to=nhhc.utils.upload.UploadHandler("cpr_verification"))),
                 (
                     "family_hca",
                     models.CharField(
@@ -198,6 +211,7 @@ class Migration(migrations.Migration):
                 "db_table": "employee",
                 "ordering": ["last_name", "first_name", "-hire_date"],
                 "get_latest_by": "-hire_date",
+                "indexes": [models.Index(fields=["username"], name="username_idx"), models.Index(fields=["first_name"], name="first_name_idx")],
                 "indexes": [models.Index(fields=["username"], name="username_idx"), models.Index(fields=["first_name"], name="first_name_idx")],
             },
             bases=(employee.models.EmployeeMethodUtility, models.Model, django_prometheus.models.ExportModelOperationsMixin("employee")),

@@ -961,7 +961,7 @@ REJECTION_TEMPLATE_BODY: Template = Template(
 )
 
 
-PLAIN_TEXT_REJECTION_EMAI_TEMPLATE: Template = Template(
+PLAIN_TEXT_REJECTION_EMAIL_TEMPLATE: Template = Template(
     """
 $first_name,
 

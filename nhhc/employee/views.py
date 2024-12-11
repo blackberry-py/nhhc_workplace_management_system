@@ -33,6 +33,8 @@ from rest_framework import status
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from web.models import EmploymentApplicationModel
+from django.contrib.auth.decorators import login_required, user_passes_test
+
 
 from nhhc.utils.helpers import (
     get_content_for_unauthorized_or_forbidden,
@@ -159,7 +161,7 @@ def reject(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-def hire(request: HttpRequest) -> HttpResponse:
+class Hire:
     """
     Handle the process of hiring an applicant.
 
@@ -180,129 +182,77 @@ def hire(request: HttpRequest) -> HttpResponse:
         ValueError: If the 'pk' value is invalid or not provided in the request.
         DoesNotExist: If the employment application with the provided 'pk' does not exist.
     """
-    # Condition Checked: Requesting User is Logged in and An Admin
-    if not request.user.is_authenticated or not request.user.is_superuser:
-        logger.warning("No Authenticated or Non-Admin Hire Request Recieved - Denying Request")
-        return HttpResponse(
-            status=get_status_code_for_unauthorized_or_forbidden(request),
-            content=get_content_for_unauthorized_or_forbidden(request),
-        )
-    # Condition Checked: POST REQUEST  is vaild with a interger PK in body in key `pk`
-    try:
-        pk = int(request.POST.get("pk"))  # type: ignore
-        logger.debug(f"Hire Request Initiated for Employee ID: {pk}")
-    except (ValueError, TypeError):
-        logger.warning("Bad Request to Hire Applicant, Invalid or NO Application PK Submitted")
-        return HttpResponse(
-            status=status.HTTP_400_BAD_REQUEST,
-            content=bytes(
-                "Failed to hire applicant. Invalid or no 'pk' value provided in the request.",
-                "utf-8",
-            ),
-        )
 
-    # Condition Checked: Provided PK id associated with a valid ID of an Submitted EmploymentApplicationModel
-    try:
-        applicant = EmploymentApplicationModel.objects.get(pk=pk)
-        logger.debug(f"Hire Request Resolving to {applicant.last_name}, {applicant.first_name}")
-    except EmploymentApplicationModel.DoesNotExist:
-        logger.error("Failed to hire applicant. Employment application not found.")
-        return HttpResponse(
-            status=status.HTTP_404_NOT_FOUND,
-            content=bytes("Failed to hire applicant. Employment application not found.", "utf-8"),
-        )
-    # Condition Checked: An Corresponding Employee Model Instance is created via the .hire_applicant method on the EmploymentApplicationModel class
-    try:
-        hired_user = applicant.hire_applicant(hired_by=request.user)  # type: ignore
-        logger.debug(f"Created User Account. Returning: {hired_user}")
-    except Exception as e:
-        logger.error(f"Failed to hire applicant. Error: {e}")
-        return HttpResponse(
-            status=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            content=bytes(f"Failed to hire applicant. Error: {e}.", "utf-8"),
-        )
-    # Condition Checked: New User Cred are Sent VIA email and Frontend has been provided confirmation
-    try:
+    @staticmethod
+    @require_POST
+    @login_required
+    @user_passes_test(lambda user: user.is_superuser)
+    def hire(request: HttpRequest) -> HttpResponse:
+        try:
+            pk = Hire.parse_pk_from_request(request)
+            applicant = Hire.get_applicant(pk)
+            hired_user = Hire.process_hiring(applicant, request.user)
+            Hire.send_hiring_notification(hired_user)
+            content = Hire.prepare_success_content(hired_user)
+            return HttpResponse(status=201, content=content)
+        except ValueError:
+            return Hire.invalid_pk_response()
+        except EmploymentApplicationModel.DoesNotExist:
+            return Hire.applicant_not_found_response()
+        except Exception as e:
+            return Hire.handle_general_exception(e)
+
+    # Helper functions
+    @staticmethod
+    def parse_pk_from_request(request: HttpRequest) -> int:
+        if pk := int(request.POST.get("pk")):
+            return pk
+        else:
+            raise ValueError("Missing or invalid PK.")
+
+    @staticmethod
+    def get_applicant(pk: int) -> EmploymentApplicationModel:
+        return EmploymentApplicationModel.objects.get(pk=pk)
+
+    @staticmethod
+    def process_hiring(applicant, user):
+        applicant.hire_applicant(hired_by=user)
         applicant.save()
-        new_user_credentials = {
+        return applicant
+
+    @staticmethod
+    def send_hiring_notification(hired_user):
+        credentials = {
             "new_user_email": hired_user["email"],
             "new_user_first_name": hired_user["first_name"],
             "plaintext_temp_password": hired_user["plain_text_password"],
             "username": hired_user["username"],
         }
-        notice = HR_MAILROOM.send_external_applicant_new_hire_onboarding_email(new_user_credentials)
-        content = f"username: {hired_user['username']},  password: {hired_user['plain_text_password']}, employee_id: {hired_user['employee_id']}"
+        notice = HR_MAILROOM.send_external_applicant_new_hire_onboarding_email(credentials)
         if notice != 1:
-            logger.error(f"Email Not Sent: {notice}")
-        logger.success(f"Successfully Converted Appicant to Employee - {hired_user['last_name']}, {hired_user['first_name']}")
-        return HttpResponse(status=status.HTTP_201_CREATED, content=bytes(content, "utf-8"))
-    except Exception as e:
-        logger.exception(f"Failed to send new user credentials. Error: {e}")
+            logger.error(f"Email not sent: {notice}")
+        return notice
+
+    @staticmethod
+    def prepare_success_content(hired_user):
+        return f"username: {hired_user['username']}, password: {hired_user['plain_text_password']}, employee_id: {hired_user['employee_id']}"
+
+    @staticmethod
+    def invalid_pk_response():
+        logger.warning("Invalid or missing application PK submitted.")
+        return HttpResponse(status=400, content="Failed to hire applicant. Invalid or no 'pk' value provided.")
+
+    @staticmethod
+    def applicant_not_found_response():
+        logger.error("Employment application not found.")
+        return HttpResponse(status=404, content="Failed to hire applicant. Employment application not found.")
+
+    @staticmethod
+    def handle_general_exception(e):
+        logger.exception(f"Failed to hire applicant or send new user credentials. Error: {e}")
         return HttpResponse(
-            status=status.HTTP_424_FAILED_DEPENDENCY,
-            content=bytes(f"Failed to send new user credentials. Error: {e}.", "utf-8"),
-        )
-
-
-@require_POST
-def terminate(request: HttpRequest) -> HttpResponse:
-    """
-    This function is used to promote an applicant based on the provided 'pk' value in the request.
-
-    Args:
-    - request (HttpRequest): The HTTP request object containing the 'pk' value.
-
-    Returns:
-    - HttpResponse: Returns an HTTP response with a status code indicating the success or failure of the hiring process.
-    """
-    # Check if the requesting user is logged in and an admin
-    if not request.user.is_authenticated or not request.user.is_superuser:
-        logger.warning("No Authenticated or Non-Admin Termination Request Received - Denying Request")
-        return HttpResponse(
-            status=get_status_code_for_unauthorized_or_forbidden(request),
-            content=get_content_for_unauthorized_or_forbidden(request),
-        )
-
-    # Authenticate the user
-    try:
-        user = authenticate(username=request.user.username, password=request.POST.get("password"))
-        if user is None:
-            return HttpResponse(status=status.HTTP_403_FORBIDDEN, content="Invalid Password User Combination")
-
-        # Get the employee ID from the request
-        pk = request.POST.get("pk")
-        if not pk:
-            logger.info("Bad Request to Promote Applicant, Invalid or No Application PK Submitted")
-            return HttpResponse(
-                status=status.HTTP_400_BAD_REQUEST,
-                content="Failed to promote employee. Invalid or no 'pk' value provided in the request.",
-            )
-
-        # Get the employee instance from the provided PK
-        try:
-            terminated_employee = Employee.objects.get(employee_id=pk)
-            logger.debug(f"Promotion Request Resolving to {terminated_employee.last_name}, {terminated_employee.first_name}")
-
-            # Promote the employee to admin
-            try:
-                HR_MAILROOM.send_external_applicant_termination_email(terminated_employee)
-                terminated_employee.terminate_employment()
-                logger.success(f"Employment status for {terminated_employee.last_name}, {terminated_employee.first_name} TERMINATED")
-                logger.info("Sending Termination email")
-                return HttpResponse(status=204)
-            except Exception as e:
-                logger.exception(f"Failed to promote employee. Error: {e}")
-                return HttpResponse(status=400, content=f"Failed to promote employee. Error: {e}")
-
-        except Employee.DoesNotExist:
-            logger.info("Failed to promote employee. Employee not found.")
-            return HttpResponse(status=404, content="Failed to promote employee. Employee not found.")
-
-    except (ValueError, TypeError):
-        logger.info("Bad Request to Promote Applicant, Invalid or No Application PK Submitted")
-        return HttpResponse(
-            status=status.HTTP_400_BAD_REQUEST,
-            content="Failed to promote employee. Invalid or no 'pk' value provided in the request.",
+            status=422 if "hire_applicant" in str(e) else 424,
+            content=f"Failed to hire applicant or send new user credentials. Error: {e}.",
         )
 
 

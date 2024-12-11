@@ -15,6 +15,7 @@ import highlight_io
 from highlight_io.integrations.django import DjangoIntegration
 from logtail import LogtailHandler
 from loguru import logger
+import warnings
 
 # SECTION: **********************OPERATIONAL SETTINGS*********************************
 # The Settings in this section modify the entire operations of the application. Change with Caution
@@ -28,10 +29,9 @@ TESTING = "test" in sys.argv
 
 logger.remove()  # Remove all handlers added so far, including the default one.
 
-# SECTION - Basic Application Defintion
+# SECTION - Basic Application Definition
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ["SECRET_KEY"]
-DEBUG = False
 KOLO_DISABLE = not DEBUG
 DATETIME_FORMAT: str = "m/d/yyyy h:mm A"
 ADMINS = [("Terry Brooks", "Terry@BrooksJr.com")]
@@ -85,7 +85,7 @@ INTERNAL_IPS = ["127.0.0.1"]
 
 
 # SECTION - Email Communication
-
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.environ["EMAIL_SERVER"]
 EMAIL_SUBJECT_PREFIX = "NHHC Django Server -"
 EMAIL_USE_TLS = False
@@ -161,6 +161,9 @@ INSTALLED_APPS = [
     "health_check.cache",
     "health_check.contrib.s3boto3_storage",
     "health_check.contrib.redis",
+    "health_check.contrib.psutil",
+    "health_check.contrib.celery",
+    "health_check.contrib.celery_ping",
     "sage_encrypt",
     "anymail",
     "defender",
@@ -225,7 +228,7 @@ ENCRYPT_PUBLIC_KEY = os.environ["DB_GPG_PUBLIC_KEY"]
 
 # Section - Caching
 REDIS_URL = os.environ["REDIS_CACHE_URI_TOKEN"]
-HEALTHCHECK_CACHE_KEY = "healthcheck_key"
+HEALTHCHECK_CACHE_KEY = "cache-heartbeat"
 
 CACHES = {
     "default": {
@@ -282,13 +285,12 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     # `allauth` specific authentication methods, such as login by email
     "allauth.account.auth_backends.AuthenticationBackend",
-    "guardian.backends.ObjectPermissionBackend",
 ]
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 LOGIN_REDIRECT_URL = "/dashboard"
 LOGIN_URL = "/login"
 LOGOUT_REDIRECT_URL = LOGIN_URL
-REQUIRE_LOGIN_PUBLIC_URLS = (LOGIN_URL, LOGOUT_REDIRECT_URL, r"^/api/.*", r"^/metrics", r"^/control-center")
+REQUIRE_LOGIN_PUBLIC_URLS = (LOGIN_URL, LOGOUT_REDIRECT_URL, r"^/api/.*", r"^/metrics", r"^/control-center", r"^/status")
 REQUIRE_LOGIN_PUBLIC_NAMED_URLS = (
     "account_reset_password",
     "account_email",
@@ -331,11 +333,11 @@ FILE_UPLOAD_TEMP_DIR = os.environ["FILE_UPLOAD_TEMP_DIR"]
 
 
 # SECTION - AWS settings
-AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]
-AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
+AWS_ACCESS_KEY_ID = os.environ["SPACES_KEY"]
+AWS_SECRET_ACCESS_KEY = os.environ["SPACES_SECRET"]
 AWS_STORAGE_BUCKET_NAME = os.environ["AWS_STORAGE_BUCKET_NAME"]
 AWS_DEFAULT_ACL = "private"
-AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+AWS_S3_CUSTOM_DOMAIN = os.environ["DIGITAL_OCEAN_SPACES_ENDPOINT"]
 AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
 AWS_S3_SIGNATURE_VERSION = "s3v4"
 AWS_QUERYSTRING_EXPIRE = 3600
@@ -348,18 +350,19 @@ AWS_CLOUDFRONT_KEY = os.environ["AWS_CLOUDFRONT_PRIVATE_KEY"]
 STATIC_LOCATION = "staticfiles/"
 STATIC_URL = f"https://cdn.netthandshome.care/{STATIC_LOCATION}/"
 STATIC_ROOT = STATIC_URL
+STATIC_HOST = "" if DEBUG else STATIC_URL
 # !SECTION
 
 # SECTION -  S3 public media settings
 PUBLIC_MEDIA_LOCATION = "media/"
-MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
+MEDIA_URL = os.path.join(AWS_S3_CUSTOM_DOMAIN, PUBLIC_MEDIA_LOCATION)
 # !SECTION
 
 # SECTION - S3 private media settings
 PRIVATE_MEDIA_LOCATION = "restricted/"
 MEDIA_DIRECTORY = "/restricted/compliance/"
 PRIVATE_FILE_STORAGE = "nhhc.backends.storage_backends.PrivateMediaStorage"
-PRIVATE_MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PRIVATE_MEDIA_LOCATION}/"
+PRIVATE_MEDIA_URL = os.path.join(AWS_S3_CUSTOM_DOMAIN, PRIVATE_MEDIA_LOCATION)
 
 # !SECTION
 # SECTION - File Management
@@ -377,7 +380,7 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
 # SECTION -  Static files (CSS, JavaScript, Images, Templates)
 
-# SECTION - Staticfile Dirs
+# SECTION - Staticfiles Dirs
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static/"),
     os.path.join(BASE_DIR, "static", "vendor"),
@@ -415,10 +418,22 @@ TEMPLATES = [
 # !SECTION
 
 # SECTION - Logging
-LOGGING_CONFIG = None
+logger.remove()
+
+
+def log_warning(message, category, filename, lineno, file=None, line=None):
+    logger.warning(f" {message}")
+
+
+warnings.filterwarnings(
+    action="ignore",
+    message=r"w+",
+)
+
+warnings.showwarning = log_warning
 LOG_FORMAT = "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <magenta>{name}</magenta>:<cyan>Function: {function}</cyan>:<white>File: {file}</white>:<blue> Line: {line}</blue> - <level>{message}</level>'"
 
-HIGHLIGHT_MOINITORING = highlight_io.H(
+HIGHLIGHT_MONITORING = highlight_io.H(
     "jdkmrpog",
     integrations=[DjangoIntegration()],
     instrument_logging=True,
@@ -432,7 +447,7 @@ DEBUG_LOG_FILE = os.path.join(os.environ.get("LOG_FILE_DIRECTORY"), "debug.log")
 LOGTAIL_HANDLER = LogtailHandler(source_token=os.environ["LOGTAIL_API_KEY"])
 DEFAULT_HANDLER = sys.stdout
 logger.add(
-    HIGHLIGHT_MOINITORING.logging_handler,
+    HIGHLIGHT_MONITORING.logging_handler,
     format=LOG_FORMAT,
     level="DEBUG",
     backtrace=True,
@@ -442,6 +457,9 @@ logger.add(DEBUG_LOG_FILE, format=LOG_FORMAT, colorize=True, diagnose=True, catc
 logger.add(PRIMARY_LOG_FILE, colorize=True, format=LOG_FORMAT, diagnose=False, catch=True, backtrace=False, level="INFO")
 logger.add(LOGTAIL_HANDLER, colorize=True, format=LOG_FORMAT, diagnose=False, catch=True, backtrace=True, level="DEBUG")
 logger.add(DEFAULT_HANDLER, colorize=True, format=LOG_FORMAT, diagnose=True, catch=True, backtrace=True, level="DEBUG")
+logger.add("spam.log", level="DEBUG", format=LOG_FORMAT)
+logger.add(sys.stderr, level="ERROR", format=LOG_FORMAT)
+
 REQUEST_LOG_USER = True
 REQUEST_TRAFFIC_MODULES = [
     "request.traffic.UniqueVisitor",
@@ -454,7 +472,7 @@ REQUEST_TRAFFIC_MODULES = [
 ]
 # !SECTION
 
-# SECTION - Preformence Monitoring
+# SECTION - Performance Monitoring
 
 PROMETHEUS_LATENCY_BUCKETS = (
     0.1,

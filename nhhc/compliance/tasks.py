@@ -11,8 +11,13 @@ from django.http import HttpRequest, HttpResponse
 from employee.models import Employee
 from loguru import logger
 from rest_framework import status
+from celery import shared_task
 
 
+@shared_task(
+    bind=True,
+    serializer="json",
+)
 def upload_file_to_s3(file_name, bucket=settings.AWS_STORAGE_BUCKET_NAME, object_name=None) -> bool:
     """Upload a file to an S3 bucket
     Args:

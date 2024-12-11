@@ -10,6 +10,8 @@ Signal Handlers:
 
 """
 
+
+import contextlib
 from typing import Callable
 from uuid import uuid4
 
@@ -59,14 +61,12 @@ def password_change_signal(sender, instance, **kwargs) -> None:
     Returns:
         None
     """
-    try:
+    with contextlib.suppress(Employee.DoesNotExist):
         user = Employee.objects.get(username=instance.username)
         if user.password != instance.password:
             profile = UserProfile.objects.get(user=instance)
             profile.force_password_change = False
             profile.save()
-    except Employee.DoesNotExist:
-        pass
 
 
 def employee_terminated_signal(sender, instance, **kwargs) -> None:
@@ -85,13 +85,11 @@ def employee_terminated_signal(sender, instance, **kwargs) -> None:
     - If the terminated employee is found in the database and is not active with a termination date,
       the function logs the archival process.
     """
-    try:
+    with contextlib.suppress(Employee.DoesNotExist):
         employee = Employee.objects.get(username=instance.username)
         if not employee.is_active and employee.termination_date is not None:
             logger.info(f"Archiving Terminated Employee - {employee.last_name}, {employee.first_name}")
-            # TODO: Complete Stroage Set up AND then implement profile archival
-    except Employee.DoesNotExist:
-        pass
+            # TODO: Complete Storage Set up AND then implement profile archival
 
 
 signals.pre_save.connect(employee_terminated_signal, sender=Employee, dispatch_uid="employee.models")

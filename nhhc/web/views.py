@@ -76,7 +76,7 @@ class ClientInterestFormView(PublicViewMixin, FormView):
         context = {}
         form = ClientInterestForm(request.POST)
         if form.is_valid():
-            self.form_valid(form)
+            return self.form_valid(form)
         elif not form.is_valid():
             context["form"] = form
             context["form_errors"] = form.errors
@@ -90,7 +90,7 @@ class EmploymentApplicationFormView(PublicViewMixin, FormView):
     extra_context = {"title": "Employment Application"}
 
     def form_valid(self, form: EmploymentApplicationForm) -> HttpResponse:
-        failed_submission_attempts_application = Counter("failed_submission_attempts_application", "Metric Counter for the Number of Applicatioin Submission attempts that failed validation")
+        failed_submission_attempts_application = Counter("failed_submission_attempts_application", "Metric Counter for the Number of Application Submission attempts that failed validation")
         """If the form is valid, redirect to the supplied URL."""
         if form.is_valid():
             return self.process_submitted_application(form) 
@@ -108,7 +108,7 @@ class EmploymentApplicationFormView(PublicViewMixin, FormView):
         processed_form = form.cleaned_data
         del processed_form["resume_cv"]
         process_new_application(processed_form)
-        return HttpResponsePermanentRedirect(reverse("submitted"), {"type": "Employment Interest Form"})
+        return HttpResponseRedirect(reverse("submitted"), {"type": "Employment Interest Form"})
 
     def get_form(self, form_class=None):
         if self.request.POST:
@@ -120,7 +120,19 @@ class EmploymentApplicationFormView(PublicViewMixin, FormView):
     def get(self, request):
         form = EmploymentApplicationForm()
         context = {"form": form}
+        logger.debug(context)
         return render(request, "employee-interest.html", context)
+
+    @public
+    def post(self, request):
+        context = {}
+        form = EmploymentApplicationForm(request.POST)
+        if form.is_valid():
+            return self.form_valid(form)
+        elif not form.is_valid():
+            context["form"] = form
+            context["form_errors"] = form.errors
+            return render(request, "employee-interest.html", context)
 
 
 @public

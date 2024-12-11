@@ -32,23 +32,31 @@
     "makefile.configureOnOpen": false,
     "cSpell.words": [
         "ADMINRESTRICT",
+        "authtoken",
+        "CSFR",
         "customscripts",
         "customstyles",
         "docuseal",
-        "HRIS",
+        "gunicorn",
+        "healthcheck",
         "IDOA",
         "idph",
+        "jdkmrpog",
         "jobdesc",
         "jsonifed",
         "jsonified",
+        "MAILROOM",
         "multiprocess",
         "Nett",
+        "netthands",
         "nhhc",
+        "nostatic",
+        "phonenumber",
+        "searchreplace",
         "setbg",
-        "TINYMCE"
-    ],
-    "python.analysis.extraPaths": [
-        "./nhhc"
+        "Sitewide",
+        "TINYMCE",
+        "usermenu"
     ],
     "python.analysis.extraPaths": [
         "./nhhc"

@@ -9,6 +9,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
+
     initial = True
 
     dependencies = [
@@ -46,12 +47,16 @@ class Migration(migrations.Migration):
                 ("aps_check_passed", models.BooleanField(blank=True, null=True)),
                 ("aps_check_verification", models.FileField(blank=True, null=True, upload_to="aps_check_verification_uploads")),
                 ("hhs_oig_exclusionary_check_verification", models.FileField(blank=True, null=True, upload_to="hhs_oig_exclusionary_check_verification_uploads")),
+                ("aps_check_verification", models.FileField(blank=True, null=True, upload_to="aps_check_verification_uploads")),
+                ("hhs_oig_exclusionary_check_verification", models.FileField(blank=True, null=True, upload_to="hhs_oig_exclusionary_check_verification_uploads")),
                 ("hhs_oig_exclusionary_check_completed", models.BooleanField(blank=True, default=False, null=True)),
                 ("idph_background_check_completed", models.BooleanField(blank=True, default=False, null=True)),
+                ("idph_background_check_verification", models.FileField(blank=True, null=True, upload_to="idph_background_check_verification_uploads")),
                 ("idph_background_check_verification", models.FileField(blank=True, null=True, upload_to="idph_background_check_verification_uploads")),
                 ("initial_idph_background_check_completion_date", models.DateField(blank=True, null=True)),
                 ("current_idph_background_check_completion_date", models.DateField(blank=True, null=True)),
                 ("training_exempt", models.BooleanField(blank=True, default=False, null=True)),
+                ("pre_training_verification", models.FileField(blank=True, null=True, upload_to="pretraining_verification_uploads")),
                 ("pre_training_verification", models.FileField(blank=True, null=True, upload_to="pretraining_verification_uploads")),
                 ("pre_service_completion_date", models.DateField(blank=True, null=True)),
                 ("added_to_TTP_portal", models.BooleanField(blank=True, null=True)),
