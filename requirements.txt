@@ -1,5 +1,5 @@
 amqp==5.2.0
-anyio==4.4.0
+anyio==4.6.0
 arrow==1.3.0
 asgiref==3.8.1
 astroid==2.15.8
@@ -9,10 +9,10 @@ backoff==2.2.1
 backports.tarfile==1.2.0
 bandit==1.7.9
 beautifulsoup4==4.12.3
-billiard==4.2.0
-black==24.3.0
-boto3==1.35.19
-botocore==1.35.19
+billiard==4.2.1
+black==24.8.0
+boto3==1.35.24
+botocore==1.35.24
 Brotli==1.1.0
 build==1.2.2
 CacheControl==0.14.0
@@ -44,7 +44,7 @@ Deprecated==1.2.14
 dill==0.3.8
 distlib==0.3.8
 dj-database-url==2.2.0
-Django==5.1.1
+Django==5.1.4
 django-admin-env-notice==1.0
 django-allauth==0.60.1
 django-anymail==10.3
@@ -60,7 +60,7 @@ django-defender==0.9.8
 django-discover-runner==1.0
 django-extensions==3.2.3
 django-filter==23.5
-django-formset==1.5.2
+django-formset==1.5.3
 django-health-check==3.18.3
 django-ip-restriction==1.1.1
 django-ipware==5.0.2
@@ -100,7 +100,7 @@ EditorConfig==0.12.4
 factory_boy==3.3.1
 Faker==22.7.0
 fastjsonschema==2.20.0
-filelock==3.16.0
+filelock==3.16.1
 filemagic==1.6
 filetype==1.2.0
 flake8==5.0.4
@@ -112,7 +112,7 @@ GitPython==3.1.43
 googleapis-common-protos==1.65.0
 grpcio==1.66.1
 guardian==0.2.2
-gunicorn==23.0.0
+gunicorn==20.1.0
 h11==0.14.0
 highlight-io==0.7.1
 hiredis==2.4.0
@@ -131,7 +131,7 @@ installer==0.7.0
 IPy==1.1
 isort==5.13.2
 jaraco.classes==3.4.0
-jaraco.collections==5.0.1
+jaraco.collections==5.1.0
 jaraco.context==6.0.1
 jaraco.functools==4.0.2
 jaraco.text==4.0.0
@@ -140,8 +140,8 @@ jmespath==1.0.1
 jsbeautifier==1.15.1
 json5==0.9.25
 keyring==24.3.1
-kolo==2.33.7
-kombu==5.4.1
+kolo==2.33.8
+kombu==5.4.2
 lazy-object-proxy==1.10.0
 logtail-python==0.2.10
 loguru==0.7.2
@@ -151,12 +151,13 @@ MarkupSafe==2.1.5
 mccabe==0.7.0
 mdurl==0.1.2
 mock==5.1.0
-mocket==3.12.9
+mocket==3.13.0
 model-bakery==1.19.5
 more-itertools==10.5.0
 msgpack==1.1.0
 mypy==1.11.2
 mypy-extensions==1.0.0
+-e git+ssh://git@github.com/Terry-BrooksJr/nhhc_workplace_management_system.git@f6d426fb976132a6f647c263e310cb8fbfed76a4#egg=nhhc
 nodeenv==1.9.1
 oauthlib==3.2.2
 opentelemetry-api==1.22.0
@@ -181,17 +182,18 @@ pexpect==4.9.0
 phonenumberslite==8.13.45
 pillow==10.4.0
 pkginfo==1.11.1
-platformdirs==4.3.3
+platformdirs==4.3.6
 pluggy==1.5.0
 poetry==1.8.3
 poetry-core==1.9.0
 poetry-plugin-export==1.8.0
 portend==3.2.0
 pre-commit==3.8.0
-prometheus_client==0.20.0
+prometheus_client==0.21.0
 prompt_toolkit==3.0.47
 prospector==1.10.3
-protobuf==4.25.4
+protobuf==4.25.5
+psutil==6.1.0
 psycopg2-binary==2.9.9
 ptyprocess==0.7.0
 pycodestyle==2.9.1
@@ -212,7 +214,7 @@ PyMuPDFb==1.24.10
 pyOpenSSL==24.2.1
 pyphen==0.16.0
 pyproject_hooks==1.1.0
-pyright==1.1.380
+pyright==1.1.381
 pyroma==4.2
 PySocks==1.7.1
 pytest==8.3.3
@@ -220,7 +222,7 @@ pytest-django==4.9.0
 python-crontab==3.2.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
-python-gnupg==0.5.2
+python-gnupg==0.5.3
 python-magic==0.4.27
 python-stdnum==1.20
 python3-openid==3.2.0
@@ -236,7 +238,7 @@ requests-toolbelt==1.0.0
 requirements-detector==1.2.2
 rich==13.8.1
 s3transfer==0.10.2
-selenium==4.24.0
+selenium==4.25.0
 semver==3.0.2
 setoptconf-tmp==0.3.1
 shellingham==1.5.4
@@ -246,7 +248,7 @@ sniffio==1.3.1
 snowballstemmer==2.2.0
 sortedcontainers==2.4.0
 soupsieve==2.6
-sqlglot==25.21.3
+sqlglot==25.22.0
 sqlparse==0.5.1
 stevedore==5.3.0
 supervisor==4.2.5
@@ -267,9 +269,10 @@ typing_extensions==4.12.2
 tzdata==2024.1
 ulid-py==1.1.0
 urllib3==2.2.3
+uWSGI==2.0.26
 vine==5.1.0
-virtualenv==20.26.4
-vulture==2.11
+virtualenv==20.26.5
+vulture==2.12
 waitress==3.0.0
 wcwidth==0.2.13
 weasyprint==61.2

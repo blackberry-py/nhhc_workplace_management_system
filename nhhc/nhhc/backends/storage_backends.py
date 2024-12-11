@@ -44,9 +44,10 @@ import os
 from django.conf import settings
 from django_bunny.storage import BunnyStorage
 from storages.backends.s3boto3 import S3Boto3Storage
+from whitenoise.storage import CompressedStaticFilesStorage
 
 
-class StaticStorage(BunnyStorage):
+class StaticStorage(CompressedStaticFilesStorage, BunnyStorage):
     location = "staticfiles"
     default_acl = "public-read"
 

@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.forms.models import model_to_dict
 from loguru import logger
-
+import os
 from nhhc.utils.email_templates import (
     APPLICATION_BODY,
     CLIENT_BODY,
@@ -12,7 +12,7 @@ from nhhc.utils.email_templates import (
     PLAIN_TEXT_APPLICATION_BODY,
     PLAIN_TEXT_CLIENT_BODY,
     PLAIN_TEXT_NEW_HIRE_ONBOARDING_EMAIL_TEMPLATE,
-    PLAIN_TEXT_REJECTION_EMAI_TEMPLATE,
+    PLAIN_TEXT_REJECTION_EMAIL_TEMPLATE,
     PLAIN_TEXT_TERMINATION_EMAIL_TEMPLATE,
     REJECTION_TEMPLATE_BODY,
 )
@@ -61,7 +61,7 @@ class PostOffice(EmailMultiAlternatives):
         html_content = APPLICATION_BODY.substitute(first_name=applicant["first_name"])
         text_content = PLAIN_TEXT_APPLICATION_BODY.substitute(first_name=applicant["first_name"])
 
-        msg = EmailMultiAlternatives(subject=subject, to=[to], body=text_content, from_email=self.from_email, reply_to=[self.reply_to])
+        msg = EmailMultiAlternatives(subject=subject, to=[to], body=text_content, from_email=os.getenv("EMAIL_USER"), reply_to=[os.getenv("EMAIL_USER")])
         msg.attach_alternative(html_content, content_subtype)
         sent_emails: int = msg.send()
         if sent_emails <= 0:
@@ -75,7 +75,7 @@ class PostOffice(EmailMultiAlternatives):
         Sends a confirmation email for a new client interest submission.
 
         Args:
-            interested_client (dict) Dictornary representation  of the Instance of thr Client Submission
+            interested_client (dict) Dictonary representation  of the Instance of thr Client Submission
         Returns:
             None
 
@@ -107,7 +107,7 @@ class PostOffice(EmailMultiAlternatives):
         Sends email rerjecting the application for employment of the reciepent
 
         Args:
-            new_applicant (dict) Dictornary representation  of the Instance of the submitted application
+            new_applicant (dict) Dictonary representation  of the Instance of the submitted application
         Returns:
             None
 
@@ -124,23 +124,23 @@ class PostOffice(EmailMultiAlternatives):
             to: list = rejected_applicant["email"].lower()
             content_subtype = "text/html"
             html_content = REJECTION_TEMPLATE_BODY.substitute(first_name=rejected_applicant["first_name"])
-            text_content = PLAIN_TEXT_REJECTION_EMAI_TEMPLATE.substitute(first_name=rejected_applicant["first_name"])
+            text_content = PLAIN_TEXT_REJECTION_EMAIL_TEMPLATE.substitute(first_name=rejected_applicant["first_name"])
             msg = EmailMultiAlternatives(subject=subject, to=[to], from_email=self.from_email, reply_to=self.reply_to, body=text_content)
             msg.attach_alternative(html_content, content_subtype)
             sent_emails = msg.send()
             if sent_emails <= 0:
                 logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
-                raise RuntimeError("Email Not Sents")
+                raise RuntimeError("Email Not Sent")
             return sent_emails
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
 
     def send_external_applicant_termination_email(self, terminated_employee: dict) -> int:
         """
-        Sends email terminating  employment of the reciepent
+        Sends email terminating  employment of the recipient
 
         Args:
-            new_applicant (dict) Dictornary representation  of the Instance of the submitted application
+            new_applicant (dict) Dictonary representation  of the Instance of the submitted application
         Returns:
             None
 
@@ -150,7 +150,7 @@ class PostOffice(EmailMultiAlternatives):
 
         if not isinstance(terminated_employee, dict):
             terminated_employee = model_to_dict(terminated_employee)
-            logger.info(f"Inititating EMAIL Transmission - Termination Email - Receipent {terminated_employee['last_name'], terminated_employee['first_name']}({terminated_employee['email']})")
+            logger.info(f"Initiating EMAIL Transmission - Termination Email - Recipient {terminated_employee['last_name'], terminated_employee['first_name']}({terminated_employee['email']})")
 
         try:
             subject: str = f"NOTICE: Termination of Employment from Nett Hands Home Care"
@@ -168,10 +168,10 @@ class PostOffice(EmailMultiAlternatives):
 
     def send_external_applicant_new_hire_onboarding_email(self, new_hire: dict) -> int:
         """
-        Sends email informing the application of their Login Creidntals and the start of their emoployment
+        Sends email informing the application of their Login Credentials and the start of their emoployment
 
         Args:
-            interested_client (dict) Dictornary representation of the newly hired Applicant's employee model instance
+            interested_client (dict) Dictonary representation of the newly hired Applicant's employee model instance
         Returns:
             int
 

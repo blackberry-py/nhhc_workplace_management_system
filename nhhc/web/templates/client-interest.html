@@ -2,7 +2,6 @@
 {% load static %}
 {% load crispy_forms_tags %}
 {% block custom_js %}
-    <script src={% static 'js/address_autocomplete.js' %} defer></script>
 {% endblock custom_js %}
 
 <style>
@@ -54,7 +53,7 @@
 
 {% endblock main %}
 {% block customscripts %}
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAcVC3cpOlGII6mN-jDumKeUMt8914j-GA&loading=async&callback=initAutocomplete&libraries=places&v=weekly" defer> </script>
+
     <script defer>
         function openLoader() {
             document.getElementById("btn-submit").style.display = "none";
