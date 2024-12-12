@@ -6,7 +6,7 @@ description = "Front-End website and web application for Nett Hands Home care"
 authors = ["Terry Brooks, Jr. <Terry.Arthur@BrooksJr.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.11,<=3.12.5"
+python = ">=3.11,<=3.13"
 Django = ">=3.2.19"
 psycopg2-binary = "^2.9.6"
 django-crispy-forms = "^2.0"

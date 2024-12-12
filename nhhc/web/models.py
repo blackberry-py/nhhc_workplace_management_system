@@ -33,7 +33,6 @@ from loguru import logger
 from phonenumber_field.modelfields import PhoneNumberField
 from sage_encrypt.fields.asymmetric import EncryptedCharField, EncryptedEmailField
 
-from nhhc.utils.managers import CachedQuerySet
 from nhhc.utils.password_generator import RandomPasswordGenerator
 from nhhc.utils.upload import UploadHandler
 
@@ -94,7 +93,6 @@ class ClientInterestSubmission(models.Model, ExportModelOperationsMixin("client_
         PHYS_THERAPY = "PT", _("Physical Therapy")
         OTHER = "NA", _("Other")
 
-    objects = CachedQuerySet.as_manager()
 
     first_name = EncryptedCharField(max_length=10485760)
     last_name = EncryptedCharField(max_length=10485760)
@@ -220,7 +218,6 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
         JUNIOR = "J", _("3+ Months")
         NEW = "N", _("No Prior Experience")
 
-    objects = CachedQuerySet.as_manager()
     first_name = EncryptedCharField(max_length=10485760)
     last_name = EncryptedCharField(max_length=10485760)
     contact_number = PhoneNumberField(region="US")

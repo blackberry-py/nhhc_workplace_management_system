@@ -157,7 +157,6 @@ more-itertools==10.5.0
 msgpack==1.1.0
 mypy==1.11.2
 mypy-extensions==1.0.0
--e git+ssh://git@github.com/Terry-BrooksJr/nhhc_workplace_management_system.git@f6d426fb976132a6f647c263e310cb8fbfed76a4#egg=nhhc
 nodeenv==1.9.1
 oauthlib==3.2.2
 opentelemetry-api==1.22.0

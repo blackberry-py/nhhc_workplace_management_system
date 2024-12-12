@@ -15,7 +15,7 @@ career_web_mailer = PostOffice(
 )
 
 
-@shared_task
+@shared_task()
 def process_new_application(form: Union[EmploymentApplicationForm, Dict[str, Any]], **kwargs) -> Dict[str, int]:
     """
     Async Celery task to Process new employment interest by sending internal and external notifications.

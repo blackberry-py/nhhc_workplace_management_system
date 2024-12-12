@@ -20,9 +20,9 @@ import warnings
 # SECTION: **********************OPERATIONAL SETTINGS*********************************
 # The Settings in this section modify the entire operations of the application. Change with Caution
 # ************************************************************************************
-DEBUG = bool(os.getenv("ENABLE_DEBUGGING", False))
-MAINTENANCE_MODE = bool(os.getenv("ENABLE_MAINTENANCE_MODE", None))
-# ************************************************************************************
+DEBUG = True
+MAINTENANCE_MODE = False
+# ******************************** ****************************************************
 #!SECTION
 
 TESTING = "test" in sys.argv
@@ -69,7 +69,7 @@ SESSION_COOKIE_SECURE = True
 CORS_ORIGIN_ALLOW_ALL = True
 SESSION_COOKIE_HTTPONLY = True
 CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = ["http://netthandshome.care", "cdn.netthandshome.care"]
+CSRF_TRUSTED_ORIGINS = ["http://netthandshome.care", "https://cdn.netthandshome.care","https://netthandshome.care"]
 
 
 # !SECTION
@@ -159,15 +159,14 @@ INSTALLED_APPS = [
     "health_check",
     "health_check.db",
     "health_check.cache",
-    "health_check.contrib.s3boto3_storage",
     "health_check.contrib.redis",
     "health_check.contrib.psutil",
     "health_check.contrib.celery",
     "health_check.contrib.celery_ping",
     "sage_encrypt",
     "anymail",
+    "robots",
     "defender",
-    "health_check.storage",
     "django_celery_results",
     "health_check.contrib.migrations",
     "guardian",
@@ -211,7 +210,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 DATABASES = {
     "default": dj_database_url.config(
-        default=f'postgresql://{os.environ["POSTGRES_USER"]}:{os.environ["POSTGRES_PASSWORD"]}@{os.environ["POSTGRES_HOST"]}:{os.environ["POSTGRES_PORT"]}?sslmode=require&sslrootcert=postgres_ssl.crt',
+        default=f'postgresql://{os.environ["POSTGRES_USER"]}:{os.environ["POSTGRES_PASSWORD"]}@{os.environ["POSTGRES_HOST"]}:{os.environ["POSTGRES_PORT"]}?sslmode=require&sslrootcert={os.environ['DB_CERT_PATH']}',
         conn_max_age=600,
         conn_health_checks=True,
     ),
@@ -251,7 +250,7 @@ CACHES = {
     },
 }
 ROBOTS_CACHE_TIMEOUT = 60 * 60 * 24
-
+REDIS_HOST=os.environ["REDIS_HOST"]
 
 # !SECTION
 
@@ -641,7 +640,7 @@ JAZZMIN_SETTINGS = {
 # SECTION - ASYNC/BACKGROUND WORKERS
 CELERY_BROKER_URL = os.environ["ASYNC_QUEUE_BROKER_URI"]
 CELERY_TIMEZONE = TIME_ZONE
-CELERY_TASK_TRACK_STARTED = os.environ["CELERY_TRACK_TASK_START"]
+CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = int(os.environ["CELERY_TASK_TIME_LIMIT"]) * 60
 CELERY_RESULT_BACKEND = "django-db"
 CELERY_CACHE_BACKEND = "celery"
@@ -655,6 +654,8 @@ CELERY_RESULT_EXTENDED = True
 
 # DEBUG SETTINGS
 EMAIL_BACKEND = "django_smtp_ssl.SSLEmailBackend"
+if TESTING:
+      EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 
 if not TESTING:
     INSTALLED_APPS = [
@@ -665,4 +666,5 @@ if not TESTING:
     MIDDLEWARE = [
         "debug_toolbar.middleware.DebugToolbarMiddleware",
         *MIDDLEWARE,
-    ]
+    ] 
+                                                                   

@@ -1,8 +1,10 @@
+import os
+
 from django.conf import settings
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.forms.models import model_to_dict
 from loguru import logger
-import os
+
 from nhhc.utils.email_templates import (
     APPLICATION_BODY,
     CLIENT_BODY,

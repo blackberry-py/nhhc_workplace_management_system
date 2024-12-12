@@ -18,6 +18,7 @@ from typing import Any
 
 from compliance.models import Compliance
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
@@ -33,8 +34,6 @@ from rest_framework import status
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from web.models import EmploymentApplicationModel
-from django.contrib.auth.decorators import login_required, user_passes_test
-
 
 from nhhc.utils.helpers import (
     get_content_for_unauthorized_or_forbidden,

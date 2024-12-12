@@ -1,10 +1,11 @@
+from django.conf import settings
 from django.core import mail
 from django.test import TestCase
-from model_bakery import baker
 from employee.models import Employee
 from employee.views import Hire
+from model_bakery import baker
 from web.forms import EmploymentApplicationForm
-from django.conf import settings
+
 from nhhc.utils.mailer import PostOffice
 from nhhc.utils.testing import (
     generate_random_encrypted_char,

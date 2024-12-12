@@ -154,7 +154,12 @@ class S3HANDLER:
             logger.debug(file_name)
 
         # Upload the file
-        s3_client = boto3.client("s3")
+        s3_client = boto3.client("s3",
+                region_name='nyc3',
+                endpoint_url='https://nyc3.digitaloceanspaces.com',
+                aws_access_key_id=os.environ["SPACES_KEY"],
+                aws_secret_access_key=os.environ["SPACES_SECRET"]
+                                 )
         try:
             s3_client.upload_file(file_name, bucket, object_name, Callback=ProgressPercentage(file_name))
             return True
