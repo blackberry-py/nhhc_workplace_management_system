@@ -41,8 +41,7 @@ db-shell: ## Access the Postgres Docker database interactively with psql. Pass i
 
 .PHONY: workers
 workers:
-	cd nhhc/
-	doppler run -t $(TOKEN)  --  celery -A nhhc worker --without-heartbeat --without-gossip --without-mingle -D --loglevel debug
+	doppler run -t   --  celery -A nhhc worker -D --loglevel debug &
 
 .PHONY: test
 test: ## Run tests
@@ -55,7 +54,7 @@ pipeline-test: ## Run tests
 
 .PHONY: flower
 flower:
-	nohup doppler run -t $(TOKEN)  --  celery -A nhhc flower --port=9005
+	nohup doppler run -t $(TOKEN)  --  celery -A nhhc flower --port=9005 &
 
 .PHONY: 	docs
 docs:
@@ -75,4 +74,4 @@ admin:
 
 .PHONY: start
 start:
-	doppler run  --  gunicorn --workers=2  --threads=2 nhhc.wsgi:application -b :7772
+	doppler run  --  gunicorn --workers=2  --threads=2 nhhc.wsgi:application -b :8080

@@ -5,10 +5,9 @@ from unittest.mock import patch
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 from faker import Faker
-
-from web.views import ClientInterestFormView, EmploymentApplicationFormView, favicon
 from web.forms import ClientInterestForm, EmploymentApplicationForm
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
+from web.views import ClientInterestFormView, EmploymentApplicationFormView, favicon
 
 test_data = Faker()
 
@@ -104,9 +103,8 @@ class TestViews(TestCase):
             "availability_friday": True,
             "availability_saturday": False,
         }
-        form= EmploymentApplicationForm(valid_data)
+        form = EmploymentApplicationForm(valid_data)
         self.assetTrue(form.is_valid())
-
 
     def test_employment_application_form_view_post_invalid(self):
         valid_data = {
@@ -129,9 +127,8 @@ class TestViews(TestCase):
             "availability_friday": False,
             "availability_saturday": False,
         }
-        form= EmploymentApplicationForm(valid_data)
+        form = EmploymentApplicationForm(valid_data)
         self.assetFalse(form.is_valid())
-    
 
 
 class RobotsTxtTests(TestCase):

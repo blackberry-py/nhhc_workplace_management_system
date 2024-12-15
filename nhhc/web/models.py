@@ -93,7 +93,6 @@ class ClientInterestSubmission(models.Model, ExportModelOperationsMixin("client_
         PHYS_THERAPY = "PT", _("Physical Therapy")
         OTHER = "NA", _("Other")
 
-
     first_name = EncryptedCharField(max_length=10485760)
     last_name = EncryptedCharField(max_length=10485760)
     email = EncryptedEmailField(null=True)

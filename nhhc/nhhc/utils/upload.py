@@ -33,6 +33,8 @@ import boto3
 import requests
 from botocore.exceptions import ClientError
 from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from django.core.files.uploadhandler import FileUploadHandler
 from django.template.defaultfilters import filesizeformat
 from django.utils.deconstruct import deconstructible
 from django.utils.translation import gettext_lazy as _
@@ -89,9 +91,15 @@ class FileValidator(object):
 
 
 @deconstructible
-class UploadHandler:
+class UploadHandler(FileUploadHandler):
     def __init__(self, upload_type):
         self.s3_path = upload_type
+        self.s3_client = boto3.client(
+            "s3", region_name="nyc3", endpoint_url="https://nyc3.digitaloceanspaces.com", aws_access_key_id=os.environ["SPACES_KEY"], aws_secret_access_key=os.environ["SPACES_SECRET"]
+        )
+
+    def receive_data_chunk(raw_data, start):
+        pass
 
     def generate_randomized_file_name(
         self,
@@ -136,7 +144,7 @@ class ProgressPercentage(object):
             sys.stdout.flush()
 
 
-class S3HANDLER:
+class S3HANDLER(FileSystemStorage):
     @staticmethod
     @s3_upload_recorder.time()
     def upload_file_to_s3(file_name, bucket: str = settings.AWS_STORAGE_BUCKET_NAME, object_name=None) -> bool:
@@ -154,12 +162,9 @@ class S3HANDLER:
             logger.debug(file_name)
 
         # Upload the file
-        s3_client = boto3.client("s3",
-                region_name='nyc3',
-                endpoint_url='https://nyc3.digitaloceanspaces.com',
-                aws_access_key_id=os.environ["SPACES_KEY"],
-                aws_secret_access_key=os.environ["SPACES_SECRET"]
-                                 )
+        s3_client = boto3.client(
+            "s3", region_name="nyc3", endpoint_url="https://nyc3.digitaloceanspaces.com", aws_access_key_id=os.environ["SPACES_KEY"], aws_secret_access_key=os.environ["SPACES_SECRET"]
+        )
         try:
             s3_client.upload_file(file_name, bucket, object_name, Callback=ProgressPercentage(file_name))
             return True

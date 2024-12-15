@@ -15,8 +15,8 @@ career_web_mailer = PostOffice(
 )
 
 
-@shared_task()
-def process_new_application(form: Union[EmploymentApplicationForm, Dict[str, Any]], **kwargs) -> Dict[str, int]:
+@shared_task(bind=True)
+def process_new_application(self, form: Union[EmploymentApplicationForm, Dict[str, Any]], **kwargs) -> Dict[str, int]:
     """
     Async Celery task to Process new employment interest by sending internal and external notifications.
 
@@ -24,10 +24,10 @@ def process_new_application(form: Union[EmploymentApplicationForm, Dict[str, Any
         form (Union[EmploymentApplicationForm,Dict[str,Any]]): The form submitted by the client.
 
     Returns:
-        Dict[str,int]: A dictionary containing the results of the notification tasks. The values represent the number of notifications successful sent.
+        Dict[str,int]: A dictionary containing the results of the notification t1sks. The values represent the number of notifications successful sent.
     """
     try:
-        logger.debug("Processing New Application - Sending EMAILS")
+        logger.debug(f"Processing New Application - Sending EMAILS: Celery Task id {self.request.id}, args: {self.request.args!r} kwargs: {self.request.kwargs!r}")
         if internal_notify_task := career_web_mailer.send_internal_new_applicant_notification(form):
             logger.debug("Successfully Sent Internal Notification Email")
             if external_notify_task := career_web_mailer.send_external_application_submission_confirmation(form):
@@ -45,8 +45,8 @@ client_web_mailer = PostOffice(
 )
 
 
-@shared_task
-def process_new_client_interest(form: Union[ClientInterestSubmission, Dict[str, Any]], **kwargs) -> Dict[str, int]:
+@shared_task(bind=True)
+def process_new_client_interest(self, form: Union[ClientInterestSubmission, Dict[str, Any]], **kwargs) -> Dict[str, int]:
     """
     Async Celery task to Process new client interest by sending internal and external notifications.
 
@@ -57,8 +57,9 @@ def process_new_client_interest(form: Union[ClientInterestSubmission, Dict[str, 
         Dict[str,int]: A dictionary containing the results of the notification tasks. The values represent the number of notifications succesful sent.
     """
     try:
-        logger.info("Starting Client Submission Processing")
-        internal_notify_task = client_web_mailer.send_internal_new_applicant_notification(form)
+        logger.info(f"Starting Client Submission Processing Sending EMAILS: Celery Task id {self.request.id}")
+        internal_notify_task = client_web_mailer.send_internal_new_client_service_request_notification(form)
+
         external_notify_task = client_web_mailer.send_external_client_submission_confirmation(form)
         results: Dict[str, int] = {"internal": internal_notify_task, "external": external_notify_task}
         return results

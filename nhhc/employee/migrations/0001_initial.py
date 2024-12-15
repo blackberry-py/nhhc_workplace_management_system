@@ -4,10 +4,11 @@ import django_extensions.db.fields
 import django_prometheus.models
 import employee.models
 import localflavor.us.models
-import nhhc.utils.upload
 import phonenumber_field.modelfields
 import sage_encrypt.fields.asymmetric
 from django.db import migrations, models
+
+import nhhc.utils.upload
 
 
 class Migration(migrations.Migration):

@@ -131,7 +131,7 @@ class EmploymentApplicationForm(ModelForm):
     def __init__(self, *args, **kwargs):  # pragma: no cover
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.attrs = {"autocomplete": "off"}
+        self.helper.attrs = {"autocomplete": "off", "enctype": "multipart/form-data"}
         self.fields["captcha"].label = False
 
         self.helper.layout = Layout(

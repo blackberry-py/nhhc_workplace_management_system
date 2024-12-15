@@ -39,11 +39,13 @@ from formset.calendar import CalendarResponseMixin
 from formset.upload import FileUploadMixin
 from loguru import logger
 from portal.forms import PayrollExceptionForm
+from portal.models import PayrollException
 from portal.serializers import ClientInquiriesSerializer
 from rest_framework import generics, mixins, permissions, status
 from rest_framework.response import Response
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
 
+from nhhc.utils.cache import CachedResponseMixin
 from nhhc.utils.helpers import NeverCacheMixin
 
 
@@ -63,8 +65,10 @@ class Dashboard(CalendarResponseMixin, TemplateView):
         return context
 
 
-class ProfileDetailView(DetailView):
+class ProfileDetailView(CachedResponseMixin, DetailView):
     model = Employee
+    primary_model = Employee
+    cache_models = []
     template_name = "profile_main.html"
 
     def get_object(self, queryset=None):
@@ -78,9 +82,11 @@ class ProfileDetailView(DetailView):
         return context
 
 
-class ProfileFormView(UpdateView, FileUploadMixin):
+class ProfileFormView(CachedResponseMixin, UpdateView, FileUploadMixin):
     form_class = EmployeeForm
     model = Employee
+    primary_model = Employee
+    cache_models = []
     template_name = "profile_main.html"
 
     def get_object(self, queryset=None):
@@ -91,9 +97,11 @@ class ProfileFormView(UpdateView, FileUploadMixin):
         return reverse("profile")
 
 
-class PayrollExceptionView(FormView):
+class PayrollExceptionView(CachedResponseMixin, FormView):
     template_name = "exception.html"
     form_class = PayrollExceptionForm
+    primary_model = PayrollException
+    cache_models = []
 
 
 class Profile(NeverCacheMixin, View):
@@ -109,9 +117,11 @@ class Profile(NeverCacheMixin, View):
 # TODO: Implement REST endpoint with DRF
 
 
-class EmploymentApplicationModelAPIListView(mixins.DestroyModelMixin, generics.ListCreateAPIView):
+class EmploymentApplicationModelAPIListView(CachedResponseMixin, mixins.DestroyModelMixin, generics.ListCreateAPIView):
     queryset = EmploymentApplicationModel.objects.all()
     serializer_class = [EmploymentApplicationModel]
+    primary_model = EmploymentApplicationModel
+    cache_model = [Employee, EmploymentApplicationModel]
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = [
@@ -159,8 +169,10 @@ def all_client_inquiries(request: HttpRequest) -> HttpResponse:
     return HttpResponse(content=inquiries_json, status=status.HTTP_200_OK)
 
 
-class ClientInquiriesAPIListView(generics.ListCreateAPIView):
+class ClientInquiriesAPIListView(CachedResponseMixin, generics.ListCreateAPIView):
     queryset = ClientInterestSubmission.objects.all()
+    primary_model = ClientInterestSubmission
+    cache_models = []
     serializer_class = ClientInquiriesSerializer
     permission_classes = [
         permissions.IsAuthenticated,
@@ -169,13 +181,15 @@ class ClientInquiriesAPIListView(generics.ListCreateAPIView):
 
 
 # SECTION - Class-Based Views
-class ClientInquiriesListView(ListView):
+class ClientInquiriesListView(CachedResponseMixin, ListView):
     """
     Renders a list of client inquiries.
     """
 
     template_name = "service-inquiries.html"
     model = ClientInterestSubmission
+    primary_model = model
+    cache_models = []
     queryset = ClientInterestSubmission.objects.all().order_by("-date_submitted")
     context_object_name = "submissions"
     paginate_by = 25
@@ -188,27 +202,33 @@ class ClientInquiriesListView(ListView):
             reviewed=True,
         ).count()
         context["all_submissions"] = ClientInterestSubmission.objects.all().count()
+        context["type_of_submission"] = "Client Service Request"
         return context
 
 
-class ClientInquiriesDetailView(DetailView):
+class ClientInquiriesDetailView(CachedResponseMixin, DetailView):
     """
     Renders details of a specific client inquiry.
     """
 
     template_name = "submission-details.html"
     model = ClientInterestSubmission
+    primary_model = model
+    cache_models = []
     context_object_name = "submission"
     pk_url_kwarg = "pk"
+    extra_context = {"type_of_submission": "Client Service Request"}
 
 
-class EmploymentApplicationListView(ListView):
+class EmploymentApplicationListView(CachedResponseMixin, ListView):
     """
     Renders a list of submitted employment applications.
     """
 
     template_name = "submitted-applications.html"
     model = EmploymentApplicationModel
+    primary_model = model
+    cache_model = []
     queryset = EmploymentApplicationModel.objects.all().order_by("-date_submitted")
     context_object_name = "submissions"
     paginate_by = 25
@@ -220,6 +240,8 @@ class EmploymentApplicationListView(ListView):
             reviewed=True,
         ).count()
         context["all_submissions"] = EmploymentApplicationModel.objects.count()
+        context["type_of_submission"] = "Employment Application"
+
         return context
 
 
@@ -232,6 +254,7 @@ class EmploymentApplicationDetailView(DetailView):
     model = EmploymentApplicationModel
     context_object_name = "submission"
     pk_url_kwarg = "pk"
+    extra_context = {"type_of_submission": "Employment Application"}
 
 
 # TODO: Implement REST endpoint with DRF

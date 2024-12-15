@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 {% load static %}
-{% block title %} {{ type }} Submission - {{ submission.last_name }}, {{ submission.first_name }} {% endblock title %}
+{% block title %} {{ type_of_submission|default:""  }} - {{ submission.last_name }}, {{ submission.first_name }} {% endblock title %}
 {% load crispy_forms_tags %}
 {% load replace_underscore %}
 {% load human_readable %}
@@ -13,7 +13,8 @@
       <div class="card-header">
         <div class="row align-items-center">
           <div class="col-8">
-            <h3 class="mb-0">{{ type }} </h3>
+            <h3 class="mb-0">{{ type_of_submission }} </h3>
+            <em><p class="submission-date"><strong>Date Recieved:</strong> {{ submission.date_submitted|date:"l F d Y" }} ({{ submission.date_submitted|timesince }} ago)</p></em>
           </div>
         </div>
       </div>

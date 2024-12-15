@@ -8,10 +8,7 @@ class WebConfig(AppConfig):
 
     def ready(self) -> None:
         super().ready()
-        from nhhc.status import (
-            UnitedHealthChecks,
-            DocSealSigningServiceHealthCheck,
-        )
-        plugin_dir.register(UnitedHealthChecks)
+        from nhhc.status import DocSealSigningServiceHealthCheck, CloudObjectStorageBackend
+
+        plugin_dir.register(CloudObjectStorageBackend)
         plugin_dir.register(DocSealSigningServiceHealthCheck)
- 

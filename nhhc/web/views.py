@@ -24,16 +24,15 @@ from prometheus_client import Counter
 from web.forms import ClientInterestForm, EmploymentApplicationForm
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
 from web.tasks import process_new_application, process_new_client_interest
+
 from nhhc.utils.cache import CachedResponseMixin
 from nhhc.utils.helpers import CachedTemplateView
+from nhhc.utils.upload import S3HANDLER
 
 CACHE_TTL: int = settings.CACHE_TTL
 
-failed_submission_attempts = Counter(
-    "failed_submission_attempts",
-    "Metric Counter for the Number of Application or Client Interest Submission attempts that failed validation",
-    ['application_type']
-)
+failed_submission_attempts = Counter("failed_submission_attempts", "Metric Counter for the Number of Application or Client Interest Submission attempts that failed validation", ["application_type"])
+
 
 # SECTION - Page Rendering Views
 @method_decorator(require_safe, name="dispatch")
@@ -51,12 +50,14 @@ class AboutUsView(CachedResponseMixin, PublicViewMixin, CachedTemplateView):
     primary_model = None
     cache_models = [None]
 
+
 @method_decorator(require_safe, name="dispatch")
-class SuccessfulSubmission(CachedResponseMixin,PublicViewMixin, CachedTemplateView):
+class SuccessfulSubmission(CachedResponseMixin, PublicViewMixin, CachedTemplateView):
     template_name = "submission.html"
     extra_context = {"title": "About Nett Hands"}
     primary_model = None
     cache_models = [None]
+
 
 class ClientInterestFormView(CachedResponseMixin, PublicViewMixin, FormView):
     form_class = ClientInterestForm
@@ -68,15 +69,13 @@ class ClientInterestFormView(CachedResponseMixin, PublicViewMixin, FormView):
     extra_context = {"title": "Client Services Request"}
 
     def form_valid(self, form: ClientInterestForm) -> HttpResponse:
-
         """If the form is valid, redirect to the supplied URL."""
         if form.is_valid():
             logger.debug("Form Is Valid")
             form.save()
             process_new_client_interest(form.cleaned_data)
             return HttpResponsePermanentRedirect(reverse("submitted"), {"type": "Client Interest Form"})
-        context = {}
-        context["form"] = self.get_form()
+        context = {"form": self.get_form()}
         context["form_errors"] = form.errors
         failed_submission_attempts.labels(application_type="client-interest").inc()
         logger.error("Form Is Invalid")
@@ -108,33 +107,21 @@ class EmploymentApplicationFormView(CachedResponseMixin, PublicViewMixin, FormVi
     extra_context = {"title": "Employment Application"}
     primary_model = EmploymentApplicationModel
 
-    def form_valid(self, form: EmploymentApplicationForm) -> HttpResponse:
-   
-        """If the form is valid, redirect to the supplied URL."""
-        if form.is_valid():
-            return self.process_submitted_application(form) 
-        context = {}
-        context["form"] = self.get_form()
-        context["form_errors"] = form.errors
-        failed_submission_attempts.labels(application_type="employment").inc()
-        logger.error("Form Is Invalid")
-        return HttpResponseRedirect(reverse("application"), context)
-
-    def process_submitted_application(self, form):
+    def form_valid(self, form: EmploymentApplicationForm, resume) -> HttpResponse:
         logger.debug("Form Is Valid")
-        form.cleaned_data["contact_number"] = str(form["contact_number"])
+        formdata = form.cleaned_data
+        formdata["contact_number"] = str(form["contact_number"])
+        formdata["resume_cv"] = resume.file.path
+        process_new_application.delay(formdata)
         form.save()
-        processed_form = form.cleaned_data
-        del processed_form["resume_cv"]
-        process_new_application(processed_form)
         return HttpResponseRedirect(reverse("submitted"), {"type": "Employment Interest Form"})
 
     def get_form(self, form_class=None):
         if self.request.POST:
-            return EmploymentApplicationForm(self.request.POST)
+            return EmploymentApplicationForm(self.request.POST, self.request.FILES)
         else:
             return EmploymentApplicationForm()
-
+                                    
     @public
     def get(self, request):
         form = EmploymentApplicationForm()
@@ -145,13 +132,16 @@ class EmploymentApplicationFormView(CachedResponseMixin, PublicViewMixin, FormVi
     @public
     def post(self, request):
         context = {}
-        form = EmploymentApplicationForm(request.POST)
+        form = EmploymentApplicationForm(request.POST, request.FILES)
         if form.is_valid():
-            return self.form_valid(form)
-        elif not form.is_valid():
-            context["form"] = form
-            context["form_errors"] = form.errors
-            return render(request, "employee-interest.html", context)
+            resume = request.FILES["resume_cv"]
+            return self.form_valid(form, resume)
+     
+        context = {"form": self.get_form()}
+        context["form_errors"] = form.errors
+        failed_submission_attempts.labels(application_type="employment").inc()
+        logger.error("Form Is Invalid")
+        return HttpResponseRedirect(reverse("application"), context)
 
 
 @public

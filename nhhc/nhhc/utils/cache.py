@@ -5,23 +5,21 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
+from django.http.response import JsonResponse
+from django.template.response import TemplateResponse
 from loguru import logger
 from prometheus_client import Counter
 from redis.exceptions import LockNotOwnedError
 from rest_framework import status
 from rest_framework.response import Response
 
-cached_queryset_hit = Counter(
-    "cached_queryset_hit", "Number of requests served by a cached Queryset", ["model"]
-)
+cached_queryset_hit = Counter("cached_queryset_hit", "Number of requests served by a cached Queryset", ["model"])
 cached_queryset_miss = Counter(
     "cached_queryset_miss",
     "Number of  requests not served by a cached Queryset",
     ["model"],
 )
-cached_queryset_evicted = Counter(
-    "cached_queryset_evicted", "Number of cached Querysets evicted", ["model"]
-)
+cached_queryset_evicted = Counter("cached_queryset_evicted", "Number of cached Querysets evicted", ["model"])
 
 
 class CachedResponseMixin:
@@ -78,15 +76,11 @@ class CachedResponseMixin:
         """
         cached_data = cache.get(cache_key)
         if cached_data is not None:
-            logger.debug(
-                f"Cache Hit for {self.primary_model.__name__} - Cache Key: {cache_key}"
-            )
+            logger.debug(f"Cache Hit for {self.primary_model.__name__} - Cache Key: {cache_key}")
             cached_queryset_hit.labels(model=self.primary_model.__name__).inc()
             return Response(cached_data, status=status.HTTP_200_OK)
         else:
-            logger.debug(
-                f"Cache Miss for {self.primary_model.__name__}  - Cache Key: {cache_key}"
-            )
+            logger.debug(f"Cache Miss for {self.primary_model.__name__}  - Cache Key: {cache_key}")
             cached_queryset_miss.labels(model=self.primary_model.__name__).inc()
             return None
 
@@ -99,6 +93,8 @@ class CachedResponseMixin:
             cache_key (str): The cache key under which to store the data.
             data: The data to be cached.
         """
+        if type(data) in [JsonResponse, TemplateResponse]:
+            data = data.render()
         logger.debug(f"New Cache Set {cache_key}: {data}")
         cache.set(cache_key, data, timeout=settings.VIEW_CACHE_TTL)
 
@@ -173,6 +169,4 @@ def invalidate_cache(sender, **kwargs):
         cache.delete_many(cache_keys)
         logger.info(f"Cache invalidated for model: {model_name}")
     else:
-        logger.debug(
-            f"No cache keys found for model: {model_name} using {cache_key_pattern}"
-        )
+        logger.debug(f"No cache keys found for model: {model_name} using {cache_key_pattern}")

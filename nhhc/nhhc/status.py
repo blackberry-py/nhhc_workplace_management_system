@@ -8,6 +8,14 @@ import time
 from collections import Counter
 from contextlib import suppress
 from os import PathLike
+from redis.backoff import ExponentialBackoff
+from redis.retry import Retry
+from redis.client import Redis
+from redis.exceptions import (
+   BusyLoadingError,
+   ConnectionError,
+   TimeoutError
+)
 import boto3
 import psycopg2
 import redis
@@ -85,7 +93,7 @@ class DocSealSigningServiceHealthCheck(BaseHealthCheckBackend):
         submitter_details["name"] = mock_data.name()
         submitter_details["email"] = mock_data.email()
         # submitter_details["phone"] = "+14439835591",
-        
+
         submitter_details["external_id"] = str(random.randint(8000, 12124445555444))
         return json.dumps(submission)
 
@@ -110,8 +118,9 @@ class DocSealSigningServiceHealthCheck(BaseHealthCheckBackend):
             return None
         if isinstance(response, list) and len(response) > 0:
             return int(response[0].get("submission_id", None))
-    
+
         return None
+
     def archive_submission(self, submission_id: int) -> bool:
         """
         Archives a submission in the DocuSeal service using its submission ID.
@@ -145,7 +154,7 @@ class DocSealSigningServiceHealthCheck(BaseHealthCheckBackend):
             ServiceUnavailable: If there is an error during the submission creation or archiving process.
         """
         try:
-            created_submission = self.create_docseal_submission() 
+            created_submission = self.create_docseal_submission()
             if created_submission != None:
                 return self.archive_submission(created_submission)
         except Exception as e:
@@ -156,55 +165,13 @@ class DocSealSigningServiceHealthCheck(BaseHealthCheckBackend):
         return self.__class__.__name__
 
 
-
-
-class UnitedHealthChecks(BaseHealthCheckBackend):
-
-        
-
-    def check_postgres_health(self):
-        """Check the health of a PostgreSQL database."""
-        try:
-            conn = psycopg2.connect(
-                dbname=settings.DATABASES["default"]["NAME"],
-                user=settings.DATABASES["default"]["USER"],
-                password=settings.DATABASES["default"]["PASSWORD"],
-                host=settings.DATABASES["default"]["HOST"],
-                port=settings.DATABASES["default"]["PORT"],
-                sslmode="require",
-                sslrootcert=os.environ["DB_CERT_PATH"]
-            )
-            conn.close()
-            return {"postgres": "healthy"}
-        except Exception as e:
-            logger.error(f"PostgreSQL health check failed: {e}")
-            raise ServiceUnavailable(message=f"postgres is unhealthy. Error: {str(e)}")
-
-    def check_redis_health(self):
-        """Check the health of a Redis instance."""
-        try:
-            r = redis.StrictRedis(
-                username="default",
-                host=settings.REDIS_HOST,
-                port=6379,
-                password=os.environ["REDIS_PASSWORD"],
-                decode_responses=True,
-            )
-            r.ping()
-            return {"redis": "healthy"}
-        except Exception as e:
-            logger.error(f"Redis health check failed: {e}")
-            raise ServiceUnavailable(message=f"redis is unhealthy. Error: {str(e)}")
+class CloudObjectStorageBackend(BaseHealthCheckBackend):
 
     def check_s3_health(self):
         """Check the health of an S3 bucket."""
         try:
             s3 = boto3.client(
-                "s3",
-                region_name='nyc3',
-                endpoint_url='https://nyc3.digitaloceanspaces.com',
-                aws_access_key_id=os.environ["SPACES_KEY"],
-                aws_secret_access_key=os.environ["SPACES_SECRET"]
+                "s3", region_name=settings.AWS_S3_REGION_NAME, aws_access_key_id=settings.AWS_ACCESS_KEY_ID, aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
             )
             s3.head_bucket(Bucket=settings.AWS_STORAGE_BUCKET_NAME)
             return {"s3": "healthy"}
@@ -214,8 +181,5 @@ class UnitedHealthChecks(BaseHealthCheckBackend):
 
     def check_status(self):
         """Perform all health checks and return a summary."""
-        return {
-            **self.check_postgres_health(),
-            **self.check_redis_health(),
-            **self.check_s3_health(),
-        }
+        return self.check_s3_health()
+        

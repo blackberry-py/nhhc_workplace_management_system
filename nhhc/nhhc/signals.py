@@ -10,7 +10,6 @@ Signal Handlers:
 
 """
 
-
 import contextlib
 from typing import Callable
 from uuid import uuid4

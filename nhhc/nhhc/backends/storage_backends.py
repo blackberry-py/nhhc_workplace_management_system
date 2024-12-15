@@ -63,5 +63,5 @@ class PrivateMediaStorage(S3Boto3Storage):
     location = "restricted"
     default_acl = "private"
     file_overwrite = True
-    custom_domain = False
+    custom_domain = True
     base_url = os.environ["PRIVATE_MEDIA_BASE_URL"]
