@@ -60,21 +60,21 @@
                             <div class="navbar-brand">
 
                                 {% if title == "Home" %}
-                                    <a href="{% url 'homepage' %}"><img src="{% static 'img/logo-dark.png' %}" alt="LOGO"></a>
+                                    <a href="{% url 'web:home' %}"><img src="{% static 'img/logo-dark.png' %}" alt="LOGO"></a>
                                     </div>
                                     </div>
                                     <div class="col-lg-10">
                                         <div class="header__nav__option">
                                             <nav class="header__nav__menu mobile-menu">
                                                 <ul>
-                                                    <li class="active"><a href="{% url 'homepage' %}">Home</a></li>
-                                                    <li><a href="{% url 'about' %}">About Nett Hands</a></li>
+                                                    <li class="active"><a href="{% url 'web:home' %}">Home</a></li>
+                                                    <li><a href="{% url 'web:about_us' %}">About Nett Hands</a></li>
                                                     <li><a href="#impact">Our Impact</a></li>
                                                     <li><a href="#services">Services</a>
                                                     </li>
                                                     <li><a href="#careers">Careers</a>
                                                         <ul class="dropdown">
-                                                            <li><a href="{% url 'application' %}">Employee Interest Application</a></li>
+                                                            <li><a href="{% url 'web:employment_application_form' %}">Employee Interest Application</a></li>
                                                             <li><a href="{% url 'account_login' %}">Employee Portal</a></li>
                                                         </ul>
                                                     </li>
@@ -83,7 +83,7 @@
                                             </nav>
 
                                 {% else %}
-                                    <a href="{% url 'homepage' %}"><img src="{% static 'img/logo-light.png' %}" alt=""></a>
+                                    <a href="{% url 'web:home' %}"><img src="{% static 'img/logo-light.png' %}" alt=""></a>
                                     </div>
                                     </div>
                                     <div class="col-lg-10">
@@ -91,7 +91,7 @@
                                             <nav class="header__nav__menu mobile-menu">
                                                 {% if request.path != "/maintenance/"  %}
                                                     <ul>
-                                                        <li class="active"><a href="{% url 'homepage' %}"><span class="back-to-home">Back to Home</span></a></li>
+                                                        <li class="active"><a href="{% url 'web:home' %}"><span class="back-to-home">Back to Home</span></a></li>
                                                     </ul>
                                                 {% endif %}
 
@@ -167,15 +167,15 @@
                                 <h5>About us</h5>
                                 <p>Nett Hands Home Care is a State of Illinois Department of Public Health licensed home health care agency. We are bonded and insured. All of our in-home care providers are extremely understanding, skilled and experienced in caring for you in the comfort of your home. Serving the entire Chicagoland area, Cook County and surrounding
                                     suburban counties.</p>
-                                <a href="{% url 'about' %}" class="read__more">Read more <span class="arrow_right"></span></a>
+                                <a href="{% url 'web:about_us' %}" class="read__more">Read more <span class="arrow_right"></span></a>
                             </div>
                         </div>
                         <div class="col-lg-2 col-md-3 col-sm-3">
                             <div class="footer__option__item">
                                 <h5>Quick Links</h5>
                                 <ul>
-                                    <li><a href="{% url 'application' %}">Employment Application</a></li>
-                                    <li><a href="{% url 'client_interest' %}">Client Interest Form</a></li>
+                                    <li><a href="{% url 'web:employment_application_form' %}">Employment Application</a></li>
+                                    <li><a href="{% url 'web:client_interest_form' %}">Client Interest Form</a></li>
                                     <li class="disabled"><a href="{% url 'account_login' %}">Employee Portal</a></li>
                                 </ul>
                                 <br>

@@ -2,14 +2,14 @@
     <div class="header__nav__option">
         <nav class="header__nav__menu mobile-menu">
             <ul>
-                <li class="active"><a href="{% url 'homepage' %}">Home</a></li>
-                <li><a href="{% url 'about' %}">About Nett Hands</a></li>
+                <li class="active"><a href="{% url 'web:home' %}">Home</a></li>
+                <li><a href="{% url 'web:about_us' %}">About Nett Hands</a></li>
                 <li><a href="#impact">Our Impact</a></li>
                 <li><a href="#services">Services</a>
                 </li>
                 <li><a href="#careers">Careers</a>
                     <ul class="dropdown">
-                        <li><a href="{% url 'application' %}">Employee Interest Application</a></li>
+                        <li><a href="{% url 'web:employment_application_form' %}">Employee Interest Application</a></li>
                         <li><a href="{% url 'account_login' %}" target="_blank">Employee Portal</a></li>
                     </ul>
                 </li>

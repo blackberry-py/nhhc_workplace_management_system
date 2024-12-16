@@ -145,7 +145,7 @@ urlpatterns: List[Union[RoutePattern, RegexPattern]] = [
     path("maintenance/", maintenance_handler, name="maintenance_mode"),
     path("tinymce/", include(tinymce.urls)),
     path("", include(portal.urls)),
-    path("", include(web.urls)),
+    path("", include(web.urls, namespace="web")),
     path("", include(allauth.urls)),
     path("", include(employee.urls)),
     path("", include(announcements.urls)),

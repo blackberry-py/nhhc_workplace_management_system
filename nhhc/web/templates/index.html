@@ -14,7 +14,7 @@
                             <div class="hero__text">
                                 <span>For dedicated home healthcare professionals</span>
                                 <h2>Join Our Team!</h2>
-                                <a href="{% url 'application' %}" class="primary-btn">Complete Employment Interest Application</a>
+                                <a href="{% url 'web:employment_application_form' %}" class="primary-btn">Complete Employment Interest Application</a>
                             </div>
                         </div>
                     </div>
@@ -27,7 +27,7 @@
                             <div class="hero__text">
                                 <span>For loving family loving members</span>
                                 <h2>Enroll Your Loved One!</h2>
-                                <a href='{% url "client_interest" %}' class="primary-btn">Enroll In Services</a>
+                                <a href='{% url "web:client_interest_form" %}' class="primary-btn">Enroll In Services</a>
                             </div>
                         </div>
                     </div>
@@ -59,7 +59,7 @@
                             <div class="hero__text">
                                 <span>For dedicated home healthcare professionals</span>
                                 <h2>Join Our Team!</h2>
-                                <a href="{% url 'application' %}" class="primary-btn">Complete Employment Interest Application</a>
+                                <a href="{% url 'web:employment_application_form' %}" class="primary-btn">Complete Employment Interest Application</a>
                             </div>
                         </div>
                     </div>
@@ -72,7 +72,7 @@
                             <div class="hero__text">
                                 <span>For loving family loving members</span>
                                 <h2>Enroll Your Loved One!</h2>
-                                <a href='{% url "client_interest" %}' class="primary-btn">Complete A Client Services Inquiry</a>
+                                <a href='{% url "web:client_interest_form" %}' class="primary-btn">Complete A Client Services Inquiry</a>
                             </div>
                         </div>
                     </div>
@@ -113,7 +113,7 @@
                     <div class="row"
                     >                        <div class="col-lg-12 p-0">
                         <div class="team__btn">
-                            <a id="body-join-us" href="{% url 'client_interest' %}" class="primary-btn">Enroll In Services</a>
+                            <a id="body-join-us" href="{% url 'web:client_interest_form' %}" class="primary-btn">Enroll In Services</a>
                         </div>
                     </div>
                     </div>
@@ -298,7 +298,7 @@
                 </div>
                 <div class="col-lg-12 p-0">
                     <div class="team__btn">
-                        <a id="body-join-us" href="{% url 'application' %}" class="primary-btn">Join Our Team</a>
+                        <a id="body-join-us" href="{% url 'web:employment_application_form' %}" class="primary-btn">Join Our Team</a>
                     </div>
                 </div>
             </div>

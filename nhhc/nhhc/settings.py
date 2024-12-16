@@ -66,7 +66,7 @@ ROBOTS_USE_HOST = False
 FIRST_DAY_OF_WEEK = 1
 RECAPTCHA_PUBLIC_KEY = os.environ["RECAPTCHA_PUBLIC_KEY"]
 RECAPTCHA_PRIVATE_KEY = os.environ["RECAPTCHA_PRIVATE_KEY"]
-SILENCED_SYSTEM_CHECKS = ["auth.W004"]
+SILENCED_SYSTEM_CHECKS = ["auth.W004", 'captcha.recaptcha_test_key_error']
 ROBOTS_SITEMAP_VIEW_NAME = "cached-sitemap"
 SITE_ID = os.environ["SITE_ID"]
 ENVIRONMENT_FLOAT = True
@@ -105,6 +105,7 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.environ["EMAIL_SERVER"]
 EMAIL_SUBJECT_PREFIX = "NHHC Django Server -"
 EMAIL_USE_TLS = False
+SMTP_TEST_EMAIL_ADDRESS = os.environ["TEST_EMAIL_ADDRESS"]
 EMAIL_USE_LOCALTIME = True
 DEFAULT_FROM_EMAIL = "postmaster@netthandshome.care"
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
@@ -260,7 +261,7 @@ REDIS_CONNECTION_OPTIONS = {
         "redis.exceptions.TimeoutError",
     ],
     "RETRY": Retry(
-        backoff=ExponentialBackoff(base=0.1, cap=15),
+        backoff=ExponentialBackoff(base=1.0, cap=15),
         retries=5,  # Maximum retries
     ),  # Retry strategy for timeouts
 }
@@ -335,7 +336,7 @@ ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 LOGIN_REDIRECT_URL = "/dashboard"
 LOGIN_URL = "/login"
 LOGOUT_REDIRECT_URL = LOGIN_URL
-REQUIRE_LOGIN_PUBLIC_URLS = (LOGIN_URL, LOGOUT_REDIRECT_URL, r"^/api/.*", r"^/metrics", r"^/control-center", r"^/status/*", r"/confirm-email")
+REQUIRE_LOGIN_PUBLIC_URLS = (LOGIN_URL, LOGOUT_REDIRECT_URL, r"^/api/.*", r"^/metrics", r"^/control-center", r"^/status/*", r"/confirm-email", r'/$', r'/^about',r"^favicon.ico\/?/$")
 REQUIRE_LOGIN_PUBLIC_NAMED_URLS = (
     "account_reset_password",
     "account_email",
@@ -394,7 +395,7 @@ BUNNY_HOSTNAME = os.environ["BUNNY_HOSTNAME"]
 BUNNY_BASE_DIR = os.environ["BUNNY_BASE_DIR"]
 # !SECTION
 STATIC_LOCATION = "staticfiles/"
-STATIC_URL = f"https://cdn.netthandshome.care/{STATIC_LOCATION}/"
+STATIC_URL = "https://cdn.netthandshome.care/staticfiles/"
 STATIC_ROOT = STATIC_URL
 STATIC_HOST = "" if DEBUG else STATIC_URL
 WHITENOISE_MANIFEST_STRICT = False
@@ -421,7 +422,9 @@ PRIVATE_MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.
 # SECTION - File Management
 ALLOWED_UPLOAD_MIME_TYPES = list(os.environ["ALLOWED_MIME_TYPES"].split(","))
 STORAGES = {
-    "default": {"BACKEND": "nhhc.backends.storage_backends.PrivateMediaStorage"},
+    "default": {
+        "BACKEND": "nhhc.backends.storage_backends.PrivateMediaStorage"
+        },
     "staticfiles": {
         "BACKEND": "nhhc.backends.storage_backends.StaticStorage",
     },
@@ -498,7 +501,7 @@ logger.add(
 logger.add(DEBUG_LOG_FILE, format=LOG_FORMAT, colorize=True, diagnose=True, catch=True, backtrace=True, level="DEBUG")
 logger.add(PRIMARY_LOG_FILE, colorize=True, format=LOG_FORMAT, diagnose=False, catch=True, backtrace=False, level="INFO")
 logger.add(LOGTAIL_HANDLER, colorize=True, format=LOG_FORMAT, diagnose=False, catch=True, backtrace=True, level="DEBUG")
-logger.add(DEFAULT_HANDLER, colorize=True, format=LOG_FORMAT, diagnose=True, catch=True, backtrace=True, level="DEBUG")
+logger.add(DEFAULT_HANDLER, colorize=True, format=LOG_FORMAT, diagnose=False, catch=False, backtrace=False, level="INFO")
 logger.add("spam.log", level="DEBUG", format=LOG_FORMAT)
 logger.add(sys.stderr, level="ERROR", format=LOG_FORMAT)
 
@@ -691,7 +694,7 @@ CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_RESULT_EXTENDED = True
-
+CELERY_WORKER_CANCEL_LONG_RUNNING_TASKS_ON_CONNECTION_LOSS = True
 # Broker Settings
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BROKER_CONNECTION_TIMEOUT = 30
@@ -709,7 +712,11 @@ CELERY_WORKER_PREFETCH_MULTIPLIER = 1
 # DEBUG SETTINGS
 EMAIL_BACKEND = "django_smtp_ssl.SSLEmailBackend"
 if TESTING:
+    SILENCED_SYSTEM_CHECKS.append('')
+
     EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+    RECAPTCHA_PUBLIC_KEY="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+    RECAPTCHA_PRIVATE_KEY="6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
 
 if not TESTING and DEBUG:
     INSTALLED_APPS = [

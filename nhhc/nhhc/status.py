@@ -2,8 +2,10 @@ import datetime
 import hashlib
 import json
 import os
+from django.core.mail import EmailMessage
 import random
 import re
+import requests
 import time
 from collections import Counter
 from contextlib import suppress
@@ -109,6 +111,7 @@ class DocSealSigningServiceHealthCheck(BaseHealthCheckBackend):
         Raises:
             KeyError: If the environment variable "DOCSEAL_TEST_API_KEY" is not set.
         """
+
         headers = {"Content-Type": "application/json", "Accept": "application/json", "X-Auth-Token": os.environ["DOCSEAL_TEST_API_KEY"]}
         payload = self.randomize_data()
         logger.debug(payload)
@@ -183,3 +186,18 @@ class CloudObjectStorageBackend(BaseHealthCheckBackend):
         """Perform all health checks and return a summary."""
         return self.check_s3_health()
         
+
+
+class SMTPEmailBackend(BaseHealthCheckBackend):
+    def send_test_email(self):
+        try:
+            test_email = EmailMessage(subject="Healthcheck Email", from_email=settings.SERVER_EMAIL, to=[settings.SMTP_TEST_EMAIL_ADDRESS], body="Health Check Email", fail_silently=False )
+            if test_email.send() == 1:
+                return True
+            raise ServiceUnavailable('SMTP Server Unavailable: Test Email Not Sent')
+        except Exception as e :
+            logger.error(f"SMTP Server Unavailable: {e}")
+            raise ServiceUnavailable(f"SMTP Server Unavailable: {e}") from  e
+    def check_status(self):
+        """Perform all health checks and return a summary."""
+        return self.send_test_email()

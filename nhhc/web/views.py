@@ -65,7 +65,7 @@ class ClientInterestFormView(CachedResponseMixin, PublicViewMixin, FormView):
     primary_model = ClientInterestSubmission
     cache_models = [None]
     template_name = "client-interest.html"
-    success_url = reversed("submitted")
+    success_url = reversed("web:form_submission_success")
     extra_context = {"title": "Client Services Request"}
 
     def form_valid(self, form: ClientInterestForm) -> HttpResponse:
@@ -74,12 +74,12 @@ class ClientInterestFormView(CachedResponseMixin, PublicViewMixin, FormView):
             logger.debug("Form Is Valid")
             form.save()
             process_new_client_interest(form.cleaned_data)
-            return HttpResponsePermanentRedirect(reverse("submitted"), {"type": "Client Interest Form"})
+            return HttpResponsePermanentRedirect(reverse("web:form_submission_success"), {"type": "Client Interest Form"})
         context = {"form": self.get_form()}
         context["form_errors"] = form.errors
         failed_submission_attempts.labels(application_type="client-interest").inc()
         logger.error("Form Is Invalid")
-        return HttpResponseRedirect(reverse("client_interest"), {"errors": form.errors})
+        return HttpResponseRedirect(reverse("web:client_interest_form"), {"errors": form.errors})
 
     @public
     def get(self, request):
@@ -103,18 +103,19 @@ class ClientInterestFormView(CachedResponseMixin, PublicViewMixin, FormView):
 class EmploymentApplicationFormView(CachedResponseMixin, PublicViewMixin, FormView):
     model = EmploymentApplicationModel
     template_name = "employee-interest.html"
-    success_url = reversed("submitted")
+    success_url = reversed("web:form_submission_success")
     extra_context = {"title": "Employment Application"}
     primary_model = EmploymentApplicationModel
 
-    def form_valid(self, form: EmploymentApplicationForm, resume) -> HttpResponse:
+    def form_valid(self, form: EmploymentApplicationForm, resume=None) -> HttpResponse:
         logger.debug("Form Is Valid")
         formdata = form.cleaned_data
         formdata["contact_number"] = str(form["contact_number"])
-        formdata["resume_cv"] = resume.file.path
+        if resume:
+            formdata["resume_cv"] = resume.file.path
         process_new_application.delay(formdata)
         form.save()
-        return HttpResponseRedirect(reverse("submitted"), {"type": "Employment Interest Form"})
+        return HttpResponseRedirect(reverse("web:form_submission_success"), {"type": "Employment Interest Form"})
 
     def get_form(self, form_class=None):
         if self.request.POST:
@@ -134,14 +135,17 @@ class EmploymentApplicationFormView(CachedResponseMixin, PublicViewMixin, FormVi
         context = {}
         form = EmploymentApplicationForm(request.POST, request.FILES)
         if form.is_valid():
-            resume = request.FILES["resume_cv"]
-            return self.form_valid(form, resume)
+            if request.FILES:
+                resume = request.FILES
+                logger.debug(resume)
+                return self.form_valid(form, resume)
+            return self.form_valid(form)
      
         context = {"form": self.get_form()}
         context["form_errors"] = form.errors
+        logger.warning(f'Form Failed Invalid: {form.errors.as_text}')
         failed_submission_attempts.labels(application_type="employment").inc()
-        logger.error("Form Is Invalid")
-        return HttpResponseRedirect(reverse("application"), context)
+        return HttpResponseRedirect(reverse("web:employment_application_form"), context)
 
 
 @public
