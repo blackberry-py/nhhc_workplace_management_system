@@ -27,13 +27,14 @@ from web.tasks import process_new_application, process_new_client_interest
 
 from nhhc.utils.cache import CachedResponseMixin
 from nhhc.utils.helpers import CachedTemplateView
-from nhhc.utils.upload import S3HANDLER
+from nhhc.utils.upload import S3HANDLER, FileValidator
 
 CACHE_TTL: int = settings.CACHE_TTL
 
 failed_submission_attempts = Counter("failed_submission_attempts", "Metric Counter for the Number of Application or Client Interest Submission attempts that failed validation", ["application_type"])
 
 
+resume_validator = FileValidator(max_size=100)
 # SECTION - Page Rendering Views
 @method_decorator(require_safe, name="dispatch")
 class HomePageView(CachedResponseMixin, PublicViewMixin, CachedTemplateView):
@@ -70,17 +71,11 @@ class ClientInterestFormView(CachedResponseMixin, PublicViewMixin, FormView):
 
     def form_valid(self, form: ClientInterestForm) -> HttpResponse:
         """If the form is valid, redirect to the supplied URL."""
-        if form.is_valid():
-            logger.debug("Form Is Valid")
-            form.save()
-            process_new_client_interest(form.cleaned_data)
-            return HttpResponsePermanentRedirect(reverse("web:form_submission_success"), {"type": "Client Interest Form"})
-        context = {"form": self.get_form()}
-        context["form_errors"] = form.errors
-        failed_submission_attempts.labels(application_type="client-interest").inc()
-        logger.error("Form Is Invalid")
-        return HttpResponseRedirect(reverse("web:client_interest_form"), {"errors": form.errors})
-
+        logger.debug("Form Is Valid")
+        form.save()
+        process_new_client_interest(form.cleaned_data)
+        return HttpResponsePermanentRedirect(reverse("submitted"), {"type": "Client Interest Form"})
+        
     @public
     def get(self, request):
         form = ClientInterestForm()
@@ -95,9 +90,12 @@ class ClientInterestFormView(CachedResponseMixin, PublicViewMixin, FormView):
         if form.is_valid():
             return self.form_valid(form)
         elif not form.is_valid():
-            context["form"] = form
+            context = {"form": self.get_form()}
             context["form_errors"] = form.errors
-            return render(request, "client-interest.html", context)
+            failed_submission_attempts.labels(application_type="client-interest").inc()
+            logger.error("Form Is Invalid")
+            return HttpResponseRedirect(reverse("client_interest"), {"errors": form.errors})
+
 
 
 class EmploymentApplicationFormView(CachedResponseMixin, PublicViewMixin, FormView):
@@ -135,8 +133,9 @@ class EmploymentApplicationFormView(CachedResponseMixin, PublicViewMixin, FormVi
         context = {}
         form = EmploymentApplicationForm(request.POST, request.FILES)
         if form.is_valid():
-            if request.FILES:
-                resume = request.FILES
+            if request.FILES.get('resume_cv'):
+                resume = resume_validator()
+
                 logger.debug(resume)
                 return self.form_valid(form, resume)
             return self.form_valid(form)

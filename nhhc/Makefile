@@ -40,12 +40,12 @@ db-shell: ## Access the Postgres Docker database interactively with psql. Pass i
 	docker exec -it container_name psql -d $(DBNAME)
 
 .PHONY: workers
-workers:
-	doppler run -t   --  celery -A nhhc worker -D --loglevel debug &
+workers: 
+	doppler run   --  celery -A nhhc worker -D --loglevel debug 
 
 .PHONY: test
 test: ## Run tests
-	doppler run -- coverage run $(DOCKER_PATH)manage.py test web employee portal  --verbosity=2 --keepdb   --failfast  --force-color
+	doppler run -- coverage run manage.py test web   --verbosity=2 --keepdb   --failfast  --force-color
 
 .PHONY: test
 pipeline-test: ## Run tests
@@ -53,8 +53,8 @@ pipeline-test: ## Run tests
 
 
 .PHONY: flower
-flower:
-	nohup doppler run -t $(TOKEN)  --  celery -A nhhc flower --port=9005 &
+flower: workers
+	nohup doppler run  --  celery -A nhhc flower --port=9005 &
 
 .PHONY: 	docs
 docs:
@@ -62,7 +62,7 @@ docs:
 
 .PHONY: run
 run:
-	doppler run -t $(TOKEN)  -- python lsmanage.py runserver 9555
+	doppler run -t $(TOKEN)  -- python manage.py runserver 9555
 
 .PHONY: debug
 debug: ## Run the Django server
@@ -73,5 +73,5 @@ admin:
 	doppler run -t $(TOKEN)  --   python manage.py createsuperuser --no-input
 
 .PHONY: start
-start:
+start: flower
 	doppler run  --  gunicorn --workers=2  --threads=2 nhhc.wsgi:application -b :8080

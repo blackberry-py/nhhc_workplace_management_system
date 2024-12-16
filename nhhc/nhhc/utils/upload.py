@@ -65,7 +65,8 @@ class FileValidator(object):
     def __init__(self, max_size: typing.Optional[int] = None, min_size: typing.Optional[int] = None):
         self.max_size = max_size
         self.min_size = min_size
-        if settings.ALLOWED_UPLOAD_MIME_TYPES:
+
+        if not settings.ALLOWED_UPLOAD_MIME_TYPES:
             raise AttributeError('Settings Module Must Have a value set for ALLOWED_UPLOAD_MIME_TYPES')
         self.content_types = settings.ALLOWED_UPLOAD_MIME_TYPES
 
