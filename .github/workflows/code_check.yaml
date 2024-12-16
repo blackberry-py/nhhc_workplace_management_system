@@ -19,7 +19,9 @@ jobs:
           doppler-project: ${{ vars.DOPPLER_PROJECT }}
           doppler-config: ${{ vars.DOPPLER_CONFIG }}
       - uses: actions/checkout@v1
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'       
       - uses: syphar/restore-virtualenv@v1
         id: cache-virtualenv
       - uses: syphar/restore-pip-download-cache@v1
