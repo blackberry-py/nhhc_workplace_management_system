@@ -110,10 +110,10 @@ GitPython==3.1.43
 googleapis-common-protos==1.66.0
 grpcio==1.68.1
 guardian==0.2.2
-gunicorn==20.1.0
+gunicorn==23.0.0
 h11==0.14.0
 highlight-io==0.7.1
-hiredis==2.4.0
+hiredis==3.1.0
 html-tag-names==0.1.2
 html-void-elements==0.1.0
 html5lib==1.1
