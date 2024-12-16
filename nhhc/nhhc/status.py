@@ -191,8 +191,8 @@ class CloudObjectStorageBackend(BaseHealthCheckBackend):
 class SMTPEmailBackend(BaseHealthCheckBackend):
     def send_test_email(self):
         try:
-            test_email = EmailMessage(subject="Healthcheck Email", from_email=settings.SERVER_EMAIL, to=[settings.SMTP_TEST_EMAIL_ADDRESS], body="Health Check Email", fail_silently=False )
-            if test_email.send() == 1:
+            test_email = EmailMessage(subject="Healthcheck Email", from_email=settings.SERVER_EMAIL, to=[settings.SMTP_TEST_EMAIL_ADDRESS], body="Health Check Email")
+            if test_email.send(fail_silently=False) == 1:
                 return True
             raise ServiceUnavailable('SMTP Server Unavailable: Test Email Not Sent')
         except Exception as e :
