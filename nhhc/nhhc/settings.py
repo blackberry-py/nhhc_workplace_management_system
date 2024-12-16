@@ -714,7 +714,7 @@ EMAIL_BACKEND = "django_smtp_ssl.SSLEmailBackend"
 if TESTING:
     SILENCED_SYSTEM_CHECKS.append('')
 
-    EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+    # EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
     RECAPTCHA_PUBLIC_KEY="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
     RECAPTCHA_PRIVATE_KEY="6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
 

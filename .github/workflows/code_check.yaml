@@ -45,7 +45,7 @@ jobs:
         - uses: syphar/restore-virtualenv@v1
           id: cache-virtualenv
 
-        - run: pip install isort && python  -m isort . --diff --check-only
+        - run: pip install isort && python  -m isort  --check-only --diff .
         - run: pip install black && python  -m black --check --diff .
 
   tests:
@@ -72,4 +72,4 @@ jobs:
               sudo chown -R $USER:$USER /data && \
               sudo chmod 777v && \
               cd nhhc && \
-              exit 0;
+              doppler run -- python manage.py test web --keepdb

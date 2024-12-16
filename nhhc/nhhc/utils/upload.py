@@ -62,10 +62,13 @@ class FileValidator(object):
         "content_type": "Files of type %(content_type)s are not supported.",
     }
 
-    def __init__(self, max_size: typing.Optional[int] = None, min_size: typing.Optional[int] = None, content_types: set = ()):
+    def __init__(self, max_size: typing.Optional[int] = None, min_size: typing.Optional[int] = None):
         self.max_size = max_size
         self.min_size = min_size
-        self.content_types = content_types
+        if settings.ALLOWED_UPLOAD_MIME_TYPES:
+            raise AttributeError('Settings Module Must Have a value set for ALLOWED_UPLOAD_MIME_TYPES')
+        self.content_types = settings.ALLOWED_UPLOAD_MIME_TYPES
+
 
     def __call__(self, data):
         if self.max_size is not None and data.size > self.max_size:
@@ -85,7 +88,7 @@ class FileValidator(object):
 
         if file_type not in settings.ALLOWED_UPLOAD_MIME_TYPES:
             raise FileValidationError(self.error_messages["content_type"], "content_type", params)
-
+        return data 
     def __eq__(self, other):
         return isinstance(other, FileValidator) and self.max_size == other.max_size and self.min_size == other.min_size and self.content_types == other.content_types
 
