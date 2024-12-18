@@ -24,6 +24,7 @@ Meta:
 - verbose_name: "Internal Announcement"
 - verbose_name_plural: "Internal Announcements"
 """
+
 import arrow
 from django.conf import settings
 from django.core.cache import cache

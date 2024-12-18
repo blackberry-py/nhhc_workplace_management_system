@@ -21,7 +21,6 @@ For more detailed information on each class and function, refer to the individua
 
 """
 
-
 import json
 import os
 from typing import Any
@@ -48,9 +47,11 @@ from nhhc.utils.upload import S3HANDLER
 
 # SECTION - Contract Related Viewws
 
+
 class SuccessfulUpdate(TemplateView):
     template_name = "successful_update.html"
     extra_context = {"title": "Form Updated Successfully"}
+
 
 class CreateContractFormView(CreateView):
     """
@@ -122,19 +123,19 @@ def signed_attestations(request: HttpRequest) -> HttpResponse:
     Raises:
         HttpResponse(status_code: 422): If an invalid document type is encountered during processing.
     """
-    logger.info('Signed Document Request Recieved From AWS')
+    logger.info("Signed Document Request Recieved From AWS")
     try:
         logger.debug(request.body)
         docuseal_payload = json.loads(request.body)
-        employee_id = docuseal_payload['data']['external_id']
-        document_type = docuseal_payload['data']['template']['name']
+        employee_id = docuseal_payload["data"]["external_id"]
+        document_type = docuseal_payload["data"]["template"]["name"]
         uploading_employee = Employee.objects.get(employee_id=employee_id)
-        document_id = docuseal_payload['data']['template']['id']
+        document_id = docuseal_payload["data"]["template"]["id"]
         doc_type_prefix = S3HANDLER.get_doc_type(document_id)
         employee_upload_suffix = f"{uploading_employee.last_name.lower()}_{uploading_employee.first_name.lower()}.pdf"
-        filepath = os.path.join("attestations",doc_type_prefix,f"{doc_type_prefix}_{employee_upload_suffix}" )
+        filepath = os.path.join("attestations", doc_type_prefix, f"{doc_type_prefix}_{employee_upload_suffix}")
 
-# fmt: off
+        # fmt: off
 
         match document_type:
             case "Nett Hands - Do Not Drive Agreement - 2024":
@@ -164,15 +165,16 @@ def signed_attestations(request: HttpRequest) -> HttpResponse:
             case _:
                 logger.error(f'Invaild Document Type: {document_type} - {document_id}')
                 return HttpResponse(content='Invaild Document Type', status=status.HTTP_406_NOT_ACCEPTABLE)
-    # fmt: on
+        # fmt: on
 
         if S3HANDLER.download_pdf_file(docuseal_payload):
             return HttpResponse(content="Processed File Path", status=status.HTTP_201_CREATED)
         else:
             return HttpResponse(content="Failed to Process File", status=status.HTTP_422_UNPROCESSABLE_ENTITY)
     except Exception as e:
-        logger.error(f'Unable to Assign FilePath: {e}')
+        logger.error(f"Unable to Assign FilePath: {e}")
         return HttpResponse(content="Unable to Assign FilePath", status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
 
 class DocusealCompliaceDocsSigning_IDOA(TemplateView):
     """
@@ -191,13 +193,13 @@ class DocusealCompliaceDocsSigning_IDOA(TemplateView):
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
         context["doc_url"] = "https://docuseal.co/d/r5UbQeVsQgkwUp"
-        context['title'] = "Nett Hands & Illinois Department of Aging General Policies"
+        context["title"] = "Nett Hands & Illinois Department of Aging General Policies"
         return context
-    def dispatch(self, *args, **kwargs):
-            response = super(DocusealCompliaceDocsSigning_IDOA, self).dispatch(*args, **kwargs)
-            response['Access-Control-Allow-Origin'] = "*"
-            return response
 
+    def dispatch(self, *args, **kwargs):
+        response = super(DocusealCompliaceDocsSigning_IDOA, self).dispatch(*args, **kwargs)
+        response["Access-Control-Allow-Origin"] = "*"
+        return response
 
 
 class DocusealCompliaceDocsSigning_HCA(TemplateView):
@@ -217,12 +219,14 @@ class DocusealCompliaceDocsSigning_HCA(TemplateView):
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
         context["doc_url"] = "https://docuseal.co/d/3KA4PP4CEjpy4r"
-        context['title'] = "US Department of Homeland Security - Employment Eligibility Verification"
+        context["title"] = "US Department of Homeland Security - Employment Eligibility Verification"
         return context
+
     def dispatch(self, *args, **kwargs):
-            response = super(DocusealCompliaceDocsSigning_HCA, self).dispatch(*args, **kwargs)
-            response['Access-Control-Allow-Origin'] = "*"
-            return response
+        response = super(DocusealCompliaceDocsSigning_HCA, self).dispatch(*args, **kwargs)
+        response["Access-Control-Allow-Origin"] = "*"
+        return response
+
 
 class DocusealCompliaceDocsSigning_DoNotDrive(TemplateView):
     """
@@ -241,12 +245,13 @@ class DocusealCompliaceDocsSigning_DoNotDrive(TemplateView):
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
         context["doc_url"] = "https://docuseal.co/d/v1FPgz9xgBJVgH"
-        context['title'] = "Nett Hands - Do Not Drive Agreement"
+        context["title"] = "Nett Hands - Do Not Drive Agreement"
         return context
+
     def dispatch(self, *args, **kwargs):
-            response = super(DocusealCompliaceDocsSigning_DoNotDrive, self).dispatch(*args, **kwargs)
-            response['Access-Control-Allow-Origin'] = "*"
-            return response
+        response = super(DocusealCompliaceDocsSigning_DoNotDrive, self).dispatch(*args, **kwargs)
+        response["Access-Control-Allow-Origin"] = "*"
+        return response
 
 
 class DocusealCompliaceDocsSigning_JobDesc(TemplateView):
@@ -266,12 +271,14 @@ class DocusealCompliaceDocsSigning_JobDesc(TemplateView):
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
         context["doc_url"] = "https://docuseal.co/d/KQUEkomQZr1ddD"
-        context['title'] = "Nett Hands Homehealth Care Aide (HCA) Job Desc"
+        context["title"] = "Nett Hands Homehealth Care Aide (HCA) Job Desc"
         return context
+
     def dispatch(self, *args, **kwargs):
-            response = super(DocusealCompliaceDocsSigning_JobDesc, self).dispatch(*args, **kwargs)
-            response['Access-Control-Allow-Origin'] = "*"
-            return response
+        response = super(DocusealCompliaceDocsSigning_JobDesc, self).dispatch(*args, **kwargs)
+        response["Access-Control-Allow-Origin"] = "*"
+        return response
+
 
 class DocusealCompliaceDocsSigning_i9(TemplateView):
     """
@@ -290,12 +297,14 @@ class DocusealCompliaceDocsSigning_i9(TemplateView):
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
         context["doc_url"] = "https://docuseal.co/d/ovQk6ACHqajQvC"
-        context['title'] = "US Department of Homeland Security - Employment Eligibility Verification"
+        context["title"] = "US Department of Homeland Security - Employment Eligibility Verification"
         return context
+
     def dispatch(self, *args, **kwargs):
-            response = super(DocusealCompliaceDocsSigning_i9, self).dispatch(*args, **kwargs)
-            response['Access-Control-Allow-Origin'] = "*"
-            return response
+        response = super(DocusealCompliaceDocsSigning_i9, self).dispatch(*args, **kwargs)
+        response["Access-Control-Allow-Origin"] = "*"
+        return response
+
 
 class DocusealCompliaceDocsSigning_irs_w4(TemplateView):
     """
@@ -314,12 +323,13 @@ class DocusealCompliaceDocsSigning_irs_w4(TemplateView):
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
         context["doc_url"] = "https://docuseal.co/d/wmJGUH3wU2GrUJ"
-        context['title'] = "US Internal Revenue Services - Withholding Certificate"
+        context["title"] = "US Internal Revenue Services - Withholding Certificate"
         return context
+
     def dispatch(self, *args, **kwargs):
-            response = super(DocusealCompliaceDocsSigning_irs_w4, self).dispatch(*args, **kwargs)
-            response['Access-Control-Allow-Origin'] = "*"
-            return response
+        response = super(DocusealCompliaceDocsSigning_irs_w4, self).dispatch(*args, **kwargs)
+        response["Access-Control-Allow-Origin"] = "*"
+        return response
 
 
 class DocusealCompliaceDocsSigning_il_w4(TemplateView):
@@ -339,12 +349,14 @@ class DocusealCompliaceDocsSigning_il_w4(TemplateView):
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
         context["doc_url"] = "https://docuseal.co/d/M6o9cZ4528yk4L"
-        context['title'] = "State of Illinois - Department of Revenue - Withholding Worksheet"
+        context["title"] = "State of Illinois - Department of Revenue - Withholding Worksheet"
         return context
+
     def dispatch(self, *args, **kwargs):
-            response = super(DocusealCompliaceDocsSigning_il_w4, self).dispatch(*args, **kwargs)
-            response['Access-Control-Allow-Origin'] = "*"
-            return response
+        response = super(DocusealCompliaceDocsSigning_il_w4, self).dispatch(*args, **kwargs)
+        response["Access-Control-Allow-Origin"] = "*"
+        return response
+
 
 class DocusealCompliaceDocsSigning_idph_bg_auth(TemplateView):
     """
@@ -363,12 +375,13 @@ class DocusealCompliaceDocsSigning_idph_bg_auth(TemplateView):
         context = super().get_context_data(**kwargs)
         context["employee"] = Employee.objects.get(employee_id=self.request.user.employee_id)
         context["doc_url"] = "https://docuseal.co/d/RiVYseBYUpvrxD"
-        context['title'] = "Health Care Worker Background Check Authorization"
+        context["title"] = "Health Care Worker Background Check Authorization"
         return context
+
     def dispatch(self, *args, **kwargs):
-            response = super(DocusealCompliaceDocsSigning_idph_bg_auth, self).dispatch(*args, **kwargs)
-            response['Access-Control-Allow-Origin'] = "*"
-            return response
+        response = super(DocusealCompliaceDocsSigning_idph_bg_auth, self).dispatch(*args, **kwargs)
+        response["Access-Control-Allow-Origin"] = "*"
+        return response
 
 
 # !SECTION

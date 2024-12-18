@@ -1,8 +1,11 @@
+import os
+
 from django.conf import settings
-from django.core.mail import EmailMessage, EmailMultiAlternatives
+from django.core.mail import EmailMessage, EmailMultiAlternatives, mail_managers
 from django.forms.models import model_to_dict
 from loguru import logger
-import os
+from web.models import ClientInterestSubmission, EmploymentApplicationModel
+
 from nhhc.utils.email_templates import (
     APPLICATION_BODY,
     CLIENT_BODY,
@@ -24,6 +27,7 @@ class PostOffice(EmailMultiAlternatives):
     headers = (None,)
     cc = (None,)
     reply_to = settings.EMAIL_HOST_USER
+    internal_distro_list = settings.MANAGERS
 
     def __init__(self, from_email, reply_to=None):
         if reply_to is None:
@@ -198,7 +202,7 @@ class PostOffice(EmailMultiAlternatives):
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
 
-    def send_internal_new_applicant_notification(self, applicant: dict) -> int:
+    def send_internal_new_applicant_notification(self, applicant: dict) -> bool:
         """
         Trigger Intrernal Notification of a New Application
 
@@ -206,7 +210,7 @@ class PostOffice(EmailMultiAlternatives):
             interested_client (dict) Dictornary representation of the newly hired Applicant's employee model instance
 
         Returns:
-            int Number of emails successfully send
+            bool if emails successfully send
 
 
         Raises:
@@ -222,7 +226,7 @@ class PostOffice(EmailMultiAlternatives):
                 last_name=applicant["last_name"],
                 email=applicant["email"],
                 contact_number=applicant["contact_number"],
-                home_address=applicant["home_address"],
+                home_address=applicant["home_address1"],
                 city=applicant["city"],
                 state=applicant["state"],
                 zipcode=applicant["zipcode"],
@@ -235,13 +239,11 @@ class PostOffice(EmailMultiAlternatives):
                 availability_friday=applicant["availability_friday"],
                 availability_saturday=applicant["availability_saturday"],
                 availability_sunday=applicant["availability_sunday"],
+                url_slug=EmploymentApplicationModel.objects.filter(email=applicant["email"], zipcode=applicant["zipcode"]).order_by("-date_submitted")[0].__dict__["id"],
+                resume_url=applicant["resume_cv"].url,
             )
-            msg = EmailMessage(subject=subject, from_email=self.from_email, reply_to=self.reply_to, to=[to], body=body)
-            sent_emails = msg.send()
-            if sent_emails <= 0:
-                logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
-                raise RuntimeError("Email Not Sents")
-            return sent_emails
+            mail_managers(subject=subject, fail_silently=False, message=body)
+            return True
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
 
@@ -270,14 +272,12 @@ class PostOffice(EmailMultiAlternatives):
                 contact_number=interested_client["contact_number"],
                 zipcode=interested_client["zipcode"],
                 insurance_carrier=interested_client["insurance_carrier"],
+                url_slug=ClientInterestSubmission.objects.filter(email=interested_client["email"], insurance_carrier=interested_client["insurance_carrier"], zipcode=interested_client["zipcode"])
+                .order_by("-date_submitted")[0]
+                .__dict__["id"],
             )
-            msg = EmailMessage(subject=subject, from_email=self.from_email, reply_to=self.reply_to, to=[to], body=body)
-            sent_emails = msg.send()
-            if sent_emails <= 0:
-                logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
-                settings.HIGHLIGHT_MONITORING.record_exception(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
-                raise RuntimeError("Email Not Sents")
-            return sent_emails
+            mail_managers(subject=subject, fail_silently=False, message=body)
+            return True
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
             settings.HIGHLIGHT_MONITORING.record_exception("ERROR: Unable to Send Email - {e}")

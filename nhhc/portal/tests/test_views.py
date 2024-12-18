@@ -143,7 +143,7 @@ class SubmissionDetailTestCase(TestCase):
         )
 
     def test_submission_detail_view(self):
-        url = reverse("client_interest_details", kwargs={"pk": self.submission.pk})
+        url = reverse("web:client_interest_form_details", kwargs={"pk": self.submission.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
         self.assertContains(response, "Client Interest")

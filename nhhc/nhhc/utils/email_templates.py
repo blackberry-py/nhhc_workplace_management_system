@@ -17,6 +17,7 @@ Templates:
     APPLICATION_BODY:str
 		A f-string containing the HTML of the  application submission email
 """
+
 from string import Template
 
 # SECTION - External Email Templates
@@ -1535,6 +1536,8 @@ INTERNAL_APPLICATION_NOTIFICATION: Template = Template(
             Availability Friday: $availability_friday\n
             Availability Saturday: $availability_saturday\n
             Availability Sunday: $availability_sunday\n
+            Link to Resume: $resume_url
+            Link to Application in Carenett: https://netthandshome.care/applicant/$url_slug
             """,
 )
 
@@ -1547,7 +1550,9 @@ INTERNAL_CLIENT_SERVICE_REQUEST_NOTIFICATION: Template = Template(
             Contact Number: $contact_number\n
             Zipcode: $zipcode\n
             Insurance Carrier: $insurance_carrier\n
-            Desired Service: $desired_service
+            Desired Service: $desired_service            
+            Link to Request in Carenett: https://netthandshome.care/inquiries/$url_slug
+
             """,
 )
 # !SECTION

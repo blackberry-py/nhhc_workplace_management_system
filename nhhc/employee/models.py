@@ -133,7 +133,6 @@ employee_cpr_card_uploads = UploadHandler("cpr_verification")
 
 
 class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("employee")):
-
     """
     Represents an employee in the organization and is the Core User Model
 

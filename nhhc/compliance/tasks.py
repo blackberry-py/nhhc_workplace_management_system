@@ -11,7 +11,6 @@ from django.http import HttpRequest, HttpResponse
 from employee.models import Employee
 from loguru import logger
 from rest_framework import status
-from celery import shared_task
 
 
 @shared_task(
