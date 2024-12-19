@@ -72,4 +72,4 @@ jobs:
               sudo chown -R $USER:$USER /data && \
               sudo chmod 777v && \
               cd nhhc && \
-              doppler run -- python manage.py test web --keepdb
+              make test
