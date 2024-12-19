@@ -1108,3 +1108,8 @@ package-lock.json
 nhhc/async_worker_log
 nhhc/flower
 nhhc/monkeytype.sqlite3
+nhhc/nohup.out
+.github/.secrets
+.github/workflows/.env
+nhhc/digital_ocean_postgres_ssl.crt
+nhhc/digital_ocean_postgres_ssl.crt

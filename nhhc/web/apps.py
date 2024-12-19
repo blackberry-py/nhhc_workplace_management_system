@@ -8,7 +8,9 @@ class WebConfig(AppConfig):
 
     def ready(self) -> None:
         super().ready()
-        from nhhc.status import DigitalOceanSpacesHeathCheck, DocSealSigningServiceHealthCheck
+        from nhhc.status import DocSealSigningServiceHealthCheck, CloudObjectStorageBackend, SMTPEmailBackend
 
-        plugin_dir.register(DigitalOceanSpacesHeathCheck)
+        plugin_dir.register(CloudObjectStorageBackend)
+        plugin_dir.register(DocSealSigningServiceHealthCheck)
+        plugin_dir.register(SMTPEmailBackend)
         plugin_dir.register(DocSealSigningServiceHealthCheck)

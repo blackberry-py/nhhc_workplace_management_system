@@ -1,4 +1,4 @@
-{% load i18n %}{% autoescape off %}Hello from NettCare!
+{% load i18n %}{% autoescape off %}Hello from CareNett!
 
 {% block content %}{% endblock content %}
 
@@ -6,5 +6,5 @@
 
 
 --
-Thank you for using NettCare!
+Thank you for using CareNett!
 {% endautoescape %}

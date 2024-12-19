@@ -14,7 +14,6 @@ Both forms utilize the ReCaptchaField for added security.
 
 """
 
-
 from captcha.fields import ReCaptchaField
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Column, Field, Layout, Row, Submit
@@ -132,7 +131,7 @@ class EmploymentApplicationForm(ModelForm):
     def __init__(self, *args, **kwargs):  # pragma: no cover
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.attrs = {"autocomplete": "off"}
+        self.helper.attrs = {"autocomplete": "off", "enctype": "multipart/form-data"}
         self.fields["captcha"].label = False
 
         self.helper.layout = Layout(
@@ -188,7 +187,7 @@ class EmploymentApplicationForm(ModelForm):
                 Column("availability_saturday", css_class="form-group col-md-3 mb-0"),
                 Column("availability_sunday", css_class="form-group col-md-3 mb-0"),
                 css_class="form-row",
-            ),
+            ),1
             HTML(
                 """<h3 class="application-text">Supporting Documents</h3>""",
             ),
@@ -205,26 +204,53 @@ class EmploymentApplicationForm(ModelForm):
 
     def clean(self):
         super().clean()
-        availability_saturday = self.cleaned_data.get("availability_saturday")
-        availability_friday = self.cleaned_data.get("availability_friday")
-        availability_thursday = self.cleaned_data.get("availability_thursday")
-        availability_wednesday = self.cleaned_data.get("availability_wednesday")
-        availability_tuesday = self.cleaned_data.get("availability_tuesday")
-        availability_sunday = self.cleaned_data.get("availability_sunday")
-        availability_monday = self.cleaned_data.get("availability_monday")
 
-        seven_day_availability = [availability_sunday, availability_friday, availability_monday, availability_tuesday, availability_wednesday, availability_thursday, availability_saturday]
+        # Validate availability
+        availability_fields = [
+            "availability_sunday",
+            "availability_monday",
+            "availability_tuesday",
+            "availability_wednesday",
+            "availability_thursday",
+            "availability_friday",
+            "availability_saturday",
+        ]
+        availability_data = [self.cleaned_data.get(day) for day in availability_fields]
 
-        if True not in seven_day_availability:
-            error = forms.ValidationError(_("You Must be Available at least 1 day a week. Please review the Work Availability Section"), code="invalid")
-            self.add_error(error=error, field="availability_monday")
-            self.add_error(error=error, field="availability_tuesday")
-            self.add_error(error=error, field="availability_wednesday")
-            self.add_error(error=error, field="availability_thursday")
-            self.add_error(error=error, field="availability_friday")
-            self.add_error(error=error, field="availability_saturday")
-            self.add_error(error=error, field="availability_sunday")
+        if not any(availability_data):
+            error = forms.ValidationError(
+                _("You must be available at least one day a week."),
+                code="invalid",
+            )
+            for field in availability_fields:
+                self.add_error(field, error)
 
+        if resume_cv := self.cleaned_data.get("resume_cv"):
+            # Validate file size
+            max_size = 1 * 1024 * 1024  # 1 MB
+            if resume_cv.size > max_size:
+                self.add_error(
+                    "resume_cv",
+                    forms.ValidationError(
+                        _("File size must not exceed 1MB."),
+                        code="file_too_large",
+                    ),
+                )
+
+            # Validate MIME type
+            allowed_mime_types = [
+                "application/msword",
+                "application/pdf",
+                "text/plain",
+            ]
+            if resume_cv.content_type not in allowed_mime_types:
+                self.add_error(
+                    "resume_cv",
+                    forms.ValidationError(
+                        _("Invalid file type. Allowed types are .doc, .pdf, and .txt."),
+                        code="invalid_mime_type",
+                    ),
+                )
     class Meta:
         """Meta definition for EmploymentApplicationModelForm."""
 

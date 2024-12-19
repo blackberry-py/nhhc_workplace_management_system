@@ -2,23 +2,25 @@
 
 The `urlpatterns` list routes URLs to views.
 """
+
 import json
 from typing import Callable, Dict, List, Union
 
+import allauth.urls
 import announcements.urls
 import compliance.urls
-import employee.urls
-import portal.urls
-import web.urls
 import defender.urls
-import robots.urls
 import django_prometheus.urls
-import tinymce.urls
+import employee.urls
 import health_check.urls
+import portal.urls
 
 # import maintenance_mode.urls
 import rest_framework.urls
-import allauth.urls
+import robots.urls
+import tinymce.urls
+import web.urls
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.contrib.sitemaps import Sitemap
@@ -27,10 +29,9 @@ from django.shortcuts import render
 from django.urls import include, path, re_path
 from django.urls.resolvers import RegexPattern, RoutePattern
 from django.views.decorators.cache import cache_page
+from django_require_login.mixins import public
 from loguru import logger
 from web.sitemaps import StaticViewSitemap
-from django.conf import settings
-from django_require_login.mixins import public
 
 # SECTION - Sitemap
 sitemaps: Dict[str, Sitemap] = {"static": StaticViewSitemap}
@@ -140,11 +141,11 @@ urlpatterns: List[Union[RoutePattern, RegexPattern]] = [
     re_path(r"^sitemap.xml$\/?", cache_page(60)(sitemaps), {"sitemaps": sitemaps}, name="cached-sitemap"),
     re_path(r"^robots\.txt\/?", include(robots.urls)),
     re_path("", include(django_prometheus.urls), name="metric_scrape"),
-    re_path(r"^status/", include(health_check.urls)),
+    re_path(r"^status/SX2g8DpabBBA1KlZTRcb50F5DtUh2_XUQVSkhU_3_Bc/", include(health_check.urls)),
     path("maintenance/", maintenance_handler, name="maintenance_mode"),
     path("tinymce/", include(tinymce.urls)),
     path("", include(portal.urls)),
-    path("", include(web.urls)),
+    path("", include(web.urls, namespace="web")),
     path("", include(allauth.urls)),
     path("", include(employee.urls)),
     path("", include(announcements.urls)),

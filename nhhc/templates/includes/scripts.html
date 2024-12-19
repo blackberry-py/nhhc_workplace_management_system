@@ -44,8 +44,15 @@
             ],
         },
     });
-    H.identify("{{ request.user.email |default:'anon@anon.com' }}", {
-        highlightDisplayName: "{{ request.user.last_name|default:'User' }}, {{ request.user.first_name|default:'Anon' }}",
+    
+    {% if request.user.is_authenticated %}
+    H.identify("{{ request.user.email}}",
+    highlightDisplayName: "{{ request.user.last_name }}, {{ request.user.first_name }}",
+    {% else %}
+    H.identify("anon@anon.com", {
+        highlightDisplayName: "User.Anon",
+    {%  endif %}
+
         {% if request.user.is_staff %}
             accountType: "staff",
         {% else %}

@@ -9,6 +9,7 @@ The URL patterns include:
 These URL patterns are used to define the routing for the views in the application.
 
 """
+
 from authentication.views import CustomLoginView
 from django.urls import path
 
