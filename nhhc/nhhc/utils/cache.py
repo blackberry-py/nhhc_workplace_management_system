@@ -43,7 +43,7 @@ class CachedResponseMixin:
         """
         user_id = self.request.user.id if self.request.user.is_authenticated else "anon"
         query_params = self.request.GET.urlencode()
-        query_params_hash = hashlib.md5(query_params.encode("utf-8")).hexdigest()
+        query_params_hash = hashlib.md5(query_params.encode("utf-8"), usedforsecurity=False).hexdigest()
 
         # Get the model name(s) associated with the view
         model_names = []
