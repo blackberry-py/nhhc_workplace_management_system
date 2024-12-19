@@ -26,7 +26,6 @@ from formset.widgets import Button, UploadedFileInput
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
 
 
-
 class ClientInterestForm(ModelForm):
     """Form definition for ClientInterestSubmission."""
 
@@ -249,6 +248,7 @@ class EmploymentApplicationForm(ModelForm):
                         code="invalid_mime_type",
                     ),
                 )
+
     class Meta:
         """Meta definition for EmploymentApplicationModelForm."""
 

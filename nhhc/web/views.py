@@ -74,7 +74,7 @@ class ClientInterestFormView(CachedResponseMixin, PublicViewMixin, FormView):
         form.save()
         process_new_client_interest(form.cleaned_data)
         return HttpResponsePermanentRedirect(reverse("web:form_submission_success"), {"type": "Client Interest Form"})
-        
+
     @public
     def get(self, request):
         form = ClientInterestForm()
@@ -94,7 +94,6 @@ class ClientInterestFormView(CachedResponseMixin, PublicViewMixin, FormView):
             failed_submission_attempts.labels(application_type="client-interest").inc()
             logger.error("Form Is Invalid")
             return HttpResponseRedirect(reverse("web:client_interest_form"), {"errors": form.errors})
-
 
 
 class EmploymentApplicationFormView(CachedResponseMixin, PublicViewMixin, FormView):
@@ -119,7 +118,7 @@ class EmploymentApplicationFormView(CachedResponseMixin, PublicViewMixin, FormVi
             return EmploymentApplicationForm(self.request.POST, self.request.FILES)
         else:
             return EmploymentApplicationForm()
-                                    
+
     @public
     def get(self, request):
         form = EmploymentApplicationForm()
@@ -132,14 +131,14 @@ class EmploymentApplicationFormView(CachedResponseMixin, PublicViewMixin, FormVi
         context = {}
         form = EmploymentApplicationForm(request.POST, request.FILES)
         if form.is_valid():
-            if request.FILES.get('resume_cv'):
-                resume = request.FILES['resume_cv']
+            if request.FILES.get("resume_cv"):
+                resume = request.FILES["resume_cv"]
                 return self.form_valid(form, resume)
             return self.form_valid(form)
-     
+
         context = {"form": self.get_form()}
         context["form_errors"] = form.errors
-        logger.warning(f'Form Failed Invalid: {form.errors.as_text}')
+        logger.warning(f"Form Failed Invalid: {form.errors.as_text}")
         failed_submission_attempts.labels(application_type="employment").inc()
         return HttpResponseRedirect(reverse("web:employment_application_form"), context)
 

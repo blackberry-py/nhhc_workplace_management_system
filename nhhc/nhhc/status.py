@@ -2,32 +2,28 @@ import datetime
 import hashlib
 import json
 import os
-from django.core.mail import EmailMessage
 import random
 import re
-import requests
 import time
 from collections import Counter
 from contextlib import suppress
 from os import PathLike
-from redis.backoff import ExponentialBackoff
-from redis.retry import Retry
-from redis.client import Redis
-from redis.exceptions import (
-   BusyLoadingError,
-   ConnectionError,
-   TimeoutError
-)
+
 import boto3
 import psycopg2
 import redis
 import requests
 from django.conf import settings
+from django.core.mail import EmailMessage
 from faker import Faker
 from health_check.backends import BaseHealthCheckBackend
 from health_check.exceptions import ServiceUnavailable
 from health_check.storage.backends import StorageHealthCheck
 from loguru import logger
+from redis.backoff import ExponentialBackoff
+from redis.client import Redis
+from redis.exceptions import BusyLoadingError, ConnectionError, TimeoutError
+from redis.retry import Retry
 
 from nhhc.backends.storage_backends import PrivateMediaStorage
 
@@ -168,13 +164,11 @@ class DocSealSigningServiceHealthCheck(BaseHealthCheckBackend):
         return self.__class__.__name__
 
 
-class CloudObjectStorageBackend(BaseHealthCheckBackend):                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+class CloudObjectStorageBackend(BaseHealthCheckBackend):
     def check_s3_health(self):
         """Check the health of an S3 bucket."""
         try:
-            s3 = boto3.client(
-                "s3", region_name=settings.AWS_S3_REGION_NAME, aws_access_key_id=settings.AWS_ACCESS_KEY_ID, aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
-            )
+            s3 = boto3.client("s3", region_name=settings.AWS_S3_REGION_NAME, aws_access_key_id=settings.AWS_ACCESS_KEY_ID, aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
             s3.head_bucket(Bucket=settings.AWS_STORAGE_BUCKET_NAME)
             return {"s3": "healthy"}
         except Exception as e:
@@ -184,7 +178,6 @@ class CloudObjectStorageBackend(BaseHealthCheckBackend):
     def check_status(self):
         """Perform all health checks and return a summary."""
         return self.check_s3_health()
-        
 
 
 class SMTPEmailBackend(BaseHealthCheckBackend):
@@ -193,10 +186,11 @@ class SMTPEmailBackend(BaseHealthCheckBackend):
             test_email = EmailMessage(subject="Healthcheck Email", from_email=settings.SERVER_EMAIL, to=[settings.SMTP_TEST_EMAIL_ADDRESS], body="Health Check Email")
             if test_email.send(fail_silently=False) == 1:
                 return True
-            raise ServiceUnavailable('SMTP Server Unavailable: Test Email Not Sent')
-        except Exception as e :
+            raise ServiceUnavailable("SMTP Server Unavailable: Test Email Not Sent")
+        except Exception as e:
             logger.error(f"SMTP Server Unavailable: {e}")
-            raise ServiceUnavailable(f"SMTP Server Unavailable: {e}") from  e
+            raise ServiceUnavailable(f"SMTP Server Unavailable: {e}") from e
+
     def check_status(self):
         """Perform all health checks and return a summary."""
         return self.send_test_email()
