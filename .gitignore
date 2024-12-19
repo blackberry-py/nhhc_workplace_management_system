@@ -1111,3 +1111,5 @@ nhhc/monkeytype.sqlite3
 nhhc/nohup.out
 .github/.secrets
 .github/workflows/.env
+nhhc/digital_ocean_postgres_ssl.crt
+nhhc/digital_ocean_postgres_ssl.crt
