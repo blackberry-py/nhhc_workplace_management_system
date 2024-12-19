@@ -1113,3 +1113,5 @@ nhhc/nohup.out
 .github/workflows/.env
 nhhc/digital_ocean_postgres_ssl.crt
 nhhc/digital_ocean_postgres_ssl.crt
+node_modules
+digital_ocean_postgres_ssl.crt
