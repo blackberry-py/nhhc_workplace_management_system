@@ -2,7 +2,7 @@ name: General Test and Deploy
 on: push
 jobs:
   setup-virtualenv:
-    runs-on: ubuntu-latest]
+    runs-on: ubuntu-latest
     env:
       DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
       DOPPLER_PROJECT: ${{ vars.DOPPLER_PROJECT }}
