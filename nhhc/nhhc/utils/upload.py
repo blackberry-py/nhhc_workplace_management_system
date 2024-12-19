@@ -5,7 +5,6 @@ This module contains classes and functions related to handling file uploads and 
 
 Classes:
 - FileValidationError: Custom exception for file validation errors.
-- FileValidator: Class for validating file properties such as size and content type.
 - UploadHandler: Class for handling file uploads to S3 with customized file naming.
 - ProgressPercentage: Class for tracking upload progress.
 - S3HANDLER: Class for uploading and downloading files to and from S3.
@@ -52,39 +51,6 @@ class FileValidationError(AttributeError):
     """Custom exception for file validation errors."""
 
     pass
-
-
-@deconstructible
-class FileValidator(object):
-    max_size = 2000000 #bytes
-    error_messages = {
-        "max_size": ("Ensure this file size is not greater than %(max_size)s." " Your file size is %(size)s."),
-        "min_size": ("Ensure this file size is not less than %(min_size)s. " "Your file size is %(size)s."),
-        "content_type": "Files of type %(content_type)s are not supported.",
-    }
- 
-    if settings.ALLOWED_UPLOAD_MIME_TYPES:
-        content_types = settings.ALLOWED_UPLOAD_MIME_TYPEScontent_types 
-    else:
-        raise AttributeError('Settings Module Must Have a value set for ALLOWED_UPLOAD_MIME_TYPES')
-
-    @staticmethod
-    def validate(data):
-        with open(data, 'rb') as validating_file:
-             if validating_file.size >FileValidator.max_size :
-                params = {
-                    "max_size": filesizeformat(FileValidator.max_size),
-                    "size": filesizeformat(validating_file.size),
-                }
-                raise FileValidationError(FileValidator.error_messages["max_size"], "max_size", params)
-
-        file = guess(validating_file)
-        file_type = file.mime
-                
-        if file_type not in FileValidator.content_types:
-            raise FileValidationError(FileValidator.error_messages["content_type"], "content_type", params)
-    def __eq__(self, other):
-        return isinstance(other, FileValidator) and self.max_size == other.max_size and self.min_size == other.min_size and self.content_types == other.content_types
 
 
 @deconstructible
