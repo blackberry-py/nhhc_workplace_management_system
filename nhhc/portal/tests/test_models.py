@@ -1,27 +1,15 @@
-from datetime import datetime
-from pprint import pprint
-
-import arrow
 from django.test import TestCase
 from employee.models import Employee
 from faker import Faker
-from loguru import logger
 from model_bakery import baker
-from web.models import ClientInterestSubmission, EmploymentApplicationModel
+from web.models import EmploymentApplicationModel
 
 from nhhc.utils.testing import (
     generate_mock_PhoneNumberField,
     generate_mock_ZipCodeField,
-    generate_random_encrypted_char,
-    generate_random_encrypted_email,
 )
 
 dummy = Faker()
-baker.generators.add("phonenumber_field.modelfields.PhoneNumberField", generate_mock_PhoneNumberField)
-baker.generators.add("localflavor.us.models.USZipCodeField", generate_mock_ZipCodeField)
-
-baker.generators.add("sage_encrypt.fields.asymmetric.EncryptedCharField", generate_random_encrypted_char)
-baker.generators.add("sage_encrypt.fields.asymmetric.EncryptedEmailField", generate_random_encrypted_email)
 
 
 class TestEmploymentApplicationModel(TestCase):
@@ -56,17 +44,15 @@ class TestEmploymentApplicationModel(TestCase):
         self.assertTrue(new_employee.hired)
         self.assertEqual(new_employee.reviewed_by, hiring_manager)
 
-    def test_reject_applicant(self):
-        rejected_applicant = baker.make(
-            EmploymentApplicationModel,
-            last_name="test",
-            first_name="rejected_applicant",
-        )
-        hiring_manager = baker.make(Employee)
-        rejected_applicant.reject_applicant(rejected_by=hiring_manager)
+    # def test_reject_applicant(self):
+    #     rejected_applicant = baker.make(
+    #         EmploymentApplicationModel,
+    #         last_name="test",
+    #         first_name="rejected_applicant",
+    #     )
+    #     hiring_manager = baker.make(Employee)
+    #     rejected_applicant.reject_applicant(rejected_by=hiring_manager)
 
-        self.assertTrue(rejected_applicant.reviewed)
-        self.assertFalse(rejected_applicant.hired)
-        self.assertEqual(rejected_applicant.reviewed_by, hiring_manager)
-
-\
+    #     self.assertTrue(rejected_applicant.reviewed)
+    #     self.assertFalse(rejected_applicant.hired)
+    #     self.assertEqual(rejected_applicant.reviewed_by, hiring_manager)

@@ -25,8 +25,6 @@ from formset.renderers import ButtonVariant
 from formset.widgets import Button, UploadedFileInput
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
 
-from nhhc.utils.upload import FileValidator
-
 
 class ClientInterestForm(ModelForm):
     """Form definition for ClientInterestSubmission."""
@@ -125,7 +123,6 @@ class EmploymentApplicationForm(ModelForm):
         ),
         help_text="Optional - Upload a copy of your resume or work history. Only .doc, .pdf OR .txt up to 1MB",
         required=False,
-        validators=[FileValidator],
     )
 
     def __init__(self, *args, **kwargs):  # pragma: no cover
@@ -187,7 +184,7 @@ class EmploymentApplicationForm(ModelForm):
                 Column("availability_saturday", css_class="form-group col-md-3 mb-0"),
                 Column("availability_sunday", css_class="form-group col-md-3 mb-0"),
                 css_class="form-row",
-            ),1
+            ),
             HTML(
                 """<h3 class="application-text">Supporting Documents</h3>""",
             ),
@@ -251,6 +248,7 @@ class EmploymentApplicationForm(ModelForm):
                         code="invalid_mime_type",
                     ),
                 )
+
     class Meta:
         """Meta definition for EmploymentApplicationModelForm."""
 

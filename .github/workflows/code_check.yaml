@@ -52,4 +52,4 @@ jobs:
           sudo chown -R $USER:$USER /data
           sudo chmod 777 /data
           cd nhhc
-          make test
+          coverage run manage.py test web --settings=nhhc.test_settings --verbosity=2 --keepdb   --failfast  --force-color

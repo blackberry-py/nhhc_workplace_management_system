@@ -4,12 +4,12 @@ import django_extensions.db.fields
 import django_prometheus.models
 import employee.models
 import localflavor.us.models
-import nhhc.utils.upload
 import phonenumber_field.modelfields
 import sage_encrypt.fields.asymmetric
+from django.contrib.postgres.operations import CryptoExtension
 from django.db import migrations, models
 
-from django.contrib.postgres.operations import CryptoExtension
+import nhhc.utils.upload
 
 
 class Migration(migrations.Migration):
@@ -20,7 +20,8 @@ class Migration(migrations.Migration):
         ("auth", "0012_alter_user_first_name_max_length"),
     ]
 
-    operations = [CryptoExtension(),
+    operations = [
+        CryptoExtension(),
         migrations.CreateModel(
             name="Employee",
             fields=[
