@@ -19,7 +19,7 @@ venv: ## Make a new virtual environment
 
 .PHONY: collect
 collect:
-	doppler -t $(TOKEN) run -- python  $(DOCKER_PATH)manage.py collectstatic --no-input
+	doppler run -- python  manage.py collectstatic --no-input
 
 .PHONY: install
 install: ## Make venv and install requirements
@@ -30,8 +30,8 @@ freeze: ## Pin current dependencies
 	$(BIN)/pip freeze > ../requirements.txt
 
 migrate: ## Make and run migrations
-	doppler run -t $(TOKEN)  --  	python $(DOCKER_PATH)manage.py makemigrations
-	doppler run -t $(TOKEN)  --  	python $(DOCKER_PATH)manage.py migrate
+	doppler run   --  	python manage.py makemigrations
+	doppler run  --  	python manage.py migrate
 
 lint:
 	doppler run -t $(TOKEN)  --  prospector  -w  pylint pyroma mypy dodgy mccabe bandit profile-validator > prospector_results_${CURRENTDATE}.json
@@ -45,7 +45,7 @@ workers:
 
 .PHONY: test
 test: ## Run tests
-	doppler run -- coverage run manage.py test web   --verbosity=2 --keepdb   --failfast  --force-color
+	doppler run -- coverage run manage.py test web --settings=nhhc.test_settings --verbosity=2 --keepdb   --failfast  --force-color
 
 .PHONY: test
 pipeline-test: ## Run tests
@@ -58,20 +58,20 @@ flower: workers
 
 .PHONY: 	docs
 docs:
-	nohup doppler run -t $(DOPPL/Users/terry-brooks/Documents/NettHands/.venvER_TOKEN) -- cd ./docs && docsify serve docs
+	nohup doppler run  -- cd ./docs && docsify serve docs
 
 .PHONY: run
 run:
-	doppler run -t $(TOKEN)  -- python manage.py runserver 9555
+	doppler run   -- python manage.py runserver 9555
 
 .PHONY: debug
 debug: ## Run the Django server
-	doppler run -t $(TOKEN)  --  	kolo run manage.py runserver --noreload --nothreading
+	doppler run   --  	kolo run manage.py runserver --noreload --nothreading
 
 .PHONY: admin
 admin:
-	doppler run -t $(TOKEN)  --   python manage.py createsuperuser --no-input
+	doppler run --   python manage.py createsuperuser --no-input
 
 .PHONY: start
 start: flower
-	doppler run  --  gunicorn --workers=2  --threads=2 nhhc.wsgi:application -b :8080
+	doppler run  --  gunicorn --workers=2  --threads=2 nhhc.wsgi:application -b :9090

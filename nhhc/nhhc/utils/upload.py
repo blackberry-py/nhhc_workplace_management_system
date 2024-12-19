@@ -56,40 +56,33 @@ class FileValidationError(AttributeError):
 
 @deconstructible
 class FileValidator(object):
+    max_size = 2000000 #bytes
     error_messages = {
         "max_size": ("Ensure this file size is not greater than %(max_size)s." " Your file size is %(size)s."),
         "min_size": ("Ensure this file size is not less than %(min_size)s. " "Your file size is %(size)s."),
         "content_type": "Files of type %(content_type)s are not supported.",
     }
+ 
+    if settings.ALLOWED_UPLOAD_MIME_TYPES:
+        content_types = settings.ALLOWED_UPLOAD_MIME_TYPEScontent_types 
+    else:
+        raise AttributeError('Settings Module Must Have a value set for ALLOWED_UPLOAD_MIME_TYPES')
 
-    def __init__(self, max_size: typing.Optional[int] = None, min_size: typing.Optional[int] = None):
-        self.max_size = max_size
-        self.min_size = min_size
+    @staticmethod
+    def validate(data):
+        with open(data, 'rb') as validating_file:
+             if validating_file.size >FileValidator.max_size :
+                params = {
+                    "max_size": filesizeformat(FileValidator.max_size),
+                    "size": filesizeformat(validating_file.size),
+                }
+                raise FileValidationError(FileValidator.error_messages["max_size"], "max_size", params)
 
-        if not settings.ALLOWED_UPLOAD_MIME_TYPES:
-            raise AttributeError('Settings Module Must Have a value set for ALLOWED_UPLOAD_MIME_TYPES')
-        self.content_types = settings.ALLOWED_UPLOAD_MIME_TYPES
-
-
-    def __call__(self, data):
-        if self.max_size is not None and data.size > self.max_size:
-            params = {
-                "max_size": filesizeformat(self.max_size),
-                "size": filesizeformat(data.size),
-            }
-            raise FileValidationError(self.error_messages["max_size"], "max_size", params)
-
-        if self.min_size is not None and data.size < self.min_size:
-            params = {"min_size": filesizeformat(self.min_size), "size": filesizeformat(data.size)}
-            raise FileValidationError(self.error_messages["min_size"], "min_size", params)
-
-        if self.content_types:
-            file = guess(data)
-            file_type = file.mime
-
-        if file_type not in settings.ALLOWED_UPLOAD_MIME_TYPES:
-            raise FileValidationError(self.error_messages["content_type"], "content_type", params)
-        return data 
+        file = guess(validating_file)
+        file_type = file.mime
+                
+        if file_type not in FileValidator.content_types:
+            raise FileValidationError(FileValidator.error_messages["content_type"], "content_type", params)
     def __eq__(self, other):
         return isinstance(other, FileValidator) and self.max_size == other.max_size and self.min_size == other.min_size and self.content_types == other.content_types
 
@@ -102,7 +95,7 @@ class UploadHandler(FileUploadHandler):
             "s3", region_name="nyc3", endpoint_url="https://nyc3.digitaloceanspaces.com", aws_access_key_id=os.environ["SPACES_KEY"], aws_secret_access_key=os.environ["SPACES_SECRET"]
         )
 
-    def receive_data_chunk(raw_data, start):
+    def receive_data_chunk(self, raw_data, start):
         pass
 
     def generate_randomized_file_name(

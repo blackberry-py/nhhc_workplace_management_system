@@ -27,14 +27,13 @@ from web.tasks import process_new_application, process_new_client_interest
 
 from nhhc.utils.cache import CachedResponseMixin
 from nhhc.utils.helpers import CachedTemplateView
-from nhhc.utils.upload import S3HANDLER, FileValidator
+from nhhc.utils.upload import S3HANDLER
 
 CACHE_TTL: int = settings.CACHE_TTL
 
 failed_submission_attempts = Counter("failed_submission_attempts", "Metric Counter for the Number of Application or Client Interest Submission attempts that failed validation", ["application_type"])
 
 
-resume_validator = FileValidator(max_size=100)
 # SECTION - Page Rendering Views
 @method_decorator(require_safe, name="dispatch")
 class HomePageView(CachedResponseMixin, PublicViewMixin, CachedTemplateView):
@@ -74,7 +73,7 @@ class ClientInterestFormView(CachedResponseMixin, PublicViewMixin, FormView):
         logger.debug("Form Is Valid")
         form.save()
         process_new_client_interest(form.cleaned_data)
-        return HttpResponsePermanentRedirect(reverse("submitted"), {"type": "Client Interest Form"})
+        return HttpResponsePermanentRedirect(reverse("web:form_submission_success"), {"type": "Client Interest Form"})
         
     @public
     def get(self, request):
@@ -94,7 +93,7 @@ class ClientInterestFormView(CachedResponseMixin, PublicViewMixin, FormView):
             context["form_errors"] = form.errors
             failed_submission_attempts.labels(application_type="client-interest").inc()
             logger.error("Form Is Invalid")
-            return HttpResponseRedirect(reverse("client_interest"), {"errors": form.errors})
+            return HttpResponseRedirect(reverse("web:client_interest_form"), {"errors": form.errors})
 
 
 
@@ -109,7 +108,7 @@ class EmploymentApplicationFormView(CachedResponseMixin, PublicViewMixin, FormVi
         logger.debug("Form Is Valid")
         formdata = form.cleaned_data
         formdata["contact_number"] = str(form["contact_number"])
-        if resume:
+        if resume is not None:
             formdata["resume_cv"] = resume.file.path
         process_new_application.delay(formdata)
         form.save()
@@ -134,9 +133,7 @@ class EmploymentApplicationFormView(CachedResponseMixin, PublicViewMixin, FormVi
         form = EmploymentApplicationForm(request.POST, request.FILES)
         if form.is_valid():
             if request.FILES.get('resume_cv'):
-                resume = resume_validator()
-
-                logger.debug(resume)
+                resume = request.FILES['resume_cv']
                 return self.form_valid(form, resume)
             return self.form_valid(form)
      

@@ -234,12 +234,7 @@ DATABASES = {
 DATABASES["default"]["NAME"] =  os.environ["POSTGRES_DATABASE"]
 
 DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = True
-DATABASES["default"]['TEST'] = {
-            "DEPENDENCIES": ["default"],
-            "MIRROR": 'default',
 
-
-}
 
 # SECTION - Database Encryption
 ENCRYPT_KEY = os.environ["ENCRYPT_KEY"]
@@ -358,7 +353,7 @@ PASSWORD_HASHERS = [
 
 ]
 
-ACCOUNT_EMAIL_REQUIRED = True3
+ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = False
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_EMAIL_SUBJECT_PREFIX = "CareNett - Nett Hands Home Care - Caregiver Portal - "
@@ -574,7 +569,7 @@ DEBUG_TOOLBAR_PANELS = [
     "debug_toolbar.panels.cache.CachePanel",
     "debug_toolbar.panels.signals.SignalsPanel",
     "debug_toolbar.panels.logging.LoggingPanel",
-    "debug_toolbar.panels.redirect3s.RedirectsPanel",
+    "debug_toolbar.panels.redirects.RedirectsPanel",
     "debug_toolbar.panels.profiling.ProfilingPanel",
     "mail_panel.panels.MailToolbarPanel",
 ]
@@ -592,7 +587,7 @@ JAZZMIN_SETTINGS = {
     "login_logo": "img/logo-dark.png",
     # Logo to use for login form in dark themes (defaults to login_logo)
     "login_logo_dark": None,
-    # CSS classes that are applied to the logo above
+    # CSS classes thaet are applied to the logo above
     "site_logo_classes": "img-circle",
     # Relative path to a favicon for your site, will default to site_logo if absent (ideally 32x32 px)
     "site_icon": "img/favicon.png",
