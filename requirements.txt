@@ -64,7 +64,6 @@ django-progressbarupload==0.1.7
 django-prometheus==2.3.1
 django-recaptcha==3.0.0
 django-redis==5.4.0
-django-redis-cache==3.0.1
 django-referrer-policy==1.0
 django-request==1.6.3
 django-require-login==1.1.4

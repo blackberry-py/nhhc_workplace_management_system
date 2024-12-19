@@ -310,6 +310,7 @@ AUTH_USER_MODEL = "employee.Employee"
 AUTH_PROFILE_MODULE = "authentication.UserProfile"
 DEFENDER_REDIS_URL = os.environ["DEFENDER_REDIS_CACHE_TOKEN"]
 DEFENDER_BEHIND_REVERSE_PROXY = True
+DEFENDER_LOCK_OUT_BY_IP_AND_USERNAME = Truep
 DEFENDER_REVERSE_PROXY_HEADER = "nhhc_chicago"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 ADMINRESTRICT_ENABLE_CACHE = True
