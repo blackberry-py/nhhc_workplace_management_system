@@ -1115,3 +1115,4 @@ nhhc/digital_ocean_postgres_ssl.crt
 nhhc/digital_ocean_postgres_ssl.crt
 node_modules
 digital_ocean_postgres_ssl.crt
+nhhc/async_worker_log.sqlite

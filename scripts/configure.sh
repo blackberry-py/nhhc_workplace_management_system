@@ -81,7 +81,7 @@ cleanup() {
         rm -f "$TEMP_DOCKER_SCRIPT" "$TEMP_NODE_EXPORTER_TARBALL" "$TEMP_NODE_EXPORTER_DIR"
     fi
 }
-trap cleanup EXIT
+trap "echo The script is terminated; cleanup; exit" SIGINT  EXIT
 
 # Check if the script is run as root
 check_root() {
