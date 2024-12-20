@@ -224,7 +224,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 DATABASES = {
     "default": dj_database_url.config(
-        default=f'postgresql://{os.environ["POSTGRES_USER"]}:{os.environ["POSTGRES_PASSWORD"]}@{os.environ["POSTGRES_HOST"]}:25061?sslmode=require&sslrootcert={os.environ['DB_CERT_PATH']}',
+        default=f'postgresql://{os.environ["POSTGRES_USER"]}:{os.environ["POSTGRES_PASSWORD"]}@{os.environ["POSTGRES_HOST"]}:25061?sslmode=require&sslrootcert={os.environ["DB_CERT_PATH"]}',
         conn_max_age=600,
         conn_health_checks=True,
     ),
