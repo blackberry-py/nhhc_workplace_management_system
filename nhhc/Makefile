@@ -40,7 +40,7 @@ db-shell: ## Access the Postgres Docker database interactively with psql. Pass i
 	docker exec -it container_name psql -d $(DBNAME)
 .PHONY: 	docs
 docs:
-	nohup doppler run  -- cd ./docs && docsify serve docs &
+	nohup doppler run  --commands="cd ./docs && npx docsify serve docs" &
 .PHONY: workers
 workers: docs
 	doppler run   --  celery -A nhhc worker -D --loglevel debug 

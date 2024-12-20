@@ -163,6 +163,7 @@ install_python_and_dependencies() {
 
     # Set Doppler token securely
     DOPPLER_ENV_FILE="/etc/profile.d/doppler.sh"
+    sudo chmod 600 "$DOPPLER_ENV_FILE" || true
     echo "export DOPPLER_TOKEN=${TOKEN}" | sudo tee "$DOPPLER_ENV_FILE" >/dev/null || error_exit "Failed to set Doppler token."
     sudo chmod +x "$DOPPLER_ENV_FILE" || error_exit "Failed to set execute permission on Doppler environment file."
 
@@ -286,7 +287,7 @@ install_prometheus_node_exporter() {
     TEMP_NODE_EXPORTER_TARBALL="/tmp/$NODE_EXPORTER_TARBALL"
     TEMP_NODE_EXPORTER_DIR="/tmp/$NODE_EXPORTER_DIR"
 
-    wget -q "$NODE_EXPORTER_URL" -O "$TEMP_NODE_EXPORTER_TARBALL" || error_exit "Failed to download Node Exporter from $NODE_EXPORTER_URL."
+    wget -q --tries=3 --timeout=15 "$NODE_EXPORTER_URL" -O "$TEMP_NODE_EXPORTER_TARBALL" || error_exit "Failed to download Node Exporter from $NODE_EXPORTER_URL."
     tar -xzf "$TEMP_NODE_EXPORTER_TARBALL" -C /tmp || error_exit "Failed to extract Node Exporter tarball."
 
     sudo mv "/tmp/${NODE_EXPORTER_DIR}/node_exporter" /usr/bin/ || error_exit "Failed to move node_exporter to /usr/bin/."

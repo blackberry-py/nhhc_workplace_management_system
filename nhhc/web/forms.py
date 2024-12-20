@@ -26,6 +26,7 @@ from formset.widgets import Button, UploadedFileInput
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
 
 
+
 class ClientInterestForm(ModelForm):
     """Form definition for ClientInterestSubmission."""
 
@@ -224,7 +225,7 @@ class EmploymentApplicationForm(ModelForm):
 
         if resume_cv := self.cleaned_data.get("resume_cv"):
             # Validate file size
-            max_size = 1 * 1024 * 1024  # 1 MB
+            max_size = 2 * 1024 * 1024  # 2 MB
             if resume_cv.size > max_size:
                 self.add_error(
                     "resume_cv",
@@ -248,7 +249,6 @@ class EmploymentApplicationForm(ModelForm):
                         code="invalid_mime_type",
                     ),
                 )
-
     class Meta:
         """Meta definition for EmploymentApplicationModelForm."""
 
