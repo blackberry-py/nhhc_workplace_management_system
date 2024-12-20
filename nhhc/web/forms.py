@@ -26,7 +26,6 @@ from formset.widgets import Button, UploadedFileInput
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
 
 
-
 class ClientInterestForm(ModelForm):
     """Form definition for ClientInterestSubmission."""
 
