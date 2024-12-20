@@ -46,7 +46,15 @@ log() {
     local message="$2"
     local timestamp
     timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-    echo "$timestamp [$level] $message" | tee -a "$LOG_FILE"
+    local icon="🔧"
+    if [ $level == "WARN" ]
+    then
+        $icon = "⚠️"
+    elif [ $level == "ERROR" ]
+    then
+        $icon = "‼️"
+    fi  
+    echo "$timestamp [$icon $level] $message" | tee -a "$LOG_FILE"
 }
 
 log_info() {
