@@ -79,7 +79,7 @@ SHELL ["/bin/bash", "-c"]
 ENTRYPOINT [ "doppler run -- python3" ]
 
 # Healthcheck command
-HEALTHCHECK --interval=30s --timeout=30s --start-period=30s --retries=3 \
+HEALTHCHECK --interval=60s --timeout=120s --start-period=60s --retries=5 \
     CMD curl -f http://localhost:8080/status/SX2g8DpabBBA1KlZTRcb50F5DtUh2_XUQVSkhU_3_Bc/ || exit 1
 
 # Command to run the Gunicorn server
