@@ -196,8 +196,8 @@ install_docker() {
     if ! getent group docker &>/dev/null; then
         sudo groupadd docker || error_exit "Failed to create docker group."
     fi
-
-    sudo usermod -aG docker "$SUDO_USER" || error_exit "Failed to add user to docker group."
+    
+    sudo usermod -aG docker "${SUDO_USER:-root}" || error_exit "Failed to add user to docker group."
 
     # Inform user to relog for group changes to take effect
     log_warn "Docker installed. Please log out and log back in for group changes to take effect."
