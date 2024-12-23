@@ -378,21 +378,31 @@ setup() {
     # Install Python and dependencies
     install_python_and_dependencies &
 
+    # Collect PIDs for background tasks
+    PIDS=()
+
     # Install Docker and Prometheus Node Exporter in parallel if not bypassed
     if [[ "$BYPASS_DOCKER" = false ]]; then
         install_docker &
+        PIDS+=($!)
     else
         log_info "Bypassing Docker installation as per user request."
     fi
 
     if [[ "$BYPASS_PROMETHEUS" = false ]]; then
         install_prometheus_node_exporter &
+        PIDS+=($!)
     else
         log_info "Bypassing Prometheus Node Exporter installation as per user request."
     fi
 
     # Wait for background jobs to finish
-    wait
+    for PID in "${PIDS[@]}"; do
+        wait "$PID"
+        if [[ $? -ne 0 ]]; then
+            error_exit "A background job with PID $PID failed."
+        fi
+    done
 
     # Configure Apache if not bypassed
     if [[ "$BYPASS_APACHE" = false ]]; then
@@ -403,7 +413,6 @@ setup() {
 
     log_info "All selected components installed and configured successfully!"
 }
-
 ############################################################
 # Pre-execution Checks                                     #
 ############################################################
