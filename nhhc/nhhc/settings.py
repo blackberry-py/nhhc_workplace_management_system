@@ -25,6 +25,7 @@ from redis.retry import Retry
 # ************************************************************************************
 DEBUG = False  # DO NOT MODIFY DEBUG DIRECTLY. ADJUST THE `DJANGO_ENV` ENVIORNMENT VAR!
 if os.environ["DJANGO_ENV"].lower() != "production".lower():
+if os.environ["DJANGO_ENV"].lower() != "production".lower():
     DEBUG = True
 else:
     assert not DEBUG, "DEBUG mode must be OFF in production!"
@@ -382,7 +383,7 @@ AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
 AWS_S3_REGION_NAME = os.environ["AWS_S3_REGION_NAME"]
 AWS_STORAGE_BUCKET_NAME = os.environ["AWS_STORAGE_BUCKET_NAME"]
 AWS_DEFAULT_ACL = "private"
-AWS_S3_CUSTOM_DOMAIN = os.environ["AWS_S3_CUSTOM_DOMAIM"]
+AWS_S3_CUSTOM_DOMAIN = os.environ['AWS_S3_CUSTOM_DOMAIN']
 AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
 AWS_S3_SIGNATURE_VERSION = "s3v4"
 AWS_QUERYSTRING_EXPIRE = 3600
@@ -399,7 +400,7 @@ BUNNY_HOSTNAME = os.environ["BUNNY_HOSTNAME"]
 BUNNY_BASE_DIR = os.environ["BUNNY_BASE_DIR"]
 # !SECTION
 STATIC_LOCATION = "static/production/"
-STATIC_URL = f"{os.environ["AWS_S3_CUSTOM_DOMAIM"]}/{STATIC_LOCATION}"
+STATIC_URL = f"{os.environ['AWS_S3_CUSTOM_DOMAIN']}/{STATIC_LOCATION}"
 STATIC_ROOT = STATIC_URL
 STATIC_HOST = "" if DEBUG else STATIC_URL
 WHITENOISE_MANIFEST_STRICT = False
@@ -412,14 +413,14 @@ STATICFILES_DIRS = [
 
 # SECTION -  S3 public media settings
 PUBLIC_MEDIA_LOCATION = "media/"
-MEDIA_URL =  f"{os.environ["AWS_S3_CUSTOM_DOMAIM"]}/{PUBLIC_MEDIA_LOCATION}"
+MEDIA_URL =  f"{os.environ['AWS_S3_CUSTOM_DOMAIN']}/{PUBLIC_MEDIA_LOCATION}"
 # !SECTION
 
 # SECTION - S3 private media settings
 PRIVATE_MEDIA_LOCATION = "restricted/"
 MEDIA_DIRECTORY = "/restricted/compliance/"
 PRIVATE_FILE_STORAGE = "nhhc.backends.storage_backends.PrivateMediaStorage"
-PRIVATE_MEDIA_URL =  f"{os.environ["AWS_S3_CUSTOM_DOMAIM"]}/{PRIVATE_MEDIA_LOCATION}"
+PRIVATE_MEDIA_URL =  f"{os.environ['AWS_S3_CUSTOM_DOMAIN']}/{PRIVATE_MEDIA_LOCATION}"
 
 # !SECTION
 # SECTION - File Management
