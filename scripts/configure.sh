@@ -1,18 +1,44 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+
 ############################################################
 # Constants and Variables                                  #
 ############################################################
 SCRIPT_NAME=$(basename "$0")
 LOG_FILE="/var/log/${SCRIPT_NAME%.*}.log"
+TEMP_DOCKER_SCRIPT="/tmp/get-docker.sh"
+TEMP_NODE_EXPORTER_TARBALL=""
+TEMP_NODE_EXPORTER_DIR=""
 
 # Initialize default values
 BYPASS_DOCKER=false
 BYPASS_APACHE=false
 BYPASS_PROMETHEUS=false
+BYPASS_PYTHON=false
 DRY_RUN=false
 
+############################################################
+# Main function                                           #
+############################################################
+main() {
+    # Initialize log file
+    touch "$LOG_FILE" || error_exit "Cannot create log file at $LOG_FILE."
+
+    check_root
+    check_dependencies
+
+    # Detect package manager
+    if command -v apt-get &>/dev/null; then
+        PACKAGE_MANAGER="apt-get"
+    elif command -v yum &>/dev/null; then
+        PACKAGE_MANAGER="yum"
+    else
+        error_exit "No supported package manager found (apt-get or yum)."
+    fi
+
+    setup "$@"
+}
 ############################################################
 # Usage                                                    #
 ############################################################
@@ -29,6 +55,7 @@ Arguments:
 
 Options:
   --bypass-docker     Bypass Docker installation.
+  --bypass-python     Bypass Python3 and b333asic dependency Installation.
   --bypass-apache     Bypass Apache2 installation.
   --bypass-prometheus Bypass Prometheus Node Exporter installation.
   --dry-run           Perform a trial run with no changes made.
@@ -47,19 +74,13 @@ log() {
     local timestamp
     timestamp=$(date '+%Y-%m-%d %H:%M:%S')
     local icon="🔧"
-    if [ $level == "WARN" ]
-    then
-        $icon = "⚠️"
-    elif [ $level == "ERROR" ]
-    then
-        $icon = "‼️"
-    fi  
+    if [ "$level" = "WARN" ]; then
+        icon="⚠️"
+    elif [ "$level" = "ERROR" ]; then
+        icon="‼️"
+    fi
     echo "$timestamp [$icon $level] $message" | tee -a "$LOG_FILE"
-}
-
-log_info() {
-    log "INFO" "$1"
-}
+    }
 
 log_warn() {
     log "WARN" "$1"
@@ -69,6 +90,9 @@ log_error() {
     log "ERROR" "$1" >&2
 }
 
+log_info(){
+	log "INFO" "$1"
+}
 # Exit with error after logging
 error_exit() {
     log_error "$1"
@@ -92,7 +116,7 @@ check_root() {
 
 # Check for required commands
 check_dependencies() {
-    local dependencies=(sudo wget curl tar jq systemctl ufw apache2 apache2-utils)
+    local dependencies=(sudo wget curl tar jq systemctl ufw)
     for cmd in "${dependencies[@]}"; do
         if ! command -v "$cmd" &>/dev/null; then
             error_exit "Required command '$cmd' is not installed. Please install it and retry."
@@ -114,8 +138,8 @@ install_python_and_dependencies() {
 
     # Update and install base packages
     if [[ "$PACKAGE_MANAGER" == "apt-get" ]]; then
-        sudo apt-get update -y || error_exit "apt-get update failed."
-        sudo apt-get install -y --no-install-recommends \
+        sudo apt update -y || error_exit "apt-get update failed."
+        sudo apt install -y --no-install-recommends \
             apt-transport-https \
             ca-certificates \
             apache2-utils \
@@ -123,6 +147,7 @@ install_python_and_dependencies() {
             python3-certbot-apache \
             direnv \
             python3-pip \
+            argon2 \
             curl \
             libenchant-2-dev \
             gnupg \
@@ -159,8 +184,8 @@ install_python_and_dependencies() {
         sudo mv "$TEMP_DOPPLER_KEY" /usr/share/keyrings/doppler-archive-keyring.gpg || error_exit "Failed to move Doppler GPG key."
         echo "deb [signed-by=/usr/share/keyrings/doppler-archive-keyring.gpg] https://packages.doppler.com/public/cli/deb/debian any-version main" \
             | sudo tee "$TEMP_DOPPLER_LIST" >/dev/null || error_exit "Failed to add Doppler repository."
-        sudo apt-get update -y || error_exit "apt-get update failed after adding Doppler repository."
-        sudo apt-get install -y --no-install-recommends doppler=3.68.0 build-essential || error_exit "Failed to install Doppler and build-essential."
+        sudo apt update -y || error_exit "apt-get update failed after adding Doppler repository."
+        sudo apt install -y --no-install-recommends doppler=3.68.0 build-essential || error_exit "Failed to install Doppler and build-essential."
     elif [[ "$PACKAGE_MANAGER" == "yum" ]]; then
         # Yum repository setup if applicable
         error_exit "Doppler repository setup for yum is not implemented."
@@ -202,8 +227,6 @@ install_docker() {
     # Inform user to relog for group changes to take effect
     log_warn "Docker installed. Please log out and log back in for group changes to take effect."
 
-    # Pull Docker image
-    docker pull terrybrooks/netthands:amd64-aug24 || error_exit "Failed to pull Docker image terrybrooks/netthands:amd64-aug24."
 
     log_info "Docker installed and user added to docker group."
 }
@@ -282,12 +305,11 @@ install_prometheus_node_exporter() {
         return
     fi
 
-    # Dynamically fetch the latest Node Exporter version
-    NODE_EXPORTER_VERSION=$(curl -s https://api.github.com/repos/prometheus/node_exporter/releases/latest | jq -r '.tag_name') || error_exit "Failed to fetch Node Exporter version."
-    NODE_EXPORTER_URL="https://github.com/prometheus/node_exporter/releases/download/${NODE_EXPORTER_VERSION}/node_exporter-${NODE_EXPORTER_VERSION}.linux-amd64.tar.gz"
-    NODE_EXPORTER_TARBALL="node_exporter-${NODE_EXPORTER_VERSION}.linux-amd64.tar.gz"
-    NODE_EXPORTER_DIR="node_exporter-${NODE_EXPORTER_VERSION}.linux-amd64"
-
+   #$# # Dynamically fetch the latest Node Exporter version
+   NODE_EXPORTER_VERSION=$(curl -s https://api.github.com/repos/prometheus/node_exporter/releases/latest | jq -r '.tag_name') || error_exit "Failed to fetch Node Exporter version."
+    NODE_EXPORTER_URL="https://github.com/prometheus/node_exporter/releases/download/${NODE_EXPORTER_VERSION}/node_exporter-${NODE_EXPORTER_VERSION:1}.linux-amd64.tar.gz"
+    NODE_EXPORTER_TARBALL="node_exporter-${NODE_EXPORTER_VERSION:1}.linux-amd64.tar.gz"
+    NODE_EXPORTER_DIR="node_exporter-${NODE_EXPORTER_VERSION:1}.linux-amd64"
     # Create system group and user
     sudo groupadd workerGroup &>/dev/null || true
     sudo useradd -g workerGroup nodeExporterUser &>/dev/null || true
@@ -332,8 +354,45 @@ EOF
 ############################################################
 
 setup() {
+    # Initialize arrays for options and positional arguments
+    local options=()
+    local positional_args=()
+
+    # Parse the arguments
     while [[ $# -gt 0 ]]; do
         case "$1" in
+            --bypass-docker|--bypass-apache|--bypass-prometheus|--dry-run|--bypass-python)
+                options+=("$1")
+                ;;
+            -h|--help)
+                usage
+                exit 0
+                ;;
+            --*)
+                error_exit "Unknown option: $1"
+                ;;
+            *)
+                positional_args+=("$1")
+                ;;
+        esac
+        shift
+    done
+
+    # Assign positional arguments
+    if [[ "${#positional_args[@]}" -lt 3 ]]; then
+        usage
+        error_exit "Insufficient arguments provided. You must provide doppler_project, doppler_config, and doppler_token."
+    fi
+    PROJECT="${positional_args[0]}"
+    CONFIG="${positional_args[1]}"
+    TOKEN="${positional_args[2]}"
+
+    # Assign options to their respective variables
+    for option in "${options[@]}"; do
+        case "$option" in
+        	--bypass--python)
+        	    BYPASS_PYTHON=true
+        	    ;;
             --bypass-docker)
                 BYPASS_DOCKER=true
                 ;;
@@ -346,40 +405,26 @@ setup() {
             --dry-run)
                 DRY_RUN=true
                 ;;
-            -h|--help)
-                usage
-                exit 0
-                ;;
-            *)
-                error_exit "Unknown option: $1"
-                ;;
         esac
-        shift
     done
 
-    # Validate required arguments
-    if [[ $# -lt 3 ]]; then
-        usage
-        error_exit "Insufficient arguments provided."
-    fi
-
-    PROJECT="$1"
-    CONFIG="$2"
-    TOKEN="$3"
-    shift 3
-
-    # Input validation
+    # Input validation for positional arguments
     if [[ -z "$PROJECT" || -z "$CONFIG" || -z "$TOKEN" ]]; then
         error_exit "All three arguments (doppler_project, doppler_config, doppler_token) are required."
     fi
 
     log_info "Starting setup with Project: $PROJECT, Config: $CONFIG."
 
-    # Install Python and dependencies
-    install_python_and_dependencies &
-
     # Collect PIDs for background tasks
     PIDS=()
+
+    # Install Python and dependencies
+    if [[ "$BYPASS_PYTHON" = false ]]; then
+        install_python_and_dependencies &
+        PIDS+=($!)
+    else
+        log_info "Bypassing Python3 installation as per user request."
+    fi
 
     # Install Docker and Prometheus Node Exporter in parallel if not bypassed
     if [[ "$BYPASS_DOCKER" = false ]]; then
@@ -413,27 +458,10 @@ setup() {
 
     log_info "All selected components installed and configured successfully!"
 }
-############################################################
-# Pre-execution Checks                                     #
-############################################################
 
-# Initialize log file
-touch "$LOG_FILE" || error_exit "Cannot create log file at $LOG_FILE."
-
-check_root
-check_dependencies
-
-# Detect package manager
-if command -v apt-get &>/dev/null; then
-    PACKAGE_MANAGER="apt-get"
-elif command -v yum &>/dev/null; then
-    PACKAGE_MANAGER="yum"
-else
-    error_exit "No supported package manager found (apt-get or yum)."
-fi
 
 ############################################################
 # Script Entry Point                                       #
 ############################################################
 
-setup "$@"
+main "$@"
