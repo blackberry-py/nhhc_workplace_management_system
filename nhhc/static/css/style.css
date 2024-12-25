@@ -2470,3 +2470,7 @@ ul.form-errors-list{
   border: 1px dotted white;
   height: 150px;
 }
+img#check {
+  height: 133px;
+  margin-bottom: -40px;
+}
