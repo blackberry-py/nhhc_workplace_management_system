@@ -36,7 +36,7 @@ class PostOffice(EmailMultiAlternatives):
         self.reply_to = reply_to
         super().__init__()
 
-    def send_external_application_submission_confirmation(self, applicant: dict) -> int:
+    def send_external_application_submission_confirmation(self, applicant: dict) -> bool:
         """
         Sends a confirmation email for a new employment interest or client interest submission.
 
@@ -44,7 +44,7 @@ class PostOffice(EmailMultiAlternatives):
             form (ClientInterestForm | EmploymentApplicationForm): The form containing the submitted information.
 
         Returns:
-            int
+            bool
 
         Raises:
             Exception: If the email transmission fails.
@@ -65,14 +65,14 @@ class PostOffice(EmailMultiAlternatives):
         html_content = APPLICATION_BODY.substitute(first_name=applicant["first_name"])
         text_content = PLAIN_TEXT_APPLICATION_BODY.substitute(first_name=applicant["first_name"])
 
-        msg = EmailMultiAlternatives(subject=subject, to=[to], body=text_content, from_email=os.getenv("EMAIL_USER"), reply_to=[os.getenv("EMAIL_USER")])
+        msg = EmailMultiAlternatives(subject=subject, to=[to], body=text_content, from_email=self.from_email, reply_to=[self.reply_to])
         msg.attach_alternative(html_content, content_subtype)
         sent_emails: int = msg.send()
         if sent_emails <= 0:
             logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
             raise RuntimeError("Email Not Sents")
         logger.info(f"Number of External Emails Sent:{sent_emails}")
-        return sent_emails
+        return True
 
     def send_external_client_submission_confirmation(self, interested_client: dict) -> None:
         """
@@ -101,10 +101,11 @@ class PostOffice(EmailMultiAlternatives):
             if sent_emails <= 0:
                 logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
                 raise RuntimeError("Email Not Sents")
-            return sent_emails
+            return True
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
             settings.HIGHLIGHT_MONITORING.record_exception(f"ERROR: Unable to Send Email - {e}")
+            return False
 
     def send_external_applicant_rejection_email(self, rejected_applicant: dict) -> int:
         """
@@ -220,7 +221,6 @@ class PostOffice(EmailMultiAlternatives):
             applicant = model_to_dict(applicant)
         try:
             subject: str = f"NOTICE: New Application For Employment - {applicant['last_name']}, {applicant['first_name']}!"
-            to: list = settings.INTERNAL_SUBMISSION_NOTIFICATION_EMAILS
             body = INTERNAL_APPLICATION_NOTIFICATION.substitute(
                 first_name=applicant["first_name"],
                 last_name=applicant["last_name"],
@@ -240,7 +240,7 @@ class PostOffice(EmailMultiAlternatives):
                 availability_saturday=applicant["availability_saturday"],
                 availability_sunday=applicant["availability_sunday"],
                 url_slug=EmploymentApplicationModel.objects.filter(email=applicant["email"], zipcode=applicant["zipcode"]).order_by("-date_submitted")[0].__dict__["id"],
-                resume_url=applicant["resume_cv"].url,
+                resume_url=applicant["resume_cv"]
             )
             mail_managers(subject=subject, fail_silently=False, message=body)
             return True

@@ -24,7 +24,7 @@ from redis.retry import Retry
 # The Settings in this section modify the entire operations of the application. Change with Caution
 # ************************************************************************************
 DEBUG = False  # DO NOT MODIFY DEBUG DIRECTLY. ADJUST THE `DJANGO_ENV` ENVIORNMENT VAR!
-if os.environ["DJANGO_ENV"] != "production":
+if os.environ["DJANGO_ENV"].lower() != "production".lower():
     DEBUG = True
 else:
     assert not DEBUG, "DEBUG mode must be OFF in production!"
@@ -167,6 +167,8 @@ INSTALLED_APPS = [
     "formset",
     "django_filters",
     "localflavor",
+    # "django_htmlmin",
+
     "captcha",
     "django_celery_beat",
     "corsheaders",
@@ -179,7 +181,6 @@ INSTALLED_APPS = [
     "health_check.contrib.celery",
     "health_check.contrib.celery_ping",
     "sage_encrypt",
-    "anymail",
     "robots",
     "defender",
     "django_celery_results",
@@ -203,6 +204,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",  # 4
     "corsheaders.middleware.CorsMiddleware",  # 5
     "django.middleware.cache.UpdateCacheMiddleware",  # 6
+    "htmlmin.middleware.HtmlMinifyMiddleware",
     "django.middleware.common.CommonMiddleware",  # 7
     "django.middleware.csrf.CsrfViewMiddleware",  # 8
     "django.contrib.auth.middleware.AuthenticationMiddleware",  # 9
@@ -213,7 +215,9 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",  # 13
     "request.middleware.RequestMiddleware",  # 15
     "django_prometheus.middleware.PrometheusAfterMiddleware",  # 16
-    "django.middleware.cache.FetchFromCacheMiddleware",  # 17 (moved to the end)
+    "django.middleware.cache.FetchFromCacheMiddleware",
+    "htmlmin.middleware.MarkRequestMiddleware",
+  # 17 (moved to the end)
     # "nhhc.middleware.maintenance.MaintenanceModeMiddleware",   # Uncomment if needed
 ]
 # SECTION - Database and Caching
@@ -224,7 +228,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 DATABASES = {
     "default": dj_database_url.config(
-        default=f'postgresql://{os.environ["POSTGRES_USER"]}:{os.environ["POSTGRES_PASSWORD"]}@{os.environ["POSTGRES_HOST"]}:25061?sslmode=require&sslrootcert={os.environ['DB_CERT_PATH']}',
+        default=f'postgresql://{os.environ["POSTGRES_USER"]}:{os.environ["POSTGRES_PASSWORD"]}@{os.environ["POSTGRES_HOST"]}:25061?sslmode=require&sslrootcert={os.environ["DB_CERT_PATH"]}',
         conn_max_age=600,
         conn_health_checks=True,
     ),
@@ -308,7 +312,7 @@ AUTH_USER_MODEL = "employee.Employee"
 AUTH_PROFILE_MODULE = "authentication.UserProfile"
 DEFENDER_REDIS_URL = os.environ["DEFENDER_REDIS_CACHE_TOKEN"]
 DEFENDER_BEHIND_REVERSE_PROXY = True
-DEFENDER_LOCK_OUT_BY_IP_AND_USERNAME = Truep
+DEFENDER_LOCK_OUT_BY_IP_AND_USERNAME = True
 DEFENDER_REVERSE_PROXY_HEADER = "nhhc_chicago"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 ADMINRESTRICT_ENABLE_CACHE = True
@@ -375,10 +379,10 @@ FILE_UPLOAD_TEMP_DIR = os.environ["FILE_UPLOAD_TEMP_DIR"]
 # SECTION - AWS settings
 AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]
 AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
-AWS_S3_REGION_NAME = "us-east-1"
+AWS_S3_REGION_NAME = os.environ["AWS_S3_REGION_NAME"]
 AWS_STORAGE_BUCKET_NAME = os.environ["AWS_STORAGE_BUCKET_NAME"]
 AWS_DEFAULT_ACL = "private"
-# AWS_S3_CUSTOM_DOMAIN = os.environ["DIGITAL_OCEAN_SPACES_ENDPOINT"]
+AWS_S3_CUSTOM_DOMAIN = os.environ["AWS_S3_CUSTOM_DOMAIM"]
 AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
 AWS_S3_SIGNATURE_VERSION = "s3v4"
 AWS_QUERYSTRING_EXPIRE = 3600
@@ -394,8 +398,8 @@ BUNNY_REGION = os.environ["BUNNY_REGION"]
 BUNNY_HOSTNAME = os.environ["BUNNY_HOSTNAME"]
 BUNNY_BASE_DIR = os.environ["BUNNY_BASE_DIR"]
 # !SECTION
-STATIC_LOCATION = "staticfiles/"
-STATIC_URL = "https://cdn.netthandshome.care/staticfiles/"
+STATIC_LOCATION = "static/production/"
+STATIC_URL = f"{os.environ["AWS_S3_CUSTOM_DOMAIM"]}/{STATIC_LOCATION}"
 STATIC_ROOT = STATIC_URL
 STATIC_HOST = "" if DEBUG else STATIC_URL
 WHITENOISE_MANIFEST_STRICT = False
@@ -403,20 +407,19 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static/"),
     os.path.join(BASE_DIR, "static", "vendor"),
 ]
-STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
 # !SECTION
 
 # SECTION -  S3 public media settings
 PUBLIC_MEDIA_LOCATION = "media/"
-MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/{PUBLIC_MEDIA_LOCATION}"
+MEDIA_URL =  f"{os.environ["AWS_S3_CUSTOM_DOMAIM"]}/{PUBLIC_MEDIA_LOCATION}"
 # !SECTION
 
 # SECTION - S3 private media settings
 PRIVATE_MEDIA_LOCATION = "restricted/"
 MEDIA_DIRECTORY = "/restricted/compliance/"
 PRIVATE_FILE_STORAGE = "nhhc.backends.storage_backends.PrivateMediaStorage"
-PRIVATE_MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/{PRIVATE_MEDIA_LOCATION}"
+PRIVATE_MEDIA_URL =  f"{os.environ["AWS_S3_CUSTOM_DOMAIM"]}/{PRIVATE_MEDIA_LOCATION}"
 
 # !SECTION
 # SECTION - File Management
@@ -431,6 +434,7 @@ STORAGES = {
 # !SECTION
 
 # SECTION - Templates
+HTML_MINIFY = True
 TEMPLATE_DIR = [
     os.path.join(BASE_DIR, "templates"),
     os.path.join(BASE_DIR, "web", "templates"),
@@ -461,7 +465,6 @@ TEMPLATES = [
 # !SECTION
 
 # SECTION - Logging
-logger.remove()
 logger.remove()
 
 

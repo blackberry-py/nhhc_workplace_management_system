@@ -2,6 +2,9 @@
 Module: web_views.py
 Description: This module contains views for rendering web pages, processing form data, and sending email notifications.
 """
+import json
+
+from django.core.files.base import ContentFile
 
 from django.conf import settings
 from django.forms import model_to_dict
@@ -71,8 +74,10 @@ class ClientInterestFormView(CachedResponseMixin, PublicViewMixin, FormView):
     def form_valid(self, form: ClientInterestForm) -> HttpResponse:
         """If the form is valid, redirect to the supplied URL."""
         logger.debug("Form Is Valid")
+        formdata = form.cleaned_data
+        formdata['contact_number'] = str(form.cleaned_data['contact_number'])
         form.save()
-        process_new_client_interest(form.cleaned_data)
+        process_new_client_interest.delay(form.cleaned_data)
         return HttpResponsePermanentRedirect(reverse("web:form_submission_success"), {"type": "Client Interest Form"})
 
     @public
@@ -107,10 +112,12 @@ class EmploymentApplicationFormView(CachedResponseMixin, PublicViewMixin, FormVi
         logger.debug("Form Is Valid")
         formdata = form.cleaned_data
         formdata["contact_number"] = str(form["contact_number"])
-        if resume is not None:
-            formdata["resume_cv"] = resume.file.path
-        process_new_application.delay(formdata)
         form.save()
+        if resume is not None:
+            formdata['resume_cv'] = resume.name
+
+        process_new_application.delay(formdata)
+
         return HttpResponseRedirect(reverse("web:form_submission_success"), {"type": "Employment Interest Form"})
 
     def get_form(self, form_class=None):
@@ -135,12 +142,12 @@ class EmploymentApplicationFormView(CachedResponseMixin, PublicViewMixin, FormVi
                 resume = request.FILES["resume_cv"]
                 return self.form_valid(form, resume)
             return self.form_valid(form)
-
-        context = {"form": self.get_form()}
-        context["form_errors"] = form.errors
-        logger.warning(f"Form Failed Invalid: {form.errors.as_text}")
-        failed_submission_attempts.labels(application_type="employment").inc()
-        return HttpResponseRedirect(reverse("web:employment_application_form"), context)
+        else:
+            context["form_errors"] = form.errors
+            context = {"form": self.get_form()}
+            logger.warning(f"Form Failed Invalid: {form.errors.as_text}")
+            failed_submission_attempts.labels(application_type="employment").inc()
+            return render(request,  "employee-interest.html", context)
 
 
 @public

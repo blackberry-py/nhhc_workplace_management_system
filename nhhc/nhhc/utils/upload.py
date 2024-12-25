@@ -47,18 +47,16 @@ s3_upload_recorder = Histogram("s3_upload_duration", "Metric of the Durtation of
 docuseal_download_recorder = Histogram("docuseal_download_duration", "Metric of the Durtation of downloading singed  Compliance Documents from the DocSeal External Signing Service to /tmp storage.")
 
 
-class FileValidationError(AttributeError):
-    """Custom exception for file validation errors."""
-
-    pass
-
-
 @deconstructible
 class UploadHandler(FileUploadHandler):
     def __init__(self, upload_type):
         self.s3_path = upload_type
         self.s3_client = boto3.client(
-            "s3", region_name="nyc3", endpoint_url="https://nyc3.digitaloceanspaces.com", aws_access_key_id=os.environ["SPACES_KEY"], aws_secret_access_key=os.environ["SPACES_SECRET"]
+            "s3",
+            region_name=os.environ["AWS_S3_REGION_NAME"],
+            endpoint_url=os.environ["AWS_S3_ENDPOINT_URL"],
+            aws_access_key_id=os.environ["AWS_SES_ACCESS_KEY_ID"],
+            aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
         )
 
     def receive_data_chunk(self, raw_data, start):
@@ -126,7 +124,7 @@ class S3HANDLER(FileSystemStorage):
 
         # Upload the file
         s3_client = boto3.client(
-            "s3", region_name="nyc3", endpoint_url="https://nyc3.digitaloceanspaces.com", aws_access_key_id=os.environ["SPACES_KEY"], aws_secret_access_key=os.environ["SPACES_SECRET"]
+            "s3", region_name=os.environ["AWS_S3_REGION_NAME"], endpoint_url=os.environ["AWS_S3_ENDPOINT_URL"], aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"], aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"]
         )
         try:
             s3_client.upload_file(file_name, bucket, object_name, Callback=ProgressPercentage(file_name))
