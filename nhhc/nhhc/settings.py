@@ -25,7 +25,6 @@ from redis.retry import Retry
 # ************************************************************************************
 DEBUG = False  # DO NOT MODIFY DEBUG DIRECTLY. ADJUST THE `DJANGO_ENV` ENVIORNMENT VAR!
 if os.environ["DJANGO_ENV"].lower() != "production".lower():
-if os.environ["DJANGO_ENV"].lower() != "production".lower():
     DEBUG = True
 else:
     assert not DEBUG, "DEBUG mode must be OFF in production!"
