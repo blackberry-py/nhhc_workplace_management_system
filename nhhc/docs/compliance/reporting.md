@@ -1,0 +1,4 @@
+# Reporting
+
+## Available Report Types
+

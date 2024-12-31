@@ -7,12 +7,6 @@ from loguru import logger
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
 from tenacity import retry, stop_after_attempt, wait_exponential
 
-    def __init__(self, from_email=settings.DEFAULT_FROM_EMAIL, reply_to=settings.DEFAULT_FROM_EMAIL):
-        self.from_email = from_email
-        self.reply_to = reply_to
-        self.logger = logging.getLogger(__name__)
-        super().__init__()
-
 
 from nhhc.utils.email_templates import (
     APPLICATION_BODY,
@@ -37,14 +31,20 @@ class PostOffice(EmailMultiAlternatives):
     cc = (None,)
     reply_to = settings.EMAIL_HOST_USER
     internal_distro_list = settings.MANAGERS
+    MAIL_RETRY_MULTIPLIER = 1
+    MAIL_RETRY_MIN_WAIT = 4
+    MAIL_RETRY_MAX_WAIT = 10
+    MAX_ATTEMPTS = stop_after_attempt(3)
+    WAIT_STRATEGY= wait_exponential(multiplier=MAIL_RETRY_MULTIPLIER, min=MAIL_RETRY_MIN_WAIT, max=MAIL_RETRY_MAX_WAIT)
+  
 
     def __init__(self, from_email=settings.DEFAULT_FROM_EMAIL, reply_to=settings.DEFAULT_FROM_EMAIL):
         self.from_email = from_email
         self.reply_to = reply_to
         super().__init__()
     @retry(
-        stop=stop_after_attempt(3),
-        wait=wait_exponential(multiplier=1, min=4, max=10),
+        stop=MAX_ATTEMPTS,
+        wait=WAIT_STRATEGY,
         reraise=True
     )
     def send_external_application_submission_confirmation(self, applicant: dict) -> bool:
@@ -86,8 +86,8 @@ class PostOffice(EmailMultiAlternatives):
         logger.info(f"Number of External Emails Sent:{sent_emails}")
         return True
     @retry(
-        stop=stop_after_attempt(3),
-        wait=wait_exponential(multiplier=1, min=4, max=10),
+        stop=MAX_ATTEMPTS,
+        wait=WAIT_STRATEGY,
         reraise=True
     )
     def send_external_client_submission_confirmation(self, interested_client: dict) -> None:
@@ -124,8 +124,8 @@ class PostOffice(EmailMultiAlternatives):
             raise ElectronicMailTransmissionError(f'Exception Raised During EMail Transmission:{e}') from e
      
     @retry(
-        stop=stop_after_attempt(3),
-        wait=wait_exponential(multiplier=1, min=4, max=10),
+        stop=MAX_ATTEMPTS,
+        wait=WAIT_STRATEGY,
         reraise=True
     )
     def send_external_applicant_rejection_email(self, rejected_applicant: dict) -> int:
@@ -163,8 +163,8 @@ class PostOffice(EmailMultiAlternatives):
             raise ElectronicMailTransmissionError(f'Exception Raised During EMail Transmission:{e}') from e
     
     @retry(
-        stop=stop_after_attempt(3),
-        wait=wait_exponential(multiplier=1, min=4, max=10),
+        stop=MAX_ATTEMPTS,
+        wait=WAIT_STRATEGY,
         reraise=True
     )
     def send_external_applicant_termination_email(self, terminated_employee: dict) -> int:
@@ -199,8 +199,8 @@ class PostOffice(EmailMultiAlternatives):
             logger.trace(f"ERROR: Unable to Send Email - {e}")
             raise ElectronicMailTransmissionError(f'Exception Raised During EMail Transmission:{e}') from e
     @retry(
-        stop=stop_after_attempt(3),
-        wait=wait_exponential(multiplier=1, min=4, max=10),
+        stop=MAX_ATTEMPTS,
+        wait=WAIT_STRATEGY,
         reraise=True
     )
     def send_external_applicant_new_hire_onboarding_email(self, new_hire: dict) -> int:
@@ -236,8 +236,8 @@ class PostOffice(EmailMultiAlternatives):
             logger.trace(f"ERROR: Unable to Send Email - {e}")
             raise ElectronicMailTransmissionError(f'Exception Raised During Email Transmission:{e}') from e
     @retry(
-            stop=stop_after_attempt(3),
-            wait=wait_exponential(multiplier=1, min=4, max=10),
+            stop=MAX_ATTEMPTS,
+            wait=WAIT_STRATEGY,
             reraise=True
         )
     def send_internal_new_applicant_notification(self, applicant: dict) -> bool:
@@ -285,8 +285,8 @@ class PostOffice(EmailMultiAlternatives):
             logger.trace(f"ERROR: Unable to Send Email - {e}")
             raise ElectronicMailTransmissionError(f'Exception Raised During EMail Transmission:{e}') from e
     @retry(
-        stop=stop_after_attempt(3),
-        wait=wait_exponential(multiplier=1, min=4, max=10),
+        stop=MAX_ATTEMPTS,
+        wait=WAIT_STRATEGY,
         reraise=True
     )
     def send_internal_new_client_service_request_notification(self, interested_client: dict) -> int:

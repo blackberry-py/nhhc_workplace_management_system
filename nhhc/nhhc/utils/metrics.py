@@ -1,7 +1,6 @@
 from prometheus_client import Counter, Histogram
 
-\
-\from prometheus_client import Counter, Histogram
+from prometheus_client import Counter, Histogram
 
 
 class NHHCMetrics:
