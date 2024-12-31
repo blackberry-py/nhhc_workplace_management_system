@@ -7,9 +7,10 @@ set -euo pipefail
 ############################################################
 SCRIPT_NAME=$(basename "$0")
 LOG_FILE="/var/log/${SCRIPT_NAME%.*}.log"
-TEMP_DOCKER_SCRIPT="/tmp/get-docker.sh"
-TEMP_NODE_EXPORTER_TARBALL=""
-TEMP_NODE_EXPORTER_DIR=""
+TEMP_DOCKER_SCRIPT=$(mktemp)
+TEMP_NODE_EXPORTER_TARBALL=$(mktemp)
+TEMP_NODE_EXPORTER_DIR=$(mktemp -d)
+
 
 # Initialize default values
 BYPASS_DOCKER=false
@@ -283,7 +284,7 @@ EOF
     fi
 
     sudo a2ensite default-ssl &>/dev/null || error_exit "Failed to enable default-ssl site."
-
+ 
     # Validate Apache configuration
     if ! sudo apachectl configtest &>/dev/null; then
         error_exit "Apache configuration test failed."
@@ -444,6 +445,7 @@ setup() {
     # Wait for background jobs to finish
     for PID in "${PIDS[@]}"; do
         wait "$PID"
+        # shellcheck disable=SC2181
         if [[ $? -ne 0 ]]; then
             error_exit "A background job with PID $PID failed."
         fi

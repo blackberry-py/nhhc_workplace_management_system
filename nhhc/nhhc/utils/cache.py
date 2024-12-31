@@ -8,18 +8,9 @@ from django.dispatch import receiver
 from django.http.response import JsonResponse
 from django.template.response import TemplateResponse
 from loguru import logger
-from prometheus_client import Counter
-from redis.exceptions import LockNotOwnedError
 from rest_framework import status
 from rest_framework.response import Response
-
-cached_queryset_hit = Counter("cached_queryset_hit", "Number of requests served by a cached Queryset", ["model"])
-cached_queryset_miss = Counter(
-    "cached_queryset_miss",
-    "Number of  requests not served by a cached Queryset",
-    ["model"],
-)
-cached_queryset_evicted = Counter("cached_queryset_evicted", "Number of cached Querysets evicted", ["model"])
+from nhhc.utils.metrics import metrics
 
 
 class CachedResponseMixin:
@@ -77,11 +68,11 @@ class CachedResponseMixin:
         cached_data = cache.get(cache_key)
         if cached_data is not None:
             logger.debug(f"Cache Hit for {self.primary_model.__name__} - Cache Key: {cache_key}")
-            cached_queryset_hit.labels(model=self.primary_model.__name__).inc()
+            metrics.increment_cache(model=self.primary_model.__name__,type="hit")
             return Response(cached_data, status=status.HTTP_200_OK)
         else:
             logger.debug(f"Cache Miss for {self.primary_model.__name__}  - Cache Key: {cache_key}")
-            cached_queryset_miss.labels(model=self.primary_model.__name__).inc()
+            metrics.increment_cache(model=self.primary_model.__name__,type="miss")
             return None
 
     def cache_response(self, cache_key, data):
@@ -167,6 +158,7 @@ def invalidate_cache(sender, **kwargs):
     logger.debug(f'Searching For Cache Key Pattern" {cache_key_pattern}')
     if cache_keys := cache.keys(cache_key_pattern):
         cache.delete_many(cache_keys)
+        metrics.increment_cache(model=self.primary_model.__name__,type="eviction")
         logger.info(f"Cache invalidated for model: {model_name}")
     else:
         logger.debug(f"No cache keys found for model: {model_name} using {cache_key_pattern}")

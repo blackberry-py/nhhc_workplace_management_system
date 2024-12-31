@@ -15,7 +15,8 @@ from django.http import (
     HttpResponsePermanentRedirect,
     HttpResponseRedirect,
 )
-from django.shortcuts import render, reverse
+from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.templatetags.static import static
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -23,21 +24,18 @@ from django.views.decorators.http import require_safe
 from django_require_login.mixins import PublicViewMixin, public
 from formset.views import FormView
 from loguru import logger
-from prometheus_client import Counter
 from web.forms import ClientInterestForm, EmploymentApplicationForm
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
 from web.tasks import process_new_application, process_new_client_interest
 
 from nhhc.utils.cache import CachedResponseMixin
 from nhhc.utils.helpers import CachedTemplateView
-from nhhc.utils.upload import S3HANDLER
-
+from functools import cached_property
+from nhhc.utils.metrics import metrics
 CACHE_TTL: int = settings.CACHE_TTL
 
-failed_submission_attempts = Counter("failed_submission_attempts", "Metric Counter for the Number of Application or Client Interest Submission attempts that failed validation", ["application_type"])
 
-
-# SECTION - Page Rendering Views
+    # SECTION - Page Rendering Views
 @method_decorator(require_safe, name="dispatch")
 class HomePageView(CachedResponseMixin, PublicViewMixin, CachedTemplateView):
     template_name = "index.html"
@@ -62,93 +60,132 @@ class SuccessfulSubmission(CachedResponseMixin, PublicViewMixin, CachedTemplateV
     cache_models = [None]
 
 
+from functools import cached_property
+
 class ClientInterestFormView(CachedResponseMixin, PublicViewMixin, FormView):
+    """Manages client interest form submissions through a web interface.
+
+    This view handles the complete lifecycle of a client interest form, from initial rendering to processing valid submissions. It provides a comprehensive workflow for capturing and validating client service requests.
+
+    Attributes:
+        form_class (ClientInterestForm): Form used for capturing client interest data.
+        model (ClientInterestSubmission): Database model for storing client interest submissions.
+        primary_model (ClientInterestSubmission): Primary model associated with the view.
+        template_name (str): HTML template for rendering the client interest form.
+        success_url (str): URL to redirect after successful form submission.
+        extra_context (dict): Additional context data for template rendering.
+
+    Methods:
+        empty_form: Cached property that initializes a clean form instance.
+        form_valid: Processes and saves a valid form submission.
+        get: Renders the initial client interest form.
+        post: Handles form submission, validation, and processing.
+    """
     form_class = ClientInterestForm
     model = ClientInterestSubmission
     primary_model = ClientInterestSubmission
     cache_models = [None]
     template_name = "client-interest.html"
-    success_url = reversed("web:form_submission_success")
+    client_interest_url = reverse_lazy("web:client_interest_form")
+    success_url = reverse_lazy("web:form_submission_success")
     extra_context = {"title": "Client Services Request"}
 
+    @cached_property
+    def empty_form(self):
+        return self.form_class()
+
     def form_valid(self, form: ClientInterestForm) -> HttpResponse:
-        """If the form is valid, redirect to the supplied URL."""
         logger.debug("Form Is Valid")
         formdata = form.cleaned_data
-        formdata['contact_number'] = str(form.cleaned_data['contact_number'])
+        formdata['contact_number'] = str(formdata['contact_number'])
         form.save()
-        process_new_client_interest.delay(form.cleaned_data)
-        return HttpResponsePermanentRedirect(reverse("web:form_submission_success"), {"type": "Client Interest Form"})
+        process_new_client_interest.delay(formdata)
+        return HttpResponsePermanentRedirect(self.success_url, {"type": "Client Interest Form"})
 
     @public
     def get(self, request):
-        form = ClientInterestForm()
-        context = {"form": form}
-        logger.debug(context)
-        return render(request, "client-interest.html", context)
+        logger.debug({"form": self.empty_form})
+        return render(request, self.template_name, {"form": self.empty_form})
 
     @public
     def post(self, request):
-        context = {}
-        form = ClientInterestForm(request.POST)
+        form = self.form_class(request.POST)
         if form.is_valid():
             return self.form_valid(form)
-        elif not form.is_valid():
-            context = {"form": self.get_form()}
-            context["form_errors"] = form.errors
-            failed_submission_attempts.labels(application_type="client-interest").inc()
-            logger.error("Form Is Invalid")
-            return HttpResponseRedirect(reverse("web:client_interest_form"), {"errors": form.errors})
-
+        
+        metrics.failed_submission_attempts("client-interest")
+        logger.error("Form Is Invalid")
+        return render(request, self.template_name, {
+            "form": form,
+            "form_errors": form.errors
+        })
 
 class EmploymentApplicationFormView(CachedResponseMixin, PublicViewMixin, FormView):
+    """Handles employment application form submissions through a web interface.
+
+        This view manages the entire lifecycle of an employment application form, from rendering the initial form to processing valid submissions. It provides a comprehensive workflow for capturing and validating employment interest applications.
+
+        Attributes:
+            model (EmploymentApplicationModel): The database model for storing employment applications.
+            template_name (str): HTML template for rendering the employment application form.
+            form_class (EmploymentApplicationForm): The form class used for capturing application data.
+            success_url (str): URL to redirect after successful form submission.
+            extra_context (dict): Additional context data for template rendering.
+            primary_model (EmploymentApplicationModel): Primary model associated with the view.
+
+        Methods:
+            form: Cached property that initializes the form class.
+            form_valid: Processes and saves a valid form submission.
+            get_form: Dynamically retrieves or creates a form instance.
+            get: Renders the initial employment application form.
+            post: Handles form submission, validation, and processing.
+    """
+
     model = EmploymentApplicationModel
     template_name = "employee-interest.html"
-    success_url = reversed("web:form_submission_success")
+    form_class = EmploymentApplicationForm
+    success_url = reverse_lazy("web:form_submission_success")
     extra_context = {"title": "Employment Application"}
     primary_model = EmploymentApplicationModel
 
-    def form_valid(self, form: EmploymentApplicationForm, resume=None) -> HttpResponse:
+    @cached_property
+    def empty_form(self):
+        return self.form_class()
+
+    def form_valid(self, form, resume=None) -> HttpResponse:
         logger.debug("Form Is Valid")
         formdata = form.cleaned_data
         formdata["contact_number"] = str(form["contact_number"])
         form.save()
-        if resume is not None:
+
+        if resume:
             formdata['resume_cv'] = resume.name
 
         process_new_application.delay(formdata)
 
-        return HttpResponseRedirect(reverse("web:form_submission_success"), {"type": "Employment Interest Form"})
+        return HttpResponseRedirect(self.success_url, {"type": "Employment Interest Form"})
 
     def get_form(self, form_class=None):
-        if self.request.POST:
-            return EmploymentApplicationForm(self.request.POST, self.request.FILES)
-        else:
-            return EmploymentApplicationForm()
+        return self.form_class(self.request.POST, self.request.FILES) if self.request.POST else self.empty_form
 
     @public
     def get(self, request):
-        form = EmploymentApplicationForm()
-        context = {"form": form}
-        logger.debug(context)
-        return render(request, "employee-interest.html", context)
+        return render(request, self.template_name, {"form": self.empty_form})
 
     @public
     def post(self, request):
-        context = {}
-        form = EmploymentApplicationForm(request.POST, request.FILES)
-        if form.is_valid():
-            if request.FILES.get("resume_cv"):
-                resume = request.FILES["resume_cv"]
-                return self.form_valid(form, resume)
-            return self.form_valid(form)
-        else:
-            context["form_errors"] = form.errors
-            context = {"form": self.get_form()}
-            logger.warning(f"Form Failed Invalid: {form.errors.as_text}")
-            failed_submission_attempts.labels(application_type="employment").inc()
-            return render(request,  "employee-interest.html", context)
+        form = self.form_class(request.POST, request.FILES)
 
+        if not form.is_valid():
+            logger.warning(f"Form Failed Invalid: {form.errors.as_text}")
+            metrics.failed_submission_attempts(application_type="employment")
+            return render(request, self.template_name, {
+                "form": self.get_form(),
+                "form_errors": form.errors
+            })
+
+        resume = request.FILES.get("resume_cv")
+        return self.form_valid(form, resume) if resume else self.form_valid(form)
 
 @public
 @cache_page(CACHE_TTL)

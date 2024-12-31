@@ -39,12 +39,9 @@ from django.utils.deconstruct import deconstructible
 from django.utils.translation import gettext_lazy as _
 from filetype import guess
 from loguru import logger
-from prometheus_client import Histogram
 
-from nhhc.utils.metrics import MetricsRecorder
+from nhhc.utils.metrics import metrics
 
-s3_upload_recorder = Histogram("s3_upload_duration", "Metric of the Durtation of S3 upload of Compliance Documents from the application's /tmp to AWS S3 block storage.")
-docuseal_download_recorder = Histogram("docuseal_download_duration", "Metric of the Durtation of downloading singed  Compliance Documents from the DocSeal External Signing Service to /tmp storage.")
 
 
 @deconstructible
@@ -107,7 +104,7 @@ class ProgressPercentage(object):
 
 class S3HANDLER(FileSystemStorage):
     @staticmethod
-    @s3_upload_recorder.time()
+    @metrics.s3_upload_recorder.time()
     def upload_file_to_s3(file_name, bucket: str = settings.AWS_STORAGE_BUCKET_NAME, object_name=None) -> bool:
         """Upload a file to an S3 bucket
         Args:
@@ -163,7 +160,7 @@ class S3HANDLER(FileSystemStorage):
         return os.path.join(path, f"{doc_type_prefix}_{employee_upload_suffix}")
 
     @staticmethod
-    @docuseal_download_recorder.time()
+    @metrics.docuseal_download_recorder.time()
     def download_pdf_file(payload: dict) -> bool:
         """Download PDF from given URL to local directory.
 

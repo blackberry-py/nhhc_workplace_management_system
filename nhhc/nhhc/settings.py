@@ -38,10 +38,11 @@ ADMINRESTRICT_ALLOW_PRIVATE_IP = False
 ALLOWED_HOSTS = list(os.environ["ALLOWED_HOSTS"].split(","))
 RESTRICT_ADMIN_BY_IPS = True
 ALLOWED_ADMIN_IPS = list(os.environ["ALLOWED_IPS"].split(","))
-SECURE_SSL_REDIRECT = False
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_PROXIED_TRAFFIC", "https")
 SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_REDIRECT_EXEMPT = [ r"^/metrics", r"^/status/*"]
 SECURE_HSTS_PRELOAD = True
 INTERNAL_IPS = ["127.0.0.1"]
 SECURE_BROWSER_XSS_FILTER = True
@@ -85,8 +86,8 @@ CSRF_COOKIE_NAME = "nhhc-csrf"
 CSRF_FAILURE_VIEW = "nhhc.urls.permission_denied_handler"
 SESSION_COOKIE_NAME = "nhhc-session"
 CSRF_HEADER_NAME = "X_CSRFToken"
-
-CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = True
+CSRF_USE_SESSIONS = True
 CORS_ALLOW_PRIVATE_NETWORK = True
 CSRF_COOKIE_DOMAIN = None
 SESSION_COOKIE_SECURE = True
@@ -167,8 +168,7 @@ INSTALLED_APPS = [
     "formset",
     "django_filters",
     "localflavor",
-    # "django_htmlmin",
-
+    "faker",
     "captcha",
     "django_celery_beat",
     "corsheaders",

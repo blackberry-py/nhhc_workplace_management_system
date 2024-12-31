@@ -1,0 +1,21 @@
+---
+engines:
+  rubocop:
+    enabled: false
+  duplication:
+    exclude_paths:
+    config:
+      languages:
+        - "python"
+languages:
+  css:
+    extensions:
+      - ".css"
+  python:exclude_paths:
+  - ".bundle/**"
+  - "spec/**/*"
+  - "benchmarks/**/*"
+  - "**.min.js"
+  - "**/tests/**"
+include_paths:
+  - "**/tests/integration/**"

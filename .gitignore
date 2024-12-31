@@ -1117,3 +1117,5 @@ node_modules
 digital_ocean_postgres_ssl.crt
 nhhc/async_worker_log.sqlite
 nhhc/async_worker_log.sqlite-*.bin
+
+.fake

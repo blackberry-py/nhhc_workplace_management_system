@@ -5,6 +5,14 @@ from django.core.mail import EmailMessage, EmailMultiAlternatives, mail_managers
 from django.forms.models import model_to_dict
 from loguru import logger
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
+from tenacity import retry, stop_after_attempt, wait_exponential
+
+    def __init__(self, from_email=settings.DEFAULT_FROM_EMAIL, reply_to=settings.DEFAULT_FROM_EMAIL):
+        self.from_email = from_email
+        self.reply_to = reply_to
+        self.logger = logging.getLogger(__name__)
+        super().__init__()
+
 
 from nhhc.utils.email_templates import (
     APPLICATION_BODY,
@@ -19,7 +27,8 @@ from nhhc.utils.email_templates import (
     PLAIN_TEXT_TERMINATION_EMAIL_TEMPLATE,
     REJECTION_TEMPLATE_BODY,
 )
-
+class ElectronicMailTransmissionError(RuntimeError):
+    pass
 
 class PostOffice(EmailMultiAlternatives):
     connection = (None,)
@@ -29,13 +38,15 @@ class PostOffice(EmailMultiAlternatives):
     reply_to = settings.EMAIL_HOST_USER
     internal_distro_list = settings.MANAGERS
 
-    def __init__(self, from_email, reply_to=None):
-        if reply_to is None:
-            self.reply_to = from_email
+    def __init__(self, from_email=settings.DEFAULT_FROM_EMAIL, reply_to=settings.DEFAULT_FROM_EMAIL):
         self.from_email = from_email
         self.reply_to = reply_to
         super().__init__()
-
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        reraise=True
+    )
     def send_external_application_submission_confirmation(self, applicant: dict) -> bool:
         """
         Sends a confirmation email for a new employment interest or client interest submission.
@@ -56,6 +67,7 @@ class PostOffice(EmailMultiAlternatives):
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
             settings.HIGHLIGHT_MONITORING.record_exception(f"ERROR: Unable to Send Email - {e}")
+            raise ElectronicMailTransmissionError(f'Exception Raised During EMail Transmission:{e}') from e
 
     # TODO Rename this here and in `send_external_application_submission_confirmation`
     def _extracted_from_send_external_application_submission_confirmation_17(self, applicant):
@@ -70,10 +82,14 @@ class PostOffice(EmailMultiAlternatives):
         sent_emails: int = msg.send()
         if sent_emails <= 0:
             logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
-            raise RuntimeError("Email Not Sents")
+            raise ElectronicMailTransmissionError("Email Not Sent")
         logger.info(f"Number of External Emails Sent:{sent_emails}")
         return True
-
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        reraise=True
+    )
     def send_external_client_submission_confirmation(self, interested_client: dict) -> None:
         """
         Sends a confirmation email for a new client interest submission.
@@ -100,13 +116,18 @@ class PostOffice(EmailMultiAlternatives):
             sent_emails = msg.send()
             if sent_emails <= 0:
                 logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
-                raise RuntimeError("Email Not Sents")
+                raise ElectronicMailTransmissionError("Email Not Sents")
             return True
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
             settings.HIGHLIGHT_MONITORING.record_exception(f"ERROR: Unable to Send Email - {e}")
-            return False
-
+            raise ElectronicMailTransmissionError(f'Exception Raised During EMail Transmission:{e}') from e
+     
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        reraise=True
+    )
     def send_external_applicant_rejection_email(self, rejected_applicant: dict) -> int:
         """
         Sends email rerjecting the application for employment of the reciepent
@@ -135,11 +156,17 @@ class PostOffice(EmailMultiAlternatives):
             sent_emails = msg.send()
             if sent_emails <= 0:
                 logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
-                raise RuntimeError("Email Not Sent")
+                raise ElectronicMailTransmissionError("Email Not Sent")
             return sent_emails
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
-
+            raise ElectronicMailTransmissionError(f'Exception Raised During EMail Transmission:{e}') from e
+    
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        reraise=True
+    )
     def send_external_applicant_termination_email(self, terminated_employee: dict) -> int:
         """
         Sends email terminating  employment of the recipient
@@ -166,11 +193,16 @@ class PostOffice(EmailMultiAlternatives):
             sent_emails = msg.send()
             if sent_emails <= 0:
                 logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
-                raise RuntimeError("Email Not Sents")
+                raise ElectronicMailTransmissionError("Email Not Sent")
             return sent_emails
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
-
+            raise ElectronicMailTransmissionError(f'Exception Raised During EMail Transmission:{e}') from e
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        reraise=True
+    )
     def send_external_applicant_new_hire_onboarding_email(self, new_hire: dict) -> int:
         """
         Sends email informing the application of their Login Credentials and the start of their emoployment
@@ -198,11 +230,16 @@ class PostOffice(EmailMultiAlternatives):
             sent_emails = msg.send()
             if sent_emails <= 0:
                 logger.error(f"EMAIL TRANSMISSION FAILURE - {sent_emails}")
-                raise RuntimeError("Email Not Sents")
+                raise ElectronicMailTransmissionError("Email Not Sent")
             return sent_emails
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
-
+            raise ElectronicMailTransmissionError(f'Exception Raised During Email Transmission:{e}') from e
+    @retry(
+            stop=stop_after_attempt(3),
+            wait=wait_exponential(multiplier=1, min=4, max=10),
+            reraise=True
+        )
     def send_internal_new_applicant_notification(self, applicant: dict) -> bool:
         """
         Trigger Intrernal Notification of a New Application
@@ -246,7 +283,12 @@ class PostOffice(EmailMultiAlternatives):
             return True
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
-
+            raise ElectronicMailTransmissionError(f'Exception Raised During EMail Transmission:{e}') from e
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        reraise=True
+    )
     def send_internal_new_client_service_request_notification(self, interested_client: dict) -> int:
         """
         Trigger Intrernal Notification of a New Application
@@ -281,3 +323,5 @@ class PostOffice(EmailMultiAlternatives):
         except Exception as e:
             logger.trace(f"ERROR: Unable to Send Email - {e}")
             settings.HIGHLIGHT_MONITORING.record_exception("ERROR: Unable to Send Email - {e}")
+            raise ElectronicMailTransmissionError(f'Exception Raised During EMail Transmission:{e}') from e
+
