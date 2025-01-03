@@ -40,10 +40,10 @@ db-shell: ## Access the Postgres Docker database interactively with psql. Pass i
 	docker exec -it container_name psql -d $(DBNAME)
 .PHONY: 	docs
 docs:
-	nohup doppler run  -- cd ./docs && docsify serve docs &
+	nohup doppler run  --command="cd ./docs && npx docsify init && npx docsify serve ." &
 .PHONY: workers
 workers: docs
-	doppler run   --  celery -A nhhc worker -D --loglevel debug 
+	doppler run   --  celery -A nhhc worker -D --loglevel debug -n %%d
 
 .PHONY: test
 test: ## Run tests
@@ -56,7 +56,7 @@ pipeline-test: ## Run tests
 
 .PHONY: flower
 flower: workers
-	nohup doppler run  --  celery -A nhhc flower --port=9005 &
+	nohup doppler run  --  celery -A nhhc flower --port=9050 &
 
 
 
@@ -74,4 +74,4 @@ admin:
 
 .PHONY: start
 start: flower
-	doppler run  --  gunicorn --workers=2  --threads=2 nhhc.wsgi:application -b :9090
+	doppler run  --  gunicorn --workers=2  --threads=2 nhhc.wsgi:application -b :8080

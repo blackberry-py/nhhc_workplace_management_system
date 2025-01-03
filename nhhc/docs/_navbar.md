@@ -1,26 +1,11 @@
- Getting started
-
+ * Getting started
   * [How to Use This Guide](overview.md)
   * [User Types](users.md)
   * [Managing Your Profile Details](profile_management.md)
 
-Managing Applicants
+* [Managing Applicants](applicant_management/applicant_service_request_overview.md)
 
-  * [Hiring Process Overview](applicant.md)
-  * [Reviewing Applications](applicant.md)
-  * [Hiring Applicants](applicant.md)
-  * [Rejecting Applicants](applicant.md)
+* [Managing Employees](employee_management/employee.md)
 
-Managing Employees
 
-  * [New Hire Onboarding Process Overview](employee.md)
-  * [Promoting Employees](employee.md)
-  * [Demoting Employees](employee.md)
-  * [Terminating Employees](employee.md)
-
-Compliance and Reporting
-
-  * [Contract Management](compliance.md)
-  * [Running Reports](compliance.md)
-  * [Reviewing Files](compliance.md)
-  * [Managing Compliance](compliance.md)
+* [Compliance & Reporting](compliance/compliance.md)

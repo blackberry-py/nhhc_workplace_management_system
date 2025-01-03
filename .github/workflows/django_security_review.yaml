@@ -9,7 +9,7 @@ env:
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
   FAIL_LEVEL: WARNING
   ENV_TYPE: venv
-  DEP_PATH: docker_requirement.txt
+  DEP_PATH: requirements.txt
   APP_PATH: nhhc/
 
 jobs:
@@ -29,7 +29,7 @@ jobs:
           doppler-token: ${{ secrets.DOPPLER_TOKEN }}
           inject-env-vars: true
           doppler-project: nhhc
-          doppler-config: stg
+          doppler-config: prod
       - name: Add Tmp Dir
         run: sudo mkdir -p /github/workspace/nhhc/tmp
       - name: Scan Django settings for security issues

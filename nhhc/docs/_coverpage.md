@@ -1,7 +1,7 @@
 
-![logo](_media/icon.svg)
+![logo](https://carenett.s3.us-east-1.amazonaws.com/static/img/CareNettLogo.png)
 
-# docsify <small>3.5</small>
+# CareNett <small>1.0</small>
 
 > A magical documentation site generator.
 

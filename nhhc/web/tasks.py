@@ -5,18 +5,72 @@ from django.http import HttpRequest
 from loguru import logger
 from web.forms import ClientInterestSubmission, EmploymentApplicationForm
 
-from nhhc.utils.mailer import PostOffice
+from nhhc.utils.mailer import PostOffice, ElectronicMailTransmissionError
 
-career_web_mailer = PostOffice(
-    from_email="Careers@NettHandsHome.care",
-    reply_to=list(
-        "Careers@NettHandsHome.care",
-    ),
-)
+career_web_mailer = PostOffice()
+
+def process(form, type):
+    status = {
+        'internal_notification': False,
+        'external_confirmation': False,
+        'error': None
+    }
+
+    if type == "Application":
+        try:
+
+            try:
+                career_web_mailer.send_internal_new_applicant_notification(form)
+                status['internal_notification'] = True
+                logger.debug("Successfully Sent Internal Notification Email")
+            except ElectronicMailTransmissionError as e:
+                logger.error(f"Failed to send internal notification: {e}")
+                status['error'] = f"Internal notification failed: {str(e)}"
+
+            try:
+                career_web_mailer.send_external_application_submission_confirmation(form)
+                status['external_confirmation'] = True
+                logger.debug("Successfully Sent External Confirmation Email")
+            except ElectronicMailTransmissionError as e:
+                logger.error(f"Failed to send external confirmation: {e}")
+                status['error'] = f"External confirmation failed: {str(e)}"
+
+            return status
+
+        except Exception as e:
+            return catch_general_exception(e, status)
+    elif type == "clientRequest":
+        try:
+            try:
+                career_web_mailer.send_internal_new_client_service_request_notification(form)
+                status['internal_notification'] = True
+                logger.debug("Successfully Sent Internal Notification Email")
+            except ElectronicMailTransmissionError as e:
+                logger.error(f"Failed to send internal notification: {e}")
+                status['error'] = f"Internal notification failed: {str(e)}"
+
+            try:
+                career_web_mailer.send_external_client_submission_confirmation(form)
+                status['external_confirmation'] = True
+                logger.debug("Successfully Sent External Confirmation Email")
+            except ElectronicMailTransmissionError as e:
+                logger.error(f"Failed to send external confirmation: {e}")
+                status['error'] = f"External confirmation failed: {str(e)}"
+
+            return status
+        except Exception as e:
+            return catch_general_exception(e, status)
+
+
+# TODO Rename this here and in `process`
+def catch_general_exception(e, status):
+    logger.error(f"UNABLE TO SEND: {e}")
+    status['error'] = f"Unexpected error: {str(e)}"
+    return status
 
 
 @shared_task(bind=True)
-def process_new_application(self, form: Union[EmploymentApplicationForm, Dict[str, Any]], **kwargs) -> Dict[str, int]:
+def process_new_application(self, form: Union[EmploymentApplicationForm, Dict[str, Any]], **kwargs) -> Dict[str, bool]:
     """
     Async Celery task to Process new employment interest by sending internal and external notifications.
 
@@ -26,27 +80,16 @@ def process_new_application(self, form: Union[EmploymentApplicationForm, Dict[st
     Returns:
         Dict[str,int]: A dictionary containing the results of the notification t1sks. The values represent the number of notifications successful sent.
     """
-    try:
-        logger.debug(f"Processing New Application - Sending EMAILS: Celery Task id {self.request.id}, args: {self.request.args!r} kwargs: {self.request.kwargs!r}")
-        if internal_notify_task := career_web_mailer.send_internal_new_applicant_notification(form):
-            logger.debug("Successfully Sent Internal Notification Email")
-            if external_notify_task := career_web_mailer.send_external_application_submission_confirmation(form):
-                return {"internal": internal_notify_task, "external": external_notify_task}
-    except Exception as e:
-        logger.error(f"UNABLE TO SEND: {e}")
-        return {"internal": 0, "external": 0}
-
-
-client_web_mailer = PostOffice(
-    from_email="CareCoordination@NettHandsHome.care",
-    reply_to=list(
-        "CareCoordination@NettHandsHome.care",
-    ),
-)
+    # try:
+    #     logger.info(f"Processing New Application - Sending EMAILS: Celery Task id {self.request.id}, args: {self.request.args!r} kwargs: {self.request.kwargs!r}")
+    #     career_web_mailer.send_internal_new_applicant_notification(form)
+    #     logger.debug("Successfully Sent Internal Notification Email")
+    #     career_web_mailer.send_external_application_submission_confirmation(form)
+    return process(form, "Application")
 
 
 @shared_task(bind=True)
-def process_new_client_interest(self, form: Union[ClientInterestSubmission, Dict[str, Any]], **kwargs) -> Dict[str, int]:
+def process_new_client_interest(self, form: Union[ClientInterestSubmission, Dict[str, Any]], **kwargs) -> Dict[str, bool]:
     """
     Async Celery task to Process new client interest by sending internal and external notifications.
 
@@ -56,12 +99,4 @@ def process_new_client_interest(self, form: Union[ClientInterestSubmission, Dict
     Returns:
         Dict[str,int]: A dictionary containing the results of the notification tasks. The values represent the number of notifications succesful sent.
     """
-    try:
-        logger.info(f"Starting Client Submission Processing Sending EMAILS: Celery Task id {self.request.id}")
-        internal_notify_task = client_web_mailer.send_internal_new_client_service_request_notification(form)
-
-        external_notify_task = client_web_mailer.send_external_client_submission_confirmation(form)
-        results: Dict[str, int] = {"internal": internal_notify_task, "external": external_notify_task}
-        return results
-    except Exception as e:
-        logger.error(f"Unable to Send Client Confirmation Email:{e}")
+    return process(form, "clientRequest")
