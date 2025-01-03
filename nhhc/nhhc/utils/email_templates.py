@@ -129,7 +129,7 @@ APPLICATION_BODY: str = Template(
     <table align="center" border="0" cellpadding="0" cellspacing="0" class="row row-2" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #0f0332; background-image: url('images/full_background_3.png'); background-position: center top; background-repeat: no-repeat;" width="100%">
     <tbody>
     <tr>
-    <td>ß
+    <td>
     <table align="center" border="0" cellpadding="0" cellspacing="0" class="row-content stack" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 600px;" width="600">
     <tbody>
     <tr>

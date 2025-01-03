@@ -5,7 +5,10 @@ from authentication.models import UserProfile
 from compliance.models import Compliance, Contract
 from django.contrib import admin
 from employee.models import Employee
-from portal.models import PayrollException  # Assessment, InServiceTraining,
+from portal.models import (  # Assessment, InServiceTraining,
+    FeatureFlag,
+    PayrollException,
+)
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
 
 now = datetime.now()
@@ -17,6 +20,7 @@ for model in all_models:
     admin.site.register(model)
 
 
+@admin.register(Employee)
 class EmployeeAdmin(admin.ModelAdmin):
     """
     This class represents the admin interface for managing employee data.
@@ -34,4 +38,9 @@ class EmployeeAdmin(admin.ModelAdmin):
     date_hierarchy = "hire_date"
 
 
-admin.site.register(Employee, EmployeeAdmin)
+@admin.register(FeatureFlag)
+class FeatureFlagAdmin(admin.ModelAdmin):
+    search_fields = ["name"]
+    list_display = ("name", "is_enabled", "modified")
+    list_editable = ("is_enabled",)
+    date_hierarchy = "modified"

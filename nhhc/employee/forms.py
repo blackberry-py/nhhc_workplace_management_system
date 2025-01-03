@@ -147,7 +147,7 @@ class EmployeeForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_action = reverse("profile")
+        self.helper.form_action = reverse("portal:profile")
         self.helper.form_id = "profile"
         self.helper.form_method = "post"
         self.fields["date_of_birth"].widget = DateInput(

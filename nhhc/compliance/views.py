@@ -7,7 +7,7 @@ Classes:
 - CreateContractFormView: A view for creating a new contract form.
 - ComplianceProfileDetailView: A DetailView for displaying Compliance object details.
 - ComplianceProfileFormView: A view for updating compliance profiles.
-- DocusealCompliaceDocsSigning_*: Views for displaying and signing compliance documents using Docuseal.
+- DocusealComplianceDocsSigning_*: Views for displaying and signing compliance documents using Docuseal.
 
 Functions:
 - signed_attestations: Handles signed attestation forms.
@@ -43,9 +43,10 @@ from formset.upload import FileUploadMixin
 from loguru import logger
 from rest_framework import status
 
-from nhhc.utils.upload import S3HANDLER
+from nhhc.utils.helpers import _get_doc_type
+from nhhc.utils.upload import download_and_upload_pdf, generate_filename
 
-# SECTION - Contract Related Viewws
+# SECTION - Contract Related Views
 
 
 class SuccessfulUpdate(TemplateView):
@@ -123,51 +124,52 @@ def signed_attestations(request: HttpRequest) -> HttpResponse:
     Raises:
         HttpResponse(status_code: 422): If an invalid document type is encountered during processing.
     """
-    logger.info("Signed Document Request Recieved From AWS")
+    logger.info("Signed Document Request Received From Docseal service")
     try:
         logger.debug(request.body)
         docuseal_payload = json.loads(request.body)
         employee_id = docuseal_payload["data"]["external_id"]
         document_type = docuseal_payload["data"]["template"]["name"]
         uploading_employee = Employee.objects.get(employee_id=employee_id)
-        document_id = docuseal_payload["data"]["template"]["id"]
-        doc_type_prefix = S3HANDLER.get_doc_type(document_id)
+        document_id = int(docuseal_payload["data"]["template"]["id"])
+        doc_type_prefix = _get_doc_type(document_id)
         employee_upload_suffix = f"{uploading_employee.last_name.lower()}_{uploading_employee.first_name.lower()}.pdf"
         filepath = os.path.join("attestations", doc_type_prefix, f"{doc_type_prefix}_{employee_upload_suffix}")
 
         # fmt: off
 
-        match document_type:
-            case "Nett Hands - Do Not Drive Agreement - 2024":
+        match document_id:
+            case 90907:
                 uploading_employee.do_not_drive_agreement_attestation = filepath
                 uploading_employee.save()
-            case "State of Illinois - Department of Revenue - Withholding Worksheet (W4)":
+            case 101305:
                 uploading_employee.state_w4_attestation = filepath
                 uploading_employee.save()
+            # TODO: Obtain Docuseal Document ID for W4
             case "US Internal Revenue Services - Withholding Certificate (W4) - 2024":
                 uploading_employee.state_w4_attestation = filepath
                 uploading_employee.save()
-            case "US Department of Homeland Security - Employment Eligibility Verification (I-9)":
+            case 91067:
                 uploading_employee.dha_i9 = filepath
                 uploading_employee.save()
-            case "Nett Hands HCA Policy - 2024":
+            case 90909:
                 uploading_employee.hca_policy_attestation = filepath
                 uploading_employee.save()
-            case "Nett Hands & Illinois Department of Aging General Policies":
+            case 90908:
                 uploading_employee.idoa_agency_policies_attestation = filepath
                 uploading_employee.save()
-            case "Nett Hands Homehealth Care Aide (HCA)  Job Desc - 2024":
+            case 90910:
                 uploading_employee.job_duties_attestation = filepath
                 uploading_employee.save()
-            case "IDPH - Health Care Worker Background Check Authorization":
+            case 116255:
                 uploading_employee.idph_background_check_authorization = filepath
                 uploading_employee.save()
             case _:
-                logger.error(f'Invaild Document Type: {document_type} - {document_id}')
-                return HttpResponse(content='Invaild Document Type', status=status.HTTP_406_NOT_ACCEPTABLE)
+                logger.error(f'Invalid Document ID: {document_type} - {document_id}')
+                return HttpResponse(content='Invalid Document Type', status=status.HTTP_406_NOT_ACCEPTABLE)
         # fmt: on
 
-        if S3HANDLER.download_pdf_file(docuseal_payload):
+        if download_and_upload_pdf(docuseal_payload):
             return HttpResponse(content="Processed File Path", status=status.HTTP_201_CREATED)
         else:
             return HttpResponse(content="Failed to Process File", status=status.HTTP_422_UNPROCESSABLE_ENTITY)
@@ -176,7 +178,7 @@ def signed_attestations(request: HttpRequest) -> HttpResponse:
         return HttpResponse(content="Unable to Assign FilePath", status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 
-class DocusealCompliaceDocsSigning_IDOA(TemplateView):
+class DocusealComplianceDocsSigning_IDOA(TemplateView):
     """
     A view for displaying and signing compliance documents using Docuseal.
 
@@ -197,12 +199,12 @@ class DocusealCompliaceDocsSigning_IDOA(TemplateView):
         return context
 
     def dispatch(self, *args, **kwargs):
-        response = super(DocusealCompliaceDocsSigning_IDOA, self).dispatch(*args, **kwargs)
+        response = super(DocusealComplianceDocsSigning_IDOA, self).dispatch(*args, **kwargs)
         response["Access-Control-Allow-Origin"] = "*"
         return response
 
 
-class DocusealCompliaceDocsSigning_HCA(TemplateView):
+class DocusealComplianceDocsSigning_HCA(TemplateView):
     """
     A view for displaying and signing compliance documents using Docuseal.
 
@@ -223,12 +225,12 @@ class DocusealCompliaceDocsSigning_HCA(TemplateView):
         return context
 
     def dispatch(self, *args, **kwargs):
-        response = super(DocusealCompliaceDocsSigning_HCA, self).dispatch(*args, **kwargs)
+        response = super(DocusealComplianceDocsSigning_HCA, self).dispatch(*args, **kwargs)
         response["Access-Control-Allow-Origin"] = "*"
         return response
 
 
-class DocusealCompliaceDocsSigning_DoNotDrive(TemplateView):
+class DocusealComplianceDocsSigning_DoNotDrive(TemplateView):
     """
     A view for displaying and signing compliance documents using Docuseal.
 
@@ -249,12 +251,12 @@ class DocusealCompliaceDocsSigning_DoNotDrive(TemplateView):
         return context
 
     def dispatch(self, *args, **kwargs):
-        response = super(DocusealCompliaceDocsSigning_DoNotDrive, self).dispatch(*args, **kwargs)
+        response = super(DocusealComplianceDocsSigning_DoNotDrive, self).dispatch(*args, **kwargs)
         response["Access-Control-Allow-Origin"] = "*"
         return response
 
 
-class DocusealCompliaceDocsSigning_JobDesc(TemplateView):
+class DocusealComplianceDocsSigning_JobDesc(TemplateView):
     """
     A view for displaying and signing compliance documents using Docuseal.
 
@@ -275,12 +277,12 @@ class DocusealCompliaceDocsSigning_JobDesc(TemplateView):
         return context
 
     def dispatch(self, *args, **kwargs):
-        response = super(DocusealCompliaceDocsSigning_JobDesc, self).dispatch(*args, **kwargs)
+        response = super(DocusealComplianceDocsSigning_JobDesc, self).dispatch(*args, **kwargs)
         response["Access-Control-Allow-Origin"] = "*"
         return response
 
 
-class DocusealCompliaceDocsSigning_i9(TemplateView):
+class DocusealComplianceDocsSigning_i9(TemplateView):
     """
     A view for displaying and signing compliance documents using Docuseal.
 
@@ -301,12 +303,12 @@ class DocusealCompliaceDocsSigning_i9(TemplateView):
         return context
 
     def dispatch(self, *args, **kwargs):
-        response = super(DocusealCompliaceDocsSigning_i9, self).dispatch(*args, **kwargs)
+        response = super(DocusealComplianceDocsSigning_i9, self).dispatch(*args, **kwargs)
         response["Access-Control-Allow-Origin"] = "*"
         return response
 
 
-class DocusealCompliaceDocsSigning_irs_w4(TemplateView):
+class DocusealComplianceDocsSigning_irs_w4(TemplateView):
     """
     A view for displaying and signing compliance documents using Docuseal.
 
@@ -327,12 +329,12 @@ class DocusealCompliaceDocsSigning_irs_w4(TemplateView):
         return context
 
     def dispatch(self, *args, **kwargs):
-        response = super(DocusealCompliaceDocsSigning_irs_w4, self).dispatch(*args, **kwargs)
+        response = super(DocusealComplianceDocsSigning_irs_w4, self).dispatch(*args, **kwargs)
         response["Access-Control-Allow-Origin"] = "*"
         return response
 
 
-class DocusealCompliaceDocsSigning_il_w4(TemplateView):
+class DocusealComplianceDocsSigning_il_w4(TemplateView):
     """
     A view for displaying and signing compliance documents using Docuseal.
 
@@ -353,12 +355,12 @@ class DocusealCompliaceDocsSigning_il_w4(TemplateView):
         return context
 
     def dispatch(self, *args, **kwargs):
-        response = super(DocusealCompliaceDocsSigning_il_w4, self).dispatch(*args, **kwargs)
+        response = super(DocusealComplianceDocsSigning_il_w4, self).dispatch(*args, **kwargs)
         response["Access-Control-Allow-Origin"] = "*"
         return response
 
 
-class DocusealCompliaceDocsSigning_idph_bg_auth(TemplateView):
+class DocusealComplianceDocsSigning_idph_bg_auth(TemplateView):
     """
     A view for displaying and signing compliance documents using Docuseal.
 
@@ -379,7 +381,7 @@ class DocusealCompliaceDocsSigning_idph_bg_auth(TemplateView):
         return context
 
     def dispatch(self, *args, **kwargs):
-        response = super(DocusealCompliaceDocsSigning_idph_bg_auth, self).dispatch(*args, **kwargs)
+        response = super(DocusealComplianceDocsSigning_idph_bg_auth, self).dispatch(*args, **kwargs)
         response["Access-Control-Allow-Origin"] = "*"
         return response
 

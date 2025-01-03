@@ -5,35 +5,32 @@ from django.http import HttpRequest
 from loguru import logger
 from web.forms import ClientInterestSubmission, EmploymentApplicationForm
 
-from nhhc.utils.mailer import PostOffice, ElectronicMailTransmissionError
+from nhhc.utils.mailer import ElectronicMailTransmissionError, PostOffice
 
 career_web_mailer = PostOffice()
 
+
 def process(form, type):
-    status = {
-        'internal_notification': False,
-        'external_confirmation': False,
-        'error': None
-    }
+    status = {"internal_notification": False, "external_confirmation": False, "error": None}
 
     if type == "Application":
         try:
 
             try:
                 career_web_mailer.send_internal_new_applicant_notification(form)
-                status['internal_notification'] = True
+                status["internal_notification"] = True
                 logger.debug("Successfully Sent Internal Notification Email")
             except ElectronicMailTransmissionError as e:
                 logger.error(f"Failed to send internal notification: {e}")
-                status['error'] = f"Internal notification failed: {str(e)}"
+                status["error"] = f"Internal notification failed: {str(e)}"
 
             try:
                 career_web_mailer.send_external_application_submission_confirmation(form)
-                status['external_confirmation'] = True
+                status["external_confirmation"] = True
                 logger.debug("Successfully Sent External Confirmation Email")
             except ElectronicMailTransmissionError as e:
                 logger.error(f"Failed to send external confirmation: {e}")
-                status['error'] = f"External confirmation failed: {str(e)}"
+                status["error"] = f"External confirmation failed: {str(e)}"
 
             return status
 
@@ -43,19 +40,19 @@ def process(form, type):
         try:
             try:
                 career_web_mailer.send_internal_new_client_service_request_notification(form)
-                status['internal_notification'] = True
+                status["internal_notification"] = True
                 logger.debug("Successfully Sent Internal Notification Email")
             except ElectronicMailTransmissionError as e:
                 logger.error(f"Failed to send internal notification: {e}")
-                status['error'] = f"Internal notification failed: {str(e)}"
+                status["error"] = f"Internal notification failed: {str(e)}"
 
             try:
                 career_web_mailer.send_external_client_submission_confirmation(form)
-                status['external_confirmation'] = True
+                status["external_confirmation"] = True
                 logger.debug("Successfully Sent External Confirmation Email")
             except ElectronicMailTransmissionError as e:
                 logger.error(f"Failed to send external confirmation: {e}")
-                status['error'] = f"External confirmation failed: {str(e)}"
+                status["error"] = f"External confirmation failed: {str(e)}"
 
             return status
         except Exception as e:
@@ -65,7 +62,7 @@ def process(form, type):
 # TODO Rename this here and in `process`
 def catch_general_exception(e, status):
     logger.error(f"UNABLE TO SEND: {e}")
-    status['error'] = f"Unexpected error: {str(e)}"
+    status["error"] = f"Unexpected error: {str(e)}"
     return status
 
 

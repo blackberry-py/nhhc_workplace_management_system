@@ -3,7 +3,7 @@
 The `urlpatterns` list routes URLs to views.
 """
 
-import json
+import os
 from typing import Callable, Dict, List, Union
 
 import allauth.urls
@@ -141,16 +141,16 @@ urlpatterns: List[Union[RoutePattern, RegexPattern]] = [
     re_path(r"^sitemap.xml$\/?", cache_page(60)(sitemaps), {"sitemaps": sitemaps}, name="cached-sitemap"),
     re_path(r"^robots\.txt\/?", include(robots.urls)),
     re_path("", include(django_prometheus.urls), name="metric_scrape"),
-    re_path(r"^status/SX2g8DpabBBA1KlZTRcb50F5DtUh2_XUQVSkhU_3_Bc/?", include(health_check.urls)),
+    path(f"status/${os.environ["STATUS_URL_KEY"]}/?", include(health_check.urls)),
     path("maintenance/", maintenance_handler, name="maintenance_mode"),
     path("tinymce/", include(tinymce.urls)),
-    path("", include(portal.urls)),
+    path("", include(portal.urls, namespace="portal")),
     path("", include(web.urls, namespace="web")),
     path("", include(allauth.urls)),
     path("", include(employee.urls)),
     path("", include(announcements.urls)),
 ]
-#!SECTION
+#!SECTIONwww
 if settings.DEBUG:
     import debug_toolbar
 

@@ -122,7 +122,7 @@ class ClientInquiriesTestCase(TestCase):
 
     def test_all_client_inquiries(self):
         self.client.force_login(self.employee)
-        response = self.client.get(reverse("inquiries"))
+        response = self.client.get(reverse("portal:inquiries"))
         self.assertEqual(response.status_code, 200)
 
 

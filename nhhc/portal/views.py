@@ -45,8 +45,8 @@ from rest_framework import generics, mixins, permissions, status
 from rest_framework.response import Response
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
 
-from nhhc.utils.cache import CachedResponseMixin
-from nhhc.utils.helpers import NeverCacheMixin
+from nhhc.utils.cache import CachedResponseMixin, NeverCacheMixin
+from nhhc.utils.feature_flags import is_feature_enabled
 
 
 class Dashboard(CalendarResponseMixin, TemplateView):
@@ -54,13 +54,13 @@ class Dashboard(CalendarResponseMixin, TemplateView):
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        recent_annoucements = list(Announcements.objects.all().filter(status="A").order_by("-date_posted")[:5])
-        listed_amnnoucements = []
-        for announcement in list(recent_annoucements):
+        recent_announcements = list(Announcements.objects.all().filter(status="A").order_by("-date_posted")[:5])
+        listed_announcements = []
+        for announcement in list(recent_announcements):
             announcement = model_to_dict(announcement)
             announcement["posted_by"] = Employee.objects.get(employee_id=announcement["posted_by"]).first_name
-            listed_amnnoucements.append(announcement)
-        context["recent_announcements"] = listed_amnnoucements
+            listed_announcements.append(announcement)
+        context["recent_announcements"] = listed_announcements
         context["ExceptionForm"] = PayrollExceptionForm()
         return context
 
@@ -94,7 +94,7 @@ class ProfileFormView(CachedResponseMixin, UpdateView, FileUploadMixin):
         return queryset
 
     def get_success_url(self):
-        return reverse("profile")
+        return reverse("portal:profile")
 
 
 class PayrollExceptionView(CachedResponseMixin, FormView):
@@ -155,18 +155,6 @@ class EmploymentApplicationModelAPIListView(CachedResponseMixin, mixins.DestroyM
             )
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-def all_client_inquiries(request: HttpRequest) -> HttpResponse:
-    """
-    Retrieves all client inquiries and returns them as JSON.
-
-    Returns:
-    - HttpResponse: JSON response containing all client inquiries
-    """
-    inquiries = ClientInterestSubmission.objects.all().values()
-    inquiries_json = json.dumps(list(inquiries), cls=DjangoJSONEncoder)
-    return HttpResponse(content=inquiries_json, status=status.HTTP_200_OK)
 
 
 class ClientInquiriesAPIListView(CachedResponseMixin, generics.ListCreateAPIView):
@@ -315,12 +303,28 @@ class ExceptionView(View):
 # TODO: Remove this once the features they are Referencing is implemented.
 
 
-@login_required(login_url="/login/")
-def coming_soon(request) -> HttpResponse:
-    """
-    Renders a "coming soon" page.
+class ComingSoonTemplateView(TemplateView):
+    """Renders the coming soon page.
 
-    Returns:
-    - HttpResponse: Rendered HTML template
+    This view simply displays a static "coming soon" page.
     """
-    return render(request, "coming_soon.html", {})
+
+    template_name = "coming_soon.html"
+
+
+# !SECTION
+
+
+# SECTION - In Development Views:
+
+# if is_feature_enabled("beta_training_portal"):
+
+#     class TrainingView(View):
+#         pass
+
+# else:
+
+
+class TrainingView(TemplateView):
+    template_name = "coming_soon.html"
+    extra_context = {"feature_name": "CareNett Training Portal", "expected_completion": "July 2025", "expected_completion_epoch": 1753952400}

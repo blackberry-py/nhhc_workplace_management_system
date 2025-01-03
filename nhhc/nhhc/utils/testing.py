@@ -4,58 +4,36 @@ import string
 
 import gnupg
 from django.conf import settings
-from faker import Faker
-from loguru import logger
-from django.core.files.uploadedfile import UploadedFile, SimpleUploadedFile
-from faker_file.providers.image.imgkit_generator import ImgkitImageGenerator
-from faker_file.providers.png_file import PngFileProvider
-from faker_file.providers.pdf_file.generators.pil_generator import (
-    PilPdfGenerator,
-)
-
-from faker_file.providers.docx_file import DocxFileProvider
+from django.core.files.uploadedfile import SimpleUploadedFile, UploadedFile
 from factory import Faker, Trait
-from faker_file.providers.augment_file_from_dir import (
-    AugmentFileFromDirProvider,
-)
+from faker import Faker
+from faker_file.providers.augment_file_from_dir import AugmentFileFromDirProvider
 from faker_file.providers.bin_file import BinFileProvider
 from faker_file.providers.bmp_file import BmpFileProvider
 from faker_file.providers.csv_file import CsvFileProvider
 from faker_file.providers.docx_file import DocxFileProvider
 from faker_file.providers.eml_file import EmlFileProvider
 from faker_file.providers.epub_file import EpubFileProvider
-from faker_file.providers.ico_file import (
-    GraphicIcoFileProvider,
-    IcoFileProvider,
-)
-from faker_file.providers.jpeg_file import (
-    GraphicJpegFileProvider,
-    JpegFileProvider,
-)
+from faker_file.providers.ico_file import GraphicIcoFileProvider, IcoFileProvider
+from faker_file.providers.image.imgkit_generator import ImgkitImageGenerator
+from faker_file.providers.jpeg_file import GraphicJpegFileProvider, JpegFileProvider
 from faker_file.providers.mp3_file import Mp3FileProvider
 from faker_file.providers.odp_file import OdpFileProvider
 from faker_file.providers.ods_file import OdsFileProvider
 from faker_file.providers.odt_file import OdtFileProvider
-from faker_file.providers.pdf_file import (
-    GraphicPdfFileProvider,
-    PdfFileProvider,
-)
-from faker_file.providers.png_file import (
-    GraphicPngFileProvider,
-    PngFileProvider,
-)
+from faker_file.providers.pdf_file import GraphicPdfFileProvider, PdfFileProvider
+from faker_file.providers.pdf_file.generators.pil_generator import PilPdfGenerator
+from faker_file.providers.png_file import GraphicPngFileProvider, PngFileProvider
 from faker_file.providers.pptx_file import PptxFileProvider
 from faker_file.providers.random_file_from_dir import RandomFileFromDirProvider
 from faker_file.providers.rtf_file import RtfFileProvider
 from faker_file.providers.svg_file import SvgFileProvider
 from faker_file.providers.tar_file import TarFileProvider
 from faker_file.providers.txt_file import TxtFileProvider
-from faker_file.providers.webp_file import (
-    GraphicWebpFileProvider,
-    WebpFileProvider,
-)
+from faker_file.providers.webp_file import GraphicWebpFileProvider, WebpFileProvider
 from faker_file.providers.xlsx_file import XlsxFileProvider
 from faker_file.providers.zip_file import ZipFileProvider
+from loguru import logger
 
 MockData = Faker(TxtFileProvider)
 MockData.add_provider(AugmentFileFromDirProvider)
@@ -88,11 +66,10 @@ MockData.add_provider(WebpFileProvider)
 MockData.add_provider(XlsxFileProvider)
 MockData.add_provider(ZipFileProvider)
 
-def generate_mock_file(name:str, type:str, extenstion:str, size:int=1024):
+
+def generate_mock_file(name: str, type: str, extenstion: str, size: int = 1024):
     file_path = MockData.file_path(extension=extenstion, size=size * size)
 
-
-    
 
 def generate_mock_PhoneNumberField() -> str:
     """

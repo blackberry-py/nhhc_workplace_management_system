@@ -1,10 +1,11 @@
+from io import BytesIO
+
+from django.core.files.uploadedfile import SimpleUploadedFile, UploadedFile
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
 from web.forms import ClientInterestForm
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
 from web.views import ClientInterestFormView, EmploymentApplicationFormView
-from django.core.files.uploadedfile import SimpleUploadedFile, UploadedFile
-from io import BytesIO
 
 from nhhc.utils.testing import generate_mock_ZipCodeField
 
@@ -26,7 +27,7 @@ class TestApplicationFormView(TestCase):
     def test_create_application_no_resume_submit_valid(self):
         """Tests submitting a valid employment application without a resume.
 
-        This test verifies the successful submission of an employment application form with valid data. 
+        This test verifies the successful submission of an employment application form with valid data.
         It checks that the form submission results in a redirect and creates a corresponding application record.
 
         Args:
@@ -71,8 +72,8 @@ class TestApplicationFormView(TestCase):
         """
         Verifies the employment application form loads correctly and contains expected fields.
 
-        This test ensures that the employment application form view renders successfully and includes 
-        the required form fields for submission. It checks both the HTTP response status and the 
+        This test ensures that the employment application form view renders successfully and includes
+        the required form fields for submission. It checks both the HTTP response status and the
         presence of critical form fields.
 
         Args:
@@ -98,14 +99,14 @@ class TestApplicationFormView(TestCase):
     def test_create_application_no_resume_submit_invalid(self):
         """Tests submission of an invalid employment application form.
 
-        This test verifies the form validation process by submitting an application with invalid data. 
+        This test verifies the form validation process by submitting an application with invalid data.
         It checks that the form correctly identifies and reports specific validation errors.
 
         Args:
             self: Test case instance.
 
         Raises:
-            AssertionError: If form validation fails to detect expected errors or if the application 
+            AssertionError: If form validation fails to detect expected errors or if the application
             is incorrectly created with invalid data.
         """
         # Fill out the form and submit it:
@@ -148,7 +149,7 @@ class TestApplicationFormView(TestCase):
         self.assertFalse(EmploymentApplicationModel.objects.filter(home_address1=data.get("home_address1")).exists())
 
     def test_create_application_with_resume_submit_valid(self):
-     
+
         test_file_good = SimpleUploadedFile(name="accepted_file.pdf", content=b"Accpeted File For Upload", content_type="application/pdf")
         # Fill out the form and submit it:
         data = {
@@ -172,7 +173,7 @@ class TestApplicationFormView(TestCase):
             "availability_saturday": False,
             "g-recaptcha-response": "PASSED",
             "captcha": "PASSED",
-            "resume_cv": test_file_good
+            "resume_cv": test_file_good,
         }
         r = self.client.post(reverse("web:employment_application_form"), data=data)
         self.assertEqual(r.status_code, 302)
@@ -182,8 +183,9 @@ class TestApplicationFormView(TestCase):
         self.assertEqual(str(application.state), str(data.get("state")))
         self.assertEqual(application.email, data.get("email"))
         self.assertIsNotNone(application.resume_cv)
+
     def test_create_application_with_resume_submit_invalid_file_type_vaild_extenstion(self):
-     
+
         test_file_bad_content = SimpleUploadedFile(name="rejected_file.pdf", content=b"const file_output = 'output bad'  \n console.log(file_output)", content_type="text/javascript")
         # Fill out the form and submit it:
         data = {
@@ -207,7 +209,7 @@ class TestApplicationFormView(TestCase):
             "availability_saturday": False,
             "g-recaptcha-response": "PASSED",
             "captcha": "PASSED",
-            "resume_cv": test_file_bad_content
+            "resume_cv": test_file_bad_content,
         }
         request = RequestFactory().post(reverse("web:employment_application_form"), data=data)
 
@@ -220,9 +222,9 @@ class TestApplicationFormView(TestCase):
         self.assertTrue(form.has_error(field="resume_cv"))
         self.assertFormError(form=form, field="resume_cv", errors="Invalid file type. Allowed types are .doc, .pdf, and .txt.")
 
-
         # Verify the new fruit was not created:
         self.assertFalse(EmploymentApplicationModel.objects.filter(last_name=data.get("last_name"), home_address1=data.get("home_address1")).exists())
+
     # def test_create_application_with_resume_submit_valid_file_type_invaild_size(self):
     #     """
     #     Verify the record is not created if invalid values are passed to the form:
@@ -264,11 +266,8 @@ class TestApplicationFormView(TestCase):
     #     self.assertTrue(form.has_error(field="resume_cv"))
     #     self.assertFormError(form=form, field="resume_cv", errors="Invalid file type. Allowed types are .doc, .pdf, and .txt.")
 
-
     #     # Verify the new fruit was not created:
     #     self.assertFalse(EmploymentApplicationModel.objects.filter(last_name=data.get("last_name"), home_address1=data.get("home_address1")).exists())
-
-
 
 
 class TestClientServiceRequestFormView(TestCase):
