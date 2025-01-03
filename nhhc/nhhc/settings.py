@@ -9,7 +9,6 @@ import os
 import re
 import sys
 import warnings
-from enum import Enum, unique
 from pathlib import Path
 
 import dj_database_url
@@ -29,15 +28,11 @@ if os.environ["DJANGO_ENV"].lower() != "production".lower():
     DEBUG = True
 else:
     assert not DEBUG, "DEBUG mode must be OFF in production!"
-MAINTENANCE_MODE = False  # is IMPLEMENTED SIMILAR TO FEATURE FLAGS
+MAINTENANCE_MODE = False
 TESTING = "test" in sys.argv
 # ******************************** ****************************************************
 #!SECTION
-# SECTION - FEATURE FLAGS
-FEATURE_FLAGS = {
-    "beta_compliance_reporting": False,
-    "beta_training_portal": False,
-}
+
 # SECTION - Protcols, General Security ACL COnfigs
 ADMINRESTRICT_ALLOW_PRIVATE_IP = False
 ALLOWED_HOSTS = list(os.environ["ALLOWED_HOSTS"].split(","))
@@ -47,7 +42,7 @@ SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_PROXIED_TRAFFIC", "https")
 SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_REDIRECT_EXEMPT = [r"^/metrics", r"^/status/*"]
+SECURE_REDIRECT_EXEMPT = [ r"^/metrics", r"^/status/*"]
 SECURE_HSTS_PRELOAD = True
 INTERNAL_IPS = ["127.0.0.1"]
 SECURE_BROWSER_XSS_FILTER = True
@@ -222,7 +217,7 @@ MIDDLEWARE = [
     "django_prometheus.middleware.PrometheusAfterMiddleware",  # 16
     "django.middleware.cache.FetchFromCacheMiddleware",
     "htmlmin.middleware.MarkRequestMiddleware",
-    # 17 (moved to the end)
+  # 17 (moved to the end)
     # "nhhc.middleware.maintenance.MaintenanceModeMiddleware",   # Uncomment if needed
 ]
 # SECTION - Database and Caching
@@ -387,7 +382,7 @@ AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
 AWS_S3_REGION_NAME = os.environ["AWS_S3_REGION_NAME"]
 AWS_STORAGE_BUCKET_NAME = os.environ["AWS_STORAGE_BUCKET_NAME"]
 AWS_DEFAULT_ACL = "private"
-AWS_S3_CUSTOM_DOMAIN = os.environ["AWS_S3_CUSTOM_DOMAIN"]
+AWS_S3_CUSTOM_DOMAIN = os.environ['AWS_S3_CUSTOM_DOMAIN']
 AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
 AWS_S3_SIGNATURE_VERSION = "s3v4"
 AWS_QUERYSTRING_EXPIRE = 3600
@@ -417,52 +412,18 @@ STATICFILES_DIRS = [
 
 # SECTION -  S3 public media settings
 PUBLIC_MEDIA_LOCATION = "media/"
-MEDIA_URL = f"{os.environ['AWS_S3_CUSTOM_DOMAIN']}/{PUBLIC_MEDIA_LOCATION}"
+MEDIA_URL =  f"{os.environ['AWS_S3_CUSTOM_DOMAIN']}/{PUBLIC_MEDIA_LOCATION}"
 # !SECTION
 
 # SECTION - S3 private media settings
 PRIVATE_MEDIA_LOCATION = "restricted/"
 MEDIA_DIRECTORY = "/restricted/compliance/"
 PRIVATE_FILE_STORAGE = "nhhc.backends.storage_backends.PrivateMediaStorage"
-PRIVATE_MEDIA_URL = f"{os.environ['AWS_S3_CUSTOM_DOMAIN']}/{PRIVATE_MEDIA_LOCATION}"
+PRIVATE_MEDIA_URL =  f"{os.environ['AWS_S3_CUSTOM_DOMAIN']}/{PRIVATE_MEDIA_LOCATION}"
 
 # !SECTION
 # SECTION - File Management
 ALLOWED_UPLOAD_MIME_TYPES = list(os.environ["ALLOWED_MIME_TYPES"].split(","))
-
-
-class CustomEnumMeta(type(Enum)):
-    def __getitem__(cls, name):
-        # Automatically prepend the underscore
-        return super().__getitem__(f"_{name}")
-
-
-@unique
-class DOCSEAL_DOCUMENT_TYPES(Enum, metaclass=CustomEnumMeta):
-    """Enum for DocSeal document types.
-
-    Provides a mapping between DocSeal document IDs and their human-readable names.
-    This enum utilizes a custom metaclass to automatically prepend underscores to member names.
-
-    Attributes:
-        _90907 (str): Do Not Drive Agreement Attestation.
-        _101305 (str): State W4 Attestation.
-        _91067 (str): DHA I9.
-        _90909 (str): HCA Policy Attestation.
-        _90908 (str): DOA Agency Policies Attestation.
-        _90910 (str): Job Duties Attestation.
-        _116255 (str): IDPH Background Check Authorization.
-    """
-
-    _90907 = "do_not_drive_agreement_attestation"
-    _101305 = "state_w4_attestation"
-    _91067 = "dha_i9"
-    _90909 = "hca_policy_attestation"
-    _90908 = "doa_agency_policies_attestation"
-    _90910 = "job_duties_attestation"
-    _116255 = "idph_background_check_authorization"
-
-
 STORAGES = {
     "default": {"BACKEND": "nhhc.backends.storage_backends.PrivateMediaStorage"},
     "staticfiles": {

@@ -7,49 +7,10 @@ from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.http.response import JsonResponse
 from django.template.response import TemplateResponse
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page, never_cache
-from django.views.generic import TemplateView
 from loguru import logger
 from rest_framework import status
 from rest_framework.response import Response
-
 from nhhc.utils.metrics import metrics
-
-
-class CachedTemplateView(TemplateView):
-    """TemplateView with built-in caching.
-
-    Caches the view's response for a specified duration using the `cache_page` decorator.
-
-    Args:
-        **initkwargs: Keyword arguments passed to the parent class's `as_view` method.
-
-    Returns:
-        The result of the parent class's `as_view` method, wrapped with the `cache_page` decorator.
-    """
-
-    @classmethod
-    def as_view(cls, **initkwargs):  # @NoSelf
-        return cache_page(settings.CACHE_TTL)(super(CachedTemplateView, cls).as_view(**initkwargs))
-
-
-class NeverCacheMixin(object):
-    """Mixin to prevent caching of views.
-
-    Applies the `never_cache` decorator to the dispatch method, ensuring that the view's response is not cached.
-
-    Args:
-        *args: Variable length argument list.
-        **kwargs: Arbitrary keyword arguments.
-
-    Returns:
-        The result of the superclass's dispatch method.
-    """
-
-    @method_decorator(never_cache)
-    def dispatch(self, *args, **kwargs):
-        return super(NeverCacheMixin, self).dispatch(*args, **kwargs)
 
 
 class CachedResponseMixin:
@@ -107,11 +68,11 @@ class CachedResponseMixin:
         cached_data = cache.get(cache_key)
         if cached_data is not None:
             logger.debug(f"Cache Hit for {self.primary_model.__name__} - Cache Key: {cache_key}")
-            metrics.increment_cache(model=self.primary_model.__name__, type="hit")
+            metrics.increment_cache(model=self.primary_model.__name__,type="hit")
             return Response(cached_data, status=status.HTTP_200_OK)
         else:
             logger.debug(f"Cache Miss for {self.primary_model.__name__}  - Cache Key: {cache_key}")
-            metrics.increment_cache(model=self.primary_model.__name__, type="miss")
+            metrics.increment_cache(model=self.primary_model.__name__,type="miss")
             return None
 
     def cache_response(self, cache_key, data):
@@ -197,7 +158,7 @@ def invalidate_cache(sender, **kwargs):
     logger.debug(f'Searching For Cache Key Pattern" {cache_key_pattern}')
     if cache_keys := cache.keys(cache_key_pattern):
         cache.delete_many(cache_keys)
-        metrics.increment_cache(model=self.primary_model.__name__, type="eviction")
+        metrics.increment_cache(model=self.primary_model.__name__,type="eviction")
         logger.info(f"Cache invalidated for model: {model_name}")
     else:
         logger.debug(f"No cache keys found for model: {model_name} using {cache_key_pattern}")

@@ -12,7 +12,7 @@
           <div class="col-12">
             <h2 class="mb-0">Applicant Details - {{submission.last_name}}, {{submission.first_name}} {% if submission.hired is not None %} <span class="badge badge-pill badge-info">Reviewed</span></h2> {% endif %} {% if submission.ipdh_registered is True %} <a  target="_blank" href="https://hcwrpub.dph.illinois.gov/SearchResults.aspx?ps=0|{{submission.first_name}}||{{submission.last_name}}" class="badge badge-pill badge-success animate__animated animate__heartBeat animate__infinite">IDPH Registered</a></h2> {% endif %}
             </div>
-           <em><p class="submission-date"><strong>Date Received:</strong> {{ submission.date_submitted|date:"l F d Y" }} ({{ submission.date_submitted|timesince }} ago)</p></em>
+           <em><p class="submission-date"><strong>Date Recieved:</strong> {{ submission.date_submitted|date:"l F d Y" }} ({{ submission.date_submitted|timesince }} ago)</p></em>
           </div>
         </div>
         <div class="card-body">
@@ -56,7 +56,7 @@
               <p>{{ submission.state }}</p>
             </div>
             <div class="col-4">
-              <h3><strong>Postal Code:</strong></h3>
+              <h3><strong>Zipcode:</strong></h3>
               <p>{{ submission.zipcode }}</p>
             </div>
           </div>

@@ -27,27 +27,6 @@ from employee.models import Employee
 
 now = arrow.now(tz="America/Chicago")
 
-from django.db import models
-from django_extensions.db.models import TimeStampedModel
-
-
-class FeatureFlag(TimeStampedModel, models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    is_enabled = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        """
-        This class defines metadata options for the Feature Flag model.
-        """
-
-        db_table = "feature_flags"
-        ordering = ["-modified"]
-        verbose_name = "Feature Flag"
-        verbose_name_plural = "Feature Flags"
-
 
 class PayrollException(models.Model, ExportModelOperationsMixin("exceptions")):
     """
@@ -116,28 +95,6 @@ class PayrollException(models.Model, ExportModelOperationsMixin("exceptions")):
     def reject_exception(self, reviewer: Employee) -> None:
         self.status = "R"
         self.reviewer = reviewer.employee_id
-
-
-from django.db import models
-from django_extensions.db.models import TimeStampedModel
-
-
-class FeatureFlag(TimeStampedModel, models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    is_enabled = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        """
-        This class defines metadata options for the Feature Flag model.
-        """
-
-        db_table = "feature_flags"
-        ordering = ["-modified"]
-        verbose_name = "Feature Flag"
-        verbose_name_plural = "Feature Flags"
 
 
 # class Assessment(models.Model):

@@ -1,5 +1,5 @@
 """
-Module: nhhc.utils.upload
+Module: upload_handler.py
 
 This module contains classes and functions related to handling file uploads and downloads, specifically to and from an S3 bucket.
 
@@ -7,45 +7,45 @@ Classes:
 - FileValidationError: Custom exception for file validation errors.
 - UploadHandler: Class for handling file uploads to S3 with customized file naming.
 - ProgressPercentage: Class for tracking upload progress.
+- S3HANDLER: Class for uploading and downloading files to and from S3.
 
 Functions:
-- download_and_upload_pdf: Downloads file from URL to Memory and Uploads to an S3 bucket.
-- generate_filename: Generates a filename based on payload data.
+- S3HANDLER.upload_file_to_s3: Uploads a file to an S3 bucket.
+- S3HANDLER.generate_filename: Generates a filename based on payload data.
+- S3HANDLER.download_pdf_file: Downloads a PDF file from a URL and uploads it to S3.
 
 Usage:
 Import the module and utilize the classes and functions for handling file uploads and downloads to and from an S3 bucket.
 
 """
 
+import json
 import os
+import random
+import re
+import string
 import sys
 import threading
 import typing
 
 import boto3
+import requests
+from botocore.exceptions import ClientError
 from django.conf import settings
-from django.core.exceptions import ValidationError
+from django.core.files.storage import FileSystemStorage
+from django.core.files.uploadhandler import FileUploadHandler
+from django.template.defaultfilters import filesizeformat
 from django.utils.deconstruct import deconstructible
 from django.utils.translation import gettext_lazy as _
+from filetype import guess
 from loguru import logger
 
-from nhhc.utils.helpers import (
-    _confirm_docseal_payload,
-    _download_file_to_memory,
-    _extract_template_id,
-    _extract_uploading_employee_name,
-    _generate_filename_from_parts,
-    _get_doc_type,
-    _upload_file_to_s3,
-    _validate_docseal_payload,
-    _validate_file_metadata,
-    FileValidationError
-)
 from nhhc.utils.metrics import metrics
 
 
+
 @deconstructible
-class UploadHandler:
+class UploadHandler(FileUploadHandler):
     def __init__(self, upload_type):
         self.s3_path = upload_type
         self.s3_client = boto3.client(
@@ -55,6 +55,9 @@ class UploadHandler:
             aws_access_key_id=os.environ["AWS_SES_ACCESS_KEY_ID"],
             aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
         )
+
+    def receive_data_chunk(self, raw_data, start):
+        pass
 
     def generate_randomized_file_name(
         self,
@@ -99,60 +102,86 @@ class ProgressPercentage(object):
             sys.stdout.flush()
 
 
-def generate_filename(payload: typing.Dict) -> str:
-    """Generates a filename based on the provided payload.
+class S3HANDLER(FileSystemStorage):
+    @staticmethod
+    @metrics.s3_upload_recorder.time()
+    def upload_file_to_s3(file_name, bucket: str = settings.AWS_STORAGE_BUCKET_NAME, object_name=None) -> bool:
+        """Upload a file to an S3 bucket
+        Args:
+            file_name: File to upload
+            bucket: Bucket to upload to
+            object_name: S3 object name. If not specified then file_name is used
+        Returns:
+            bool  - True if file was uploaded, else False
+        """
+        if object_name is None:
+            object_name = file_name
+            logger.debug(object_name)
+            logger.debug(file_name)
 
-    Extracts data from the payload, validates it, and constructs a unique filename.
-
-    Args:
-        payload (dict): The payload containing data, metadata, and template information.
-
-    Returns:
-        str: The generated filename.
-    """
-    data = _confirm_docseal_payload(payload)
-    metadata, template = _validate_docseal_payload(data)
-    last_name, first_name = _extract_uploading_employee_name(metadata)
-    document_id = _extract_template_id(template)
-    doc_type_prefix = _get_doc_type(document_id)
-    return _generate_filename_from_parts(doc_type_prefix, last_name, first_name)
-
-
-@metrics.docuseal_download_recorder.time()
-def download_and_upload_pdf(payload: typing.Dict, max_file_size_mb: int = 1) -> bool:
-    """
-    Downloads a PDF from a URL specified in the payload and uploads it to S3.
-
-    Args:
-        payload (Dict): Payload containing download information.
-        max_file_size_mb (int, optional): Maximum file size in megabytes. Defaults to 1MB.
-
-    Returns:
-        bool: True if download and upload successful, False otherwise.
-    """
-    try:
-        # Pre-check file metadata
-        url = payload["data"]["documents"][0]["url"]
-        _validate_file_metadata(url, max_file_size_mb)
-
-        # Download file into memory
-        file_obj = _download_file_to_memory(url)
-
-        # Generate object name for S3 upload
-        pdf_file_name = generate_filename(payload)
-
-        if _upload_file_to_s3(file_obj, object_name=pdf_file_name):
-            logger.success(f"Successfully uploaded {pdf_file_name}")
+        # Upload the file
+        s3_client = boto3.client(
+            "s3", region_name=os.environ["AWS_S3_REGION_NAME"], endpoint_url=os.environ["AWS_S3_ENDPOINT_URL"], aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"], aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"]
+        )
+        try:
+            s3_client.upload_file(file_name, bucket, object_name, Callback=ProgressPercentage(file_name))
             return True
-        else:
-            logger.error(f"Failed to upload {pdf_file_name} to S3")
+        except ClientError as e:
             return False
-    except FileValidationError as fve:
-        logger.error(f"Unable to Validate the File Before Downloading:{fve}")
-        return False
-    except ValueError as ve:
-        logger.error(f"Unable to Verify the Data Quality or Contents of Payload: {ve}")
-        return False
-    except Exception as e:
-        logger.error(f"Unable to Retrieve or Upload Attestation: {e}")
-        return False
+
+    @staticmethod
+    def get_doc_type(document_id: int) -> str:
+        match document_id:
+            case 90907:
+                return "do_not_drive_agreement_attestation"
+            case 101305:
+                return "state_w4_attestation"
+            case 91067:
+                return "dha_i9"
+            case 90909:
+                return "hca_policy_attestation"
+            case 90908:
+                return "doa_agency_policies_attestation"
+            case 90910:
+                return "job_duties_attestation"
+            case 116255:
+                return "idph_background_check_authorization"
+            case _:
+                return "unknown"
+
+    @staticmethod
+    def generate_filename(payload: dict) -> str:
+        employee_upload_suffix = f"{payload['data']['metadata']['last_name'].lower()}_{payload['data']['metadata']['first_name'].lower()}.pdf"
+        document_id = payload["data"]["template"]["id"]
+        doc_type_prefix = S3HANDLER.get_doc_type(document_id)
+
+        path = os.path.join("restricted", "attestations", doc_type_prefix)
+        os.makedirs(path, exist_ok=True)
+        return os.path.join(path, f"{doc_type_prefix}_{employee_upload_suffix}")
+
+    @staticmethod
+    @metrics.docuseal_download_recorder.time()
+    def download_pdf_file(payload: dict) -> bool:
+        """Download PDF from given URL to local directory.
+
+        :param url: The url of the PDF file to be downloaded
+        :return: True if PDF file was successfully downloaded, otherwise False.
+        """
+
+        # Request URL and get response object
+        response = requests.get(payload["data"]["documents"][0]["url"], stream=True)
+
+        # isolate PDF filename from URL
+        pdf_file_name = S3HANDLER.generate_filename(payload)
+
+        if response.status_code == 200:
+            # Save in current working directory
+            with open(pdf_file_name, "wb+") as pdf_object:
+                pdf_object.write(response.content)
+                S3HANDLER.upload_file_to_s3(pdf_file_name)
+                logger.info(f"{pdf_file_name} was successfully saved!")
+                return True
+        else:
+            print(f"Uh oh! Could not download {pdf_file_name},")
+            print(f"HTTP response status code: {response.status_code}")
+            return False

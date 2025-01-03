@@ -13,11 +13,9 @@ from django.contrib.auth.decorators import login_required
 from django.urls import path, re_path
 from portal import views
 
-app_name = "portal"
-
 urlpatterns = [
-    re_path(r"^dashboard$/?", views.Dashboard.as_view(), name="dashboard"),
-    re_path(r"^profile$/?", views.Profile.as_view(), name="profile"),
+    path("dashboard", views.Dashboard.as_view(), name="dashboard"),
+    re_path(r"^profile/$", views.Profile.as_view(), name="profile"),
     path(
         "inquiries/",
         login_required(views.ClientInquiriesListView.as_view()),
@@ -54,6 +52,6 @@ urlpatterns = [
         name="applicant-details",
     ),
     path("all_applicants", views.all_applicants, name="submitted-applicants-api"),
-    path("training/", views.TrainingView.as_view(), name="training"),
+    path("coming-soon/", views.coming_soon, name="coming-soon"),
     path("exceptions/", views.PayrollExceptionView.as_view(), name="exceptions"),
 ]

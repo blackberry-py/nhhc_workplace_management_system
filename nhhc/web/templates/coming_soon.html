@@ -7,58 +7,31 @@
 <!--===============================================================================================-->
     <link rel="stylesheet" type="text/css" href="{% static 'css/coming_soon_util.css'%}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/coming_soon.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/flipdown.css' %}">
 <!--===============================================================================================-->
 {% endblock stylesheets %}
 
 {% block content %}
     <div class="bg-img1 size1 overlay1" style="background-image: url('images/bg01.jpg');">
         <div class="size1 p-l-15 p-r-15 p-t-30 p-b-50">
-[=-[                                                                                                                                                                                                                                                                                                                                                                                                 ]]
+
 
 
             <div class="wsize1 m-lr-auto">
-                <h1 class="text-center l1-txt1 p-b-60">
-                    The {{ feature_name | default_if_none: feature}} </h1>
-                    {% if expected_completion_epoch  %}
-                        <div class="flipdown-container">
-                            <div id="flipdown" class="flipdown flipdown__theme-light mx-auto"></div>
-                        </div>
-                        {% endif %}
-                   <h3 class="text-center"> is <span class="l1-txt2">expected in  {{ expected_completion| default_if_none:"soon"}}  </span>, hang tight!
-                   
+                <p class="txt-center l1-txt1 p-b-60">
+                    This feature is <span class="l1-txt2">Coming Soon</span>, hang tight!
+                </p>
             </div>
         </div>
     </div>
 
 
 <!--===============================================================================================-->
-    {% comment %} <script src="{% static 'vendor/countdowntime/moment.min.js' %}"></script>
+    <script src="{% static 'vendor/countdowntime/moment.min.js' %}"></script>
     <script src="{% static 'vendor/countdowntime/moment-timezone.min.j' %}"></script>
     <script src="{% static 'vendor/countdowntime/moment-timezone-with-data.min.js' %}"></script>
-    <script src="{% static 'vendor/countdowntime/countdowntime.js' %}"></script> {% endcomment %}
+    <script src="{% static 'vendor/countdowntime/countdowntime.js' %}"></script>
     <script src="{% static 'vendor/tilt/tilt.jquery.min.js' %}"></script>
     <script src="{% static 'js/cs_main.js' %}"></script>
-    {% if expected_completion_epoch  %}
-    <script src="{% static 'js/flipdown.js' %}" defer></script>
-    
-
-        <script defer>
-            /*--------------------------------------------------
-            Element Flipdown Counter
-            ---------------------------------------------------*/
-
-            document.addEventListener('DOMContentLoaded', () => {
-
-                
-                // Set up FlipDown
-            const FLIPDOWN_TIMESTAMP = {{ expected_completion_epoch }};
-            var flipdown = new FlipDown(FLIPDOWN_TIMESTAMP).start().ifEnded(() => {
-                    console.log('The countdown has ended!');
-                });
-            });
-        </script>
-    {% endif %}
 {% endblock content %}
 
 

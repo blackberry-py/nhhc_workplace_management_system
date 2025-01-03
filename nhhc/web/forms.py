@@ -18,7 +18,6 @@ from captcha.fields import ReCaptchaField
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Column, Field, Layout, Row, Submit
 from django import forms
-from django.conf import settings
 from django.forms import ModelForm, fields, forms
 from django.utils.translation import gettext_lazy as _
 from formset.fields import Activator
@@ -119,7 +118,7 @@ class EmploymentApplicationForm(ModelForm):
         widget=UploadedFileInput(
             attrs={
                 "max-size": 1024 * 1024,
-                "accept": settings.ALLOWED_UPLOAD_MIME_TYPES,
+                "accept": "application/msword, application/pdf, text/plain",
             }
         ),
         help_text="Optional - Upload a copy of your resume or work history. Only .doc, .pdf OR .txt up to 1MB",
@@ -236,7 +235,12 @@ class EmploymentApplicationForm(ModelForm):
                 )
 
             # Validate MIME type
-            if resume_cv.content_type not in settings.ALLOWED_UPLOAD_MIME_TYPES:
+            allowed_mime_types = [
+                "application/msword",
+                "application/pdf",
+                "text/plain",
+            ]
+            if resume_cv.content_type not in allowed_mime_types:
                 self.add_error(
                     "resume_cv",
                     forms.ValidationError(
@@ -244,7 +248,6 @@ class EmploymentApplicationForm(ModelForm):
                         code="invalid_mime_type",
                     ),
                 )
-
     class Meta:
         """Meta definition for EmploymentApplicationModelForm."""
 
