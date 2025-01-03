@@ -43,7 +43,7 @@ docs:
 	nohup doppler run  --command="cd ./docs && npx docsify init && npx docsify serve ." &
 .PHONY: workers
 workers: docs
-	doppler run   --  celery -A nhhc worker -D --loglevel debug -n %d
+	doppler run   --  celery -A nhhc worker -D --loglevel debug -n %%d
 
 .PHONY: test
 test: ## Run tests
