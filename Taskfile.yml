@@ -1,0 +1,108 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  TOKEN: $DOPPLER_TOKEN
+
+tasks:
+  collect:
+    dir: .
+    desc: Collects the static files to one directory for production static serving
+    cmds:
+      - doppler run -t {{.TOKEN}} -- .venv/bin/python  run/manage.py collectstatic --no-input
+    generates:
+      - ./staticfiles
+    sources:
+      - ./staticfiles
+    silent: false
+    interactive: false
+  
+  deps_check:
+    dir: .
+    desc: Uses poetry to check the venv dependencies, sync them, update the requirements dir files. 
+    cmds:
+      - doppler run -t {{.TOKEN}} -- poetry sync
+      - doppler run -t {{.TOKEN}} -- poetry export --without dev,test --without-hashes -without-urls > ./requirements/base.txt
+      - doppler run -t {{.TOKEN}} -- poetry export --only dev,test --without-hashes -without-urls > ./requirements/dev.txt
+    generates:
+      - ./requirements/dev.txt
+      - ./requirements/base.txt
+      - ./poetry.lock
+    sources:
+      - ./poetry.lock
+    silent: false
+    interactive: false
+  
+  start_test_worker:
+   desc: Starts celery background workers
+   dir: .
+   cmds:
+     - doppler run -c prod -- .venv/bin/celery -A common worker -D --loglevel debug -n %%d
+   interactive: false
+   silent: true
+
+  monitor_test_workers:
+   desc: Starts flower the celery background workers
+   dir: .
+   cmds:
+     - nohup doppler run -c prod -- .venv/bin/celery -A common flower &
+     - defer: rm nohup.out
+   interactive: false
+   silent: true
+   internal: true
+
+
+  
+  start_worker:
+   desc: Starts celery background workers
+   dir: .
+   cmds:
+     - sudo systemctl start celery.service
+   interactive: false
+   silent: true
+   internal: true
+
+  monitor_workers:
+   desc: Starts flower the celery background workers
+   dir: .
+   cmds:
+     - sudo systemctl start flower.service
+   interactive: false
+   silent: true
+      
+  develop:
+   desc: Starts the Django Application, and background workers in a debug state
+   dir: .
+   cmds:
+     - echo 'Starting Doppler'
+     - doppler run -c prod -- .venv/bin/python run/manage.py migrate
+     - echo 'Starting Celery'
+     - task: start_test_worker
+     - echo 'Starting Flower'
+     - task: monitor_test_workers
+     - doppler run  -c prod -- .venv/bin/python run/manage.py runserver
+   interactive: false
+   silent: false 
+
+  start:
+   desc: Starts the Django Application, and background workers in a production state
+   dir: core
+   cmds:
+     - echo 'Starting Celery'
+     - task: start_worker
+     - echo 'Starting Flower'
+     - task: monitor_workers
+     - doppler run -t {{.TOKEN}} -- sudo systemctl start carenett.service
+   interactive: false
+   silent: false
+
+  make_admin:
+   desc: Creates a new Superuser 
+   dir: .
+   cmds:
+     - echo 'Creating Superuser'
+     - doppler run  -c prod -- .venv/bin/python run/manage.py createsuperuser --no-input
+     - echo 'User Created'
+   interactive: false
+   silent: false

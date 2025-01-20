@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "docsify": "^4.13.1",
-    "docsify-cli": "^1.0.0"
-  }
-}
