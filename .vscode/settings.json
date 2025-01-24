@@ -64,5 +64,6 @@
     },
     "FSharp.suggestGitignore": false,
     "doppler.autocomplete.enable": true,
-    "doppler.hover.enable": true
+    "doppler.hover.enable": true,
+    "eslint.enable": false
 }

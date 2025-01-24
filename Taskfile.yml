@@ -10,7 +10,7 @@ tasks:
     dir: .
     desc: Collects the static files to one directory for production static serving
     cmds:
-      - doppler run -t {{.TOKEN}} -- .venv/bin/python  run/manage.py collectstatic --no-input
+      - doppler run -- .venv/bin/python  run/manage.py collectstatic --no-input
     generates:
       - ./staticfiles
     sources:
@@ -81,7 +81,7 @@ tasks:
      - task: start_test_worker
      - echo 'Starting Flower'
      - task: monitor_test_workers
-     - doppler run  -c prod -- .venv/bin/python run/manage.py runserver
+     - doppler run  -c prod -- .venv/bin/gunicorn -w3 -t2  core.wsgi:application --bind 127.0.0.1:{{.CLI_ARGS}}
    interactive: false
    silent: false 
 
@@ -104,5 +104,15 @@ tasks:
      - echo 'Creating Superuser'
      - doppler run  -c prod -- .venv/bin/python run/manage.py createsuperuser --no-input
      - echo 'User Created'
+   interactive: false
+   silent: false
+
+  test:
+   desc: Creates a new Superuser 
+   dir: .
+   cmds:
+     - echo 'Starting test - Setting Configuration Env To Testing'
+     - export DJANGO_CONFIGURATION=Testing
+     -  doppler run -- python run/manage.py test {{.CLI_ARGS}} --verbosity=2 --keepdb   --failfast  --force-color
    interactive: false
    silent: false

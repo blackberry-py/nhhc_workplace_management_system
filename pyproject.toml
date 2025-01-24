@@ -87,6 +87,7 @@ django-guardian = "^2.4.0"
 django-phonenumber-field = {extras = ["phonenumbers"], version = "^8.0.0"}
 psutil = "^6.1.1"
 argon2-cffi = "^23.1.0"
+django-minify-html = "^1.11.0"
 
 
 [tool.poetry.group.dev.dependencies]

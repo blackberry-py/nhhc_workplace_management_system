@@ -1,7 +1,7 @@
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 from faker import Faker
-from web.views import (
+from applications.web.views import (
     AboutUsView,
     HomePageView,
     SuccessfulSubmission,
