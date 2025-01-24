@@ -385,3 +385,4 @@ postgres_ssl.crt
 digital_ocean_postgres_ssl.crt
 README.Docker.md
 .task
+spam.log

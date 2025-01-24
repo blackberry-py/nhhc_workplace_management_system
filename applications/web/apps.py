@@ -17,4 +17,3 @@ class WebConfig(AppConfig):
         plugin_dir.register(CloudObjectStorageBackend)
         plugin_dir.register(DocSealSigningServiceHealthCheck)
         plugin_dir.register(SMTPEmailBackend)
-        plugin_dir.register(DocSealSigningServiceHealthCheck)
