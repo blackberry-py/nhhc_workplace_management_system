@@ -76,7 +76,7 @@ tasks:
    dir: .
    cmds:
      - echo 'Starting Doppler'
-     - doppler run -c prod -- .venv/bin/python run/manage.py migrate
+     - doppler run -c prod -- .venv/bin/gunicorn -t 2 -w 2 --timeout 60 core.wsgi:application --bind 127.0.0.1:{{.CLI_ARGS}} 
      - echo 'Starting Celery'
      - task: start_test_worker
      - echo 'Starting Flower'
@@ -116,3 +116,10 @@ tasks:
      -  doppler run -- python run/manage.py test {{.CLI_ARGS}} --verbosity=2 --keepdb   --failfast  --force-color
    interactive: false
    silent: false
+
+  shell:
+    desc: Open a shell in the app container
+    cmds:
+      - doppler run -- dockec ompose exec app /bin/bash
+    interactive: true
+    silent: false

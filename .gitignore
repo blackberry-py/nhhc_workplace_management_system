@@ -386,3 +386,4 @@ digital_ocean_postgres_ssl.crt
 README.Docker.md
 .task
 spam.log
+.devcontainer/node_modules
