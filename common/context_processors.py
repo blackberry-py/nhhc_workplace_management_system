@@ -3,8 +3,8 @@ from typing import Any, Dict
 
 from django.conf import settings
 from django.http import HttpRequest
-from portal.forms import PayrollExceptionForm
-
+from applications.portal.forms import PayrollExceptionForm
+from core.settings import Base
 
 def global_forms(request: HttpRequest) -> Dict[str, Any]:
     pattern = re.compile(r"[a-z0-9]+://[a-z0-9]+:\d.*/login/", re.IGNORECASE)
@@ -13,13 +13,6 @@ def global_forms(request: HttpRequest) -> Dict[str, Any]:
     else:
         form = PayrollExceptionForm()
     return {"ExceptionForm": form}
-
-
-def from_settings(request):
-    return {
-        "ENVIRONMENT_NAME": settings.ENVIRONMENT_NAME,
-        "ENVIRONMENT_COLOR": settings.ENVIRONMENT_COLOR,
-    }
 
 
 def maintenance_mode(request):

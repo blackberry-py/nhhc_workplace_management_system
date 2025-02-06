@@ -18,7 +18,7 @@ def maintenance_handler(request: HttpRequest, exception=None) -> HttpResponse:
         HttpResponse: A response with status code 400 and the 400.html template rendered.
     """
 
-    return render(request, "503.html", status=503)
+    return render(request, "common/503.html", status=503)
 
 
 @public
@@ -35,7 +35,7 @@ def bad_request_handler(request: HttpRequest, exception=None) -> HttpResponse:
     """
 
     logger.warning(f"BAD REQUEST: {exception}")
-    return render(request, "400.html", status=400)
+    return render(request, "common/400.html", status=400)
 
 
 @public
@@ -51,7 +51,7 @@ def permission_denied_handler(request: HttpRequest, reason=None) -> HttpResponse
         HttpResponse: A response with status code 400 and the 400.html template rendered.
     """
     logger.error(f"FORBIDDEN ERROR: {reason}")
-    return render(request, "403_csrf.html", status=403)
+    return render(request, "common/403_csrf.html", status=403)
 
 
 @public
@@ -67,7 +67,7 @@ def page_not_found_handler(request: HttpRequest, exception=None) -> HttpResponse
         HttpResponse: A response with status code 404 and the 404.html template rendered.
     """
     logger.warning(f"PAGE NOT FOUND ERROR: {exception}")
-    return render(request, "404.html", status=404)
+    return render(request, "common/404.html", status=404)
 
 
 @public
@@ -83,7 +83,7 @@ def server_error_handler(request: HttpRequest, exception=None) -> HttpResponse:
         HttpResponse: A response with status code 400 and the 400.html template rendered.
     """
     logger.error(f"SERVER ERROR: {exception}")
-    return render(request, "500.html", status=500)
+    return render(request, "common/500.html", status=500)
 
 
 class ElectronicMailTransmissionError(RuntimeError):

@@ -387,3 +387,6 @@ README.Docker.md
 .task
 spam.log
 .devcontainer/node_modules
+POSTGRES_SSL.crt
+CODE_OF_CONDUCT.md
+async_worker_log

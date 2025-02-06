@@ -59,7 +59,7 @@ urlpatterns = [
     # re_path(r"^sitemap.xml$\/?", cache_page(60)(sitemaps), {"sitemaps": sitemaps}, name="cached-sitemap"),
     re_path(r"^robots\.txt\/?", include(robots.urls)),
     re_path("", include(django_prometheus.urls), name="metric_scrape"),
-    path(f"status/{os.environ["STATUS_URL_KEY"]}/", include(health_check.urls)),
+    path(f"status/{os.environ['STATUS_URL_KEY']}/", include(health_check.urls)),
     path("maintenance/", maintenance_handler, name="maintenance_mode"),
     path("tinymce/", include(tinymce.urls)),
     path("", include(applications.portal.urls, namespace="portal")),

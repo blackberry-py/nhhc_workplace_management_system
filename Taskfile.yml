@@ -2,6 +2,7 @@
 
 version: '3'
 
+silent: true
 vars:
   TOKEN: $DOPPLER_TOKEN
 
@@ -38,7 +39,9 @@ tasks:
    desc: Starts celery background workers
    dir: .
    cmds:
-     - doppler run -c prod -- .venv/bin/celery -A common worker -D --loglevel debug -n %%d
+     - echo "Initializing Background Workers..."
+     - doppler run -c prod -- python3 -m celery -A common worker -D --loglevel debug -n %%d
+     - defer: echo "Killing Background Workers.." && pkill -9 -f 'celery worker'
    interactive: false
    silent: true
 
@@ -46,7 +49,7 @@ tasks:
    desc: Starts flower the celery background workers
    dir: .
    cmds:
-     - nohup doppler run -c prod -- .venv/bin/celery -A common flower &
+     - nohup doppler run -c prod -- python3 -m celery -A common flower &
      - defer: rm nohup.out
    interactive: false
    silent: true
@@ -75,15 +78,17 @@ tasks:
    desc: Starts the Django Application, and background workers in a debug state
    dir: .
    cmds:
-     - echo 'Starting Doppler'
-     - doppler run -c prod -- .venv/bin/gunicorn -t 2 -w 2 --timeout 60 core.wsgi:application --bind 127.0.0.1:{{.CLI_ARGS}} 
      - echo 'Starting Celery'
      - task: start_test_worker
      - echo 'Starting Flower'
      - task: monitor_test_workers
-     - doppler run  -c prod -- .venv/bin/gunicorn -w3 -t2  core.wsgi:application --bind 127.0.0.1:{{.CLI_ARGS}}
+     - doppler run -c prod -- python -m gunicorn -t 2 -w 2 --timeout 60 core.wsgi:application --bind 127.0.0.1:{{.CLI_ARGS}} --reload
    interactive: false
-   silent: false 
+   silent: false
+   requires:
+     vars:
+       - DOPPLER_TOKEN
+       - DB_CERT_PATH
 
   start:
    desc: Starts the Django Application, and background workers in a production state
@@ -96,6 +101,10 @@ tasks:
      - doppler run -t {{.TOKEN}} -- sudo systemctl start carenett.service
    interactive: false
    silent: false
+   requires:
+     vars:
+       - DOPPLER_TOKEN
+       - DB_CERT_PATH
 
   make_admin:
    desc: Creates a new Superuser 
@@ -123,3 +132,21 @@ tasks:
       - doppler run -- dockec ompose exec app /bin/bash
     interactive: true
     silent: false
+  
+  venv:
+    desc: Make a new virtual environment
+    dir: .
+    cmds:
+      - python3 -m venv .venv --prompt="ACTIVE_VENV_CARENETT"
+      - cmd: source .venv/bin/activate
+        ignore_error: true
+
+  install:
+    desc: Make venv and install requirements
+    dir: .
+    deps: [venv]
+    cmds:
+      - pip install poetry
+      - poetry lock -n
+      - poetry install --no-root
+    
