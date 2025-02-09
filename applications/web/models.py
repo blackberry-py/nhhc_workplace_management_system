@@ -1,5 +1,5 @@
 """
-Module: nhcc.web.models
+Module: applications.web.models
 
 This module contains the models needed for the front-end for client interest submissions and employment applications.
 
