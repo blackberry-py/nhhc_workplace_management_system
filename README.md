@@ -1,11 +1,13 @@
 <a id="readme-top"></a>
 
 <!-- PROJECT SHIELDS -->
+
 <div align="center">
 
 [![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/Terry-BrooksJr/nhhc_workplace_management_system.svg?style=for-the-badge)](issues-url)  [![Static Badge](https://img.shields.io/github/license/Terry-BrooksJr/nhhc_workplace_management_system.svg?style=for-the-badge)](license-url)    [![Static Badge](https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555)](linkedin-url)
 
 `</div>
+
 <!-- PROJECT LOGO -->
 
 <br />
@@ -19,14 +21,10 @@
 <p align="center">
     The NHHC Workplace Management System is a custom comprehensive tool designed to streamline workplace operations by managing resources, employees, and daily tasks in a centralized system. Built with Python, Django, and PostgreSQL, it facilitates efficient operations, performance tracking, and resource allocation.
 
-<br />
-<a href="http://docs.netthandshome.care"><strong>Read the Admin User's Manual »</strong></a>
-<br />
-<br />
-
 <a href="https://github.com/Terry-BrooksJr/nhhc_workplace_management_system/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
 
 <a href="https://github.com/Terry-BrooksJr/nhhc_workplace_management_system/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+
 </p>
 </div>
 
@@ -61,8 +59,6 @@
 
 ## About The Project
 
-[!
-
 ![](assets/20240921_174958_readme_project_image.png)
 
 [Product Name Screen Shot][product-screenshot]](http://netthandshome.care)
@@ -74,6 +70,47 @@ It is a bespoke HRIS system that is customized around contractual requirements s
 This application makes no claims to be HIPPA compliant. While it's design does follow the core precepts of data privacy and security in the United States, it does require individualized production harding.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+```mermaid
+## CareNett Django Application Architecture
+```mermaid
+graph TD
+    A[Django Application] --> B[Security Middleware]
+    A --> C[Caching Layer]
+    A --> D[Authentication]
+    A --> E[Logging]
+    A --> F[Background Workers]
+
+    B --> B1[CSRF Protection]
+    B --> B2[SSL Redirect]
+    B --> B3[XSS Filter]
+
+    C --> C1[Redis Cache]
+    C --> C2[Session Cache]
+    C --> C3[Celery Cache]
+
+    D --> D1[AllAuth]
+    D --> D2[Custom Employee Model]
+    D --> D3[Defender Login Protection]
+
+    E --> E1[Loguru Logger]
+    E --> E2[Logtail Handler]
+
+    F --> F1[Celery]
+    F --> F2[Background Task Queue]
+
+    G[Database] --> A
+    G --> H[PostgreSQL]
+    G --> I[SSL Encrypted Connection]
+
+    J[Storage] --> A
+    J --> K[AWS S3]
+    J --> L[Private/Public Media Storage]
+
+    M[Monitoring] --> N[Prometheus]
+    M --> O[Health Checks]
+```
+```
 
 ### Built With
 
@@ -94,28 +131,36 @@ To get a local copy up and running follow these simple steps.
 ### Prerequisites
 
 * Python 3.11+
-  ```sh
-  sudo apt-get install python3
-  ```
+
+```sh
+sudo apt-get install python3
+```
 
 ### Installation
 
 1. Clone the repo
-   ```sh
-   git clone https://github.com/Terry-BrooksJr/nhhc_workplace_management_system.git
-   ```
+
+```sh
+git clone https://github.com/Terry-BrooksJr/nhhc_workplace_management_system.git
+```
+
 2. Install Python packages
-   ```sh
-   pip install -r requirements.txt
-   ```
+
+```sh
+pip install -r requirements.txt
+```
+
 3. Set up the database
-   ```sh
-   python manage.py migrate
-   ```
+
+```sh
+python manage.py migrate
+```
+
 4. Run the development server
-   ```sh
-   python manage.py runserver
-   ```
+
+```sh
+python manage.py runserver
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
