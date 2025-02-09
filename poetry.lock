@@ -2439,6 +2439,36 @@ files = [
     {file = "gunicorn-23.0.0.tar.gz", hash = "sha256:f014447a0101dc57e294f6c18ca6b40227a4c90e9bdb586042628030cba004ec"},
 ]
 
+[package.extras]
+protobuf = ["grpcio-tools (>=1.68.1)"]
+
+[[package]]
+name = "guardian"
+version = "0.2.2"
+description = "Monitor the status of a set of services."
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "guardian-0.2.2-py3-none-any.whl", hash = "sha256:6cb6ce4cdc827e27dcd18d81c587331f00fc44c92e8b2547c9da02f18938c38b"},
+    {file = "guardian-0.2.2.tar.gz", hash = "sha256:658229b3e4caf22136f6bffdd231ea666cc3490cdebc080cef4f814bbef02170"},
+]
+
+[package.dependencies]
+jinja2 = ">=3.1.2,<4.0.0"
+PyYAML = ">=6.0.0,<7.0.0"
+
+[[package]]
+name = "gunicorn"
+version = "22.0.0"
+description = "WSGI HTTP Server for UNIX"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "gunicorn-22.0.0-py3-none-any.whl", hash = "sha256:350679f91b24062c86e386e198a15438d53a7a8207235a78ba1b53df4c4378d9"},
+    {file = "gunicorn-22.0.0.tar.gz", hash = "sha256:4a0b436239ff76fb33f11c07a16482c521a7e09c1ce3cc293c2330afe01bec63"},
+]
+
+
 [package.dependencies]
 packaging = "*"
 
@@ -6690,8 +6720,7 @@ files = [
 [package.extras]
 test = ["pytest"]
 
-[metadata]
-
+[metadata] 
 lock-version = "2.1"
 python-versions = ">3.11,<4"
 content-hash = "7e58128f1dafa1591f71b442b7990bf0e54a79cb31c3e6acf27aaabd83cf2a4b"
