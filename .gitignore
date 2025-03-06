@@ -1119,3 +1119,5 @@ nhhc/async_worker_log.sqlite
 nhhc/async_worker_log.sqlite-*.bin
 
 .fake
+.task/checksum/deps_check
+.task/checksum/collect
