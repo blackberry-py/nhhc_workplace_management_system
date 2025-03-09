@@ -7,6 +7,35 @@ vars:
   TOKEN: $DOPPLER_TOKEN
 
 tasks:
+  create_log_files:
+    dir: /var/log
+    desc: Creates the log files with proper permissions for the application
+    cmds:
+      - direnv allow .
+      - touch ./MASTER.log
+      - touch ./FATAL.log
+      - touch ./SERVICE.log
+      - chmod 777 ./MASTER./log
+      - chmod 777 ./FATAL.log
+      - chmod 777 ./SERVICE.log
+    generates:
+      - /var/log/MASTER.log
+      - /var/log/FATAL.log
+      - /var/log/SERVICE.log
+    sources:
+      - /var/log/MASTER.log
+      - /var/log/FATAL.log
+      - /var/log/SERVICE.log
+    internal: true
+    preconditions:
+      - sh: test ! -f /var/log/MASTER.log
+        msg: "MASTER.log file already exists"
+      - sh: test ! -f /var/log/FATAL.log
+        msg: "FATAL.log file already exists"
+      - sh: test ! -f /var/log/SERVICE.log
+        msg: "SERVICE.log file already exists"
+     wwenv: 
+
   collect:
     dir: .
     desc: Collects the static files to one directory for production static serving
@@ -40,8 +69,8 @@ tasks:
    dir: .
    cmds:
      - echo "Initializing Background Workers..."
-     - doppler run -c prod -- python3 -m celery -A common worker -D --loglevel debug -n %%d
-     - defer: echo "Killing Background Workers.." && pkill -9 -f 'celery worker'
+     - doppler run -c prod -- python3 -m celery -A common.celery:app worker -D --loglevel debug -n %%d
+     - defer: echo "Killing Background Workers.." && kill -9 -f 'celery worker'
    interactive: false
    silent: true
 
@@ -51,7 +80,7 @@ tasks:
    cmds:
      - nohup doppler run -c prod -- python3 -m celery -A common flower &
      - defer: rm nohup.out
-   interactive: false
+   interactive: false          
    silent: true
    internal: true
 
@@ -78,22 +107,25 @@ tasks:
    desc: Starts the Django Application, and background workers in a debug state
    dir: .
    cmds:
-     - echo 'Starting Celery'
+     - echo "Completing Pre-Start Environment Check For Development..."
+     - task: create_log_files
+     - echo 'Starting Celery'.......
      - task: start_test_worker
      - echo 'Starting Flower'
      - task: monitor_test_workers
      - doppler run -c prod -- python -m gunicorn -t 2 -w 2 --timeout 60 core.wsgi:application --bind 127.0.0.1:{{.CLI_ARGS}} --reload
-   interactive: false
+   interactive: false 
    silent: false
    requires:
      vars:
        - DOPPLER_TOKEN
        - DB_CERT_PATH
-
   start:
    desc: Starts the Django Application, and background workers in a production state
    dir: core
    cmds:
+     - echo "Completing Pre-Start Environment Check For Production..."
+     - task: create_log_files
      - echo 'Starting Celery'
      - task: start_worker
      - echo 'Starting Flower'
@@ -129,7 +161,7 @@ tasks:
   shell:
     desc: Open a shell in the app container
     cmds:
-      - doppler run -- dockec ompose exec app /bin/bash
+      - doppler run -- docker-compose exec app /bin/bash
     interactive: true
     silent: false
   
@@ -149,4 +181,3 @@ tasks:
       - pip install poetry
       - poetry lock -n
       - poetry install --no-root
-    
