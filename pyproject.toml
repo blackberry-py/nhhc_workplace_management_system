@@ -1,9 +1,15 @@
-[tool.poetry]
-name = "nhhc"
-version = "0.1.0"
-license = "GNU3"
-description = "Front-End website and web application for Nett Hands Home care"
-authors = ["Terry Brooks, Jr. <Terry.Arthur@BrooksJr.com>"]
+[project]
+name = "carenett"
+version = "1.0.0"
+description = "The NHHC Workplace Management System is a comprehensive tool designed to streamline workplace operations by managing resources, employees, and daily tasks in a centralized system. Built with Python, Django, and PostgreSQL, it facilitates efficient operations, performance tracking, and resource allocation."
+authors = [
+    {name = "Terry Arthur Brooks, Jr.",email = "Terry.Arthur@BrooksJr.com"}
+]
+license = {text = "GNU General Public License"}
+readme = "README.md"
+requires-python = ">=3.11,<4"
+package-mode = false
+
 
 [tool.poetry.dependencies]
 python = ">=3.11,<=3.13"
@@ -13,7 +19,7 @@ django-crispy-forms = "2.3"
 django-phonenumber-field = "7.3.0"
 django-localflavor = "4.0"
 whitenoise = "6.8.2"
-gunicorn = "20.1.0"
+gunicorn = "22.0.0"
 six = "1.17.0"
 supervisor = "4.2.5"
 boto3 = "1.35.79"
@@ -150,7 +156,7 @@ httpcore = "1.0.7"
 httpx = "0.28.1"
 humanize = "4.11.0"
 identify = "2.6.3"
-idna = "3.10"
+idna = "3.7"
 importlib-metadata = "6.11.0"
 iniconfig = "2.0.0"
 installer = "0.7.0"
@@ -298,37 +304,35 @@ zipp = "3.21.0"
 zopfli = "0.2.3.post1"
 
 
+
 [tool.poetry.group.dev.dependencies]
-pre-commit = "^3.6.0"
-black = "^24.3.0"
-djhtml = "^3.0.6"
+pre-commit = "^4.0.1"
+black = "^24.10.0"
+djhtml = "^3.0.7"
 isort = "^5.13.2"
-djlint = "^1.31.1"
-kolo = "^2.17.0"
-django-debug-toolbar = "^4.2.0"
-poetry-plugin-export = "^1.6.0"
-bandit = "^1.7.8"
+djlint = "^1.36.4"
+django-debug-toolbar = "^4.4.6"
+poetry-plugin-export = "^1.8.0"
+bandit = "^1.8.0"
+prospector = {extras = ["with-everything"], version = "^1.13.3"}
+autoflake = "^2.3.1"
+pylint-celery = "^0.3"
+sourcery = "^1.29.0"
+django-mail-panel = "^4.0.4"
 
 [tool.poetry.group.test.dependencies]
-django-webtest = "^1.9.11"
-coverage = "^7.3.4"
-django-discover-runner = "^1.0"
+selenium = "^4.27.1"
+pytest-django = "^4.9.0"
+coverage = "^7.6.10"
+django-webtest = "^1.9.12"
+model-bakery = "^1.20.1"
 mock = "^5.1.0"
-model-bakery = "^1.17.0"
-factory-boy = "^3.3.0"
-selenium = "^4.16.0"
-faker = "^22.0.0"
+factory-boy = "^3.3.1"
 tblib = "^3.0.0"
-pytest-django = "^4.7.0"
-doppler-env = "^0.3.1"
-isort = "^5.13.2"
-
-
-
 
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.isort]
@@ -337,7 +341,18 @@ profile = "black"
 [tool.black]
 line-length = 200
 target-version = ['py312']
-extend-exclude = "nhhc/compliance/views.py, nhhc/nhhc/utils/upload.py"
+extend-exclude = "CareNett/compliance/views.py"
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.mypy]
+ignore_missing_imports = true
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+
 
 [tool.coverage.report]
 exclude_also = [
@@ -378,4 +393,24 @@ disable = [
 python_files = ["test_*.py", "*_test.py", "testing/python/*.py"]
 
 [tool.kolo]
-use_rust = false
+use_rust = true
+
+[tool.ruff.lint]
+fixable = ["ALL"]
+extend-select = [
+  "UP", # pyupgrade
+  "F", # Pyflakes
+  "E", "W", # Pycodestyle
+  "I", # isort
+  "S", # flake8-bandit
+  "SIM", # flake8-simplify
+  "B", # flake8-bugbear
+  # pydocstyle
+  "D213", "D214", "D215", "D405", "D406", "D407", "D408", "D409", "D410", "D411", "D413", "D416", "D417",
+]
+ignore= [
+  "S101", # Use of assert detected
+  "SIM105", # suppressible-exception (slow code)
+]
+
+[tool.sourcery]
