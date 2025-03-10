@@ -390,3 +390,6 @@ spam.log
 POSTGRES_SSL.crt
 CODE_OF_CONDUCT.md
 async_worker_log
+
+.task/checksum/deps_check
+.task/checksum/collect
