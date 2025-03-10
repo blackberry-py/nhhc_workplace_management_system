@@ -1,0 +1,25 @@
+---
+repos:
+  - repo: https://github.com/sourcery-ai/sourcery
+    rev: v1.29.0
+    hooks:
+      - id: sourcery
+        args:
+          - --diff=git diff HEAD
+          - --no-summary
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+  - repo: https://github.com/psf/black
+    rev: 23.12.1
+    hooks:
+      - id: black
+        language_version: python3.12
+  -   repo: https://github.com/PyCQA/autoflake
+      rev: v2.3.1
+      hooks:
+      -   id: autoflake
+          args: [--remove-all-unused-imports, --in-place, --remove-unused-variables,  --ignore-pass-after-docstring,   --ignore-init-module-imports ]
