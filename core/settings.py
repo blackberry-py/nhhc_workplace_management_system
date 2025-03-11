@@ -65,6 +65,7 @@ class Base(Configuration):
     TINYMCE_JS_URL: str = f'https://cdn.tiny.cloud/1/{os.environ["TINYMCE_API_KEY"]}/tinymce/7/tinymce.min.js'
     TINYMCE_COMPRESSOR: bool = True
     CRISPY_TEMPLATE_PACK: str = "bootstrap5"
+    CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap', 'uni_form', 'bootstrap3', 'bootstrap4', 'bootstrap5') 
     TINYMCE_DEFAULT_CONFIG: Dict[str, str] = {
         "menubar": "file edit view insert format tools table help",
         "plugins": "advlist autolink lists link image charmap print preview anchor searchreplace visualblocks code " "fullscreen insertdatetime media table paste code help wordcount spellchecker",
@@ -244,7 +245,7 @@ class Base(Configuration):
         action="ignore",
         message=r"w+",
     )
-    warnings.showwarning = log_warning...
+    warnings.showwarning = log_warning
 
     LOG_FORMAT: str = "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <white>{message}</white>'"
     MASTER_LOG_FILE: Path = os.path.join(os.environ.get("LOG_FILE_DIRECTORY"), "MASTER.log")
@@ -259,7 +260,7 @@ class Base(Configuration):
         "request.traffic.UniqueVisitor",
         "request.traffic.UniqueVisit",
         "request.traffic.Hit",
-        "request.traffic.Search",m
+        "request.traffic.Search",
         "request.traffic.User",
         "request.traffic.Error404",
         "request.traffic.Error",
@@ -327,7 +328,7 @@ class Base(Configuration):
 
 class Production(Base):
     # SECTION - Production Protocols, General Security ACL COnfigs
-    DEBUG: bool = False
+    DEBUG: bool = True  
     ALLOWED_HOSTS = list(os.environ["ALLOWED_HOSTS"])
     SECURE_SSL_REDIRECT: int = True
     SECURE_HSTS_SECONDS: int = 31536000  # 1 year
