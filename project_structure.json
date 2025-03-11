@@ -1,0 +1,1184 @@
+[
+  {
+    "type": "directory",
+    "name": ".",
+    "contents": [
+      { "type": "file", "name": "CODE_OF_CONDUCT.md" },
+      { "type": "file", "name": "Dockerfile" },
+      { "type": "file", "name": "README.md" },
+      { "type": "file", "name": "SECURITY.md" },
+      { "type": "file", "name": "Taskfile.yml" },
+      {
+        "type": "directory",
+        "name": "applications",
+        "contents": [
+          { "type": "file", "name": "__init__.py" },
+          {
+            "type": "directory",
+            "name": "announcements",
+            "contents": [
+              { "type": "file", "name": "__init__.py" },
+              { "type": "file", "name": "apps.py" },
+              { "type": "file", "name": "forms.py" },
+              {
+                "type": "directory",
+                "name": "migrations",
+                "contents": [
+                  { "type": "file", "name": "0001_initial.py" },
+                  { "type": "file", "name": "0002_initial.py" },
+                  { "type": "file", "name": "__init__.py" }
+                ]
+              },
+              { "type": "file", "name": "models.py" },
+              {
+                "type": "directory",
+                "name": "tests",
+                "contents": [
+                  { "type": "file", "name": "__init__.py" },
+                  { "type": "file", "name": "test_forms.py" },
+                  { "type": "file", "name": "test_models.py" },
+                  { "type": "file", "name": "test_views.py" }
+                ]
+              },
+              { "type": "file", "name": "urls.py" },
+              { "type": "file", "name": "views.py" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "authentication",
+            "contents": [
+              { "type": "file", "name": "__init__.py" },
+              { "type": "file", "name": "config.py" },
+              { "type": "file", "name": "forms.py" },
+              {
+                "type": "directory",
+                "name": "migrations",
+                "contents": [
+                  { "type": "file", "name": "0001_initial.py" },
+                  { "type": "file", "name": "0002_initial.py" },
+                  { "type": "file", "name": "__init__.py" }
+                ]
+              },
+              { "type": "file", "name": "models.py" },
+              { "type": "file", "name": "tasks.py" },
+              { "type": "file", "name": "urls.py" },
+              { "type": "file", "name": "views.py" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "compliance",
+            "contents": [
+              { "type": "file", "name": "__init__.py" },
+              { "type": "file", "name": "apps.py" },
+              { "type": "file", "name": "forms.py" },
+              {
+                "type": "directory",
+                "name": "migrations",
+                "contents": [
+                  { "type": "file", "name": "0001_initial.py" },
+                  { "type": "file", "name": "__init__.py" }
+                ]
+              },
+              { "type": "file", "name": "models.py" },
+              { "type": "file", "name": "tasks.py" },
+              {
+                "type": "directory",
+                "name": "tests",
+                "contents": [
+                  { "type": "file", "name": "__init__.py" },
+                  { "type": "file", "name": "test_forms.py" },
+                  { "type": "file", "name": "test_models.py" },
+                  { "type": "file", "name": "test_upload_util.py" },
+                  { "type": "file", "name": "test_views.py" }
+                ]
+              },
+              { "type": "file", "name": "urls.py" },
+              { "type": "file", "name": "views.py" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "docs",
+            "contents": [
+              { "type": "file", "name": "README.md" },
+              { "type": "file", "name": "_coverpage.md" },
+              { "type": "file", "name": "_navbar.md" },
+              { "type": "file", "name": "_sidebar.md" },
+              { "type": "file", "name": "applicant.md" },
+              {
+                "type": "directory",
+                "name": "applicant_management",
+                "contents": [
+                  { "type": "file", "name": "_navbar.md" },
+                  {
+                    "type": "file",
+                    "name": "applicant_service_request_overview.md"
+                  },
+                  { "type": "file", "name": "application_review.md" },
+                  { "type": "file", "name": "hiring.md" },
+                  { "type": "file", "name": "rejecting.md" },
+                  { "type": "file", "name": "service_request_review.md" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "compliance",
+                "contents": [
+                  { "type": "file", "name": "_navbar.md" },
+                  { "type": "file", "name": "audit.md" },
+                  { "type": "file", "name": "compliance.md" },
+                  { "type": "file", "name": "contracts.md" },
+                  { "type": "file", "name": "reporting.md" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "employee_management",
+                "contents": [
+                  { "type": "file", "name": "_navbar.md" },
+                  { "type": "file", "name": "demotions.md" },
+                  { "type": "file", "name": "employee.md" },
+                  { "type": "file", "name": "process_overview.md" },
+                  { "type": "file", "name": "promotions.md" },
+                  { "type": "file", "name": "terminations.md" }
+                ]
+              },
+              { "type": "file", "name": "index.html" },
+              { "type": "file", "name": "overview.md" },
+              { "type": "file", "name": "profile_management.md" },
+              { "type": "file", "name": "sw.js" },
+              { "type": "file", "name": "user.md" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "employee",
+            "contents": [
+              { "type": "file", "name": "__init__.py" },
+              {
+                "type": "directory",
+                "name": "api",
+                "contents": [
+                  { "type": "file", "name": "endpoints.py" },
+                  { "type": "file", "name": "serializers.py" }
+                ]
+              },
+              { "type": "file", "name": "apps.py" },
+              { "type": "file", "name": "forms.py" },
+              {
+                "type": "directory",
+                "name": "migrations",
+                "contents": [
+                  { "type": "file", "name": "0001_initial.py" },
+                  { "type": "file", "name": "__init__.py" }
+                ]
+              },
+              { "type": "file", "name": "models.py" },
+              { "type": "file", "name": "tasks.py" },
+              {
+                "type": "directory",
+                "name": "tests",
+                "contents": [
+                  { "type": "file", "name": "__init__.py" },
+                  { "type": "file", "name": "test_models.py" },
+                  { "type": "file", "name": "test_views.py" }
+                ]
+              },
+              { "type": "file", "name": "urls.py" },
+              { "type": "file", "name": "views.py" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "portal",
+            "contents": [
+              { "type": "file", "name": "__init__.py" },
+              { "type": "file", "name": "admin.py" },
+              {
+                "type": "directory",
+                "name": "api",
+                "contents": [
+                  { "type": "file", "name": "endpoints.py" },
+                  { "type": "file", "name": "serializers.py" }
+                ]
+              },
+              { "type": "file", "name": "apps.py" },
+              { "type": "file", "name": "forms.py" },
+              {
+                "type": "directory",
+                "name": "migrations",
+                "contents": [
+                  { "type": "file", "name": "0001_initial.py" },
+                  { "type": "file", "name": "__init__.py" }
+                ]
+              },
+              { "type": "file", "name": "models.py" },
+              { "type": "file", "name": "tasks.py" },
+              {
+                "type": "directory",
+                "name": "tests",
+                "contents": [
+                  { "type": "file", "name": "__init__.py" },
+                  { "type": "file", "name": "test_forms.py" },
+                  { "type": "file", "name": "test_models.py" },
+                  { "type": "file", "name": "test_validators.py" },
+                  { "type": "file", "name": "test_views.py" }
+                ]
+              },
+              { "type": "file", "name": "urls.py" },
+              { "type": "file", "name": "views.py" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "web",
+            "contents": [
+              { "type": "file", "name": "__init__.py" },
+              { "type": "file", "name": "apps.py" },
+              { "type": "file", "name": "forms.py" },
+              {
+                "type": "directory",
+                "name": "migrations",
+                "contents": [
+                  { "type": "file", "name": "0001_initial.py" },
+                  { "type": "file", "name": "__init__.py" }
+                ]
+              },
+              { "type": "file", "name": "models.py" },
+              { "type": "file", "name": "sitemaps.py" },
+              { "type": "file", "name": "tasks.py" },
+              {
+                "type": "directory",
+                "name": "tests",
+                "contents": [
+                  { "type": "file", "name": "__init__.py" },
+                  { "type": "file", "name": "test_forms.py" },
+                  { "type": "file", "name": "test_mailer.py" },
+                  { "type": "file", "name": "test_models.py" },
+                  { "type": "file", "name": "test_views.py" }
+                ]
+              },
+              { "type": "file", "name": "urls.py" },
+              { "type": "file", "name": "views.py" }
+            ]
+          }
+        ]
+      },
+      { "type": "file", "name": "async_worker_log.db" },
+      {
+        "type": "directory",
+        "name": "common",
+        "contents": [
+          { "type": "file", "name": "__init__.py" },
+          {
+            "type": "directory",
+            "name": "backends",
+            "contents": [{ "type": "file", "name": "storage_backends.py" }]
+          },
+          { "type": "file", "name": "cache.py" },
+          { "type": "file", "name": "celery.py" },
+          { "type": "file", "name": "context_processors.py" },
+          { "type": "file", "name": "email_templates.py" },
+          { "type": "file", "name": "errors.py" },
+          { "type": "file", "name": "helpers.py" },
+          { "type": "file", "name": "mailer.py" },
+          { "type": "file", "name": "managers.py" },
+          { "type": "file", "name": "metrics.py" },
+          {
+            "type": "directory",
+            "name": "middleware",
+            "contents": [
+              { "type": "file", "name": "database_logger.py" },
+              { "type": "file", "name": "maintenance.py" },
+              { "type": "file", "name": "password_change.py" }
+            ]
+          },
+          { "type": "file", "name": "report_template.py" },
+          { "type": "file", "name": "signals.py" },
+          { "type": "file", "name": "status.py" },
+          { "type": "file", "name": "testing.py" },
+          { "type": "file", "name": "upload.py" }
+        ]
+      },
+      {
+        "type": "directory",
+        "name": "core",
+        "contents": [
+          { "type": "file", "name": "__init__.py" },
+          { "type": "file", "name": "asgi.py" },
+          { "type": "file", "name": "settings.py" },
+          { "type": "file", "name": "urls.py" },
+          { "type": "file", "name": "wsgi.py" }
+        ]
+      },
+      { "type": "directory", "name": "nhhc" },
+      { "type": "file", "name": "poetry.lock" },
+      { "type": "file", "name": "project_structure.html" },
+      { "type": "file", "name": "project_structure.json" },
+      { "type": "file", "name": "pyproject.toml" },
+      {
+        "type": "directory",
+        "name": "requirements",
+        "contents": [
+          { "type": "file", "name": "base.txt" },
+          { "type": "file", "name": "dev.txt" }
+        ]
+      },
+      { "type": "file", "name": "requirements.txt" },
+      {
+        "type": "directory",
+        "name": "run",
+        "contents": [
+          { "type": "file", "name": "manage.py" },
+          {
+            "type": "directory",
+            "name": "scripts",
+            "contents": [{ "type": "file", "name": "configure.sh" }]
+          }
+        ]
+      },
+      {
+        "type": "directory",
+        "name": "static",
+        "contents": [
+          {
+            "type": "directory",
+            "name": "admin",
+            "contents": [
+              {
+                "type": "directory",
+                "name": "css",
+                "contents": [
+                  { "type": "file", "name": "autocomplete.css" },
+                  { "type": "file", "name": "base.css" },
+                  { "type": "file", "name": "changelists.css" },
+                  { "type": "file", "name": "dark_mode.css" },
+                  { "type": "file", "name": "dashboard.css" },
+                  { "type": "file", "name": "forms.css" },
+                  { "type": "file", "name": "login.css" },
+                  { "type": "file", "name": "nav_sidebar.css" },
+                  { "type": "file", "name": "responsive.css" },
+                  { "type": "file", "name": "responsive_rtl.css" },
+                  { "type": "file", "name": "rtl.css" },
+                  { "type": "directory", "name": "vendor" },
+                  { "type": "file", "name": "widgets.css" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "img",
+                "contents": [
+                  { "type": "file", "name": "LICENSE" },
+                  { "type": "file", "name": "README.txt" },
+                  { "type": "file", "name": "calendar-icons.svg" },
+                  { "type": "directory", "name": "gis" },
+                  { "type": "file", "name": "icon-addlink.svg" },
+                  { "type": "file", "name": "icon-alert.svg" },
+                  { "type": "file", "name": "icon-calendar.svg" },
+                  { "type": "file", "name": "icon-changelink.svg" },
+                  { "type": "file", "name": "icon-clock.svg" },
+                  { "type": "file", "name": "icon-deletelink.svg" },
+                  { "type": "file", "name": "icon-no.svg" },
+                  { "type": "file", "name": "icon-unknown-alt.svg" },
+                  { "type": "file", "name": "icon-unknown.svg" },
+                  { "type": "file", "name": "icon-viewlink.svg" },
+                  { "type": "file", "name": "icon-yes.svg" },
+                  { "type": "file", "name": "inline-delete.svg" },
+                  { "type": "file", "name": "search.svg" },
+                  { "type": "file", "name": "selector-icons.svg" },
+                  { "type": "file", "name": "sorting-icons.svg" },
+                  { "type": "file", "name": "tooltag-add.svg" },
+                  { "type": "file", "name": "tooltag-arrowright.svg" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "js",
+                "contents": [
+                  { "type": "file", "name": "SelectBox.js" },
+                  { "type": "file", "name": "SelectFilter2.js" },
+                  { "type": "file", "name": "actions.js" },
+                  { "type": "directory", "name": "admin" },
+                  { "type": "file", "name": "autocomplete.js" },
+                  { "type": "file", "name": "calendar.js" },
+                  { "type": "file", "name": "cancel.js" },
+                  { "type": "file", "name": "change_form.js" },
+                  { "type": "file", "name": "collapse.js" },
+                  { "type": "file", "name": "core.js" },
+                  { "type": "file", "name": "filters.js" },
+                  { "type": "file", "name": "inlines.js" },
+                  { "type": "file", "name": "jquery.init.js" },
+                  { "type": "file", "name": "nav_sidebar.js" },
+                  { "type": "file", "name": "popup_response.js" },
+                  { "type": "file", "name": "prepopulate.js" },
+                  { "type": "file", "name": "prepopulate_init.js" },
+                  { "type": "file", "name": "theme.js" },
+                  { "type": "file", "name": "urlify.js" },
+                  { "type": "directory", "name": "vendor" }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "attestsation_forms",
+            "contents": [
+              {
+                "type": "file",
+                "name": "nett_hands_home_care_do_not_drive_agreement_editable.pdf"
+              },
+              {
+                "type": "file",
+                "name": "nett_hands_home_care_do_not_drive_job_duties_editabe.pdf"
+              },
+              {
+                "type": "file",
+                "name": "nett_hands_home_care_time_off_request_editable.pdf"
+              },
+              {
+                "type": "file",
+                "name": "nett_hands_homecare_hca_policy_editable.pdf"
+              },
+              {
+                "type": "file",
+                "name": "nett_hands_homecare_ioda_policy_editable.pdf"
+              }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "css",
+            "contents": [
+              { "type": "file", "name": "404_styles.css" },
+              { "type": "file", "name": "alt_style.css" },
+              { "type": "file", "name": "alt_style.css.bak" },
+              { "type": "file", "name": "argon.css" },
+              { "type": "file", "name": "argon.css.map" },
+              { "type": "file", "name": "argon.min.css" },
+              { "type": "file", "name": "bootstrap.min.css" },
+              { "type": "file", "name": "coming_soon_util.css" },
+              { "type": "file", "name": "cooming_soon.css" },
+              { "type": "file", "name": "custom-portal-styles.css" },
+              { "type": "file", "name": "elegant-icons.css" },
+              { "type": "file", "name": "flaticon.css" },
+              { "type": "file", "name": "flaticon.eot" },
+              { "type": "file", "name": "flaticon.html" },
+              { "type": "file", "name": "flaticon.svg" },
+              { "type": "file", "name": "flaticon.ttf" },
+              { "type": "file", "name": "flaticon.woff" },
+              { "type": "file", "name": "font-awesome.min.css" },
+              { "type": "file", "name": "magnific-popup.css" },
+              { "type": "file", "name": "owl.carousel.min.css" },
+              { "type": "file", "name": "slicknav.min.css" },
+              { "type": "file", "name": "snackbar.css" },
+              { "type": "file", "name": "style.css" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "debug_toolbar",
+            "contents": [
+              {
+                "type": "directory",
+                "name": "css",
+                "contents": [
+                  { "type": "file", "name": "print.css" },
+                  { "type": "file", "name": "toolbar.css" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "js",
+                "contents": [
+                  { "type": "file", "name": "history.js" },
+                  { "type": "file", "name": "redirect.js" },
+                  { "type": "file", "name": "timer.js" },
+                  { "type": "file", "name": "toolbar.js" },
+                  { "type": "file", "name": "utils.js" }
+                ]
+              }
+            ]
+          },
+          { "type": "file", "name": "favicon.ico" },
+          {
+            "type": "directory",
+            "name": "fonts",
+            "contents": [
+              { "type": "file", "name": "ElegantIcons.eot" },
+              { "type": "file", "name": "ElegantIcons.svg" },
+              { "type": "file", "name": "ElegantIcons.ttf" },
+              { "type": "file", "name": "ElegantIcons.woff" },
+              { "type": "file", "name": "FontAwesome.otf" },
+              {
+                "type": "directory",
+                "name": "Lato",
+                "contents": [
+                  { "type": "file", "name": "Lato-Black.ttf" },
+                  { "type": "file", "name": "Lato-BlackItalic.ttf" },
+                  { "type": "file", "name": "Lato-Bold.ttf" },
+                  { "type": "file", "name": "Lato-BoldItalic.ttf" },
+                  { "type": "file", "name": "Lato-Hairline.ttf" },
+                  { "type": "file", "name": "Lato-HairlineItalic.ttf" },
+                  { "type": "file", "name": "Lato-Italic.ttf" },
+                  { "type": "file", "name": "Lato-Light.ttf" },
+                  { "type": "file", "name": "Lato-LightItalic.ttf" },
+                  { "type": "file", "name": "Lato-Regular.ttf" },
+                  { "type": "file", "name": "OFL.txt" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "Poppins",
+                "contents": [
+                  { "type": "file", "name": "Poppins-Black.ttf" },
+                  { "type": "file", "name": "Poppins-BlackItalic.ttf" },
+                  { "type": "file", "name": "Poppins-Bold.ttf" },
+                  { "type": "file", "name": "Poppins-BoldItalic.ttf" },
+                  { "type": "file", "name": "Poppins-ExtraBold.ttf" },
+                  { "type": "file", "name": "Poppins-ExtraBoldItalic.ttf" },
+                  { "type": "file", "name": "Poppins-ExtraLight.ttf" },
+                  { "type": "file", "name": "Poppins-ExtraLightItalic.ttf" },
+                  { "type": "file", "name": "Poppins-Italic.ttf" },
+                  { "type": "file", "name": "Poppins-Light.ttf" },
+                  { "type": "file", "name": "Poppins-LightItalic.ttf" },
+                  { "type": "file", "name": "Poppins-Medium.ttf" },
+                  { "type": "file", "name": "Poppins-MediumItalic.ttf" },
+                  { "type": "file", "name": "Poppins-Regular.ttf" },
+                  { "type": "file", "name": "Poppins-SemiBold.ttf" },
+                  { "type": "file", "name": "Poppins-SemiBoldItalic.ttf" },
+                  { "type": "file", "name": "Poppins-Thin.ttf" },
+                  { "type": "file", "name": "Poppins-ThinItalic.ttf" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "font-awesome-4.7.0",
+                "contents": [
+                  { "type": "file", "name": "HELP-US-OUT.txt" },
+                  { "type": "directory", "name": "css" },
+                  { "type": "directory", "name": "fonts" },
+                  { "type": "directory", "name": "less" },
+                  { "type": "directory", "name": "scss" }
+                ]
+              },
+              { "type": "file", "name": "fontawesome-webfont.eot" },
+              { "type": "file", "name": "fontawesome-webfont.svg" },
+              { "type": "file", "name": "fontawesome-webfont.ttf" },
+              { "type": "file", "name": "fontawesome-webfont.woff" },
+              { "type": "file", "name": "fontawesome-webfont.woff2" },
+              {
+                "type": "directory",
+                "name": "nucleo",
+                "contents": [
+                  { "type": "file", "name": "nucleo-icons.eot" },
+                  { "type": "file", "name": "nucleo-icons.svg" },
+                  { "type": "file", "name": "nucleo-icons.ttf" },
+                  { "type": "file", "name": "nucleo-icons.woff" },
+                  { "type": "file", "name": "nucleo-icons.woff2" }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "img",
+            "contents": [
+              { "type": "file", "name": "Background.png" },
+              { "type": "file", "name": "Beefree-logo.png" },
+              { "type": "file", "name": "CareNettLogo.png" },
+              { "type": "file", "name": "Graterful.png" },
+              { "type": "file", "name": "Image_1.png" },
+              {
+                "type": "file",
+                "name": "Thank-you-lettering-greeting-card-on-transparent-background-PNG.png"
+              },
+              {
+                "type": "directory",
+                "name": "about",
+                "contents": [
+                  { "type": "file", "name": "about-1.jpg" },
+                  { "type": "file", "name": "about-2.jpg" },
+                  { "type": "file", "name": "about-3.jpg" }
+                ]
+              },
+              { "type": "file", "name": "about-heart-hands.png" },
+              { "type": "file", "name": "about-sub-hero.png" },
+              { "type": "file", "name": "about-us-helping.png" },
+              { "type": "file", "name": "about-us-large.png" },
+              { "type": "file", "name": "bg.jpg" },
+              { "type": "file", "name": "bg01.jpg" },
+              { "type": "file", "name": "breadcrumb-bg.jpg" },
+              {
+                "type": "file",
+                "name": "did-you-know-speech-balloon-message-7146587.jpg"
+              },
+              { "type": "file", "name": "email.svg" },
+              { "type": "file", "name": "favicon.ico" },
+              { "type": "file", "name": "favicon.png" },
+              { "type": "file", "name": "find_.png" },
+              {
+                "type": "directory",
+                "name": "hero",
+                "contents": [
+                  { "type": "file", "name": "hero-1.jpg" },
+                  { "type": "file", "name": "hero-1.webp" },
+                  { "type": "file", "name": "hero-2.jpg" },
+                  { "type": "file", "name": "hero-2.webp" },
+                  { "type": "file", "name": "hero-3.jpg" },
+                  { "type": "file", "name": "hero-3.webp" },
+                  { "type": "file", "name": "hero-4.webp" },
+                  { "type": "file", "name": "hero-4b.webp" },
+                  { "type": "file", "name": "hero-5.webp" },
+                  { "type": "file", "name": "hero-5b.jpg" },
+                  { "type": "file", "name": "hero-5b.webp" },
+                  { "type": "file", "name": "hero-6b.jpg" },
+                  { "type": "file", "name": "hero-6b.webp" },
+                  { "type": "file", "name": "hero-7b.jpg" },
+                  { "type": "file", "name": "hero-7b.webp" },
+                  { "type": "file", "name": "mobile-hero.webp" }
+                ]
+              },
+              {
+                "type": "file",
+                "name": "il_1588xN.2245489624_clyb-removebg-preview.png"
+              },
+              { "type": "file", "name": "locked_account.png" },
+              { "type": "file", "name": "logo-dark.png" },
+              { "type": "file", "name": "logo-dark.svg" },
+              { "type": "file", "name": "logo-light.png" },
+              { "type": "file", "name": "maintenance.gif" },
+              { "type": "file", "name": "middle_Image.png" },
+              { "type": "file", "name": "mobile-hero-img.webp" },
+              { "type": "file", "name": "new-submission-dot.png" },
+              { "type": "file", "name": "not-hired-icon.png" },
+              { "type": "file", "name": "portal-logo.png" },
+              { "type": "file", "name": "preloader_bg.jpeg" },
+              { "type": "file", "name": "product_screenshot.png" },
+              { "type": "file", "name": "profile-banner.png" },
+              { "type": "file", "name": "profile-card-image.png" },
+              { "type": "file", "name": "read-submission-dot.png" },
+              { "type": "file", "name": "readme.png" },
+              { "type": "file", "name": "submission_success.gif" },
+              {
+                "type": "directory",
+                "name": "team",
+                "contents": [
+                  { "type": "file", "name": "team-1.jpg" },
+                  { "type": "file", "name": "team-2.jpg" },
+                  { "type": "file", "name": "team-3.jpg" },
+                  { "type": "file", "name": "team-4.jpg" },
+                  { "type": "file", "name": "team-hover.png" }
+                ]
+              },
+              { "type": "file", "name": "team-bg.jpg" },
+              { "type": "file", "name": "wait.gif" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "js",
+            "contents": [
+              { "type": "file", "name": "address_autocomplete.js" },
+              { "type": "file", "name": "alerts.js" },
+              { "type": "file", "name": "argon.js" },
+              { "type": "file", "name": "argon.min.js" },
+              { "type": "file", "name": "bootstrap.min.js" },
+              {
+                "type": "directory",
+                "name": "components",
+                "contents": [
+                  { "type": "directory", "name": "charts" },
+                  { "type": "directory", "name": "custom" },
+                  { "type": "directory", "name": "init" },
+                  { "type": "directory", "name": "maps" },
+                  { "type": "directory", "name": "vendor" }
+                ]
+              },
+              { "type": "file", "name": "cs_main.js" },
+              { "type": "file", "name": "jquery-3.3.1.min.js" },
+              { "type": "file", "name": "jquery-loading.js" },
+              { "type": "file", "name": "jquery.magnific-popup.min.js" },
+              { "type": "file", "name": "jquery.slicknav.js" },
+              { "type": "file", "name": "main.js" },
+              { "type": "file", "name": "masonry.pkgd.min.js" },
+              { "type": "file", "name": "mixitup.min.js" },
+              { "type": "file", "name": "owl.carousel.min.js" },
+              { "type": "file", "name": "pagination.js" },
+              { "type": "file", "name": "payroll_exception.js" },
+              { "type": "file", "name": "profile.js" },
+              { "type": "file", "name": "slicknav.js" },
+              { "type": "file", "name": "toast-plugin-min.js" },
+              { "type": "file", "name": "toast-plugin.js" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "vendor",
+            "contents": [
+              {
+                "type": "directory",
+                "name": "@fortawesome",
+                "contents": [
+                  { "type": "directory", "name": "fontawesome-free" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "anchor-js",
+                "contents": [{ "type": "file", "name": "anchor.min.js" }]
+              },
+              {
+                "type": "directory",
+                "name": "animate.css",
+                "contents": [
+                  { "type": "file", "name": "animate-config.json" },
+                  { "type": "file", "name": "animate.min.css" },
+                  { "type": "directory", "name": "source" }
+                ]
+              },
+              { "type": "file", "name": "bootstrap-datetimepicker.js" },
+              {
+                "type": "directory",
+                "name": "bootstrap-notify",
+                "contents": [
+                  { "type": "file", "name": "bootstrap-notify.min.js" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "bootstrap-rtl",
+                "contents": [
+                  { "type": "file", "name": "bootstrap-rtl.css" },
+                  { "type": "file", "name": "bootstrap-rtl.css.map" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "bootstrap-switch",
+                "contents": [
+                  { "type": "file", "name": "CHANGELOG.md" },
+                  { "type": "file", "name": "CNAME" },
+                  { "type": "file", "name": "CONTRIBUTING.md" },
+                  { "type": "file", "name": "LICENSE" },
+                  { "type": "file", "name": "README.md" },
+                  { "type": "file", "name": "bower.json" },
+                  { "type": "file", "name": "composer.json" },
+                  { "type": "directory", "name": "docs" },
+                  { "type": "file", "name": "karma.conf.js" },
+                  { "type": "file", "name": "package.json" },
+                  { "type": "directory", "name": "src" },
+                  { "type": "file", "name": "yarn.lock" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "countdowntime",
+                "contents": [
+                  { "type": "file", "name": "countdowntime.js" },
+                  {
+                    "type": "file",
+                    "name": "moment-timezone-with-data.min.js"
+                  },
+                  { "type": "file", "name": "moment-timezone.min.js" },
+                  { "type": "file", "name": "moment.min.js" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "datatables.net",
+                "contents": [
+                  { "type": "file", "name": "License.txt" },
+                  { "type": "directory", "name": "js" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "datatables.net-bs4",
+                "contents": [
+                  { "type": "directory", "name": "css" },
+                  { "type": "directory", "name": "js" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "datatables.net-buttons",
+                "contents": [
+                  { "type": "file", "name": "License.txt" },
+                  { "type": "directory", "name": "js" },
+                  { "type": "directory", "name": "swf" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "datatables.net-buttons-bs4",
+                "contents": [
+                  { "type": "directory", "name": "css" },
+                  { "type": "directory", "name": "js" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "datatables.net-responsive-bs4",
+                "contents": [
+                  { "type": "directory", "name": "css" },
+                  { "type": "directory", "name": "js" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "datatables.net-select",
+                "contents": [
+                  { "type": "file", "name": "License.txt" },
+                  { "type": "directory", "name": "js" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "datatables.net-select-bs4",
+                "contents": [
+                  { "type": "directory", "name": "css" },
+                  { "type": "directory", "name": "js" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "font-awesome",
+                "contents": [
+                  { "type": "file", "name": "HELP-US-OUT.txt" },
+                  { "type": "directory", "name": "css" },
+                  { "type": "directory", "name": "fonts" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "gulp-copy",
+                "contents": [{ "type": "file", "name": "index.js" }]
+              },
+              {
+                "type": "directory",
+                "name": "holderjs",
+                "contents": [
+                  { "type": "file", "name": "holder.min.js" },
+                  { "type": "file", "name": "package.js" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "jekyll",
+                "contents": [
+                  { "type": "file", "name": "CONTRIBUTING.markdown" },
+                  { "type": "file", "name": "Gemfile" },
+                  { "type": "file", "name": "History.markdown" },
+                  { "type": "file", "name": "README.markdown" },
+                  { "type": "file", "name": "Rakefile" },
+                  { "type": "directory", "name": "benchmark" },
+                  { "type": "directory", "name": "bin" },
+                  { "type": "directory", "name": "features" },
+                  { "type": "file", "name": "jekyll.gemspec" },
+                  { "type": "directory", "name": "script" },
+                  { "type": "directory", "name": "site" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "jquery.scrollbar",
+                "contents": [
+                  { "type": "file", "name": "index.js" },
+                  { "type": "file", "name": "jquery.scrollbar.css" },
+                  { "type": "file", "name": "jquery.scrollbar.min.js" },
+                  { "type": "file", "name": "license-gpl.txt" },
+                  { "type": "file", "name": "license-mit.txt" },
+                  { "type": "directory", "name": "meteor" },
+                  { "type": "file", "name": "package.js" },
+                  { "type": "directory", "name": "sass" },
+                  { "type": "file", "name": "scrollbar.jquery.json" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "js-cookie",
+                "contents": [{ "type": "file", "name": "js.cookie.js" }]
+              },
+              {
+                "type": "directory",
+                "name": "jvectormap-next",
+                "contents": [
+                  { "type": "file", "name": "LICENSE-AGPL" },
+                  { "type": "file", "name": "LICENSE-COMMERCIAL" },
+                  { "type": "file", "name": "jquery-jvectormap.css" },
+                  { "type": "file", "name": "jquery-jvectormap.min.js" },
+                  { "type": "file", "name": "jquery-jvectormap.min.js.map" },
+                  { "type": "file", "name": "jquery-jvectormap.min.map" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "lavalamp",
+                "contents": [
+                  { "type": "directory", "name": "css" },
+                  { "type": "file", "name": "demo.html" },
+                  { "type": "directory", "name": "images" },
+                  { "type": "directory", "name": "js" },
+                  { "type": "file", "name": "lavalamp.jquery.json" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "minimatch",
+                "contents": [{ "type": "file", "name": "minimatch.js" }]
+              },
+              {
+                "type": "directory",
+                "name": "moment",
+                "contents": [
+                  { "type": "file", "name": "ender.js" },
+                  { "type": "directory", "name": "locale" },
+                  { "type": "directory", "name": "min" },
+                  { "type": "file", "name": "moment.js" },
+                  { "type": "file", "name": "package.js" }
+                ]
+              },
+              { "type": "file", "name": "moment.min.js" },
+              {
+                "type": "directory",
+                "name": "nouislider",
+                "contents": [{ "type": "directory", "name": "distribute" }]
+              },
+              {
+                "type": "directory",
+                "name": "nucleo",
+                "contents": [
+                  { "type": "directory", "name": "css" },
+                  { "type": "directory", "name": "fonts" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "prismjs",
+                "contents": [
+                  { "type": "directory", "name": "components" },
+                  { "type": "file", "name": "components.js" },
+                  { "type": "file", "name": "components.json" },
+                  { "type": "file", "name": "dependencies.js" },
+                  { "type": "directory", "name": "plugins" },
+                  { "type": "file", "name": "prism.js" },
+                  { "type": "directory", "name": "themes" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "select2",
+                "contents": [
+                  { "type": "file", "name": "select2.css" },
+                  { "type": "file", "name": "select2.js" },
+                  { "type": "file", "name": "select2.min.css" },
+                  { "type": "file", "name": "select2.min.js" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "tilt",
+                "contents": [{ "type": "file", "name": "tilt.jquery.min.js" }]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "directory",
+        "name": "templates",
+        "contents": [
+          {
+            "type": "directory",
+            "name": "account",
+            "contents": [
+              { "type": "file", "name": "account_inactive.html" },
+              {
+                "type": "directory",
+                "name": "email",
+                "contents": [
+                  {
+                    "type": "file",
+                    "name": "account_already_exists_message.txt"
+                  },
+                  {
+                    "type": "file",
+                    "name": "account_already_exists_subject.txt"
+                  },
+                  { "type": "file", "name": "base_message.txt" },
+                  { "type": "file", "name": "email_confirmation_message.txt" },
+                  {
+                    "type": "file",
+                    "name": "email_confirmation_signup_message.txt"
+                  },
+                  {
+                    "type": "file",
+                    "name": "email_confirmation_signup_subject.txt"
+                  },
+                  { "type": "file", "name": "email_confirmation_subject.txt" },
+                  {
+                    "type": "file",
+                    "name": "password_reset_key_message copy.txt"
+                  },
+                  { "type": "file", "name": "password_reset_key_message.txt" },
+                  { "type": "file", "name": "password_reset_key_subject.txt" },
+                  { "type": "file", "name": "unknown_account_message.txt" },
+                  { "type": "file", "name": "unknown_account_subject.txt" }
+                ]
+              },
+              { "type": "file", "name": "email_confirm.html" },
+              {
+                "type": "directory",
+                "name": "includes",
+                "contents": [
+                  { "type": "file", "name": "_loading_spinner.html" },
+                  { "type": "file", "name": "base.html" },
+                  { "type": "file", "name": "main-web-nav.html" },
+                  { "type": "file", "name": "navigation.html" },
+                  { "type": "file", "name": "new_applications_stats.html" },
+                  { "type": "file", "name": "scripts.html" },
+                  { "type": "file", "name": "sidenav.html" },
+                  { "type": "file", "name": "styles.html" },
+                  { "type": "file", "name": "sub-web-nav.html" }
+                ]
+              },
+              { "type": "file", "name": "login.html" },
+              { "type": "file", "name": "logout.html" },
+              { "type": "file", "name": "password_change.html" },
+              { "type": "file", "name": "password_reset.html" },
+              { "type": "file", "name": "password_reset_done.html" },
+              { "type": "file", "name": "password_reset_from_key.html" },
+              { "type": "file", "name": "password_reset_from_key_done.html" },
+              { "type": "file", "name": "verification_sent.html" },
+              { "type": "file", "name": "verified_email_required.html" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "annoucements",
+            "contents": [
+              { "type": "file", "name": "_announcements.html" },
+              { "type": "file", "name": "annoucements-details.html" },
+              { "type": "file", "name": "annoucements.html" },
+              {
+                "type": "directory",
+                "name": "include",
+                "contents": [{ "type": "file", "name": "_modal.html" }]
+              },
+              { "type": "file", "name": "new_annoucement.html" },
+              {
+                "type": "directory",
+                "name": "templatetags",
+                "contents": [
+                  { "type": "file", "name": "__init__.py" },
+                  { "type": "file", "name": "recent_announcements.py" }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "common",
+            "contents": [
+              { "type": "file", "name": "400.html" },
+              { "type": "file", "name": "403_csrf.html" },
+              { "type": "file", "name": "404.html" },
+              { "type": "file", "name": "500.html" },
+              { "type": "file", "name": "503.html" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "compliance",
+            "contents": [
+              { "type": "file", "name": "compliance_details.html" },
+              { "type": "file", "name": "compliance_forms.html" },
+              { "type": "file", "name": "docuseal.html" },
+              {
+                "type": "directory",
+                "name": "include",
+                "contents": [{ "type": "file", "name": "_docsign-modal.html" }]
+              },
+              { "type": "file", "name": "new_contract.html" },
+              { "type": "file", "name": "successful_update.html" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "employee",
+            "contents": [
+              { "type": "file", "name": "employee-detail.html" },
+              { "type": "file", "name": "employee-listing.html" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "layouts",
+            "contents": [
+              { "type": "file", "name": "_profile.html" },
+              { "type": "file", "name": "base-fullscreen.html" },
+              { "type": "file", "name": "base.html" },
+              { "type": "file", "name": "footer.html" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "portal",
+            "contents": [
+              { "type": "file", "name": "_unreviewed_client_requests.html" },
+              {
+                "type": "file",
+                "name": "_unreviewed_employment_applications.html"
+              },
+              { "type": "file", "name": "applicant-details.html" },
+              { "type": "file", "name": "dashboard.html" },
+              { "type": "file", "name": "exception.html" },
+              {
+                "type": "directory",
+                "name": "includes",
+                "contents": [
+                  { "type": "file", "name": "_payroll_exception_modal.html" }
+                ]
+              },
+              { "type": "file", "name": "profile_main.html" },
+              { "type": "file", "name": "service-inquiries.html" },
+              { "type": "file", "name": "submission-details.html" },
+              { "type": "file", "name": "submitted-applications.html" },
+              {
+                "type": "directory",
+                "name": "templatetags",
+                "contents": [
+                  { "type": "file", "name": "__init__.py" },
+                  { "type": "file", "name": "anonymize.py" },
+                  { "type": "file", "name": "human_readable.py" },
+                  { "type": "file", "name": "inclusion_tags.py" },
+                  { "type": "file", "name": "index.py" },
+                  { "type": "file", "name": "profile_panel.py" },
+                  { "type": "file", "name": "replace_underscore.py" },
+                  { "type": "file", "name": "unreviewed_requests.py" }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "web",
+            "contents": [
+              { "type": "file", "name": "about.html" },
+              { "type": "file", "name": "client-interest.html" },
+              { "type": "file", "name": "coming_soon.html" },
+              { "type": "file", "name": "employee-interest.html" },
+              { "type": "file", "name": "index.html" },
+              { "type": "file", "name": "robots.txt" },
+              { "type": "file", "name": "send.svg" },
+              { "type": "file", "name": "submission.html" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  { "type": "report", "directories": 149, "files": 509 }
+]
