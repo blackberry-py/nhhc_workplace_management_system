@@ -10,7 +10,7 @@ import re
 import sys
 import warnings
 from pathlib import Path
-from typing import Any, Dict, List, Pattern, Set, TextIO, Tuple, Union
+from typing import Any, Dict, List, Pattern, Set, TextIO, Tuple, Union, Literal,Pattern
 
 import dj_database_url
 from configurations import Configuration
@@ -19,14 +19,14 @@ from loguru import logger
 from redis.backoff import ExponentialBackoff
 from redis.retry import Retry
 
-logger.level(name="DATABASE_QUERY", no=19,color='orange')
+logger.level(name="DATABASE_QUERY", no=19, color='orange')
 
 def log_warning(message, category, filename, lineno, file=None, line=None):
     logger.warning(f" {message}")
 
 
 class Base(Configuration):
-    # SECTION - Base Protocols, General Security ACL COnfigs
+    # SECTION/var/log/QUERY.log - Base Protocols, General Security ACL COnfigs
     BASE_DIR: Path = Path(__file__).resolve().parent.parent
     SECRET_KEY: str = os.environ["SECRET_KEY"]
     MAINTENANCE_MODE: bool = False
@@ -39,8 +39,8 @@ class Base(Configuration):
 
     # SECTION - Basic Application Definition
     DATETIME_FORMAT: str = "m/d/yyyy h:mm A"
-    ADMINS: List[str] = [("Terry Brooks", "Terry@BrooksJr.com")]
-    MANAGERS: List[str] = ADMINS
+    ADMINS: List[Tuple[str, str]] = [("Terry Brooks", "Terry@BrooksJr.com")]
+    MANAGERS: List[Tuple[str, str]]  = ADMINS
     WSGI_APPLICATION: str = "core.wsgi.application"
     IGNORABLE_404_URLS: List[Pattern] = [
         re.compile(r"^/apple-touch-icon.*\.png$"),
@@ -66,7 +66,7 @@ class Base(Configuration):
     TINYMCE_COMPRESSOR: bool = True
     CRISPY_TEMPLATE_PACK: str = "bootstrap5"
     CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap', 'uni_form', 'bootstrap3', 'bootstrap4', 'bootstrap5') 
-    TINYMCE_DEFAULT_CONFIG: Dict[str, str] = {
+    TINYMCE_DEFAULT_CONFIG: Dict[str, Union[str,int]] = {
         "menubar": "file edit view insert format tools table help",
         "plugins": "advlist autolink lists link image charmap print preview anchor searchreplace visualblocks code " "fullscreen insertdatetime media table paste code help wordcount spellchecker",
         "toolbar": "undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft "
@@ -79,7 +79,7 @@ class Base(Configuration):
     }
     # SECTION - Database and Caching
     CACHE_TTL: int = int(os.environ["TIME_TO_LIVE_MINUTES"]) * 60
-    QUERYSET_TTL: int = os.environ["QUERYSET_TTL"]
+    QUERYSET_TTL: int = int(os.environ["QUERYSET_TTL"])
     DEFAULT_AUTO_FIELD: str = "django.db.models.BigAutoField"
     HEALTHCHECK_CACHE_KEY: str = "cache-heartbeat"
     SESSION_ENGINE: str = "django.contrib.sessions.backends.cache"
@@ -88,10 +88,11 @@ class Base(Configuration):
     ENCRYPT_KEY: str = os.environ["ENCRYPT_KEY"]
     ENCRYPT_PRIVATE_KEY: str = os.environ["DB_GPG_PRIVATE_KEY"]
     ENCRYPT_PUBLIC_KEY: str = os.environ["DB_GPG_PUBLIC_KEY"]
+    REDIS_URL: str = os.environ["BASE_REDIS_CACHE_URI_TOKEN"]
 
     # Centralized Redis connection options
-    REDIS_CONNECTION_OPTIONS: Dict[str, Union[str, int]] = {
-        "PARSER_CLASS": "redis.connection._HiredisParser",
+    REDIS_CONNECTION_OPTIONS: Dict[str, Any] = {
+        # "PARSER_CLASS": "redis.connection._HiredisParser",
         "SOCKET_CONNECT_TIMEOUT": 30,  # seconds
         "SOCKET_TIMEOUT": 30,  # seconds
         "CLIENT_CLASS": "django_redis.client.DefaultClient",
@@ -105,8 +106,8 @@ class Base(Configuration):
         ],
         "RETRY": Retry(
             backoff=ExponentialBackoff(base=1.0, cap=15),
-            retries=5,  # Maximum retries
-        ),  # Retry strategy for timeouts
+            retries=5,  
+        ),  
     }
 
     ROBOTS_CACHE_TIMEOUT: int = 60 * 60 * 24
@@ -116,7 +117,7 @@ class Base(Configuration):
     DEFENDER_REDIS_URL: str = os.environ["DEFENDER_REDIS_CACHE_TOKEN"]
     DEFENDER_BEHIND_REVERSE_PROXY: bool = True
     DEFENDER_LOCK_OUT_BY_IP_AND_USERNAME = True
-    DEFENDER_REVERSE_PROXY_HEADER: str = SECURE_PROXY_SSL_HEADER
+    DEFENDER_REVERSE_PROXY_HEADER: Tuple[str,str] = SECURE_PROXY_SSL_HEADER
     # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
     # ADMINRESTRICT_ENABLE_CACHE = True TODO: Check Impact and Remove
     # ADMINRESTRICT_DENIED_MSG = "Unable To Access Admin From This IP Address" TODO: Check Impact and Remove
@@ -142,9 +143,9 @@ class Base(Configuration):
     ACCOUNT_AUTHENTICATION_METHOD: str = "username_email"
     LOGIN_REDIRECT_URL: str = "/dashboard"
     LOGIN_URL: str = "/login"
-    LOGOUT_REDIRECT_URL: Tuple[str] = LOGIN_URL
-    REQUIRE_LOGIN_PUBLIC_URLS: Tuple[str] = (LOGIN_URL, LOGOUT_REDIRECT_URL, r"^/api/.*", r"^/metrics", r"^/control-center", r"^/status/*", r"/confirm-email", r"/$", r"/^about", r"^favicon.ico\/?/$")
-    REQUIRE_LOGIN_PUBLIC_NAMED_URLS: Tuple[str] = (
+    LOGOUT_REDIRECT_URL: str = LOGIN_URL
+    REQUIRE_LOGIN_PUBLIC_URLS = (LOGIN_URL, LOGOUT_REDIRECT_URL, r"^/api/.*", r"^/metrics", r"^/control-center", r"^/status/*", r"/confirm-email", r"/$", r"/^about", r"^favicon.ico\/?/$")
+    REQUIRE_LOGIN_PUBLIC_NAMED_URLS = (
         "account_reset_password",
         "account_email",
         "account_set_password",
@@ -168,19 +169,19 @@ class Base(Configuration):
     USE_L10N: bool = True
     USE_TZ: bool = True
     # SECTION - STORAGE
-    FILE_UPLOAD_TEMP_DIR: Path = os.environ["FILE_UPLOAD_TEMP_DIR"]
+    FILE_UPLOAD_TEMP_DIR: str = os.environ["FILE_UPLOAD_TEMP_DIR"]
     # SECTION - AWS settings
-    AWS_ACCESS_KEY_ID: str = os.environ["AWS_ACCESS_KEY_ID"]
-    AWS_SECRET_ACCESS_KEY: str = os.environ["AWS_SECRET_ACCESS_KEY"]
-    AWS_S3_REGION_NAME: str = os.environ["AWS_S3_REGION_NAME"]
-    AWS_STORAGE_BUCKET_NAME: str = os.environ["AWS_STORAGE_BUCKET_NAME"]
+    AWS_ACCESS_KEY_ID: str = os.environ["SPACES_KEY"]
+    AWS_SECRET_ACCESS_KEY: str = os.environ["SPACES_SECRET"]
+    AWS_S3_REGION_NAME: str = os.environ["DIGITAL_OCEAN_S3_REGION_NAME"]
+    AWS_STORAGE_BUCKET_NAME: str = os.environ["DIGITAL_OCEAN_SPACES_NAME"]
     AWS_DEFAULT_ACL: str = "private"
     AWS_S3_CUSTOM_DOMAIN: str = os.environ["AWS_S3_CUSTOM_DOMAIN"]
     AWS_S3_OBJECT_PARAMETERS: Dict[str, str] = {"CacheControl": "max-age=86400"}
     AWS_S3_SIGNATURE_VERSION: str = "s3v4"
     AWS_QUERYSTRING_EXPIRE: int = 3600
     AWS_S3_FILE_OVERWRITE: bool = True
-
+    AWS_S3_ENDPOINT_URL = os.environ["DIGITAL_OCEAN_SPACES_ENDPOINT_URL"]
     STATIC_LOCATION: str = "static/production/"
     STATIC_URL: str = f"{os.environ['AWS_S3_CUSTOM_DOMAIN']}/{STATIC_LOCATION}"
     STATIC_ROOT: str = STATIC_URL
@@ -199,7 +200,7 @@ class Base(Configuration):
     # !SECTION
     # SECTION - File Management
     ALLOWED_UPLOAD_MIME_TYPES: List[str] = list(os.environ["ALLOWED_MIME_TYPES"].split(","))
-    STORAGES: Dict[str, str] = {
+    STORAGES: Dict[str, Union[str,Dict[str,str]]] = {
         "default": {"BACKEND": "common.backends.storage_backends.PrivateMediaStorage"},
         "staticfiles": {
             "BACKEND": "common.backends.storage_backends.StaticStorage",
@@ -208,7 +209,7 @@ class Base(Configuration):
     # SECTION - Templates
     HTML_MINIFY: bool = True
     COMPRESS_CACHE_BACKEND: str = "compressed_static"
-    TEMPLATE_DIR: List[Path] = [
+    TEMPLATE_DIR: List[str] = [
         os.path.join(BASE_DIR, "templates"),
         os.path.join(BASE_DIR, "templates", "web"),
         os.path.join(BASE_DIR, "templates", "employee"),
@@ -246,7 +247,6 @@ class Base(Configuration):
         message=r"w+",
     )
     warnings.showwarning = log_warning
-
     LOG_FORMAT: str = "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <white>{message}</white>'"
     MASTER_LOG_FILE: Path = os.path.join(os.environ.get("LOG_FILE_DIRECTORY"), "MASTER.log")
     CRITICAL_LOG_FILE: Path = os.path.join(os.environ.get("LOG_FILE_DIRECTORY"), "FATAL.log")
@@ -433,7 +433,7 @@ class Production(Base):
 
     DATABASES = {
         "default": dj_database_url.config(
-            default=f'postgresql://{os.environ["POSTGRES_USER"]}:{os.environ["POSTGRES_PASSWORD"]}@{os.environ["POSTGRES_HOST"]}:25061?sslmode=require&sslrootcert={os.environ["DB_CERT_PATH"]}',
+            default=f'postgresql://{os.environ["POSTGRES_USER"]}:{os.environ["POSTGRES_PASSWORD"]}@{os.environ["POSTGRES_HOST"]}:{os.environ["POSTGRES_PORT"]}?sslmode=require&sslrootcert={os.environ["DB_CERT_PATH"]}',
             conn_max_age=600,
             conn_health_checks=True,
         ),
@@ -441,12 +441,11 @@ class Production(Base):
     DATABASES["default"]["NAME"] = os.environ["POSTGRES_DATABASE"]
 
     DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = True
-    REDIS_URL: str = os.environ["REDIS_CACHE_URI_TOKEN"]
     #  Cache configurations with separate Redis databases
     CACHES = {
         "default": {
             "BACKEND": os.environ["CACHE_ENGINE"],
-            "LOCATION": os.environ["CACHE_DB_REDIS"],
+            "LOCATION":f"{Base.REDIS_URL}/1",
             "OPTIONS": {
                 **Base.REDIS_CONNECTION_OPTIONS,
                 "KEY_PREFIX": "NHHC-NATIVE",
@@ -454,7 +453,7 @@ class Production(Base):
         },
         "session": {
             "BACKEND": os.environ["CACHE_ENGINE"],
-            "LOCATION": os.environ["SESSION_CACHE"],
+            "LOCATION": f"{Base.REDIS_URL}/12",
             "OPTIONS": {
                 **Base.REDIS_CONNECTION_OPTIONS,
                 "SERIALIZER": "django_redis.serializers.json.JSONSerializer",
@@ -463,7 +462,7 @@ class Production(Base):
         },
         "celery": {
             "BACKEND": os.environ["CACHE_ENGINE"],
-            "LOCATION": os.environ["CELERY_BROKER_URL"],
+            "LOCATION": f"{Base.REDIS_URL}/5",
             "OPTIONS": {
                 **Base.REDIS_CONNECTION_OPTIONS,
                 "SERIALIZER": "django_redis.serializers.json.JSONSerializer",
@@ -567,8 +566,8 @@ class Production(Base):
 
 class Development(Base):
     # SECTION - Development Protocols, General Security ACL COnfigs
-    DEBUG: True = True
-    ALLOWED_HOSTS: List[str] = (["*"],)
+    DEBUG: bool = True
+    ALLOWED_HOSTS: List[str] = ["*"]
     SECURE_SSL_REDIRECT: bool = False
     # !SECTION
     # SECTION - Basic Application Definition
@@ -667,22 +666,20 @@ class Development(Base):
     ]
 
     # SECTION - Database and Caching
-
     DATABASES = {
-        "default": {
-            "ENGINE": "django_prometheus.db.backends.postgresql",
-            "NAME": "development_carenett",
-            "USER": "dev_user",
-            "PASSWORD": "dev_password",
-            "HOST": "localhost",
-            "PORT": 6543,
-        }
+        "default": dj_database_url.config(
+            default=f'postgresql://{os.environ["POSTGRES_USER"]}:{os.environ["POSTGRES_PASSWORD"]}@{os.environ["POSTGRES_HOST"]}:{os.environ["POSTGRES_PORT"]}?sslmode=require&sslrootcert={os.environ["DB_CERT_PATH"]}',
+            conn_max_age=600,
+            conn_health_checks=True,
+        ),
     }
-    REDIS_URL: str = "redis://default@localhost:6379"
+    DATABASES["default"]["NAME"] = os.environ["POSTGRES_DATABASE"]
+
+    DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = True
     CACHES = {
         "default": {
             "BACKEND": os.environ["CACHE_ENGINE"],
-            "LOCATION": f"{REDIS_URL}/1",
+            "LOCATION": f"{Base.REDIS_URL}/1",
             "OPTIONS": {
                 **Base.REDIS_CONNECTION_OPTIONS,
                 "KEY_PREFIX": "NHHC-NATIVE",
@@ -690,7 +687,7 @@ class Development(Base):
         },
         "session": {
             "BACKEND": os.environ["CACHE_ENGINE"],
-            "LOCATION": f"{REDIS_URL}/2",
+            "LOCATION": f"{Base.REDIS_URL}/2",
             "OPTIONS": {
                 **Base.REDIS_CONNECTION_OPTIONS,
                 "SERIALIZER": "django_redis.serializers.json.JSONSerializer",
@@ -699,7 +696,7 @@ class Development(Base):
         },
         "celery": {
             "BACKEND": os.environ["CACHE_ENGINE"],
-            "LOCATION": f"{REDIS_URL}/3",
+            "LOCATION": f"{Base.REDIS_URL}/3",
             "OPTIONS": {
                 **Base.REDIS_CONNECTION_OPTIONS,
                 "SERIALIZER": "django_redis.serializers.json.JSONSerializer",
@@ -708,7 +705,7 @@ class Development(Base):
         },
         "compressed_static": {
             "BACKEND": os.environ["CACHE_ENGINE"],
-            "LOCATION": f"{REDIS_URL}/5",
+            "LOCATION": f"{Base.REDIS_URL}/5",
             "OPTIONS": {
                 **Base.REDIS_CONNECTION_OPTIONS,
                 "KEY_PREFIX": "COMPRESSOR",
@@ -731,7 +728,7 @@ class Development(Base):
     retention="7 days",  
     compression="zip"
 )
-    REQUEST_LOG_USER: bool = False
+    REQUEST_LOG_USER: bool = True
     PROMETHEUS_METRIC_NAMESPACE: str = "development_care_nett"
     DEBUG_TOOLBAR_PANELS: List[str] = [
         "debug_toolbar.panels.history.HistoryPanel",
@@ -762,7 +759,7 @@ class Development(Base):
         "site_icon": "img/favicon.png",
         "welcome_sign": "Welcome to the Development Env of CareNett Control Center",
         "copyright": "Blackberry Py, LLC",
-        "search_model": ["employee.Employee", "auth.Group", "web.interested"],
+        "search_model": ["employee.Employee", "auDevelopmentth.Group", "web.interested"],
         "user_avatar": None,
         ############
         # Top Menu #
@@ -820,7 +817,7 @@ class Development(Base):
         },
         "language_chooser": False,
     }
-    CELERY_BROKER_URL: str = f"{REDIS_URL}/3"
+    CELERY_BROKER_URL: str = f"{Base.REDIS_URL}/3"
 
 
 # ----------------------------------------ENVIRONMENT SETTING BOUNDARY-------------------------------------------------------------------------------
@@ -895,7 +892,7 @@ class Testing(Base):
         "django_extensions",
     ]
 
-    MIDDLEWARE: str = [
+    MIDDLEWARE: list[str] = [
         "django_prometheus.middleware.PrometheusBeforeMiddleware",  # 1
         "django.middleware.security.SecurityMiddleware",  # 2
         "whitenoise.middleware.WhiteNoiseMiddleware",  # 3
@@ -903,7 +900,7 @@ class Testing(Base):
         "corsheaders.middleware.CorsMiddleware",  # 5
         "django.middleware.cache.UpdateCacheMiddleware",  # 6
         "django.middleware.common.CommonMiddleware",  # 7
-        "django.middleware.csrf.CsrfViewMiddleware",  # 8
+        "django.middleware.csrf.CsrfViewMiddleware",  # 8   
         "django.contrib.auth.middleware.AuthenticationMiddleware",  # 9
         "allauth.account.middleware.AccountMiddleware",  # 9.1
         "defender.middleware.FailedLoginMiddleware",  # 10
@@ -918,25 +915,19 @@ class Testing(Base):
     ]
     # SECTION - Database and Caching
     DATABASES = {
-        "default": {
-            "ENGINE": "django_prometheus.db.backends.postgresql",
-            "NAME": "test_testing_carenett_prod",
-            "USER": os.getenv("POSTGRES_USER"),
-            "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-            "HOST": "blackberry-py-multi-tenet-prod-do-user-16979650-0.k.db.ondigitalocean.com",
-            "PORT": 25060,
-            "OPTIONS": {
-                "sslmode": "require",
-                "sslrootcert": os.environ["DB_CERT_PATH"],
-            },
-        }
+        "default": dj_database_url.config(
+            default=f'postgresql://{os.environ["POSTGRES_USER"]}:{os.environ["POSTGRES_PASSWORD"]}@{os.environ["POSTGRES_HOST"]}:{os.environ["POSTGRES_PORT"]}?sslmode=require&sslrootcert={os.environ["DB_CERT_PATH"]}',
+            conn_max_age=600,
+            conn_health_checks=True,
+        ),
     }
+    DATABASES["default"]["NAME"] = os.environ["POSTGRES_DATABASE"]
 
-    REDIS_URL: str = ("redis://default@localhost:6379",)
+
     CACHES = {
         "default": {
             "BACKEND": os.environ["CACHE_ENGINE"],
-            "LOCATION": f"{REDIS_URL}/1",
+            "LOCATION": f"{Base.REDIS_URL}/1",
             "OPTIONS": {
                 **Base.REDIS_CONNECTION_OPTIONS,
                 "KEY_PREFIX": "NHHC-NATIVE",
@@ -944,7 +935,7 @@ class Testing(Base):
         },
         "session": {
             "BACKEND": os.environ["CACHE_ENGINE"],
-            "LOCATION": f"{REDIS_URL}/2",
+            "LOCATION": f"{Base.REDIS_URL}/2",
             "OPTIONS": {
                 **Base.REDIS_CONNECTION_OPTIONS,
                 "SERIALIZER": "django_redis.serializers.json.JSONSerializer",
@@ -953,7 +944,7 @@ class Testing(Base):
         },
         "celery": {
             "BACKEND": os.environ["CACHE_ENGINE"],
-            "LOCATION": f"{REDIS_URL}/3",
+            "LOCATION": f"{Base.REDIS_URL}/3",
             "OPTIONS": {
                 **Base.REDIS_CONNECTION_OPTIONS,
                 "SERIALIZER": "django_redis.serializers.json.JSONSerializer",
@@ -962,7 +953,7 @@ class Testing(Base):
         },
         "compressed_static": {
             "BACKEND": os.environ["CACHE_ENGINE"],
-            "LOCATION": f"{REDIS_URL}/5",
+            "LOCATION": f"{Base.REDIS_URL}/5",
             "OPTIONS": {
                 **Base.REDIS_CONNECTION_OPTIONS,
                 "KEY_PREFIX": "COMPRESSOR",

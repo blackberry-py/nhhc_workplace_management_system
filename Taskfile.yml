@@ -8,13 +8,15 @@ tasks:
     dir: /var/log
     desc: Creates the log files with proper permissions for the application
     cmds:
-      - direnv allow /Users/terry-brooks./Github/nhhc_workplace_management_system/.envrc
-      - touch /var/log/MASTER.log
-      - touch /var/log/FATAL.log
-      - touch /var/log/SERVICE.log
-      - chmod 777 /var/log/MASTER.log
-      - chmod 777 /var/log/FATAL.log
-      - chmod 777 /var/log/SERVICE.log
+      # - direnv allow /Users/terry-brooks./Github/nhhc_workplace_management_system/.envrc
+      - sudo touch /var/log/MASTER.log
+      - sudo touch /var/log/FATAL.log
+      - sudo touch /var/log/SERVICE.log
+      - sudo touch /var/log/QUERY.log
+      - sudo chmod 777 /var/log/QUERY.log
+      - sudo chmod 777 /var/log/MASTER.log
+      - sudo chmod 777 /var/log/FATAL.log
+      - sudo chmod 777 /var/log/SERVICE.log
     generates:
       - /var/log/MASTER.log
       - /var/log/FATAL.log
@@ -25,12 +27,12 @@ tasks:
       - /var/log/SERVICE.log
     internal: false
     preconditions:
-      - sh: test ! -f /var/log/MASTER.log
-        msg: MASTER.log file already exists
-      - sh: test ! -f /var/log/FATAL.log
-        msg: FATAL.log file already exists
-      - sh: test ! -f /var/log/SERVICE.log
-        msg: SERVICE.log file already exists
+      - sh: test -e /var/log/MASTER.log
+        msg: MASTER.log file missing
+      - sh: test -e /var/log/FATAL.log
+        msg: FATAL.log file missing
+      - sh: test -e /var/log/SERVICE.log
+        msg: SERVICE.log file missing
   collect:
     dir: .
     desc: Collects the static files to one directory for production static serving
@@ -44,14 +46,11 @@ tasks:
     interactive: false
   deps_check:
     dir: .
-    desc: Uses poetry to check the venv dependencies, sync them, update the
-      requirements dir files.
+    desc: Uses poetry to check the venv dependencies, sync them, update the requirements dir files.
     cmds:
       - doppler run -t {{.TOKEN}} -- poetry sync
-      - doppler run -t {{.TOKEN}} -- poetry export --without dev,test
-        --without-hashes -without-urls > ./requirements/base.txt
-      - doppler run -t {{.TOKEN}} -- poetry export --only dev,test
-        --without-hashes -without-urls > ./requirements/dev.txt
+      - doppler run -t {{.TOKEN}} -- poetry export --without dev,test --without-hashes -without-urls > ./requirements/base.txt
+      - doppler run -t {{.TOKEN}} -- poetry export --only dev,test --without-hashes -without-urls > ./requirements/dev.txt
     generates:
       - ./requirements/dev.txt
       - ./requirements/base.txt
@@ -65,20 +64,17 @@ tasks:
     dir: .
     cmds:
       - echo "Initializing Background Workers..."
-      - doppler run -c prod -- python3 -m celery -A common.celery:app worker -D
-        --loglevel debug -n %%d
-      - defer: echo "Killing Background Workers.." && kill -9 -f 'celery worker'
+      - doppler run -c prod -- python3 -m celery -A common.celery:app worker -D --loglevel debug -n %%d
     interactive: false
     silent: true
   monitor_test_workers:
     desc: Starts flower the celery background workers
     dir: .
     cmds:
-      - nohup doppler run -c prod -- python3 -m celery -A common flower &
-      - defer: rm nohup.out
+      - nohup doppler run -c prod -- python3 -m celery -A common flower  --port=5555 &
     interactive: false
     silent: true
-    internal: true
+    internal: false
   start_worker:
     desc: Starts celery background workers
     dir: .
@@ -97,6 +93,8 @@ tasks:
   develop:
     desc: Starts the Django Application, and background workers in a debug state
     dir: .
+    env:
+      DJANGO_CONFIGURATION: Development
     cmds:
       - echo "Completing Pre-Start Environment Check For Development..."
       - task: create_log_files
@@ -105,6 +103,7 @@ tasks:
       - echo 'Starting Flower'
       - task: monitor_test_workers
       - doppler run -c prod -- python -m gunicorn -t 30 -w 3 --timeout 120 --worker-class=sync core.wsgi:application --bind 127.0.0.1:{{.CLI_ARGS}} --reload
+      - defer: echo "Stopping Instance and Dependencies...Killing Background Workers.." && pkill -9 -f 'celery worker' && echo 'Stopping Flower' && pkill -9 -f 'celery flower' & rm nohup.out
     interactive: false
     silent: false
 
@@ -130,8 +129,7 @@ tasks:
     dir: .
     cmds:
       - echo 'Creating Superuser'
-      - doppler run  -c prod -- .venv/bin/python run/manage.py createsuperuser
-        --no-input
+      - doppler run  -c prod -- .venv/bin/python run/manage.py createsuperuser --no-input
       - echo 'User Created'
     interactive: false
     silent: false
@@ -141,8 +139,7 @@ tasks:
     cmds:
       - echo 'Starting test - Setting Configuration Env To Testing'
       - export DJANGO_CONFIGURATION=Testing
-      - doppler run -- python run/manage.py test {{.CLI_ARGS}} --verbosity=2
-        --keepdb   --failfast  --force-color
+      - doppler run -- python run/manage.py test {{.CLI_ARGS}} --verbosity=2 --keepdb   --failfast  --force-color
     interactive: false
     silent: false
   shell:

@@ -65,5 +65,6 @@
     "FSharp.suggestGitignore": false,
     "doppler.autocomplete.enable": true,
     "doppler.hover.enable": true,
-    "eslint.enable": false
+    "eslint.enable": false,
+    "python-envs.pythonProjects": []
 }

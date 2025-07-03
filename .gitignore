@@ -390,3 +390,13 @@ nhhc/async_worker_log.sqlite-*.bin
 
 #Ignore vscode AI rules
 .github/copilot-instructions.md
+.task/*
+local_s3
+AIVEN_POSTGRES_CERT.pem
+*.pem
+*.p12
+*.pfx
+*.key
+*.crt
+*.csr   
+*.cert

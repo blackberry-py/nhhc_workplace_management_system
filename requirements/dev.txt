@@ -1,3 +1,4 @@
+-r  base.txt
 asgiref==3.8.1 ; python_version >= "3.12" and python_version < "4"
 astroid==3.3.8 ; python_version >= "3.12" and python_version < "4.0"
 attrs==24.3.0 ; python_version >= "3.12" and python_version < "4"
@@ -67,7 +68,6 @@ pep8-naming==0.10.0 ; python_version >= "3.12" and python_version < "4.0"
 pkginfo==1.12.0 ; python_version >= "3.12" and python_version < "4.0"
 platformdirs==4.3.6 ; python_version >= "3.12" and python_version < "4"
 pluggy==1.5.0 ; python_version >= "3.12" and python_version < "4"
-poetry-core==2.0.1 ; python_version >= "3.12" and python_version < "4.0"
 poetry-plugin-export==1.8.0 ; python_version >= "3.12" and python_version < "4.0"
 poetry==2.0.1 ; python_version >= "3.12" and python_version < "4.0"
 pre-commit==4.0.1 ; python_version >= "3.12" and python_version < "4"
