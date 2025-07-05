@@ -134,17 +134,20 @@ tasks:
     interactive: false
     silent: false
   test:
-    desc: Creates a new Superuser
+    desc: Runs Django Tests
     dir: .
     cmds:
       - echo 'Starting test - Setting Configuration Env To Testing'
       - export DJANGO_CONFIGURATION=Testing
       - doppler run -- python run/manage.py test {{.CLI_ARGS}} --verbosity=2 --keepdb   --failfast  --force-color
+      - defer: echo '{{if .EXIT_CODE}}Testing Failed with {{.EXIT_CODE}}!{{else}}Successfully Ran Test Suite!{{end}}'
     interactive: false
     silent: false
   shell:
     desc: Open a shell in the app container
     cmds:
+
+    
       - doppler run -- docker-compose exec app /bin/bash
     interactive: true
     silent: false

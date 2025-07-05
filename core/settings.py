@@ -884,13 +884,13 @@ class Testing(Base):
         "health_check.contrib.migrations",
         "guardian",
         ## Installed Internal Apps
-        "web",
-        "portal",
-        "employee",
-        "announcements",
-        "nhhc",
-        "authentication",
-        "compliance",
+        "applications.web",
+        "applications.portal",
+        "applications.employee",
+        "applications.announcements",
+        "core",
+        "applications.authentication",
+        "applications.compliance",
         "django_extensions",
     ]
 

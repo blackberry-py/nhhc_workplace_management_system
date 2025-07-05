@@ -1,23 +1,29 @@
 from unittest.mock import MagicMock, patch
 
+from django.contrib.auth.models import AnonymousUser
 from django.http import HttpRequest
 from django.test import TestCase
-from employee.views import hire
+from applications.employee.views import Hire
+from applications.employee.models import Employee
 
 
 class TestEmployeeViews(TestCase):
     def test_hire_success(self):
         request = HttpRequest()
-        request.user.is_authenticated = True
-        request.user.is_superuser = True
+        request.method = 'POST'
+        # Mock a superuser
+        mock_user = MagicMock(spec=Employee)
+        mock_user.is_authenticated = True
+        mock_user.is_superuser = True
+        request.user = mock_user
         request.POST = {"pk": 1}
 
-        with patch("employee.views.EmploymentApplicationModel.objects.get") as mock_get:
+        with patch("applications.employee.views.EmploymentApplicationModel.objects.get") as mock_get:
             mock_applicant = MagicMock()
             mock_get.return_value = mock_applicant
             mock_applicant.hire_applicant.return_value = {"email": "test@example.com", "first_name": "John", "plain_text_password": "password", "username": "john_doe", "employee_id": 123}
 
-            response = hire(request)
+            response = Hire.hire(request)
 
             self.assertEqual(response.status_code, 201)
             self.assertIn(b"username: john_doe,  password: password, employee_id: 123", response.content)
@@ -29,22 +35,27 @@ class TestEmployeeViews(TestCase):
 
     def test_hire_unauthorized(self):
         request = HttpRequest()
-        request.user.is_authenticated = False
-        request.user.is_superuser = False
+        request.method = 'POST'
+        # Use anonymous user (not authenticated)
+        request.user = AnonymousUser()
 
-        response = hire(request)
+        response = Hire.hire(request)
 
         self.assertEqual(response.status_code, 403)
 
     def test_hire_invalid_pk(self):
         request = HttpRequest()
-        request.user.is_authenticated = True
-        request.user.is_superuser = True
+        request.method = 'POST'
+        # Mock a superuser
+        mock_user = MagicMock(spec=Employee)
+        mock_user.is_authenticated = True
+        mock_user.is_superuser = True
+        request.user = mock_user
         request.POST = {"pk": "invalid"}
 
-        response = hire(request)
+        response = Hire.hire(request)
 
         self.assertEqual(response.status_code, 400)
-        self.assertIn(b"Failed to hire applicant. Invalid or no 'pk' value provided in the request.", response.content)
+        self.assertIn(b"Failed to hire applicant. Invalid or no 'pk' value provided", response.content)
 
     # Add more test cases for reject, terminate, and promote functions

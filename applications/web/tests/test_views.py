@@ -45,8 +45,8 @@ class RobotsTxtTests(TestCase):
 
     def test_get(self):
         response = self.client.get("/robots.txt")
-        self.assertEqual(301, response.status_code)
+        self.assertEqual(302, response.status_code)
 
     def test_post_disallowed(self):
         response = self.client.post("/robots.txt")
-        self.assertEqual(301, response.status_code)
+        self.assertEqual(302, response.status_code)
