@@ -22,11 +22,12 @@ from django.views.decorators.http import require_safe
 from django_require_login.mixins import PublicViewMixin, public
 from formset.views import FormView
 from loguru import logger
-from common.cache import CachedResponseMixin, CachedTemplateView
-from common.metrics import metrics
+
 from applications.web.forms import ClientInterestForm, EmploymentApplicationForm
 from applications.web.models import ClientInterestSubmission, EmploymentApplicationModel
 from applications.web.tasks import process_new_application, process_new_client_interest
+from common.cache import CachedResponseMixin, CachedTemplateView
+from common.metrics import metrics
 
 CACHE_TTL: int = settings.CACHE_TTL
 
@@ -170,8 +171,8 @@ class EmploymentApplicationFormView(CachedResponseMixin, PublicViewMixin, FormVi
 
     @public
     def post(self, request):
-        form = self.form_class(request.POST, request.FILES)            
-            
+        form = self.form_class(request.POST, request.FILES)
+
         if form.is_valid():
             if resume := request.FILES.get("resume_cv"):
                 logger.debug(f"Resume file uploaded: {resume.name}")

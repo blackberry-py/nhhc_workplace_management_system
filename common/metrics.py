@@ -5,7 +5,7 @@ class NHHCMetrics:
     """Manages metrics tracking for the NHHC web application.
 
     This class provides a comprehensive metrics tracking system for monitoring various application events and performance indicators.
-    It uses Prometheus-style counters and histograms to record submission attempts, cache interactions, and document processing metrics.                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+    It uses Prometheus-style counters and histograms to record submission attempts, cache interactions, and document processing metrics.
 
     Attributes:
         NAMESPACE (str): The base namespace for all metrics in the web application.

@@ -1,6 +1,5 @@
 from django import template
 
-
 register = template.Library()
 
 # @register.inclusion_tag(filename="blog/post-list.html")

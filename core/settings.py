@@ -10,10 +10,10 @@ import re
 import sys
 import warnings
 from pathlib import Path
-from typing import Any, Dict, List, Pattern, Set, TextIO, Tuple, Union, Literal,Pattern
+from typing import Any, Dict, List, Pattern, Set, TextIO, Tuple, Union
 
-import dj_database_url
 import arrow
+import dj_database_url
 from configurations import Configuration
 from logtail import LogtailHandler
 from loguru import logger
@@ -23,7 +23,8 @@ from redis.retry import Retry
 NOW: str = str(arrow.now().format("YYYY-MM-DD"))
 
 
-logger.level(name="DATABASE_QUERY", no=19, color='orange')
+logger.level(name="DATABASE_QUERY", no=19, color="orange")
+
 
 def log_warning(message, category, filename, lineno, file=None, line=None):
     logger.warning(f" {message}")
@@ -38,13 +39,14 @@ class Base(Configuration):
     SECURE_PROXY_SSL_HEADER: Tuple[str, str] = ("HTTP_X_PROXIED_TRAFFIC", "https")
     INTERNAL_IPS: List[str] = ["127.0.0.1"]
     ROOT_URLCONF: str = "core.urls"
+    APPEND_SLASH = True
 
     # !SECTION
 
     # SECTION - Basic Application Definition
     DATETIME_FORMAT: str = "m/d/yyyy h:mm A"
     ADMINS: List[Tuple[str, str]] = [("Terry Brooks", "Terry@BrooksJr.com")]
-    MANAGERS: List[Tuple[str, str]]  = ADMINS
+    MANAGERS: List[Tuple[str, str]] = ADMINS
     WSGI_APPLICATION: str = "core.wsgi.application"
     IGNORABLE_404_URLS: List[Pattern] = [
         re.compile(r"^/apple-touch-icon.*\.png$"),
@@ -55,11 +57,7 @@ class Base(Configuration):
     ROBOTS_USE_HOST: bool = False
     FIRST_DAY_OF_WEEK: int = 1
 
-    HEALTH_CHECK: Dict[str, int] = {
-        "DISK_USAGE_MAX": 90,  # percent
-        "MEMORY_MIN": 100,  # in MB
-        "TIMEOUT": 60
-    }
+    HEALTH_CHECK: Dict[str, int] = {"DISK_USAGE_MAX": 90, "MEMORY_MIN": 100, "TIMEOUT": 60}  # percent  # in MB
     # SECTION - Base CORS and CSRF Settings
     CSRF_COOKIE_NAME: str = "carenett-csrf"
     CSRF_FAILURE_VIEW: str = "common.errors.permission_denied_handler"
@@ -69,8 +67,8 @@ class Base(Configuration):
     TINYMCE_JS_URL: str = f'https://cdn.tiny.cloud/1/{os.environ["TINYMCE_API_KEY"]}/tinymce/7/tinymce.min.js'
     TINYMCE_COMPRESSOR: bool = True
     CRISPY_TEMPLATE_PACK: str = "bootstrap5"
-    CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap', 'uni_form', 'bootstrap3', 'bootstrap4', 'bootstrap5') 
-    TINYMCE_DEFAULT_CONFIG: Dict[str, Union[str,int]] = {
+    CRISPY_ALLOWED_TEMPLATE_PACKS = ("bootstrap", "uni_form", "bootstrap3", "bootstrap4", "bootstrap5")
+    TINYMCE_DEFAULT_CONFIG: Dict[str, Union[str, int]] = {
         "menubar": "file edit view insert format tools table help",
         "plugins": "advlist autolink lists link image charmap print preview anchor searchreplace visualblocks code " "fullscreen insertdatetime media table paste code help wordcount spellchecker",
         "toolbar": "undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft "
@@ -110,8 +108,8 @@ class Base(Configuration):
         ],
         "RETRY": Retry(
             backoff=ExponentialBackoff(base=1.0, cap=15),
-            retries=5,  
-        ),  
+            retries=5,
+        ),
     }
 
     ROBOTS_CACHE_TIMEOUT: int = 60 * 60 * 24
@@ -121,7 +119,7 @@ class Base(Configuration):
     DEFENDER_REDIS_URL: str = os.environ["DEFENDER_REDIS_CACHE_TOKEN"]
     DEFENDER_BEHIND_REVERSE_PROXY: bool = True
     DEFENDER_LOCK_OUT_BY_IP_AND_USERNAME = True
-    DEFENDER_REVERSE_PROXY_HEADER: Tuple[str,str] = SECURE_PROXY_SSL_HEADER
+    DEFENDER_REVERSE_PROXY_HEADER: Tuple[str, str] = SECURE_PROXY_SSL_HEADER
     # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
     # ADMINRESTRICT_ENABLE_CACHE = True TODO: Check Impact and Remove
     # ADMINRESTRICT_DENIED_MSG = "Unable To Access Admin From This IP Address" TODO: Check Impact and Remove
@@ -139,11 +137,7 @@ class Base(Configuration):
             "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
         },
     ]
-    AUTHENTICATION_BACKENDS: List[str] = [
-        "django.contrib.auth.backends.ModelBackend",
-        "allauth.account.auth_backends.AuthenticationBackend",
-        "guardian.backends.ObjectPermissionBackend"
-    ]
+    AUTHENTICATION_BACKENDS: List[str] = ["django.contrib.auth.backends.ModelBackend", "allauth.account.auth_backends.AuthenticationBackend", "guardian.backends.ObjectPermissionBackend"]
     ACCOUNT_AUTHENTICATION_METHOD: str = "username_email"
     LOGIN_REDIRECT_URL: str = "/dashboard"
     LOGIN_URL: str = "/login"
@@ -195,7 +189,6 @@ class Base(Configuration):
     PUBLIC_MEDIA_LOCATION = "media"
     MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
 
-
     # SECTION - S3 private media settings
     PRIVATE_MEDIA_LOCATION: str = "restricted/"
     MEDIA_DIRECTORY: str = "/restricted/compliance/"
@@ -205,7 +198,7 @@ class Base(Configuration):
     # !SECTION
     # SECTION - File Management
     ALLOWED_UPLOAD_MIME_TYPES: List[str] = list(os.environ["ALLOWED_MIME_TYPES"].split(","))
-    STORAGES: Dict[str, Union[str,Dict[str,str]]] = {
+    STORAGES: Dict[str, Union[str, Dict[str, str]]] = {
         "default": {"BACKEND": "common.backends.storage_backends.PrivateMediaStorage"},
         "staticfiles": {
             "BACKEND": "common.backends.storage_backends.StaticStorage",
@@ -224,11 +217,11 @@ class Base(Configuration):
         os.path.join(BASE_DIR, "templates", "announcements"),
     ]
     STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
-)   
-    STATICFILES_DIRS = [ os.path.join(BASE_DIR, "static")]
+        "django.contrib.staticfiles.finders.FileSystemFinder",
+        "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+        "compressor.finders.CompressorFinder",
+    )
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
     TEMPLATES = [
         {
             "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -333,7 +326,7 @@ class Base(Configuration):
 
 class Production(Base):
     # SECTION - Production Protocols, General Security ACL COnfigs
-    DEBUG: bool = True  
+    DEBUG: bool = True
     ALLOWED_HOSTS = list(os.environ["ALLOWED_HOSTS"])
     SECURE_SSL_REDIRECT: int = True
     SECURE_HSTS_SECONDS: int = 31536000  # 1 year
@@ -450,7 +443,7 @@ class Production(Base):
     CACHES = {
         "default": {
             "BACKEND": os.environ["CACHE_ENGINE"],
-            "LOCATION":f"{Base.REDIS_URL}/1",
+            "LOCATION": f"{Base.REDIS_URL}/1",
             "OPTIONS": {
                 **Base.REDIS_CONNECTION_OPTIONS,
                 "KEY_PREFIX": "NHHC-NATIVE",
@@ -492,7 +485,7 @@ class Production(Base):
     logger.add(Base.MASTER_LOG_FILE, colorize=True, format=Base.LOG_FORMAT, diagnose=False, catch=True, backtrace=False, level="INFO")
     logger.add(Base.LOGTAIL_HANDLER, colorize=True, format=Base.LOG_FORMAT, diagnose=False, catch=True, backtrace=True, level="INFO")
     REQUEST_LOG_USER: bool = True
-   
+
     # !SECTION
     PROMETHEUS_METRIC_NAMESPACE: str = "care_nett"
     # SECTION - ADMIN Backend
@@ -634,13 +627,13 @@ class Development(Base):
         "guardian",
         ## Installed Internal Apps
         "applications.web",
-       "applications.portal",
-       "applications.employee",
+        "applications.portal",
+        "applications.employee",
         "applications.announcements",
         "core",
         "applications.authentication",
-     "applications.compliance",
-     "django_extensions",
+        "applications.compliance",
+        "django_extensions",
     ]
 
     MIDDLEWARE: List[str] = [
@@ -664,9 +657,7 @@ class Development(Base):
         "django_prometheus.middleware.PrometheusAfterMiddleware",  # 16
         "django.middleware.cache.FetchFromCacheMiddleware",
         "django_minify_html.middleware.MinifyHtmlMiddleware",
-        "common.middleware.database_logger.LogDatabaseQueriesMiddleware"
-
-
+        "common.middleware.database_logger.LogDatabaseQueriesMiddleware",
         # 17 (moved to the end)
         # "nhhc.middleware.maintenance.MaintenanceModeMiddleware",   # Uncomment if needed
     ]
@@ -722,18 +713,16 @@ class Development(Base):
     # SECTION - Password validation
     ACCOUNT_EMAIL_SUBJECT_PREFIX: str = "[DEVELOPMENT] CareNett - Nett Hands Home Care - Caregiver Portal - "
     STATIC_HOST: str = ""
-    logger.add("spam.log", level="DEBUG", format=Base.LOG_FORMAT,    rotation="5 MB", 
-    retention="2 days",  
-    compression="zip")
+    logger.add("spam.log", level="DEBUG", format=Base.LOG_FORMAT, rotation="5 MB", retention="2 days", compression="zip")
     logger.add(
-    os.environ["DB_QUERY_LOG_FILE"],
-    level="DATABASE_QUERY",
-    filter=lambda record: record["level"].name == "DATABASE_QUERY",
-    format=Base.LOG_FORMAT,     
-    rotation="10 MB", 
-    retention="7 days",  
-    compression="zip"
-)
+        os.environ["DB_QUERY_LOG_FILE"],
+        level="DATABASE_QUERY",
+        filter=lambda record: record["level"].name == "DATABASE_QUERY",
+        format=Base.LOG_FORMAT,
+        rotation="10 MB",
+        retention="7 days",
+        compression="zip",
+    )
     REQUEST_LOG_USER: bool = True
     PROMETHEUS_METRIC_NAMESPACE: str = "development_care_nett"
     DEBUG_TOOLBAR_PANELS: List[str] = [
@@ -874,7 +863,7 @@ class Testing(Base):
         "corsheaders",
         "tinymce",
         "health_check",
-       "django_minify_html",
+        "django_minify_html",
         "health_check.db",
         "health_check.cache",
         "health_check.contrib.redis",
@@ -906,7 +895,7 @@ class Testing(Base):
         "corsheaders.middleware.CorsMiddleware",  # 5
         "django.middleware.cache.UpdateCacheMiddleware",  # 6
         "django.middleware.common.CommonMiddleware",  # 7
-        "django.middleware.csrf.CsrfViewMiddleware",  # 8   
+        "django.middleware.csrf.CsrfViewMiddleware",  # 8
         "django.contrib.auth.middleware.AuthenticationMiddleware",  # 9
         "allauth.account.middleware.AccountMiddleware",  # 9.1
         "defender.middleware.FailedLoginMiddleware",  # 10
@@ -916,8 +905,7 @@ class Testing(Base):
         "request.middleware.RequestMiddleware",  # 15
         "django_prometheus.middleware.PrometheusAfterMiddleware",  # 16
         "django.middleware.cache.FetchFromCacheMiddleware",
-            "django_minify_html.middleware.MinifyHtmlMiddleware",
-
+        "django_minify_html.middleware.MinifyHtmlMiddleware",
     ]
     # SECTION - Database and Caching
     DATABASES = {
@@ -928,7 +916,6 @@ class Testing(Base):
         ),
     }
     DATABASES["default"]["NAME"] = os.environ["POSTGRES_DATABASE"]
-
 
     CACHES = {
         "default": {

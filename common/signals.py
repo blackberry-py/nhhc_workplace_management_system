@@ -14,8 +14,8 @@ import contextlib
 from typing import Callable
 from uuid import uuid4
 
-from django.db.models import signals
 from django.db.backends.signals import connection_created
+from django.db.models import signals
 from loguru import logger
 
 from applications.authentication.models import UserProfile
@@ -88,6 +88,7 @@ def employee_terminated_signal(sender, instance, **kwargs) -> None:
             logger.info(f"Archiving Terminated Employee - {employee.last_name}, {employee.first_name}")
             # TODO: Complete Storage Set up AND then implement profile archival
 
+
 def log_database_queries(sender, connection, **kwargs):
     """Log database queries.
 
@@ -99,12 +100,13 @@ def log_database_queries(sender, connection, **kwargs):
         connection: The database connection object.
         **kwargs: Additional keyword arguments.
     """
-    logger.log("DATABASE_QUERY",f"Database connection created: {connection.settings_dict}")
+    logger.log("DATABASE_QUERY", f"Database connection created: {connection.settings_dict}")
 
     def log_query(sql, params=None):
-        logger.log('DATABASE_QUERY', "Executing SQL Query: {sql} | Params: {params}")
+        logger.log("DATABASE_QUERY", "Executing SQL Query: {sql} | Params: {params}")
 
     connection.execute_wrapper(log_query)
+
 
 signals.pre_save.connect(employee_terminated_signal, sender=Employee, dispatch_uid="employee.models")
 

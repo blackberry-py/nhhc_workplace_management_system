@@ -39,7 +39,6 @@ class PrivateMediaStorage(S3Boto3Storage):
 custom_domain = False
 """
 
-import os
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -51,6 +50,7 @@ class StaticStorage(S3Boto3Storage):
     Provides storage for static files in AWS S3 with public-read access.
     Ensures all required S3 settings are present before initializing the storage backend.
     """
+
     location = "static"
     default_acl = "public-read"
 
@@ -68,10 +68,11 @@ class PublicMediaStorage(S3Boto3Storage):
     Provides storage for public media files in AWS S3 with public-read access.
     Ensures media files are not overwritten and are accessible via a custom domain.
     """
+
     location = "/public"
     default_acl = "public-read"
     file_overwrite = False
-    base_url = f'{settings.AWS_S3_CUSTOM_DOMAIN}/{location}/'
+    base_url = f"{settings.AWS_S3_CUSTOM_DOMAIN}/{location}/"
 
 
 class PrivateMediaStorage(S3Boto3Storage):
@@ -79,8 +80,9 @@ class PrivateMediaStorage(S3Boto3Storage):
     Provides storage for private media files in AWS S3 with restricted access.
     Ensures files are stored privately and are accessible only through authenticated requests.
     """
+
     location = "restricted"
     default_acl = "private"
     file_overwrite = True
     custom_domain = True
-    base_url = f'{settings.AWS_S3_CUSTOM_DOMAIN}/{location}/'
+    base_url = f"{settings.AWS_S3_CUSTOM_DOMAIN}/{location}/"

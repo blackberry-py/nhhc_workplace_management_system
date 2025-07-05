@@ -1,11 +1,8 @@
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 from faker import Faker
-from applications.web.views import (
-    AboutUsView,
-    HomePageView,
-    SuccessfulSubmission,
-)
+
+from applications.web.views import AboutUsView, HomePageView, SuccessfulSubmission
 
 test_data = Faker()
 

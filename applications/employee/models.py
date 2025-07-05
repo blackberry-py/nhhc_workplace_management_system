@@ -18,7 +18,6 @@ from sage_encrypt.fields.asymmetric import (
 from common.upload import UploadHandler
 
 
-
 class EmployeeMethodUtility:
     @staticmethod
     def create_unique_username(first_name: str, last_name: str) -> str:

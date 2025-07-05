@@ -1,9 +1,10 @@
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
-from common.testing import generate_mock_ZipCodeField
+
 from applications.web.models import ClientInterestSubmission, EmploymentApplicationModel
 from applications.web.views import ClientInterestFormView, EmploymentApplicationFormView
+from common.testing import generate_mock_ZipCodeField
 
 mock_zipcode = generate_mock_ZipCodeField()
 
