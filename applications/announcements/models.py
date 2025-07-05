@@ -25,7 +25,7 @@ Meta:
 - verbose_name_plural: "Internal Announcements"
 """
 
-import arrow
+
 from django.conf import settings
 from django.db import models
 from django.http.request import HttpRequest
@@ -35,7 +35,6 @@ from loguru import logger
 
 from applications.employee.models import Employee
 
-NOW: str = str(arrow.now().format("YYYY-MM-DD"))
 
 
 class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
@@ -185,7 +184,7 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
             self.message = message
             self.announcement_title = announcement_title
             self.message_type = message_type
-            self.date_posted = NOW
+            self.date_posted = settings.NOW
             self.status = status
             self.save()
             logger.success(f"Successfully re-posted {self.pk}")

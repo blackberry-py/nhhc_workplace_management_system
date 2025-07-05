@@ -174,7 +174,7 @@ def invalidate_cache(sender, **kwargs):
     logger.debug(f'Searching For Cache Key Pattern" {cache_key_pattern}')
     if cache_keys := cache.keys(cache_key_pattern):
         cache.delete_many(cache_keys)
-        metrics.increment_cache(model=self.primary_model.__name__, type="eviction")
+        metrics.increment_cache(model=model_name, type="eviction")
         logger.info(f"Cache invalidated for model: {model_name}")
     else:
         logger.debug(f"No cache keys found for model: {model_name} using {cache_key_pattern}")

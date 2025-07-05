@@ -141,7 +141,7 @@ def generate_employee_report(employee: Employee):
     html_report = EMPLOYEE_COMPLIANCE_REPORT_TEMPLATE.substitute(
         first_name=employee.first_name,
         last_name=employee.last_name,
-        date_report_generated=NOW,
+        date_report_generated=settings.NOW,
         last_date_employee_information_updated=employee.last_modified,
         # TODO: Finish Implementing this...After A Template is created.
     )
