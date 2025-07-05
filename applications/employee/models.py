@@ -1,4 +1,4 @@
-import arrow
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser, BaseUserManager, User
 from django.core.exceptions import ObjectDoesNotExist
@@ -17,7 +17,6 @@ from sage_encrypt.fields.asymmetric import (
 
 from common.upload import UploadHandler
 
-NOW = str(arrow.now().format("YYYY-MM-DD"))
 
 
 class EmployeeMethodUtility:
@@ -405,7 +404,7 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
         return f"(Employee Id:{self.pk}), Name: {self.last_name}, {self.first_name} | Username: {self.username}"
 
     def terminate_employment(self) -> None:
-        self.termination_date = NOW
+        self.termination_date = settings.NOW
         self.username = f"{self.username}_TERMINATED"
         self.email = f"{self.email}_TERMINATED"
         self.is_active = False

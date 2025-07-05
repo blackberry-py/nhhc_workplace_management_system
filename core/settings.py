@@ -13,11 +13,15 @@ from pathlib import Path
 from typing import Any, Dict, List, Pattern, Set, TextIO, Tuple, Union, Literal,Pattern
 
 import dj_database_url
+import arrow
 from configurations import Configuration
 from logtail import LogtailHandler
 from loguru import logger
 from redis.backoff import ExponentialBackoff
 from redis.retry import Retry
+
+NOW: str = str(arrow.now().format("YYYY-MM-DD"))
+
 
 logger.level(name="DATABASE_QUERY", no=19, color='orange')
 
