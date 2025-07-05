@@ -47,11 +47,15 @@ from storages.backends.s3boto3 import S3Boto3Storage
 
 
 class StaticStorage(S3Boto3Storage):
+    """
+    Provides storage for static files in AWS S3 with public-read access.
+    Ensures all required S3 settings are present before initializing the storage backend.
+    """
     location = "static"
     default_acl = "public-read"
 
     def __init__(self, *args, **kwargs):
-        required_settings = ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_STORAGE_BUCKET_NAME", "AWS_S3_REGION_NAME", "STATIC_URL"]
+        required_settings = ["AWS_ACCESS_KEY_ID", "AWS_S3_ENDPOINT_URL", "AWS_SECRET_ACCESS_KEY", "AWS_STORAGE_BUCKET_NAME", "AWS_S3_REGION_NAME", "STATIC_URL"]
 
         if missing_settings := [setting for setting in required_settings if not hasattr(settings, setting) or not getattr(settings, setting)]:
             raise ImproperlyConfigured(f"The following required S3 settings are missing or empty: " f"{', '.join(missing_settings)}")
@@ -60,15 +64,23 @@ class StaticStorage(S3Boto3Storage):
 
 
 class PublicMediaStorage(S3Boto3Storage):
-    location = "restricted"
-    default_acl = "private"
+    """
+    Provides storage for public media files in AWS S3 with public-read access.
+    Ensures media files are not overwritten and are accessible via a custom domain.
+    """
+    location = "/public"
+    default_acl = "public-read"
     file_overwrite = False
-    base_url = os.environ["PUBLIC_MEDIA_BASE_URL"]
+    base_url = f'{settings.AWS_S3_CUSTOM_DOMAIN}/{location}/'
 
 
 class PrivateMediaStorage(S3Boto3Storage):
+    """
+    Provides storage for private media files in AWS S3 with restricted access.
+    Ensures files are stored privately and are accessible only through authenticated requests.
+    """
     location = "restricted"
     default_acl = "private"
     file_overwrite = True
     custom_domain = True
-    base_url = os.environ["PRIVATE_MEDIA_BASE_URL"]
+    base_url = f'{settings.AWS_S3_CUSTOM_DOMAIN}/{location}/'

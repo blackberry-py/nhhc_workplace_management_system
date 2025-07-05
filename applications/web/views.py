@@ -111,8 +111,8 @@ class ClientInterestFormView(CachedResponseMixin, PublicViewMixin, FormView):
         if form.is_valid():
             return self.form_valid(form)
 
-        metrics.failed_submission_attempts("client-interest")
-        logger.error("Form Is Invalid")
+        metrics.increment_failed_submissions("client-interest")
+        logger.warning(f"Form Failed Invalid: {form.errors.as_text}")
         return render(request, self.template_name, {"form": form, "form_errors": form.errors})
 
 
@@ -170,15 +170,17 @@ class EmploymentApplicationFormView(CachedResponseMixin, PublicViewMixin, FormVi
 
     @public
     def post(self, request):
-        form = self.form_class(request.POST, request.FILES)
+        form = self.form_class(request.POST, request.FILES)            
+            
+        if form.is_valid():
+            if resume := request.FILES.get("resume_cv"):
+                logger.debug(f"Resume file uploaded: {resume.name}")
+                return self.form_valid(form, resume)
+            return self.form_valid(form)
 
-        if not form.is_valid():
-            logger.warning(f"Form Failed Invalid: {form.errors.as_text}")
-            metrics.failed_submission_attempts(application_type="employment")
-            return render(request, self.template_name, {"form": self.get_form(), "form_errors": form.errors})
-
-        resume = request.FILES.get("resume_cv")
-        return self.form_valid(form, resume) if resume else self.form_valid(form)
+        metrics.increment_failed_submissions("employment-application")
+        logger.warning(f"Form Failed Invalid: {form.errors.as_text}")
+        return render(request, self.template_name, {"form": form, "form_errors": form.errors})
 
 
 @public

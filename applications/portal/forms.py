@@ -8,7 +8,7 @@ from django.forms import ModelForm, widgets
 from django.forms.fields import BoundField, DateField
 from django.forms.fields import Field as FormsField
 from django.forms.fields import TimeField
-from django_recaptcha.fields import ReCaptchaField
+from captcha.fields import ReCaptchaField
 from formset.widgets import DatePicker
 from applications.portal.models import PayrollException
 

@@ -102,7 +102,7 @@ tasks:
       - task: start_test_worker
       - echo 'Starting Flower'
       - task: monitor_test_workers
-      - doppler run -c prod -- python -m gunicorn -t 30 -w 3 --timeout 120 --worker-class=sync core.wsgi:application --bind 127.0.0.1:{{.CLI_ARGS}} --reload
+      - NEW_RELIC_CONFIG_FILE=.configs/newrelic.ini newrelic-admin run-program doppler run -c prod -- python run/manage.py runserver_plus --key-file selftest-key --cert-file selftest-cert localhost:8000
       - defer: echo "Stopping Instance and Dependencies...Killing Background Workers.." && pkill -9 -f 'celery worker' && echo 'Stopping Flower' && pkill -9 -f 'celery flower' & rm nohup.out
     interactive: false
     silent: false

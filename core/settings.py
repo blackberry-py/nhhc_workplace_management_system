@@ -171,25 +171,26 @@ class Base(Configuration):
     # SECTION - STORAGE
     FILE_UPLOAD_TEMP_DIR: str = os.environ["FILE_UPLOAD_TEMP_DIR"]
     # SECTION - AWS settings
-    AWS_ACCESS_KEY_ID: str = os.environ["SPACES_KEY"]
-    AWS_SECRET_ACCESS_KEY: str = os.environ["SPACES_SECRET"]
-    AWS_S3_REGION_NAME: str = os.environ["DIGITAL_OCEAN_S3_REGION_NAME"]
-    AWS_STORAGE_BUCKET_NAME: str = os.environ["DIGITAL_OCEAN_SPACES_NAME"]
-    AWS_DEFAULT_ACL: str = "private"
-    AWS_S3_CUSTOM_DOMAIN: str = os.environ["AWS_S3_CUSTOM_DOMAIN"]
-    AWS_S3_OBJECT_PARAMETERS: Dict[str, str] = {"CacheControl": "max-age=86400"}
-    AWS_S3_SIGNATURE_VERSION: str = "s3v4"
-    AWS_QUERYSTRING_EXPIRE: int = 3600
-    AWS_S3_FILE_OVERWRITE: bool = True
-    AWS_S3_ENDPOINT_URL = os.environ["DIGITAL_OCEAN_SPACES_ENDPOINT_URL"]
-    STATIC_LOCATION: str = "static/production/"
-    STATIC_URL: str = f"{os.environ['AWS_S3_CUSTOM_DOMAIN']}/{STATIC_LOCATION}"
-    STATIC_ROOT: str = STATIC_URL
-    WHITENOISE_MANIFEST_STRICT: bool = False
-    # SECTION -  S3 public media settings
-    PUBLIC_MEDIA_LOCATION: str = "media/"
-    MEDIA_URL: str = f"{os.environ['AWS_S3_CUSTOM_DOMAIN']}/{PUBLIC_MEDIA_LOCATION}"
-    # !SECTION
+    AWS_ACCESS_KEY_ID = os.environ["SPACES_KEY"]
+    AWS_SECRET_ACCESS_KEY = os.environ["SPACES_SECRET"]
+    AWS_S3_REGION_NAME = os.environ["DIGITAL_OCEAN_S3_REGION_NAME"]
+    AWS_STORAGE_BUCKET_NAME = os.environ["DIGITAL_OCEAN_SPACES_NAME"]
+    AWS_DEFAULT_ACL = "private"
+    AWS_S3_CUSTOM_DOMAIN = os.environ["AWS_S3_CUSTOM_DOMAIN"]
+    AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+    AWS_S3_SIGNATURE_VERSION = "s3v4"
+    AWS_QUERYSTRING_EXPIRE = 3600
+    AWS_S3_FILE_OVERWRITE = True
+    AWS_S3_ENDPOINT_URL = "https://nyc3.digitaloceanspaces.com"
+    STATIC_LOCATION = "static/production"
+    STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/"
+    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+    WHITENOISE_MANIFEST_STRICT = False
+
+    # Media
+    PUBLIC_MEDIA_LOCATION = "media"
+    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
+
 
     # SECTION - S3 private media settings
     PRIVATE_MEDIA_LOCATION: str = "restricted/"
@@ -221,10 +222,10 @@ class Base(Configuration):
     STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    # other finders..
     'compressor.finders.CompressorFinder',
-)
-    TEMPLATES: List[Dict[str, Union[bool, str, dict]]] = [
+)   
+    STATICFILES_DIRS = [ os.path.join(BASE_DIR, "static")]
+    TEMPLATES = [
         {
             "BACKEND": "django.template.backends.django.DjangoTemplates",
             "DIRS": TEMPLATE_DIR,
@@ -379,7 +380,7 @@ class Production(Base):
         "django_filters",
         "localflavor",
         "faker",
-        "django_recaptcha",
+        "captcha",
         "django_celery_beat",
         "corsheaders",
         "tinymce",
@@ -610,7 +611,7 @@ class Development(Base):
         "django_filters",
         "localflavor",
         "faker",
-        "django_recaptcha",
+        "captcha",
         "django_celery_beat",
         "corsheaders",
         "tinymce",
@@ -639,6 +640,7 @@ class Development(Base):
     ]
 
     MIDDLEWARE: List[str] = [
+        "kolo.middleware.KoloMiddleware",
         "django_prometheus.middleware.PrometheusBeforeMiddleware",  # 1
         "django.middleware.security.SecurityMiddleware",  # 2
         "whitenoise.middleware.WhiteNoiseMiddleware",  # 3
@@ -863,7 +865,7 @@ class Testing(Base):
         "django_filters",
         "localflavor",
         "faker",
-        "django_recaptcha",
+        "captcha",
         "django_celery_beat",
         "corsheaders",
         "tinymce",

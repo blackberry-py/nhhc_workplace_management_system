@@ -400,3 +400,5 @@ AIVEN_POSTGRES_CERT.pem
 *.crt
 *.csr   
 *.cert
+.idea
+async_worker_log
