@@ -14,15 +14,16 @@ Both forms utilize the ReCaptchaField for added security.
 
 """
 
+from captcha.fields import ReCaptchaField
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Column, Field, Layout, Row, Submit
 from django import forms
 from django.forms import ModelForm, fields, forms
 from django.utils.translation import gettext_lazy as _
-from captcha.fields import ReCaptchaField
 from formset.fields import Activator
 from formset.renderers import ButtonVariant
 from formset.widgets import Button, UploadedFileInput
+
 from applications.web.models import ClientInterestSubmission, EmploymentApplicationModel
 
 

@@ -2,8 +2,8 @@ from typing import Any, Dict, Union
 
 from celery import shared_task
 from loguru import logger
-from applications.web.forms import ClientInterestSubmission, EmploymentApplicationForm
 
+from applications.web.forms import ClientInterestSubmission, EmploymentApplicationForm
 from common.errors import ElectronicMailTransmissionError
 from common.mailer import PostOffice
 

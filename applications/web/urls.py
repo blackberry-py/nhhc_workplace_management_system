@@ -5,6 +5,7 @@ Description: This module contains the URL patterns for the frontend application.
 
 from django.urls import path
 from django.views.decorators.csrf import csrf_protect
+
 from applications.web import views
 
 app_name = "web"

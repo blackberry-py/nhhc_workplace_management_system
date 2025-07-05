@@ -3,14 +3,15 @@ from unittest.mock import MagicMock, patch
 from django.contrib.auth.models import AnonymousUser
 from django.http import HttpRequest
 from django.test import TestCase
-from applications.employee.views import Hire
+
 from applications.employee.models import Employee
+from applications.employee.views import Hire
 
 
 class TestEmployeeViews(TestCase):
     def test_hire_success(self):
         request = HttpRequest()
-        request.method = 'POST'
+        request.method = "POST"
         # Mock a superuser
         mock_user = MagicMock(spec=Employee)
         mock_user.is_authenticated = True
@@ -35,7 +36,7 @@ class TestEmployeeViews(TestCase):
 
     def test_hire_unauthorized(self):
         request = HttpRequest()
-        request.method = 'POST'
+        request.method = "POST"
         # Use anonymous user (not authenticated)
         request.user = AnonymousUser()
 
@@ -45,7 +46,7 @@ class TestEmployeeViews(TestCase):
 
     def test_hire_invalid_pk(self):
         request = HttpRequest()
-        request.method = 'POST'
+        request.method = "POST"
         # Mock a superuser
         mock_user = MagicMock(spec=Employee)
         mock_user.is_authenticated = True

@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 from loguru import logger
 
+
 class ComplianceConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "applications.compliance"

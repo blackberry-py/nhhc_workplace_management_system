@@ -5,13 +5,13 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpRequest, HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from applications.employee.models import Employee
 from loguru import logger
 from rest_framework import generics, mixins, permissions, status
 from rest_framework.response import Response
-from applications.web.models import ClientInterestSubmission, EmploymentApplicationModel
 
+from applications.employee.models import Employee
 from applications.portal.api.serializers import ClientInquiriesSerializer
+from applications.web.models import ClientInterestSubmission, EmploymentApplicationModel
 from common.cache import CachedResponseMixin
 
 

@@ -25,7 +25,6 @@ Meta:
 - verbose_name_plural: "Internal Announcements"
 """
 
-
 from django.conf import settings
 from django.db import models
 from django.http.request import HttpRequest
@@ -34,7 +33,6 @@ from django_prometheus.models import ExportModelOperationsMixin
 from loguru import logger
 
 from applications.employee.models import Employee
-
 
 
 class Announcements(models.Model, ExportModelOperationsMixin("announcements")):

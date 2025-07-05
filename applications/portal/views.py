@@ -17,7 +17,6 @@ Classes:
 
 from typing import Any, Dict
 
-from applications.announcements.models import Announcements
 from django.contrib.auth.decorators import login_required
 from django.forms.models import model_to_dict
 from django.http import HttpResponse
@@ -28,14 +27,15 @@ from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView, UpdateView
 from django.views.generic.list import ListView
-from applications.employee.forms import EmployeeForm
-from applications.employee.models import Employee
 from formset.calendar import CalendarResponseMixin
 from formset.upload import FileUploadMixin
+
+from applications.announcements.models import Announcements
+from applications.employee.forms import EmployeeForm
+from applications.employee.models import Employee
 from applications.portal.forms import PayrollExceptionForm
 from applications.portal.models import PayrollException
 from applications.web.models import ClientInterestSubmission, EmploymentApplicationModel
-
 from common.cache import CachedResponseMixin, NeverCacheMixin
 
 

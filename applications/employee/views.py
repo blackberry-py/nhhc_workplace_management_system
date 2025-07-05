@@ -29,9 +29,7 @@ from rest_framework import status
 
 from applications.compliance.models import Compliance
 from applications.employee.models import Employee
-from applications.employee.tasks import (
-    send_async_onboarding_email,
-)
+from applications.employee.tasks import send_async_onboarding_email
 from applications.web.models import EmploymentApplicationModel
 from common.helpers import (
     get_content_for_unauthorized_or_forbidden,

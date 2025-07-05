@@ -14,9 +14,7 @@ from nhhc.utils.testing import (
     generate_mock_USSocialSecurityNumberField,
     generate_mock_ZipCodeField,
 )
-from portal.views import (
-    marked_reviewed,
-)
+from portal.views import marked_reviewed
 from web.models import ClientInterestSubmission, EmploymentApplicationModel
 
 dummy_data = Faker()

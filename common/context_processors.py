@@ -3,8 +3,9 @@ from typing import Any, Dict
 
 from django.conf import settings
 from django.http import HttpRequest
+
 from applications.portal.forms import PayrollExceptionForm
-from core.settings import Base
+
 
 def global_forms(request: HttpRequest) -> Dict[str, Any]:
     pattern = re.compile(r"[a-z0-9]+://[a-z0-9]+:\d.*/login/", re.IGNORECASE)

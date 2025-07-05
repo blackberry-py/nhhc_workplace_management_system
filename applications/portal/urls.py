@@ -11,6 +11,7 @@ Attributes:
 
 from django.contrib.auth.decorators import login_required
 from django.urls import path, re_path
+
 from applications.portal import views
 from applications.portal.api import endpoints
 

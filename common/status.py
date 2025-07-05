@@ -13,7 +13,6 @@ from health_check.backends import BaseHealthCheckBackend
 from health_check.exceptions import ServiceUnavailable
 from loguru import logger
 
-
 Faker.seed(time.time())
 mock_data = Faker()
 
@@ -160,9 +159,7 @@ class CloudObjectStorageBackend(BaseHealthCheckBackend):
             return {"s3": "healthy"}
         except Exception as e:
             logger.error(f"S3 health check failed: {e}")
-            raise ServiceUnavailable(
-                message=f"S3 Storage is unhealthy. Error: {str(e)}"
-            ) from e
+            raise ServiceUnavailable(message=f"S3 Storage is unhealthy. Error: {str(e)}") from e
 
     def check_status(self):
         """Perform all health checks and return a summary."""
