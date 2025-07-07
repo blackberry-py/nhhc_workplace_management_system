@@ -1,6 +1,23 @@
 {
-  "dependencies": {
-    "docsify": "^4.13.1",
-    "docsify-cli": "^1.0.0"
+  "name": "nhhc_workplace_management_system",
+  "version": "1.0.0",
+  "description": "<a id=\"readme-top\"></a>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Terry-BrooksJr/nhhc_workplace_management_system.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Terry-BrooksJr/nhhc_workplace_management_system/issues"
+  },
+  "homepage": "https://github.com/Terry-BrooksJr/nhhc_workplace_management_system#readme",
+  "devDependencies": {
+    "eslint": "^9.20.0",
+    "globals": "^15.14.0"
   }
 }
