@@ -22,6 +22,3 @@ RUN apt-get update && apt-get install -y \
 
 RUN usermod --login ${USERNAME} --move-home --home /home/${USERNAME} vscode && \
     groupmod --new-name ${USERNAME} vscode
-
-
-    
