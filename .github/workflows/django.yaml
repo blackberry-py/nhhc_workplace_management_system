@@ -38,10 +38,9 @@ jobs:
     - name: Load secrets from Doppler
       uses: dopplerhq/secrets-fetch-action@v1.3.0
       with:
-        auth-method: oidc
-        doppler-identity-id: ${{ secrets.DOPPLER_IDENTITY_ID }}
-        doppler-project: myproject
-        doppler-config: ci
+        doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+        doppler-project: nhhc
+        doppler-config: prod
         inject-env-vars: true
 
     - name: Install Taskfile CLI
