@@ -25,6 +25,7 @@ class EmployeeRosterAPIView(ListCreateAPIView):
     permission_classes (list): A list of permission classes required for accessing this view.
     filter_backends (list): A list of filter backends used for filtering Employee objects.
     filterset_fields (list): A list of fields that can be used for filtering Employee objects.
+
     """
 
     queryset = Employee.objects.all()

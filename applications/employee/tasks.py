@@ -25,6 +25,7 @@ def send_async_onboarding_email(applicant: dict) -> int:
 
     Raises:
         Exception: Logs an error if the email sending fails.
+
     """
     try:
         task = hr_mailroom.send_external_applicant_new_hire_onboarding_email(new_hire=applicant)
@@ -50,6 +51,7 @@ def send_async_rejection_email(applicant: dict) -> int:
 
     Raises:
         Exception: Logs an error if the email sending fails.
+
     """
     try:
         task = hr_mailroom.send_external_applicant_rejection_email(rejected_applicant=applicant)
@@ -75,6 +77,7 @@ def send_async_termination_email(applicant: dict) -> int:
 
     Raises:
         Exception: Logs an error if the email sending fails.
+
     """
     try:
         task = hr_mailroom.send_external_applicant_termination_email(terminated_employee=applicant)

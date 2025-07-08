@@ -1,5 +1,3 @@
-from nhhc.utils.upload import UploadHandler  # Replace with the actual module name
-
 # class TestUploadHandler(unittest.TestCase):
 #     def setUp(self):
 #         # Create a sample Employee for testing

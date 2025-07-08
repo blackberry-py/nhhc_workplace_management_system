@@ -94,7 +94,11 @@ tasks:
     desc: Starts the Django Application, and background workers in a debug state
     dir: .
     env:
-      DJANGO_CONFIGURATION: Development
+      DJANGO_CONFIGURATION: ${DJANGO_CONFIGURATION:-Development}
+      OTEL_RESOURCE_ATTRIBUTES: ${OTEL_RESOURCE_ATTRIBUTES}}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT}
+      OTEL_EXPORTER_OTLP_HEADERS: ${OTEL_EXPORTER_OTLP_HEADERS}
+      OTEL_EXPORTER_OTLP_PROTOCOL: ${OTEL_EXPORTER_OTLP_PROTOCOL}
     cmds:
       - echo "Completing Pre-Start Environment Check For Development..."
       - task: create_log_files
@@ -102,7 +106,7 @@ tasks:
       - task: start_test_worker
       - echo 'Starting Flower'
       - task: monitor_test_workers
-      - NEW_RELIC_CONFIG_FILE=.configs/newrelic.ini newrelic-admin run-program doppler run -c prod -- python run/manage.py runserver_plus --key-file selftest-key --cert-file selftest-cert localhost:8000
+      - opentelemetry-instrument doppler run -c prod -- python run/secure_dev_wsgi.py
       - defer: echo "Stopping Instance and Dependencies...Killing Background Workers.." && pkill -9 -f 'celery worker' && echo 'Stopping Flower' && pkill -9 -f 'celery flower' & rm nohup.out
     interactive: false
     silent: false
@@ -147,7 +151,6 @@ tasks:
     desc: Open a shell in the app container
     cmds:
 
-    
       - doppler run -- docker-compose exec app /bin/bash
     interactive: true
     silent: false
@@ -167,3 +170,49 @@ tasks:
       - pip install poetry
       - poetry lock -n
       - poetry install --no-root
+  lint:
+    desc: Run all linting and formatting tools
+    dir: .
+    cmds:
+      - echo "🔍 Running Python linting and formatting..."
+      - echo "🧹 Running autoflake (unused imports/variables check)..."
+      - doppler run -- .venv/bin/autoflake --check --recursive --remove-all-unused-imports --remove-unused-variables --remove-duplicate-keys --ignore-init-module-imports .
+      - echo "📋 Running isort (import sorting)..."
+      - doppler run -- .venv/bin/isort . --check-only --diff
+      - echo "⚫ Running black (code formatting)..."
+      - doppler run -- .venv/bin/black . --check --diff
+      - echo "🚀 Running ruff (fast linting)..."
+      - doppler run -- .venv/bin/ruff check .
+      - echo "🔧 Running pylint (comprehensive linting)..."
+      - doppler run -- .venv/bin/pylint **/*.py --load-plugins=pylint_django,pylint_celery --django-settings-module=core.settings
+      - echo "🔒 Running bandit (security linting)..."
+      - doppler run -- .venv/bin/bandit -r . -f json --exclude=./tests,./venv,./.venv
+      - echo "🎯 Running mypy (type checking)..."
+      - doppler run -- .venv/bin/mypy .
+      - echo "🌟 Running djlint (Django template linting)..."
+      - doppler run -- .venv/bin/djlint --check templates/**/*.html
+      - echo "✅ All linting checks completed!"
+    silent: false
+    interactive: false
+  lint:fix:
+    desc: Automatically fix linting and formatting issues
+    dir: .
+    cmds:
+      - echo "🔧 Auto-fixing Python linting and formatting issues..."
+      - echo "🧹 Running autoflake (removing unused imports/variables)..."
+      - cmd: doppler run -- .venv/bin/autoflake --in-place --recursive --remove-all-unused-imports --remove-unused-variables --remove-duplicate-keys --ignore-init-module-imports .
+        ignore_error: true
+      - echo "📋 Running isort (import sorting)..."
+      - cmd: doppler run -- .venv/bin/isort .
+        ignore_error: true
+      - echo "⚫ Running black (code formatting)..."
+      - cmd: doppler run -- .venv/bin/black .
+        ignore_error: true
+      - echo "🚀 Running ruff (auto-fix)..."
+      - cmd: doppler run -- .venv/bin/ruff check . --fix
+        ignore_error: true
+      - echo "🌟 Running djlint (Django template auto-fix)..."
+      - cmd: doppler run -- .venv/bin/djlint --reformat templates/**/*.html
+      - echo "✅ Auto-fix completed! Run 'task lint' to check remaining issues."
+    silent: false
+    interactive: false

@@ -48,6 +48,7 @@ class PayrollException(models.Model, ExportModelOperationsMixin("exceptions")):
     - ordering: ["-date"]
     - verbose_name: "Payroll Exception"
     - verbose_name_plural: "Payroll Exceptions"
+
     """
 
     class STATUS(models.TextChoices):

@@ -1,21 +1,22 @@
 {% extends "layouts/base.html" %}
 {% load static %}
 {% block title %}
-    <title>Nett Hands Home Care - Coming Soon! </title>
+    <title>Nett Hands Home Care - Coming Soon!</title>
 {% endblock title %}
 {% block stylesheets %}
-<!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="{% static 'css/coming_soon_util.css'%}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/coming_soon.css' %}">
-<!--===============================================================================================-->
+    <!--===============================================================================================-->
+    <link rel="stylesheet"
+          type="text/css"
+          href="{% static 'css/coming_soon_util.css' %}">
+    <link rel="stylesheet"
+          type="text/css"
+          href="{% static 'css/coming_soon.css' %}">
+    <!--===============================================================================================-->
 {% endblock stylesheets %}
-
 {% block content %}
-    <div class="bg-img1 size1 overlay1" style="background-image: url('images/bg01.jpg');">
+    <div class="bg-img1 size1 overlay1"
+         style="background-image: url('images/bg01.jpg')">
         <div class="size1 p-l-15 p-r-15 p-t-30 p-b-50">
-
-
-
             <div class="wsize1 m-lr-auto">
                 <p class="txt-center l1-txt1 p-b-60">
                     This feature is <span class="l1-txt2">Coming Soon</span>, hang tight!
@@ -23,9 +24,7 @@
             </div>
         </div>
     </div>
-
-
-<!--===============================================================================================-->
+    <!--===============================================================================================-->
     <script src="{% static 'vendor/countdowntime/moment.min.js' %}"></script>
     <script src="{% static 'vendor/countdowntime/moment-timezone.min.j' %}"></script>
     <script src="{% static 'vendor/countdowntime/moment-timezone-with-data.min.js' %}"></script>
@@ -33,6 +32,4 @@
     <script src="{% static 'vendor/tilt/tilt.jquery.min.js' %}"></script>
     <script src="{% static 'js/cs_main.js' %}"></script>
 {% endblock content %}
-
-
 <!--===============================================================================================-->

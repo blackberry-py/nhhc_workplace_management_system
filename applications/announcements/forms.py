@@ -14,6 +14,7 @@ Methods:
 
 
 This module provides a convenient way to create and customize announcement forms in Django applications.
+
 """
 
 from crispy_forms.bootstrap import FormActions
@@ -37,6 +38,7 @@ class AnnouncementDetailsForm(forms.ModelForm):
         model (Model): The model associated with the form (Announcements).
         fields (str): The fields to include in the form (all fields).
         widgets (dict): Custom widgets for specific form fields.
+
     """
 
     class Meta:
@@ -136,6 +138,7 @@ class AnnouncementForm(forms.ModelForm):
     Attributes:
         model (Announcements): The model associated with the form.
         fields (tuple): The fields to be included in the form.
+
     """
 
     class Meta:

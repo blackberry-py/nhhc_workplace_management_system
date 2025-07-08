@@ -1,7 +1,8 @@
-import pickle
+import json
 
 from django.conf import settings
 from django.core.cache import cache
+from django.core.serializers import deserialize, serialize
 from django.db.models import QuerySet
 from loguru import logger
 
@@ -27,13 +28,25 @@ class CachedQuerySet(QuerySet):
             #     'queryset': queryset
             #     }
             # query = self.data['ps']]
-            return pickle.loads(cache_hit_queryset)
-        else:
-            logger.debug(f"Cache Miss On Queryset for {cachekey}, Setting In Cache")
-            logger.debug(type(queryset))
-            # If the queryset is not found in the cache, generate it from the database and store it in the cache
-            fresh_query = self.model.objects.filter(**filterdict)
-            cache.set(cachekey, pickle.dumps(fresh_query), settings.QUERYSET_TTL)
-            return fresh_query
+            # Use Django's serialization instead of pickle for security
+            try:
+                deserialized_data = json.loads(cache_hit_queryset)
+                return [obj.object for obj in deserialize("json", deserialized_data)]
+            except (json.JSONDecodeError, ValueError):
+                logger.warning(f"Failed to deserialize cached queryset for {cachekey}")
+                # Fall through to fresh query
+
+        # Cache miss or deserialization failed - generate fresh query
+        logger.debug(f"Cache Miss On Queryset for {cachekey}, Setting In Cache")
+        logger.debug(type(queryset))
+        # If the queryset is not found in the cache, generate it from the database and store it in the cache
+        fresh_query = self.model.objects.filter(**filterdict)
+        # Use Django's serialization instead of pickle for security
+        try:
+            serialized_data = serialize("json", fresh_query)
+            cache.set(cachekey, json.dumps(serialized_data), settings.QUERYSET_TTL)
+        except Exception as e:
+            logger.warning(f"Failed to serialize queryset for caching: {e}")
+        return fresh_query
 
     queryset_from_cache.queryset_only = False

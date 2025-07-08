@@ -42,7 +42,7 @@ class EmployeeMethodUtility:
 
         try:
             # Try to create a new user with the given username
-            user = get_user_model().objects.get(username=username)  # pylint: disable=unused-argument
+            get_user_model().objects.get(username=username)
             max_num = get_user_model().objects.filter(username__startswith=username).count()
 
             # If no number is currently appended, set the max_num to 0
@@ -71,16 +71,18 @@ class EmployeeManager(EmployeeMethodUtility, BaseUserManager, ExportModelOperati
         """
         Create a new user account with the provided first name, last name, and password.
 
-        Parameters:
-        - password (str): The password for the new user account.
-        - first_name (str): The first name of the user.
-        - last_name (str): The last name of the user.
+        Args:
+            password (str): The password for the new user account.
+            first_name (str): The first name of the user.
+            last_name (str): The last name of the user.
+            **kwargs: Additional keyword arguments for user creation.
 
         Returns:
-        - user (Employee): The newly created user object.
+            User: The newly created user object.
 
         Raises:
-        - ValueError: If any of the required parameters (password, first_name, last_name) are missing.
+            ValueError: If any of the required parameters (password, first_name, last_name) are missing.
+
         """
         if not password or not first_name or not last_name:
             raise ValueError("We need password \n first name \n and last name to create and account...")
@@ -171,6 +173,7 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
             FEMALE: Represents the Female gender.
             NON_GENDERED: Represents a Non-Gendered option.(Default)
             BINARY: Represents the Binary gender option.
+
         """
 
         MALE = "M", _("Male")
@@ -185,6 +188,7 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
         Attributes:
             RELATED: Represents the case where the worker is related to the patient.
             NOT_RELATED: Represents the case where the worker is not related to the patient.(Default)
+
         """
 
         RELATED = "true", _("Yes, I am Related to my patient")
@@ -200,6 +204,7 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
             SEPARATED: Represents the status of being separated.
             WIDOWED: Represents the status of being widowed.
             NEVER_MARRIED: Represents the status of never being married.
+
         """
 
         MARRIED = "M", _("Married")
@@ -217,6 +222,7 @@ class Employee(EmployeeMethodUtility, AbstractUser, ExportModelOperationsMixin("
         - ADMIN: Represents the administration department.
         - BILLING: Represents the billing department.
         - OTHER: Represents other types of departments.
+
         """
 
         PATIENT_CARE = "PC", _("Patient Care")

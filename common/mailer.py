@@ -45,13 +45,14 @@ class PostOffice(EmailMultiAlternatives):
         Sends a confirmation email for a new employment interest or client interest submission.
 
         Args:
-            form (ClientInterestForm | EmploymentApplicationForm): The form containing the submitted information.
+            applicant (dict): Dictionary containing the applicant's information including first_name, email, etc.
 
         Returns:
-            bool
+            bool: True if email was successfully sent.
 
         Raises:
-            Exception: If the email transmission fails.
+            ElectronicMailTransmissionError: If the email transmission fails.
+
         """
         if not isinstance(applicant, dict):
             applicant = model_to_dict(applicant)
@@ -65,7 +66,7 @@ class PostOffice(EmailMultiAlternatives):
     # TODO Rename this here and in `send_external_application_submission_confirmation`
     def _extracted_from_send_external_application_submission_confirmation_17(self, applicant):
         subject: str = f"Thanks For Your Employment Interest, {applicant['first_name']}!"
-        to: list = applicant["email"].lower()
+        to = applicant["email"].lower()
         content_subtype = "text/html"
         html_content = APPLICATION_BODY.substitute(first_name=applicant["first_name"])
         text_content = PLAIN_TEXT_APPLICATION_BODY.substitute(first_name=applicant["first_name"])
@@ -85,18 +86,20 @@ class PostOffice(EmailMultiAlternatives):
         Sends a confirmation email for a new client interest submission.
 
         Args:
-            interested_client (dict) Dictonary representation  of the Instance of thr Client Submission
+            interested_client (dict): Dictionary representation of the client submission instance containing first_name, email, etc.
+
         Returns:
-            None
+            bool: True if email was successfully sent.
 
         Raises:
-            Exception: If the email transmission fails.
+            ElectronicMailTransmissionError: If the email transmission fails.
+
         """
         if not isinstance(interested_client, dict):
             interested_client = model_to_dict(interested_client)
         try:
             subject: str = f"We Are On It, {interested_client['first_name']}!"
-            to: list = interested_client["email"].lower()
+            to = interested_client["email"].lower()
             content_subtype = "text/html"
             html_content = CLIENT_BODY.substitute(first_name=interested_client["first_name"])
             text_content = PLAIN_TEXT_CLIENT_BODY.substitute(first_name=interested_client["first_name"])
@@ -119,12 +122,14 @@ class PostOffice(EmailMultiAlternatives):
         Sends email rerjecting the application for employment of the reciepent
 
         Args:
-            new_applicant (dict) Dictonary representation  of the Instance of the submitted application
+            rejected_applicant (dict): Dictionary representation of the rejected applicant's information including first_name, last_name, email, etc.
+
         Returns:
-            None
+            bool: True if email was successfully sent.
 
         Raises:
-            Exception: If the email transmission fails.
+            ElectronicMailTransmissionError: If the email transmission fails.
+
         """
 
         if not isinstance(rejected_applicant, dict):
@@ -133,7 +138,7 @@ class PostOffice(EmailMultiAlternatives):
 
         try:
             subject: str = f"Thank You So Much For Considering Nett Hands, {rejected_applicant['first_name']}!"
-            to: list = rejected_applicant["email"].lower()
+            to = rejected_applicant["email"].lower()
             content_subtype = "text/html"
             html_content = REJECTION_TEMPLATE_BODY.substitute(first_name=rejected_applicant["first_name"])
             text_content = PLAIN_TEXT_REJECTION_EMAIL_TEMPLATE.substitute(first_name=rejected_applicant["first_name"])
@@ -154,12 +159,14 @@ class PostOffice(EmailMultiAlternatives):
         Sends email terminating  employment of the recipient
 
         Args:
-            new_applicant (dict) Dictonary representation  of the Instance of the submitted application
+            terminated_employee (dict): Dictionary representation of the terminated employee's information including first_name, last_name, email, etc.
+
         Returns:
-            None
+            bool: True if email was successfully sent.
 
         Raises:
-            Exception: If the email transmission fails.
+            ElectronicMailTransmissionError: If the email transmission fails.
+
         """
 
         if not isinstance(terminated_employee, dict):
@@ -167,8 +174,8 @@ class PostOffice(EmailMultiAlternatives):
             logger.info(f"Initiating EMAIL Transmission - Termination Email - Recipient {terminated_employee['last_name'], terminated_employee['first_name']}({terminated_employee['email']})")
 
         try:
-            subject: str = f"NOTICE: Termination of Employment from Nett Hands Home Care"
-            to: list = terminated_employee["email"].lower()
+            subject: str = "NOTICE: Termination of Employment from Nett Hands Home Care"
+            to = terminated_employee["email"].lower()
             text_content = PLAIN_TEXT_TERMINATION_EMAIL_TEMPLATE.substitute(first_name=terminated_employee["first_name"])
             msg = EmailMessage(subject=subject, to=[to], from_email=self.from_email, reply_to=self.reply_to, body=text_content)
             sent_emails = msg.send()
@@ -186,18 +193,20 @@ class PostOffice(EmailMultiAlternatives):
         Sends email informing the application of their Login Credentials and the start of their emoployment
 
         Args:
-            interested_client (dict) Dictonary representation of the newly hired Applicant's employee model instance
+            new_hire (dict): Dictionary representation of the newly hired employee's information including first_name, email, username, plaintext_temp_password, etc.
+
         Returns:
-            int
+            bool: True if email was successfully sent.
 
         Raises:
-            Exception: If the email transmission fails.
+            ElectronicMailTransmissionError: If the email transmission fails.
+
         """
         if not isinstance(new_hire, dict):
             new_hire = model_to_dict(new_hire)
         try:
             subject: str = f"Welcome to Nett Hands, {new_hire['first_name']}!"
-            to: list = new_hire["email"].lower()
+            to = new_hire["email"].lower()
             content_subtype = "text/html"
             html_content = NEW_HIRE_ONBOARDING_TEMPLATE_BODY.substitute(first_name=new_hire["first_name"], username=new_hire["username"], plaintext_password=new_hire["plaintext_temp_password"])
             text_content = PLAIN_TEXT_NEW_HIRE_ONBOARDING_EMAIL_TEMPLATE.substitute(
@@ -220,14 +229,14 @@ class PostOffice(EmailMultiAlternatives):
         Trigger Intrernal Notification of a New Application
 
         Args:
-            interested_client (dict) Dictornary representation of the newly hired Applicant's employee model instance
+            applicant (dict): Dictionary representation of the applicant's employment application including first_name, last_name, email, contact_number, home_address1, city, state, zipcode, mobility, prior_experience, availability details, resume_cv, etc.
 
         Returns:
-            bool if emails successfully send
-
+            bool: True if emails successfully sent.
 
         Raises:
-            Exception: If the email transmission fails.
+            ElectronicMailTransmissionError: If the email transmission fails.
+
         """
         if not isinstance(applicant, dict):
             applicant = model_to_dict(applicant)
@@ -266,18 +275,19 @@ class PostOffice(EmailMultiAlternatives):
         Trigger Intrernal Notification of a New Application
 
         Args:
-            interested_client (dict) Dictornary representation of the newly hired Applicant's employee model instance
+            interested_client (dict): Dictionary representation of the client service request including first_name, last_name, email, desired_service, contact_number, zipcode, insurance_carrier, etc.
+
         Returns:
-            int Number of emails successfully send
+            bool: True if emails successfully sent.
 
         Raises:
-            Exception: If the email transmission fails.
+            ElectronicMailTransmissionError: If the email transmission fails.
+
         """
         if not isinstance(interested_client, dict):
             interested_client = model_to_dict(interested_client)
         try:
             subject: str = f"NOTICE: New Client Service Request - {interested_client['last_name']}, {interested_client['first_name']}!"
-            to: list = settings.INTERNAL_SUBMISSION_NOTIFICATION_EMAILS
             body = INTERNAL_CLIENT_SERVICE_REQUEST_NOTIFICATION.substitute(
                 first_name=interested_client["first_name"],
                 last_name=interested_client["last_name"],

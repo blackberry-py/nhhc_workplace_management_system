@@ -2,13 +2,15 @@ from prometheus_client import Counter, Histogram
 
 
 class NHHCMetrics:
-    """Manages metrics tracking for the NHHC web application.
+    """
+    Manages metrics tracking for the NHHC web application.
 
     This class provides a comprehensive metrics tracking system for monitoring various application events and performance indicators.
     It uses Prometheus-style counters and histograms to record submission attempts, cache interactions, and document processing metrics.
 
     Attributes:
         NAMESPACE (str): The base namespace for all metrics in the web application.
+
     """
 
     NAMESPACE = "web_nhhc"
@@ -33,7 +35,8 @@ class NHHCMetrics:
         )
 
     def increment_failed_submissions(self, application_type: str) -> None:
-        """Increments the counter for failed submission attempts for a specific application type.
+        """
+        Increments the counter for failed submission attempts for a specific application type.
 
         This method tracks the number of unsuccessful form submissions, categorized by the type of application.
         It helps in monitoring and analyzing submission failure rates across different application types.
@@ -43,11 +46,13 @@ class NHHCMetrics:
 
         Returns:
             None
+
         """
         self.failed_submission_attempts.labels(application_type=application_type).inc()
 
     def increment_cache(self, model: str, type: str) -> None:
-        """Tracks cache performance metrics for different database models.
+        """
+        Tracks cache performance metrics for different database models.
 
         This method increments the appropriate counter based on the cache interaction type,
         providing insights into cache hit, miss, and eviction rates for specific models.
@@ -58,6 +63,7 @@ class NHHCMetrics:
 
         Returns:
             None
+
         """
         if type == "hit":
             self.cached_queryset_hit.labels(model=model).inc()

@@ -12,9 +12,7 @@ from loguru import logger
 from rest_framework import status
 from tenacity import retry, stop_after_attempt, wait_exponential
 
-from applications.compliance.models import Compliance
 from applications.employee.models import Employee
-from common.report_template import EMPLOYEE_COMPLIANCE_REPORT_TEMPLATE
 
 MAIL_RETRY_MULTIPLIER = 1
 MAIL_RETRY_MIN_WAIT = 4
@@ -29,7 +27,8 @@ WAIT_STRATEGY = wait_exponential(multiplier=MAIL_RETRY_MULTIPLIER, min=MAIL_RETR
     serializer="json",
 )
 def upload_file_to_s3(file_name, bucket=settings.AWS_STORAGE_BUCKET_NAME, object_name=None) -> bool:
-    """Upload a file to an S3 bucket
+    """
+    Upload a file to an S3 bucket
     Args:
         file_name: File to upload
         bucket: Bucket to upload to
@@ -62,6 +61,7 @@ def process_signed_form(self, docseal_payload: dict) -> HttpResponse:
     Process a signed form by downloading the document, saving it locally, and uploading it to object storage.
 
     Args:
+        self: The celery task instance
         docseal_payload (dict): A dictionary containing information about the signed form.
 
     Returns:
@@ -70,6 +70,7 @@ def process_signed_form(self, docseal_payload: dict) -> HttpResponse:
     Raises:
         requests.RequestException: If there is an issue with downloading the file.
         Exception: If there is a general error during the process.
+
     """
     if not isinstance(docseal_payload, dict):
         docseal_payload = json.loads(docseal_payload)
@@ -132,17 +133,11 @@ def generate_employee_report(employee: Employee):
     Generates a PDF output of a Django model instance.
 
     Args:
+        employee: The Employee instance to generate a report for
 
     Returns:
         Text the generated PDF.
-    """
-    compliance_profile = Compliance.objects.get(employee=employee)
 
-    html_report = EMPLOYEE_COMPLIANCE_REPORT_TEMPLATE.substitute(
-        first_name=employee.first_name,
-        last_name=employee.last_name,
-        date_report_generated=settings.NOW,
-        last_date_employee_information_updated=employee.last_modified,
-        # TODO: Finish Implementing this...After A Template is created.
-    )
+    """
+    # TODO: Finish Implementing this...After A Template is created.
     return NotImplementedError("Creating Reports is Not Currently Available")

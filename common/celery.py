@@ -1,5 +1,6 @@
 import os
 
+import configurations
 from celery import Celery
 from celery.signals import setup_logging  # noqa
 
@@ -13,9 +14,8 @@ app = Celery("nett_hands")
 # the configuration object to child processes.
 # - namespace='CELERY' means all celery-related configuration keys
 #   should have a `CELERY_` prefix.
-app.config_from_object("django.conf:settings", namespace="CELERY")
 
-import configurations
+app.config_from_object("django.conf:settings", namespace="CELERY")
 
 configurations.setup()
 

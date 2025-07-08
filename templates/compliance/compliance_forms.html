@@ -1,63 +1,72 @@
 {% extends "layouts/base.html" %}
 {% load static %}
-{% block title %} {{ type }} Employee Compliance  - {{ employee.last_name }}, {{ employee.first_name }} {% endblock title %}
+{% block title %}
+    {{ type }} Employee Compliance  - {{ employee.last_name }}, {{ employee.first_name }}
+{% endblock title %}
 {% load crispy_forms_tags %}
 {% load anonymize %}
 {% load humanize %}
 {% load widget_tweaks %}
-
 {% block content %}
-  {% if employee.termination_date is not None %}
-    <div id="terminated-notice" class="w-100 p-3 text-center sticky-top "><strong>Notice:</strong>This Profile is for a Terminated Employee</div>
-  {% endif %}
-  <div class="col-xl-8 order-xl-1">
-    <div class="card">
-      <div class="card-header">
-        <div class="row align-items-center">
-          <div class="col-8">
-            <h3 class="mb-0">Employee Compliance Details - {{employee.employee.last_name}}, {{employee.employee.first_name}}
-            </h3>
-          </div>
+    {% if employee.termination_date is not None %}
+        <div id="terminated-notice" class="w-100 p-3 text-center sticky-top ">
+            <strong>Notice:</strong>This Profile is for a Terminated Employee
         </div>
-      </div>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-12 mb-0">
-            <h1>Compliance & Supporting Documents</h1>
-          </div>
+    {% endif %}
+    <div class="col-xl-8 order-xl-1">
+        <div class="card">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col-8">
+                        <h3 class="mb-0">
+                            Employee Compliance Details - {{ employee.employee.last_name }}, {{ employee.employee.first_name }}
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 mb-0">
+                        <h1>Compliance & Supporting Documents</h1>
+                    </div>
+                </div>
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a id="profile-tab"
+                           class="nav-link"
+                           aria-current="page"
+                           href="{% url 'employee' pk=employee.employee_id %}">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a id="compliance-tab"
+                           class="nav-link active"
+                           href="{% url 'staff_update_compliance'  pk=employee.employee_id %}">Compliance</a>
+                    </li>
+                </ul>
+                {# djlint:on #}
+                {% if form.is_multipart %}
+                    <form enctype="multipart/form-data"
+                          class="show-loading-after-submit"
+                          method="POST"
+                          action="{% url 'staff_update_compliance' pk=employee.employee_id %}">
+                        {% csrf_token %}
+                        {% crispy form %}
+                    </form>
+                {% else %}
+                    <form method="POST"
+                          class="show-loading-after-submit"
+                          action="{% url 'staff_update_compliance' %}">
+                        {% csrf_token %}
+                        {% crispy form %}
+                    </form>
+                {% endif %}
+            </div>
         </div>
-        <ul class="nav nav-tabs">
-          <li class="nav-item">
-            <a id="profile-tab" class="nav-link" aria-current="page" href="{% url 'employee' pk=employee.employee_id %}">Profile</a>
-          </li>
-          <li class="nav-item">
-            <a id="compliance-tab" class="nav-link active" href="{% url 'staff_update_compliance'  pk=employee.employee_id %}">Compliance</a>
-          </li>
-        </ul>
-              {# djlint:on #}
-
-        {% if form.is_multipart %}
-          <form enctype="multipart/form-data" class="show-loading-after-submit" method="POST" action="{% url 'staff_update_compliance' pk=employee.employee_id %}">
-            {% csrf_token %}
-
-            {% crispy form %}
-          </form>
-        {% else %}
-          <form method="POST" class="show-loading-after-submit" action="{% url 'staff_update_compliance' %}">
-
-            {% csrf_token %}
-
-            {% crispy form %}
-          </form>
-        {% endif %}
-
-      </div>
     </div>
-  </div>
-  <script defer>
+    <script defer>
     function openLoader() {
       document.getElementById("edit-button").style.display = "none";
       document.getElementById("loading-btn-submit").style.display = "block";
     }
-  </script>
+    </script>
 {% endblock content %}

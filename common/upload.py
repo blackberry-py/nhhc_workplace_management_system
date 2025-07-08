@@ -22,7 +22,6 @@ Import the module and utilize the classes and functions for handling file upload
 import os
 import sys
 import threading
-import typing
 
 import boto3
 import requests
@@ -55,7 +54,7 @@ class UploadHandler(FileUploadHandler):
         self,
         instance,
         filename: str,
-    ) -> typing.Union[os.PathLike, str]:
+    ) -> os.PathLike | str:
         """
         Static  method that Generate a randomized file name based on the uploader's information.
 
@@ -65,6 +64,7 @@ class UploadHandler(FileUploadHandler):
 
         Returns:
             os.PathLike object or str: A new file name with a unique combination of uploader-specific information and a random UUID.
+
         """
         file_extension = filename.split(".")[-1]
         uploader_specific_prefix = f"{instance.last_name.lower()}_{instance.first_name.lower()}"
@@ -77,7 +77,7 @@ class UploadHandler(FileUploadHandler):
         return isinstance(other, UploadHandler) and self.s3_path == other.s3_path
 
 
-class ProgressPercentage(object):
+class ProgressPercentage:
 
     def __init__(self, filename):
         self._filename = filename
@@ -90,7 +90,7 @@ class ProgressPercentage(object):
         with self._lock:
             self._seen_so_far += bytes_amount
             percentage = (self._seen_so_far / self._size) * 100
-            sys.stdout.write("\r%s  %s / %s  (%.2f%%)" % (self._filename, self._seen_so_far, self._size, percentage))
+            sys.stdout.write(f"\r{self._filename}  {self._seen_so_far} / {self._size}  ({percentage:.2f}%)")
             sys.stdout.flush()
 
 
@@ -98,7 +98,8 @@ class S3HANDLER(FileSystemStorage):
     @staticmethod
     @metrics.s3_upload_recorder.time()
     def upload_file_to_s3(file_name, bucket: str = settings.AWS_STORAGE_BUCKET_NAME, object_name=None) -> bool:
-        """Upload a file to an S3 bucket
+        """
+        Upload a file to an S3 bucket
         Args:
             file_name: File to upload
             bucket: Bucket to upload to
@@ -158,14 +159,15 @@ class S3HANDLER(FileSystemStorage):
     @staticmethod
     @metrics.docuseal_download_recorder.time()
     def download_pdf_file(payload: dict) -> bool:
-        """Download PDF from given URL to local directory.
+        """
+        Download PDF from given URL to local directory.
 
         :param url: The url of the PDF file to be downloaded
         :return: True if PDF file was successfully downloaded, otherwise False.
         """
 
         # Request URL and get response object
-        response = requests.get(payload["data"]["documents"][0]["url"], stream=True)
+        response = requests.get(payload["data"]["documents"][0]["url"], stream=True, timeout=30)
 
         # isolate PDF filename from URL
         pdf_file_name = S3HANDLER.generate_filename(payload)

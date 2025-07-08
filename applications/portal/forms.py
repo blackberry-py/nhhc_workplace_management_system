@@ -6,9 +6,8 @@ from captcha.fields import ReCaptchaField
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Column, Layout, Row, Submit
 from django.forms import ModelForm, widgets
-from django.forms.fields import BoundField, DateField
+from django.forms.fields import BoundField, DateField, TimeField
 from django.forms.fields import Field as FormsField
-from django.forms.fields import TimeField
 from formset.widgets import DatePicker
 
 from applications.portal.models import PayrollException
@@ -24,12 +23,12 @@ def calculateExceptionHours(start: int, end: int) -> int:
 
     Returns:
         int: The difference in hours between the two time values.
+
     """
     start_time = datetime.strptime(start, "%H:%M:%S")
     end_time = datetime.strptime(end, "%H:%M:%S")
-    timedelta = self.end_time - self.start_time
-    24 * 60 * 60
-    return divmod(timedelta.total_seconds(), 3600)[0]
+    time_delta = end_time - start_time
+    return divmod(time_delta.total_seconds(), 3600)[0]
 
 
 class HoursExceptionBoundField(BoundField):
@@ -53,7 +52,7 @@ class HoursExceptionField(FormsField):
         self.end_time = end_time
 
     def get_bound_field(self, form, field_name):
-        return HoursExceptionBoundField(form, self, exception_hours)
+        return HoursExceptionBoundField(form, self, field_name)
 
 
 class PayrollExceptionForm(ModelForm):
@@ -98,7 +97,7 @@ class PayrollExceptionForm(ModelForm):
             Row(
                 Column("captcha", css_class="form-group col-6"),
                 HTML(
-                    """                  
+                    """
                 <div class="form-group col-6 mb-0">
                  <label class="form-label">Number of Hours<em>Auto-Calculated</em></label>
                  <h5 class="textinput form-control" id="exception-hours" readonly>0</h5>

@@ -1,12 +1,12 @@
 {% extends "layouts/base.html" %}
 {% load static %}
-{% block title %} Announcements {% endblock title %}
+{% block title %}
+    Announcements
+{% endblock title %}
 {% block content %}
-
-  <link href="{% static 'tinymce/css/prism.css' %}" rel="stylesheet">
-  <script src="{% static 'tinymce/js/prism.js' %}"></script>
-
-  <style>
+    <link href="{% static 'tinymce/css/prism.css' %}" rel="stylesheet">
+    <script src="{% static 'tinymce/js/prism.js' %}"></script>
+    <style>
     .popOver {
       z-index: 1100;
     }
@@ -23,157 +23,136 @@
     .remove {
       display: none;
     }
-  </style>
-
-  <div class="header bg-purple pb-6">
-    <div class="container-fluid">
-      <div class="header-body">
-        <div class="row align-items-center py-4">
-          <div class="col-lg-6 col-7">
-            <h6 class="h2 text-white d-inline-block mb-0">Announcements</h6>
-            <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
-
-            </nav>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-
-<!-- Page content -->
-  <div class="container-fluid mt--6">
-    <div class="row mb-6">
-      <div class="col">
-        <div class="card">
-        <!-- Card header -->
-          <div class="card-header border-0">
-            <h3 class="mb-0">Announcements</h3>
-          <!-- Search Bar -->
-            {% if request.user.is_staff %}
-              <div class="popOver col-lg-3 text-right">
-                <button uk-toggle="target: #new-annoucement-modal" id="btn-create-annoucement" data-target="#new-annoucement-modal" class="btn btn-lg btn-neutral">Create New Announcement</button>
-              </div>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-    </div>
-          <!-- Light table -->
-    <div class="row">
-      <div class="col-12">
-        <ul class=" nav nav-tabs">
-          <li class="tab nav-item">
-            <a class="nav-link tab active" id="all" aria-current="page" href="#">{{ all_submission }} Total Announcements</a>
-          </li>
-          {% if request.user.is_staff %}
-            <li class="nav-item">
-              <a class="nav-link tab" id="deleted" href="#">{{ deleted }} Archived Announcements </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link tab" id="draft" href="#">{{ draft }} Draft Announcements</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link tab" id="active" href="#">{{ active }} Active Announcements</a>
-            </li>
-            </ul>
+    </style>
+    <div class="header bg-purple pb-6">
+        <div class="container-fluid">
+            <div class="header-body">
+                <div class="row align-items-center py-4">
+                    <div class="col-lg-6 col-7">
+                        <h6 class="h2 text-white d-inline-block mb-0">Announcements</h6>
+                        <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                        </nav>
+                    </div>
+                </div>
             </div>
+        </div>
+    </div>
+    <!-- Page content -->
+    <div class="container-fluid mt--6">
+        <div class="row mb-6">
+            <div class="col">
+                <div class="card">
+                    <!-- Card header -->
+                    <div class="card-header border-0">
+                        <h3 class="mb-0">Announcements</h3>
+                        <!-- Search Bar -->
+                        {% if request.user.is_staff %}
+                            <div class="popOver col-lg-3 text-right">
+                                <button uk-toggle="target: #new-annoucement-modal"
+                                        id="btn-create-annoucement"
+                                        data-target="#new-annoucement-modal"
+                                        class="btn btn-lg btn-neutral">Create New Announcement</button>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-
+        </div>
+        <!-- Light table -->
+        <div class="row">
+            <div class="col-12">
+                <ul class=" nav nav-tabs">
+                    <li class="tab nav-item">
+                        <a class="nav-link tab active" id="all" aria-current="page" href="#">{{ all_submission }} Total Announcements</a>
+                    </li>
+                    {% if request.user.is_staff %}
+                        <li class="nav-item">
+                            <a class="nav-link tab" id="deleted" href="#">{{ deleted }} Archived Announcements</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link tab" id="draft" href="#">{{ draft }} Draft Announcements</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link tab" id="active" href="#">{{ active }} Active Announcements</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
             <div class="table-responsive">
-              <table class="table align-items-center table-flush table-hover">
-                <thead class="thead-light">
-                  <tr>
-                    <th scope="col" class="sort" data-sort="status">Status</th>
-                    <th scope="col" class="sort" data-sort="poster">Created By</th>
-                    <th scope="col" class="sort" data-sort="catagory">Catagory</th>
-                    <th scope="col" class="sort" data-sort="message">Message</th>
-                    <th scope="col"></th>
-                  </tr>
-                </thead>
-                <tbody class="list">
-                  {% for anouncement in announcements %}
-                    {% if anouncement.status == 'D' %}
-                      <tr class="announcement draft">
-                    {% elif anouncement.status == 'A' %}
-                      <tr class="announcement active">
-                    {% elif anouncement.status == 'X' %}
-                      <tr class="announcement deleted">
+                <table class="table align-items-center table-flush table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col" class="sort" data-sort="status">Status</th>
+                            <th scope="col" class="sort" data-sort="poster">Created By</th>
+                            <th scope="col" class="sort" data-sort="catagory">Catagory</th>
+                            <th scope="col" class="sort" data-sort="message">Message</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="list">
+                        {% for anouncement in announcements %}
+                            {% if anouncement.status == 'D' %}
+                                <tr class="announcement draft">
+                                {% elif anouncement.status == 'A' %}
+                                    <tr class="announcement active">
+                                    {% elif anouncement.status == 'X' %}
+                                        <tr class="announcement deleted">
+                                        {% endif %}
+                                        <td>{{ anouncement.get_status_display }}</td>
+                                        <td class="posted-by">{{ anouncement.posted_by.first_name }} {{ anouncement.posted_by.last_name }}</td>
+                                        <td>{{ anouncement.get_message_type_display }}</td>
+                                        <td class="message">{{ anouncement.message | truncatewords:10 }}</td>
+                                        <td>
+                                            <a class="btn btn-secondary"
+                                               href="{% url 'announcement_detail' pk=anouncement.id %}">Edit</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table align-items-center table-flush table-hover">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col" class="sort" data-sort="budget">Message</th>
+                                <th scope="col">Posted Date</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                {% for anouncement in announcements %}
+                    {% if anouncement.status == 'A' %}
+                        <tr class="announcement">
+                            <td>{{ anouncement.message }}</td>
+                            <td>{{ anouncement.posted_by }}</td>
+                        </tr>
                     {% endif %}
-                    <td>
-                      {{ anouncement.get_status_display }}
-                    </td>
-                    <td class="posted-by">
-                      {{ anouncement.posted_by.first_name }} {{ anouncement.posted_by.last_name }}
-                    </td>
-                    <td>
-                      {{ anouncement.get_message_type_display }}
-                    </td>
-
-                    <td class="message">
-                      {{ anouncement.message | truncatewords:10 }}
-                    </td>
-                    <td>
-                      <a class="btn btn-secondary" href="{% url 'announcement_detail' pk=anouncement.id %}">Edit</a>
-                    </td>
-                    </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-
-            </div>
-            </div>
-          {% else %}
-            <div class="table-responsive">
-              <table class="table align-items-center table-flush table-hover">
-                <thead class="thead-light">
-                  <tr>
-                    <th scope="col" class="sort" data-sort="budget">Message</th>
-                    <th scope="col">Posted Date</th>
-                  </tr>
-                </thead>
-              </table>
-            </div>
-
-            {% for anouncement in announcements %}
-              {% if anouncement.status == 'A' %}
-                <tr class="announcement">
-                  <td>{{ anouncement.message }}</td>
-                  <td>{{  anouncement.posted_by }}</td>
-                </tr>
-              {% endif %}
-            {% endfor %}
-
+                {% endfor %}
             </table>
-
-          {% endif %}
-          {% if is_paginated %}
+        {% endif %}
+        {% if is_paginated %}
             <div class="mx-auto text-center">
-              <div class="pagination">
-                <span class="page-links">
-                  {% if page_obj.has_previous %}
-                    <a href="{% url 'announcements' page=page_obj.previous_page_number %}"><i class="fa-solid fa-left-long fa-2xl"></i></a>
-                  {% endif %}
-                  <span class="page-current">
-                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-                  </span>
-                  {% if page_obj.has_next %}
-                    <a href="{% url 'announcements' page=page_obj.next_page_number %}"><i class="fa-solid fa-right-long fa-2xl"></i></a>
-                  {% endif %}
-                </span>
-              </div>
+                <div class="pagination">
+                    <span class="page-links">
+                        {% if page_obj.has_previous %}
+                            <a href="{% url 'announcements' page=page_obj.previous_page_number %}"><i class="fa-solid fa-left-long fa-2xl"></i></a>
+                        {% endif %}
+                        <span class="page-current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                        {% if page_obj.has_next %}
+                            <a href="{% url 'announcements' page=page_obj.next_page_number %}"><i class="fa-solid fa-right-long fa-2xl"></i></a>
+                        {% endif %}
+                    </span>
+                </div>
             </div>
-          {% endif %}
-
-          {% include "include/_modal.html" %}
-
-{% endblock content %}
-
-<!-- Specific JS goes HERE -->
-
-{% block javascripts %}
-  <script defer>
-
+        {% endif %}
+        {% include "include/_modal.html" %}
+    {% endblock content %}
+    <!-- Specific JS goes HERE -->
+    {% block javascripts %}
+        <script defer>
     function toggleCreateBtn(){
       $('#btn-create-annoucement').toggleClass('hide-me')
     }
@@ -241,5 +220,5 @@
         })
       })
     })
-  </script>
-{% endblock javascripts %}
+        </script>
+    {% endblock javascripts %}

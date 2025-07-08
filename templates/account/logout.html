@@ -5,7 +5,9 @@
 {% load widget_tweaks %}
 {% load allauth %}
 {% load allauth i18n %}
-{% block title %} CareNett Logout  {% endblock title %}
+{% block title %}
+    CareNett Logout
+{% endblock title %}
 {% block content %}
     <!-- Page content -->
     <div class="container mt--8 pb-5">
@@ -22,24 +24,23 @@
                         <div class="text-center text-muted mb-4">
                             {% url 'account_logout' as action_url %}
                             {% element form method="post" action=action_url no_visible_fields=True %}
-                                {% slot body %}
-                                    {% csrf_token %}
-                                    {% if redirect_field_value %}
-                                        <input type="hidden"
-                                               name="{{ redirect_field_name }}"
-                                               value="{{ redirect_field_value }}" />
-                                    {% endif %}
-                                {% endslot %}
-                                {% slot actions %}
-                                    <button type="submit" value="Sign Out" class="btn btn-danger mb-4">Confirm Log Out</button>
-                                {% endslot %}
-                            {% endelement %}
-                            <a href={% url 'dashboard' %}  class="btn btn-primary"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
-                        </div>
-                    </div>
-                </div>
-
+                            {% slot body %}
+                            {% csrf_token %}
+                            {% if redirect_field_value %}
+                                <input type="hidden"
+                                       name="{{ redirect_field_name }}"
+                                       value="{{ redirect_field_value }}" />
+                            {% endif %}
+                        {% endslot %}
+                        {% slot actions %}
+                        <button type="submit" value="Sign Out" class="btn btn-danger mb-4">Confirm Log Out</button>
+                    {% endslot %}
+                {% endelement %}
+                <a href={% url 'dashboard' %}  class="btn btn-primary"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
             </div>
         </div>
     </div>
+</div>
+</div>
+</div>
 {% endblock content %}

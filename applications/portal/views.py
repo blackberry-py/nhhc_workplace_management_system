@@ -15,7 +15,7 @@ Classes:
 - EmploymentApplicationDetailView: Renders details of a specific employment application.
 """
 
-from typing import Any, Dict
+from typing import Any
 
 from django.contrib.auth.decorators import login_required
 from django.forms.models import model_to_dict
@@ -121,7 +121,7 @@ class ClientInquiriesListView(CachedResponseMixin, ListView):
     context_object_name = "submissions"
     paginate_by = 25
 
-    def get_context_data(self, **kwargs) -> Dict[str, str]:
+    def get_context_data(self, **kwargs) -> dict[str, str]:
         context = super().get_context_data(**kwargs)
         context["unresponsed"] = ClientInterestSubmission.objects.filter(reviewed=False).count()
         context["showSearch"] = True
@@ -160,7 +160,7 @@ class EmploymentApplicationListView(CachedResponseMixin, ListView):
     context_object_name = "submissions"
     paginate_by = 25
 
-    def get_context_data(self, **kwargs) -> Dict[str, str]:
+    def get_context_data(self, **kwargs) -> dict[str, str]:
         context = super().get_context_data(**kwargs)
         context["unresponsed"] = EmploymentApplicationModel.objects.filter(reviewed=False).count()
         context["reviewed"] = EmploymentApplicationModel.objects.filter(
@@ -205,5 +205,6 @@ def coming_soon(request) -> HttpResponse:
 
     Returns:
     - HttpResponse: Rendered HTML template
+
     """
     return render(request, "coming_soon.html", {})

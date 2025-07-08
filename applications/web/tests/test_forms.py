@@ -22,7 +22,8 @@ class TestApplicationFormView(TestCase):
         self.assertEqual(r.status_code, 200)
 
     def test_create_application_no_resume_submit_valid(self):
-        """Tests submitting a valid employment application without a resume.
+        """
+        Tests submitting a valid employment application without a resume.
 
         This test verifies the successful submission of an employment application form with valid data.
         It checks that the form submission results in a redirect and creates a corresponding application record.
@@ -32,6 +33,7 @@ class TestApplicationFormView(TestCase):
 
         Raises:
             AssertionError: If the form submission fails or the created application does not match the submitted data.
+
         """
 
         # Fill out the form and submit it:
@@ -78,6 +80,7 @@ class TestApplicationFormView(TestCase):
 
         Raises:
             AssertionError: If the form view fails to load or expected fields are missing.
+
         """
         # Verify the form loads:
         request = RequestFactory().get(reverse("web:employment_application_form"))
@@ -94,7 +97,8 @@ class TestApplicationFormView(TestCase):
         self.assertIn("last_name", form.fields.keys())
 
     def test_create_application_no_resume_submit_invalid(self):
-        """Tests submission of an invalid employment application form.
+        """
+        Tests submission of an invalid employment application form.
 
         This test verifies the form validation process by submitting an application with invalid data.
         It checks that the form correctly identifies and reports specific validation errors.
@@ -105,6 +109,7 @@ class TestApplicationFormView(TestCase):
         Raises:
             AssertionError: If form validation fails to detect expected errors or if the application
             is incorrectly created with invalid data.
+
         """
         # Fill out the form and submit it:
         data = {

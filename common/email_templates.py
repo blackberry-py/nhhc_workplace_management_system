@@ -7,7 +7,7 @@ These styles are used to ensure consistent formatting and layout across differen
 
 Partials:
 	_APPLICATION_STYLE_DECLARATIONS:str
-    	A string containing the CSS styles for the application's email template.
+    A string containing the CSS styles for the application's email template.
     _CLIENT_STYLE_DECLARATIONS:str
 		A string containing the CSS styles for the customer facing email template.
 
@@ -1550,7 +1550,7 @@ INTERNAL_CLIENT_SERVICE_REQUEST_NOTIFICATION: Template = Template(
             Contact Number: $contact_number\n
             Zipcode: $zipcode\n
             Insurance Carrier: $insurance_carrier\n
-            Desired Service: $desired_service            
+            Desired Service: $desired_service
             Link to Request in Carenett: https://netthandshome.care/inquiries/$url_slug
 
             """,

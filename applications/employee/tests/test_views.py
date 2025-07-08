@@ -52,7 +52,7 @@ class TestEmployeeViews(TestCase):
     # Add more test cases for reject, terminate, and promote functions
 
     def test_reject_success(self):
-        request = requests.post(url="")
+        requests.post(url="", timeout=30)
 
     def test_terminate_success(self):
         # Implement test case for terminate function

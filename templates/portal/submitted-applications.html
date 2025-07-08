@@ -1,9 +1,10 @@
 {% extends "layouts/base.html" %}
 {% load static %}
-{% block title %} Applicants {% endblock title %}
-
+{% block title %}
+    Applicants
+{% endblock title %}
 {% block stylesheets %}
-  <style>
+    <style>
     .show {
       display: block;
     }
@@ -11,199 +12,184 @@
     .remove {
       display: none;
     }
-  </style>
-
+    </style>
 {% endblock stylesheets %}
-
 {% block content %}
-
-  <div class="header bg-info pb-6">
-    <div class="container-fluid">
-      <div class="header-body">
-        <div class="row align-items-center py-4">
-          <div class="col-lg-6 col-7">
-            <h6 class="h2 text-white d-inline-block mb-0">Submitted Employment Applications</h6>
-            <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
-
-            </nav>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Page content -->
-  <div class="container-fluid mt--6">
-    <div class="row">
-      <div class="col">
-        <div class="card">
-          <!-- Card header -->
-          <div class="card-header border-0">
-            <h3 class="mb-0">Applications</h3>
-            <!-- Search Bar -->
-            <div id="list-looker">
-              <form class="navbar-search navbar-search-light form-inline mr-sm-3" id="navbar-search-main">
-                <div class="form-group mb-0">
-                  <div class="p-1 bg-light rounded rounded-pill shadow-sm mb-4">
-                    <div class="input-group">
-                      <div class="input-group-prepend">
-                        <button id="button-addon2" type="submit" class="btn btn-link text-warning"><i class="fa fa-search"></i></button>
-                      </div>
-                      <input type="search" placeholder="Search by Name, Contact Number" aria-describedby="button-addon2" class="search form-control border-0 bg-light">
+    <div class="header bg-info pb-6">
+        <div class="container-fluid">
+            <div class="header-body">
+                <div class="row align-items-center py-4">
+                    <div class="col-lg-6 col-7">
+                        <h6 class="h2 text-white d-inline-block mb-0">Submitted Employment Applications</h6>
+                        <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                        </nav>
                     </div>
-                  </div>
                 </div>
-              </form>
-
-          <!-- Light table -->
-              <ul class="nav nav-tabs">
-                <li class="tab nav-item">
-                  <a class="nav-link tab active" id="all" aria-current="page" href="#">{{ all_submissions }} Total Applications</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link tab" id="reviewed" href="#">{{ reviewed }} Applications Reviewed</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link tab" id="pending" href="#">{{ unresponsed }} Applications Pending Review</a>
-                </li>
-
-              </ul>
-              <div class="table-responsive">
-                <table class="table align-items-center table-flush table-hover">
-                  <thead class="thead-light">
-                    <tr>
-                      <th scope="col" class="sort" data-sort="name"></th>
-                      <th scope="col" class="sort" data-sort="name">Submission Date</th>
-
-                      <th scope="col" class="sort" data-sort="budget">First Name</th>
-                      <th scope="col" class="sort" data-sort="status">Last Name</th>
-                      <th scope="col" class="sort" data-sort="completion">Phone</th>
-                      <th scope="col" class="sort" data-sort="reviewed">Hired?</th>
-                      <th scope="col"></th>
-                    </tr>
-                  </thead>
-                  {% if submissions %}
-                    <tbody class="list">
-                      {% for submission in submissions %}
-                        {% if submission.reviewed is True %}
-                          <tr class="applicant reviewed">
-                            <th scope="row">
-                              <div class="media align-items-center">
-                                <div class="media-body">
-                                  <p>Reviewed</p>
-                                  <em><sub>{{ submission.last_modified | timesince }} ago</sub></em>
-                                </div>
-                              </div>
-                            </th>
-                            <td class="date-submitted">
-                              {{ submission.date_submitted }}
-                            </td>
-                            <td class="first-name">
-                              {{ submission.first_name }}
-                            </td>
-                            <td class="last-name">
-                              {{ submission.last_name }}
-                            </td>
-                            <td class="phone">
-                              {{ submission.contact_number }}
-                            </td>
-                            {% if submission.hired is False %}
-                              <td>
-                                <img src="{% static 'img/not-hired-icon.png' %}" alt="Not Hired Icon" width="30px" height="30px"/>
-                              </td>
-                            {% elif submission.hired is True %}
-                              <td>
-                                <img src="{% static 'img/read-submission-dot.png' %}" alt="Not Hired Icon" width="30px" height="30px"/>
-                              </td>
-                            {% else %}
-                              <td>
-                              </td>
-                            {% endif %}
-                            <td>
-                              <a class="btn btn-secondary" href="{% url 'applicant-details' pk=submission.pk %}">Applicant Details</a>
-                            </td>
-
-                          </tr>
-                        {% elif submission.reviewed is False %}
-                          <tr class="applicant pending">
-                            <th scope="row">
-                              <div class="media align-items-center">
-                                <div class="media-body">
-                                  <span class="badge badge-pill badge-success">New</span>
-                                </div>
-                              </div>
-                            </th>
-                            <td class="date-submitted">
-                              {{ submission.date_submitted }}
-                            </td>
-                            <td class="first-name">
-                              {{ submission.first_name }}
-                            </td>
-                            <td class="last-name">
-                              {{ submission.last_name }}
-                            </td>
-                            <td class="phone">
-                              {{ submission.contact_number }}
-                            </td>
-                            {% if submission.hired is False %}
-                              <td>
-                                <img src="{% static 'img/not-hired-icon.png' %}" alt="Not Hired Icon" width="30px" height="30px"/>
-                              </td>
-                            {% elif submission.hired is True %}
-                              <td>
-                                <img src="{% static 'img/read-submission-dot.png' %}" alt="Not Hired Icon" width="30px" height="30px"/>
-                              </td>
-                            {% else %}
-                              <td>
-                              </td>
-                            {% endif %}
-                            <td>
-                              <a class="btn btn-secondary" href="{% url 'applicant-details' pk=submission.pk %}">Applicant Details</a>
-                            </td>
-                          </tr>
-                        {% endif %}
-
-                      {% endfor %}
-
-                  {% else %}
-                    <h2>No Submitted Applications</h2>
-
-                                   {# .... **Now the pagination section** .... #}
-                    {% if paginator %}
-                      <div class="mx-auto text-center">
-                        <div id="pagination-navigation" class="pagination">
-                          <span class="page-links">
-                            {% if page_obj.has_previous %}
-                              <a href="/inquiries?page={{ page_obj.previous_page_number }}"><i class="fa-solid fa-left-long fa-2xl"></i></a>  #noqa
-                              </span>
-                            {% endif %}
-                            <span class="page-current">
-                              Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-                            </span>
-                            {% if page_obj.has_next %}
-                              <a href="/inquiries?page={{ page_obj.next_page_number }}"><i class="fa-solid fa-right-long fa-2xl"></i></a> #noqa
-                            {% endif %}
-                          </div>
-                        </div>
-                      </tbody>
-                      </div>
-          <!-- Card footer -->
-                      </div>
-                    {% endif %}
-                  {% endif %}
-                </table>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
-
+    </div>
+    <!-- Page content -->
+    <div class="container-fluid mt--6">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <!-- Card header -->
+                    <div class="card-header border-0">
+                        <h3 class="mb-0">Applications</h3>
+                        <!-- Search Bar -->
+                        <div id="list-looker">
+                            <form class="navbar-search navbar-search-light form-inline mr-sm-3"
+                                  id="navbar-search-main">
+                                <div class="form-group mb-0">
+                                    <div class="p-1 bg-light rounded rounded-pill shadow-sm mb-4">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <button id="button-addon2" type="submit" class="btn btn-link text-warning">
+                                                    <i class="fa fa-search"></i>
+                                                </button>
+                                            </div>
+                                            <input type="search"
+                                                   placeholder="Search by Name, Contact Number"
+                                                   aria-describedby="button-addon2"
+                                                   class="search form-control border-0 bg-light">
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <!-- Light table -->
+                            <ul class="nav nav-tabs">
+                                <li class="tab nav-item">
+                                    <a class="nav-link tab active" id="all" aria-current="page" href="#">{{ all_submissions }} Total Applications</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link tab" id="reviewed" href="#">{{ reviewed }} Applications Reviewed</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link tab" id="pending" href="#">{{ unresponsed }} Applications Pending Review</a>
+                                </li>
+                            </ul>
+                            <div class="table-responsive">
+                                <table class="table align-items-center table-flush table-hover">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th scope="col" class="sort" data-sort="name"></th>
+                                            <th scope="col" class="sort" data-sort="name">Submission Date</th>
+                                            <th scope="col" class="sort" data-sort="budget">First Name</th>
+                                            <th scope="col" class="sort" data-sort="status">Last Name</th>
+                                            <th scope="col" class="sort" data-sort="completion">Phone</th>
+                                            <th scope="col" class="sort" data-sort="reviewed">Hired?</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    {% if submissions %}
+                                        <tbody class="list">
+                                            {% for submission in submissions %}
+                                                {% if submission.reviewed is True %}
+                                                    <tr class="applicant reviewed">
+                                                        <th scope="row">
+                                                            <div class="media align-items-center">
+                                                                <div class="media-body">
+                                                                    <p>Reviewed</p>
+                                                                    <em><sub>{{ submission.last_modified | timesince }} ago</sub></em>
+                                                                </div>
+                                                            </div>
+                                                        </th>
+                                                        <td class="date-submitted">{{ submission.date_submitted }}</td>
+                                                        <td class="first-name">{{ submission.first_name }}</td>
+                                                        <td class="last-name">{{ submission.last_name }}</td>
+                                                        <td class="phone">{{ submission.contact_number }}</td>
+                                                        {% if submission.hired is False %}
+                                                            <td>
+                                                                <img src="{% static 'img/not-hired-icon.png' %}"
+                                                                     alt="Not Hired Icon"
+                                                                     width="30px"
+                                                                     height="30px" />
+                                                            </td>
+                                                        {% elif submission.hired is True %}
+                                                            <td>
+                                                                <img src="{% static 'img/read-submission-dot.png' %}"
+                                                                     alt="Not Hired Icon"
+                                                                     width="30px"
+                                                                     height="30px" />
+                                                            </td>
+                                                        {% else %}
+                                                            <td></td>
+                                                        {% endif %}
+                                                        <td>
+                                                            <a class="btn btn-secondary"
+                                                               href="{% url 'applicant-details' pk=submission.pk %}">Applicant Details</a>
+                                                        </td>
+                                                    </tr>
+                                                {% elif submission.reviewed is False %}
+                                                    <tr class="applicant pending">
+                                                        <th scope="row">
+                                                            <div class="media align-items-center">
+                                                                <div class="media-body">
+                                                                    <span class="badge badge-pill badge-success">New</span>
+                                                                </div>
+                                                            </div>
+                                                        </th>
+                                                        <td class="date-submitted">{{ submission.date_submitted }}</td>
+                                                        <td class="first-name">{{ submission.first_name }}</td>
+                                                        <td class="last-name">{{ submission.last_name }}</td>
+                                                        <td class="phone">{{ submission.contact_number }}</td>
+                                                        {% if submission.hired is False %}
+                                                            <td>
+                                                                <img src="{% static 'img/not-hired-icon.png' %}"
+                                                                     alt="Not Hired Icon"
+                                                                     width="30px"
+                                                                     height="30px" />
+                                                            </td>
+                                                        {% elif submission.hired is True %}
+                                                            <td>
+                                                                <img src="{% static 'img/read-submission-dot.png' %}"
+                                                                     alt="Not Hired Icon"
+                                                                     width="30px"
+                                                                     height="30px" />
+                                                            </td>
+                                                        {% else %}
+                                                            <td></td>
+                                                        {% endif %}
+                                                        <td>
+                                                            <a class="btn btn-secondary"
+                                                               href="{% url 'applicant-details' pk=submission.pk %}">Applicant Details</a>
+                                                        </td>
+                                                    </tr>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <h2>No Submitted Applications</h2>
+                                            {# .... **Now the pagination section** .... #}
+                                            {% if paginator %}
+                                                <div class="mx-auto text-center">
+                                                    <div id="pagination-navigation" class="pagination">
+                                                        <span class="page-links">
+                                                            {% if page_obj.has_previous %}
+                                                                <a href="/inquiries?page={{ page_obj.previous_page_number }}"><i class="fa-solid fa-left-long fa-2xl"></i></a>  #noqa
+                                                            </span>
+                                                        {% endif %}
+                                                        <span class="page-current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                                                        {% if page_obj.has_next %}
+                                                            <a href="/inquiries?page={{ page_obj.next_page_number }}"><i class="fa-solid fa-right-long fa-2xl"></i></a> #noqa
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </tbody>
+                                        </div>
+                                        <!-- Card footer -->
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock content %}
-
 <!-- Specific JS goes HERE -->
 {% block javascripts %}
-  <script type="module" defer>
+    <script type="module" defer>
     const sortTabs = document.querySelectorAll(".tab");
     const filterableEntries = document.querySelectorAll(".applicant");
 
@@ -238,5 +224,5 @@
         applyTabSelectedStyles(tabElement, filterableEntries);
       });
     });
-  </script>
+    </script>
 {% endblock javascripts %}

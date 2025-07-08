@@ -16,6 +16,7 @@ def maintenance_handler(request: HttpRequest, exception=None) -> HttpResponse:
 
     Returns:
         HttpResponse: A response with status code 400 and the 400.html template rendered.
+
     """
 
     return render(request, "common/503.html", status=503)
@@ -32,6 +33,7 @@ def bad_request_handler(request: HttpRequest, exception=None) -> HttpResponse:
 
     Returns:
         HttpResponse: A response with status code 400 and the 400.html template rendered.
+
     """
 
     logger.warning(f"BAD REQUEST: {exception}")
@@ -45,10 +47,11 @@ def permission_denied_handler(request: HttpRequest, reason=None) -> HttpResponse
 
     Args:
         request (HttpRequest): The HTTP request object.
-        exception (Exception, optional): The exception that caused the bad request. Defaults to None.
+        reason (str, optional): The reason for the permission denial. Defaults to None.
 
     Returns:
-        HttpResponse: A response with status code 400 and the 400.html template rendered.
+        HttpResponse: A response with status code 403 and the 403.html template rendered.
+
     """
     logger.error(f"FORBIDDEN ERROR: {reason}")
     return render(request, "common/403_csrf.html", status=403)
@@ -65,6 +68,7 @@ def page_not_found_handler(request: HttpRequest, exception=None) -> HttpResponse
 
     Returns:
         HttpResponse: A response with status code 404 and the 404.html template rendered.
+
     """
     logger.warning(f"PAGE NOT FOUND ERROR: {exception}")
     return render(request, "common/404.html", status=404)
@@ -81,6 +85,7 @@ def server_error_handler(request: HttpRequest, exception=None) -> HttpResponse:
 
     Returns:
         HttpResponse: A response with status code 400 and the 400.html template rendered.
+
     """
     logger.error(f"SERVER ERROR: {exception}")
     return render(request, "common/500.html", status=500)

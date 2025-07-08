@@ -1,73 +1,83 @@
 {% load static %}
 {% load humanize %}
-
 <div class="align-content-end">
     <div id="annoucement-container" class="container-xxl py-5">
         <div class="container py-5">
             <div class="testimonial-text g-5">
                 <div class="wow fadeIn" data-wow-delay="0.1s">
-
                     <h1 class="mb-4">Recent Announcements</h1>
                     <p class="text-muted fs-4 textimal-text">Snapshot of the Most Recent Announcements.</p>
-                    <div><a href="{% url 'announcements' %}">See More Announcements</a></div>
-               {% comment %} <p class="text-muted recent-annoucement-posting-date"><strong>{{ recent_announcements|index:0|index:"date_posted" }}</p></strong> {% endcomment %}
+                    <div>
+                        <a href="{% url 'announcements' %}">See More Announcements</a>
+                    </div>
+                    {% comment %} <p class="text-muted recent-annoucement-posting-date"><strong>{{ recent_announcements|index:0|index:"date_posted" }}</p></strong> {% endcomment %}
                 </div>
                 <div class="control-btn">
-                    <button class="carousel-control-prev" type="button" data-bs-target="#recent-announcements_carousel" data-bs-slide="prev">
+                    <button class="carousel-control-prev"
+                            type="button"
+                            data-bs-target="#recent-announcements_carousel"
+                            data-bs-slide="prev">
                         <i class="fa-solid fa-arrow-left"></i>
                         <span class="carousel-control-prev-icon visually-hidden" aria-hidden="true"></span>
                         <span class="visually-hidden">Previous</span>
                     </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#recent-announcements_carousel" data-bs-slide="next">
+                    <button class="carousel-control-next"
+                            type="button"
+                            data-bs-target="#recent-announcements_carousel"
+                            data-bs-slide="next">
                         <i class="fa-solid fa-arrow-right"></i>
-
                         <span class="carousel-control-next-icon visually-hidden" aria-hidden="true"></span>
                         <span class="visually-hidden">Next</span>
                     </button>
-                </div><!--
-            <!-- </section>End of Testimonial Here -->
-
-                <section class="carousel-landmark wow fadeIn" data-wow-delay="0.5s">
-                    <div id="recent-announcements_carousel" class="carousel slide testimonial-carousel border-start border-primary">
-              <!-- <section>
+                </div>
+                <!--
+<!-- </section>End of Testimonial Here -->
+<section class="carousel-landmark wow fadeIn" data-wow-delay="0.5s">
+<div id="recent-announcements_carousel" class="carousel slide testimonial-carousel border-start border-primary">
+<!-- <section>
                 <div class="control-bar"></div>
             </section> -->
-                        <div class="carousel-indicators">
-                            <button type="button" data-bs-target="#recent-announcements_carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Announcement 1"></button>
-                            <button type="button" data-bs-target="#recent-announcements_carousel" data-bs-slide-to="1" aria-label="Announcement 2"></button>
-                            <button type="button" data-bs-target="#recent-announcements_carousel" data-bs-slide-to="2" aria-label="Announcement 3"></button>
-                            <button type="button" data-bs-target="#recent-announcements_carousel" data-bs-slide-to="3" aria-label="Announcement 4"></button>
-                            <button type="button" data-bs-target="#recent-announcements_carousel" data-bs-slide-to="4" aria-label="Announcement 5"></button>
-                        </div>
-                        <div class="carousel-inner">
-                    <!--The Carousel Container-->
-                            {% for announcement in recent_announcements %}
-                                <div class="carousel-item carousel-item-1"><!--The Carousel item 1-->
-                                    <div class="testimonial-item ps-5">
-                                        <h1 class="mb-4">{{ announcement.announcement_title }}</h1>
-
-                                        {% if announcement.message_type == 'C' %}
-                                            <span class="badge rounded-pill text-bg-primary text-bg-danger">Safety</span>
-
-                                        {% elif announcement.message_type  == 'T' %}
-                                            <span class="badge rounded-pill text-bg-primary text-bg-info">Training</span>
-
-                                        {% elif announcement.message_type   == 'X' %}
-                                            <span class="badge rounded-pill text-bg-primary  text-bg-warning">Compliance</span>
-                                        {% else %}
-                                            <span class="badge rounded-pill text-bg-primary      text-bg-primary">General</span>
-                                        {% endif %}
-                                        <p class="fs-4 textimal-text">{{  announcement.message }}</p>
-                                        <h4 class=" text-muted recent-annoucement-date">Posted by {{ announcement.date_posted |timesince }}</h4>
-                                    </div>
-                                </div>
-                            {% endfor %}
-
-                    <!-- Control Buttons -->
-                        </div><!--[End of Container]-->
-
-                    </div>
-                </section><!--End of Carousel Landmark-->
-            </div><!--End of row g-5-->
-        </div><!-- container py-5 -->
-    </div>
+<div class="carousel-indicators">
+<button type="button" data-bs-target="#recent-announcements_carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Announcement 1">
+</button>
+<button type="button" data-bs-target="#recent-announcements_carousel" data-bs-slide-to="1" aria-label="Announcement 2">
+</button>
+<button type="button" data-bs-target="#recent-announcements_carousel" data-bs-slide-to="2" aria-label="Announcement 3">
+</button>
+<button type="button" data-bs-target="#recent-announcements_carousel" data-bs-slide-to="3" aria-label="Announcement 4">
+</button>
+<button type="button" data-bs-target="#recent-announcements_carousel" data-bs-slide-to="4" aria-label="Announcement 5">
+</button>
+</div>
+<div class="carousel-inner">
+<!--The Carousel Container-->
+{% for announcement in recent_announcements %}
+<div class="carousel-item carousel-item-1">
+<!--The Carousel item 1-->
+<div class="testimonial-item ps-5">
+<h1 class="mb-4">{{ announcement.announcement_title }}</h1>
+{% if announcement.message_type == 'C' %}
+<span class="badge rounded-pill text-bg-primary text-bg-danger">Safety</span>
+{% elif announcement.message_type  == 'T' %}
+<span class="badge rounded-pill text-bg-primary text-bg-info">Training</span>
+{% elif announcement.message_type   == 'X' %}
+<span class="badge rounded-pill text-bg-primary  text-bg-warning">Compliance</span>
+{% else %}
+<span class="badge rounded-pill text-bg-primary      text-bg-primary">General</span>
+{% endif %}
+<p class="fs-4 textimal-text">{{ announcement.message }}</p>
+<h4 class=" text-muted recent-annoucement-date">Posted by {{ announcement.date_posted |timesince }}</h4>
+</div>
+</div>
+{% endfor %}
+<!-- Control Buttons -->
+</div>
+<!--[End of Container]-->
+</div>
+</section>
+<!--End of Carousel Landmark-->
+</div>
+<!--End of row g-5-->
+</div>
+<!-- container py-5 -->
+</div>

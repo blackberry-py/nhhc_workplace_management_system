@@ -1,5 +1,4 @@
 import hashlib
-from typing import Union
 
 from django.conf import settings
 from django.core.cache import cache
@@ -20,24 +19,26 @@ from common.metrics import metrics
 class CachedTemplateView(TemplateView):
     @classmethod
     def as_view(cls, **initkwargs):  # @NoSelf
-        return cache_page(settings.CACHE_TTL)(super(CachedTemplateView, cls).as_view(**initkwargs))
+        return cache_page(settings.CACHE_TTL)(super().as_view(**initkwargs))
 
 
-class NeverCacheMixin(object):
+class NeverCacheMixin:
     @method_decorator(never_cache)
     def dispatch(self, *args, **kwargs):
-        return super(NeverCacheMixin, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class CachedResponseMixin:
-    """Mixin class to provide caching functionality for API responses.
+    """
+    Mixin class to provide caching functionality for API responses.
 
     This mixin allows views to cache their responses based on user identity and query parameters,
     improving performance by reducing the need for repeated database queries.
     """
 
     def get_cache_key(self) -> str:
-        """Generate a unique cache key based on the request and model information.
+        """
+        Generate a unique cache key based on the request and model information.
 
         This method constructs a cache key that incorporates the user ID, query parameters,
         and model names associated with the view.
@@ -47,6 +48,7 @@ class CachedResponseMixin:
 
         Raises:
             AttributeError: If the view does not have a 'primary_model' attribute.
+
         """
         user_id = self.request.user.id if self.request.user.is_authenticated else "anon"
         query_params = self.request.GET.urlencode()
@@ -57,21 +59,25 @@ class CachedResponseMixin:
 
         # Add the primary model name
         primary_model = getattr(self, "primary_model", None)
-        if primary_model:
+        if primary_model is not None:
             model_names.append(primary_model.__name__)
+            primary_model_name = primary_model.__name__
         else:
-            raise AttributeError("View must have a 'primary_model' attribute.")
+            # Handle cases where primary_model is None (e.g., static template views)
+            primary_model_name = "NoModel"
+            model_names.append(primary_model_name)
 
         # Add the cache_models names
         cache_models = getattr(self, "cache_models", [])
-        model_names.extend(model.__name__ for model in cache_models)
+        model_names.extend(model.__name__ for model in cache_models if model is not None)
         # Combine the model names into a string
         model_names_str = "_".join(model_names)
 
-        return f"{primary_model.__name__}:{self.__class__.__name__}_{model_names_str}_{user_id}_{query_params_hash}_cache_key"
+        return f"{primary_model_name}:{self.__class__.__name__}_{model_names_str}_{user_id}_{query_params_hash}_cache_key"
 
-    def get_cached_response(self, cache_key) -> Union[Response | None]:
-        """Retrieve cached data using the provided cache key.
+    def get_cached_response(self, cache_key) -> Response | None:
+        """
+        Retrieve cached data using the provided cache key.
 
         This method checks if there is cached data for the given cache key and returns it if available.
 
@@ -80,25 +86,31 @@ class CachedResponseMixin:
 
         Returns:
             Response or None: The cached response if found, otherwise None.
+
         """
         cached_data = cache.get(cache_key)
+        primary_model = getattr(self, "primary_model", None)
+        model_name = primary_model.__name__ if primary_model is not None else "NoModel"
+
         if cached_data is not None:
-            logger.debug(f"Cache Hit for {self.primary_model.__name__} - Cache Key: {cache_key}")
-            metrics.increment_cache(model=self.primary_model.__name__, type="hit")
+            logger.debug(f"Cache Hit for {model_name} - Cache Key: {cache_key}")
+            metrics.increment_cache(model=model_name, type="hit")
             return Response(cached_data, status=status.HTTP_200_OK)
         else:
-            logger.debug(f"Cache Miss for {self.primary_model.__name__}  - Cache Key: {cache_key}")
-            metrics.increment_cache(model=self.primary_model.__name__, type="miss")
+            logger.debug(f"Cache Miss for {model_name}  - Cache Key: {cache_key}")
+            metrics.increment_cache(model=model_name, type="miss")
             return None
 
     def cache_response(self, cache_key, data):
-        """Store data in the cache with the specified cache key.
+        """
+        Store data in the cache with the specified cache key.
 
         This method saves the provided data in the cache for a duration of one hour.
 
         Args:
             cache_key (str): The cache key under which to store the data.
             data: The data to be cached.
+
         """
         if type(data) in [JsonResponse, TemplateResponse]:
             data = data.render()
@@ -106,7 +118,8 @@ class CachedResponseMixin:
         cache.set(cache_key, data, timeout=settings.VIEW_CACHE_TTL)
 
     def list(self, request, *args, **kwargs) -> Response:
-        """Handle GET requests for listing resources with caching.
+        """
+        Handle GET requests for listing resources with caching.
 
         This method attempts to return a cached response if available;
         otherwise, it retrieves the data, caches it, and returns the response.
@@ -118,6 +131,7 @@ class CachedResponseMixin:
 
         Returns:
             Response: The cached or newly generated response.
+
         """
         cache_key = self.get_cache_key()
         if cached_response := self.get_cached_response(cache_key):
@@ -140,7 +154,8 @@ class CachedResponseMixin:
         return Response(data)
 
     def retrieve(self, request, *args, **kwargs) -> Response:
-        """Handle GET requests for retrieving a single resource with caching.
+        """
+        Handle GET requests for retrieving a single resource with caching.
 
         This method checks for a cached response and returns it if available;
         otherwise, it retrieves the resource, caches it, and returns the response.
@@ -152,6 +167,7 @@ class CachedResponseMixin:
 
         Returns:
             Response: The cached or newly generated response.
+
         """
         cache_key = self.get_cache_key()
         if cached_response := self.get_cached_response(cache_key):

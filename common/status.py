@@ -1,7 +1,7 @@
 import datetime
 import json
 import os
-import random
+import secrets
 import time
 
 import boto3
@@ -68,6 +68,7 @@ class DocSealSigningServiceHealthCheck(BaseHealthCheckBackend):
 
         Returns:
             str: A string representation of the updated submission data.
+
         """
         submission = DocSealSigningServiceHealthCheck.submission_format
         submission["expire_at"] = (datetime.datetime.now() + datetime.timedelta(hours=2)).strftime("%Y-%m-%d  %H:%M:%S UTC")
@@ -78,7 +79,7 @@ class DocSealSigningServiceHealthCheck(BaseHealthCheckBackend):
         submitter_details["email"] = mock_data.email()
         # submitter_details["phone"] = "+14439835591",
 
-        submitter_details["external_id"] = str(random.randint(8000, 12124445555444))
+        submitter_details["external_id"] = str(secrets.randbelow(12124445555444 - 8000) + 8000)
         return json.dumps(submission)
 
     def create_docseal_submission(self) -> int:
@@ -92,12 +93,13 @@ class DocSealSigningServiceHealthCheck(BaseHealthCheckBackend):
 
         Raises:
             KeyError: If the environment variable "DOCSEAL_TEST_API_KEY" is not set.
+
         """
 
         headers = {"Content-Type": "application/json", "Accept": "application/json", "X-Auth-Token": os.environ["DOCSEAL_TEST_API_KEY"]}
         payload = self.randomize_data()
         logger.debug(payload)
-        response = (requests.request("POST", os.path.join(DocSealSigningServiceHealthCheck.base_url, "submissions"), headers=headers, data=payload)).json()
+        response = (requests.request("POST", os.path.join(DocSealSigningServiceHealthCheck.base_url, "submissions"), headers=headers, data=payload, timeout=30)).json()
         logger.debug(response)
         if isinstance(response, dict) and "error" in response:
             return None
@@ -120,9 +122,10 @@ class DocSealSigningServiceHealthCheck(BaseHealthCheckBackend):
 
         Raises:
             KeyError: If the environment variable "DOCSEAL_TEST_API_KEY" is not set.
+
         """
         headers = {"X-Auth-Token": os.environ["DOCSEAL_TEST_API_KEY"]}
-        response = (requests.request("DELETE", os.path.join(DocSealSigningServiceHealthCheck.base_url, "submissions", str(submission_id)), headers=headers)).json()
+        response = (requests.request("DELETE", os.path.join(DocSealSigningServiceHealthCheck.base_url, "submissions", str(submission_id)), headers=headers, timeout=30)).json()
         logger.debug(response)
         return response["archived_at"] is not None
 
@@ -137,10 +140,11 @@ class DocSealSigningServiceHealthCheck(BaseHealthCheckBackend):
 
         Raises:
             ServiceUnavailable: If there is an error during the submission creation or archiving process.
+
         """
         try:
             created_submission = self.create_docseal_submission()
-            if created_submission != None:
+            if created_submission is not None:
                 return self.archive_submission(created_submission)
         except Exception as e:
             logger.exception(str(e))

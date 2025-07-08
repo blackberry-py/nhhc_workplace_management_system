@@ -12,6 +12,7 @@ class ClientInquiriesSerializer(ModelSerializer):
     Attributes:
         model (EmploymentApplicationModel): The model class that this serializer is associated with.
         fields (str): The fields to include in the serialized data. If set to "__all__", all fields will be included.
+
     """
 
     class Meta:
@@ -28,6 +29,7 @@ class EmploymentApplicationSerializer(ModelSerializer):
     Attributes:
         model (EmploymentApplicationModel): The model class that this serializer is associated with.
         fields (str): The fields to include in the serialized data. If set to "__all__", all fields will be included.
+
     """
 
     class Meta:

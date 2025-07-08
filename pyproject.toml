@@ -276,7 +276,6 @@ urllib3 = "2.5.0"
 vine = "5.1.0"
 virtualenv = "20.28.0"
 vulture = "2.14"
-waitress = "3.0.2"
 wcwidth = "0.2.13"
 webencodings = "0.5.1"
 webob = "1.8.9"
@@ -297,6 +296,7 @@ django-configurations = "^2.5.1"
 django-compressor = "^4.5.1"
 faker-file = {extras = ["common"], version = "^0.18.4"}
 argon2-cffi = "^25.1.0"
+django-unfold = "^0.62.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^4.0.1"
@@ -312,6 +312,7 @@ autoflake = "^2.3.1"
 pylint-celery = "^0.3"
 sourcery = "^1.29.0"
 django-mail-panel = "^4.0.4"
+watchfiles = "^1.1.0"
 
 [tool.poetry.group.test.dependencies]
 selenium = "^4.27.1"
@@ -336,14 +337,75 @@ target-version = ['py312']
 extend-exclude = "CareNett/compliance/views.py"
 
 [tool.ruff]
+# Set the maximum line length
 line-length = 120
+
+# Set the Python version target
 target-version = "py312"
 
 [tool.mypy]
-ignore_missing_imports = true
+# Basic configuration
 python_version = "3.12"
+ignore_missing_imports = true
 warn_return_any = true
 warn_unused_configs = true
+
+# Strictness settings
+strict = false
+disallow_untyped_defs = false
+disallow_any_generics = false
+disallow_untyped_calls = false
+disallow_incomplete_defs = false
+disallow_untyped_decorators = false
+disallow_subclassing_any = false
+
+# Warning settings
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+
+# Error reporting
+show_error_codes = true
+show_column_numbers = true
+show_error_context = true
+pretty = true
+
+# Import discovery
+namespace_packages = true
+explicit_package_bases = true
+
+# Miscellaneous
+check_untyped_defs = true
+allow_redefinition = true
+local_partial_types = true
+
+# Django-specific settings
+plugins = ["mypy_django_plugin.main"]
+
+# Per-module options
+[[tool.mypy.overrides]]
+module = "tests.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "migrations.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "*.migrations.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "django.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "*.settings.*"
+ignore_errors = true
+
+[tool.django-stubs]
+django_settings_module = "core.settings"
 
 [tool.coverage.report]
 exclude_also = [
@@ -384,6 +446,7 @@ python_files = ["test_*.py", "*_test.py", "testing/python/*.py"]
 
 [tool.kolo]
 use_rust = true
+development = false
 
 [tool.ruff.lint]
 fixable = ["ALL"]
@@ -392,7 +455,14 @@ extend-select = [
   "D213", "D214", "D215", "D405", "D406", "D407", "D408", "D409", "D410", "D411", "D413", "D416", "D417",
 ]
 ignore = [
-  "S101", "SIM105",
+  "E501",  # Line too long
+  "W505",  # Doc line too long
+  "B008",  # Do not perform function calls in argument defaults
+  "S101",  # Use of assert
+  "SIM105", # Use of contextlib.suppress
 ]
+
+[tool.ruff.lint.per-file-ignores]
+"applications/*/tests/*.py" = ["S106", "S31"]
 
 [tool.sourcery]

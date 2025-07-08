@@ -1,20 +1,19 @@
 {% extends "layouts/base.html" %}
 {% load static %}
-{% block title %} {{ type }} Employee - {{ submission.last_name }}, {{ submission.first_name }} {% endblock title %}
+{% block title %}
+    {{ type }} Employee - {{ submission.last_name }}, {{ submission.first_name }}
+{% endblock title %}
 {% load crispy_forms_tags %}
 {% load anonymize %}
 {% load humanize %}
 {% load widget_tweaks %}
-
 {% block content %}
-
     <div class="col-xl-8 order-xl-1">
         <div class="card">
             <div class="card-header">
                 <div class="row align-items-center">
                     <div class="col-8">
-                        <h3 class="mb-0">Annoucement Details - {{ announcement.announcement_title }}
-                        </h3>
+                        <h3 class="mb-0">Annoucement Details - {{ announcement.announcement_title }}</h3>
                     </div>
                 </div>
             </div>
@@ -30,9 +29,7 @@
         </div>
     </div>
     {% csrf_token %}
-
     <script type="text/javascript" defer>
-
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
 

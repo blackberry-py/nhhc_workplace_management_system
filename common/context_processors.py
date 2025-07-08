@@ -1,5 +1,4 @@
-import re
-from typing import Any, Dict
+from typing import Any
 
 from django.conf import settings
 from django.http import HttpRequest
@@ -7,8 +6,7 @@ from django.http import HttpRequest
 from applications.portal.forms import PayrollExceptionForm
 
 
-def global_forms(request: HttpRequest) -> Dict[str, Any]:
-    pattern = re.compile(r"[a-z0-9]+://[a-z0-9]+:\d.*/login/", re.IGNORECASE)
+def global_forms(request: HttpRequest) -> dict[str, Any]:
     if request.method == "POST" and request.user.is_authenticated:
         form = PayrollExceptionForm(request.POST)
     else:

@@ -20,6 +20,7 @@ class EmployeeForm(ModelForm):
         model (Employee): The Employee model that this form is based on.
         fields (str): The fields to include in the form.
         labels (dict): Custom labels for specific fields in the form.
+
     """
 
     phone_sms_identical = BooleanField(required=False, widget=CheckboxInput, label="Same as Contact")

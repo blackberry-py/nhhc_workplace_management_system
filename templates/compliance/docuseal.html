@@ -1,30 +1,26 @@
 {% extends "layouts/base.html" %}
 {% load static %}
-{% block title  %} {{ title }} Digital Signing Portal  - CareNett {% endblock title %}
+{% block title %}
+    {{ title }} Digital Signing Portal  - CareNett
+{% endblock title %}
 {% block content %}
-
-  <script src="https://cdn.docuseal.co/js/form.js"></script>
-  <div class="mx-auto row d-flex">
-    <div class="col-6">
-      <a href="{% url 'profile' %}"><i class="fa-solid fa-circle-arrow-left"></i><h2>Exit Portal</h2> </a>
-    </div>
-    <div class="col-6">
-      <a href="#doc-sign-modal" uk-toggle><i class="fa-solid fa-solid fa-file-signature"></i><h2>Sign Different Document</h2> </a>
-    </div>
-  </div>
-
-  <docuseal-form
-    data-src="{{ doc_url }}"
-    data-email="{{ employee.email }}"
-    data-with-send-copy-button="false"
-    data-allow-typed-signature="false"
-    data-external-id="{{ employee.employee_id }}"
-    data-allow-to-resubmit="true"
-    data-metadata=' { "first_name": "{{employee.first_name}}", "last_name": "{{employee.last_name}}"}'x>
-  </docuseal-form>
-
-  {% include "include/_docsign-modal.html" %}
-  <script defer>
+    <script src="https://cdn.docuseal.co/js/form.js"></script>
+    <div class="mx-auto row d-flex">
+        <div class="col-6">
+        <a href="{% url 'profile' %}"><i class="fa-solid fa-circle-arrow-left"></i>
+        <h2>Exit Portal</h2>
+    </a>
+</div>
+<div class="col-6">
+<a href="#doc-sign-modal" uk-toggle><i class="fa-solid fa-solid fa-file-signature"></i>
+<h2>Sign Different Document</h2>
+</a>
+</div>
+</div>
+<docuseal-form data-src="{{ doc_url }}" data-email="{{ employee.email }}" data-with-send-copy-button="false" data-allow-typed-signature="false" data-external-id="{{ employee.employee_id }}" data-allow-to-resubmit="true" data-metadata=' { "first_name": "{{ employee.first_name }}", "last_name": "{{ employee.last_name }}"}'x>
+</docuseal-form>
+{% include "include/_docsign-modal.html" %}
+<script defer>
     document.querySelector('docuseal-form').addEventListener('completed',  (e) => {e.detail
       Swal.fire({
         title: "Signed and Delivered",
@@ -44,5 +40,5 @@
         }
       },
       )});
-  </script>
+</script>
 {% endblock content %}

@@ -1,20 +1,18 @@
 {% extends "includes/base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
-
-
 <style>
     .frontend-form {
         width: 33.33%;
     }
 </style>
 {% block title %}
-    <title>Nett Hands Home Care - Client Services Inquiry </title>
+    <title>Nett Hands Home Care - Client Services Inquiry</title>
 {% endblock title %}
 {% block main %}
-
     <!-- Breadcrumb Begin -->
-    <div class="breadcrumb-option spad set-bg" data-setbg="{% static 'img/breadcrumb-bg.jpg' %}">
+    <div class="breadcrumb-option spad set-bg"
+         data-setbg="{% static 'img/breadcrumb-bg.jpg' %}">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
@@ -24,14 +22,19 @@
                             <div id="form-errors">
                                 <ul class="form-errors-list">
                                     <p class="form-error-header">"Please correct the errors below and resubmit...</p>
-
                                     {% for error in form_errors %}
-                                        <li class="form-error"><i class="fa-solid fa-triangle-exclamation"></i> {{ error }}</li>
+                                        <li class="form-error">
+                                            <i class="fa-solid fa-triangle-exclamation"></i> {{ error }}
+                                        </li>
                                     {% endfor %}
                                 </ul>
                             </div>
                         {% else %}
-                            <p>Thank you for your interest in becoming a client with Nett Hands Home Care. <br> Your responses to this form will help us connect you to service that best meet the needs.</p>
+                            <p>
+                                Thank you for your interest in becoming a client with Nett Hands Home Care.
+                                <br>
+                                Your responses to this form will help us connect you to service that best meet the needs.
+                            </p>
                         {% endif %}
                     </div>
                 </div>
@@ -39,8 +42,6 @@
         </div>
     </div>
     <!-- Breadcrumb End -->
-
-
     <!-- Form Rendering Begins -->
     <section id="interest-form" class="contact spad mx-auto">
         <form id="client_interest_form" class="frontend-form" method="POST">
@@ -49,17 +50,12 @@
         </form>
     </section>
     <!-- Form Rendering Ends -->
-
 {% endblock main %}
 {% block customscripts %}
-
-
     <script defer>
         function openLoader() {
             document.getElementById("btn-submit").style.display = "none";
             document.getElementById("loading-btn-submit").style.display = "block";
         }
     </script>
-
-
 {% endblock customscripts %}

@@ -2,7 +2,7 @@ import json
 
 from django.forms.models import model_to_dict
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, reverse
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.views.generic.edit import FormMixin, UpdateView

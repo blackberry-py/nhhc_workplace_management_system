@@ -36,6 +36,7 @@ class ContractForm(forms.ModelForm):
 
         Returns:
             bool: True if the contract is active, False otherwise.
+
         """
 
     def save(self, commit=True):
@@ -47,6 +48,7 @@ class ContractForm(forms.ModelForm):
 
         Returns:
             Contract: The saved Contract instance.
+
         """
         form_data = self.cleaned_data
         self.instance.code = form_data["code"]
@@ -55,7 +57,7 @@ class ContractForm(forms.ModelForm):
         self.instance.contract_year_start = form_data["contract_year_start"]
         self.instance.contract_year_end = form_data["contract_year_end"]
         self.instance.active = self.is_active_contract(form_data["contract_year_start"], form_data["contract_year_end"])
-        return super(ContractForm, self).save(commit)
+        return super().save(commit)
 
     class Meta:
         model = Contract

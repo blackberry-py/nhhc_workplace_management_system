@@ -1,123 +1,151 @@
 {% extends "layouts/base.html" %}
 {% load static %}
-{% block title %} {{ type_of_submission|default:""  }} - {{ submission.last_name }}, {{ submission.first_name }} {% endblock title %}
+{% block title %}
+    {{ type_of_submission|default:"" }} - {{ submission.last_name }}, {{ submission.first_name }}
+{% endblock title %}
 {% load crispy_forms_tags %}
 {% load replace_underscore %}
 {% load human_readable %}
-
-<link rel="stylesheet" href="{% static 'css/custom-portal-styles.css' %}" type="text/css"/>
-
+<link rel="stylesheet"
+      href="{% static 'css/custom-portal-styles.css' %}"
+      type="text/css" />
 {% block content %}
-  <div class="col-xl-8 order-xl-1">
-    <div class="card">
-      <div class="card-header">
-        <div class="row align-items-center">
-          <div class="col-8">
-            <h3 class="mb-0">{{ type_of_submission }} </h3>
-            <em><p class="submission-date"><strong>Date Recieved:</strong> {{ submission.date_submitted|date:"l F d Y" }} ({{ submission.date_submitted|timesince }} ago)</p></em>
-          </div>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-6">
-            <h3><strong>First Name:</strong></h3>
-            <p>{{ submission.first_name }}</p>
-          </div>
-          <div class="col-6">
-            <h3><strong>Last Name:</strong></h3>
-            <p>{{ submission.last_name }}</p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-6">
-            <h3><strong>Email Address:</strong></h3>
-            <p>{{ submission.email }}</p>
-          </div>
-          <div class="col-6">
-            <h3><strong>Contact Number:</strong></h3>
-            <p>{{ submission.contact_number }}</p>
-          </div>
-
-        </div>
-        <hr class="uk-divider-icon"/>
-
-        <div class="row">
-          <div class="col-6">
-            <h3><strong>Desired Service:</strong></h3>
-            {% if submission.desired_service == "I" %}
-              <p>Intermittent Home Care</p>
-            {% elif submission.desired_service == "NM" %}
-              <p>Non-Medical Home Care</p>
-            {% elif submission.desired_service == "MSW" %}
-              <p>Medical Social Work</p>
-            {% elif submission.desired_service == "OT" %}
-              <p>Occupational Therapy</p>
-            {% elif submission.desired_service == "PT" %}
-              <p>Physical Therapy</p>
-            {% else %}
-              <p>Other</p>
-            {% endif %}
-          </div>
-          <div class="col-6">
-            <h3><strong>Payor:</strong></h3>
-            <p>{{ submission.insurance_carrier }}</p>
-          </div>
-        </div>
-        <hr class="uk-divider-icon"/>
-
-        <div class="row">
-          <div class="col-8">
-            <h3><strong>Service Address:</strong></h3>
-            <p>{{ submission.home_address1 }}</p>
-          </div>
-          <div class="col-4">
-            <h3><strong>Apt/Unit #:</strong></h3>
-            <p>{{ submission.home_address2 }}</p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-5">
-            <h3><strong>Service City:</strong></h3>
-            <p>{{ submission.city }}</p>
-          </div>
-          <div class="col-3">
-            <h3><strong>Service State:</strong></h3>
-            <p>{{ submission.state }}</p>
-          </div>
-          <div class="col-4">
-            <h3><strong>Service Zipcode:</strong></h3>
-            <p>{{ submission.zipcode }}</p>
-          </div>
-        </div>
-        <hr class="my-4" />
-        <div class="row">
-          <div class="col-6">
-            <h3><strong>Reviewed By Staff:</strong></h3>
-            <p>{{ submission.reviewed }}</p>
-          </div>
-          {% if submission.reviewed is True %}
-            <div class="col-6">
-              <h3><strong> Staff Member Who Reviewed Request:</strong></h3>
-              <p>{{ submission.reviewed_by.username }}</p>
+    <div class="col-xl-8 order-xl-1">
+        <div class="card">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col-8">
+                        <h3 class="mb-0">{{ type_of_submission }}</h3>
+                        <em>
+                            <p class="submission-date">
+                                <strong>Date Recieved:</strong> {{ submission.date_submitted|date:"l F d Y" }} ({{ submission.date_submitted|timesince }} ago)
+                            </p>
+                        </em>
+                    </div>
+                </div>
             </div>
-          {% endif %}
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <h3>
+                            <strong>First Name:</strong>
+                        </h3>
+                        <p>{{ submission.first_name }}</p>
+                    </div>
+                    <div class="col-6">
+                        <h3>
+                            <strong>Last Name:</strong>
+                        </h3>
+                        <p>{{ submission.last_name }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <h3>
+                            <strong>Email Address:</strong>
+                        </h3>
+                        <p>{{ submission.email }}</p>
+                    </div>
+                    <div class="col-6">
+                        <h3>
+                            <strong>Contact Number:</strong>
+                        </h3>
+                        <p>{{ submission.contact_number }}</p>
+                    </div>
+                </div>
+                <hr class="uk-divider-icon" />
+                <div class="row">
+                    <div class="col-6">
+                        <h3>
+                            <strong>Desired Service:</strong>
+                        </h3>
+                        {% if submission.desired_service == "I" %}
+                            <p>Intermittent Home Care</p>
+                        {% elif submission.desired_service == "NM" %}
+                            <p>Non-Medical Home Care</p>
+                        {% elif submission.desired_service == "MSW" %}
+                            <p>Medical Social Work</p>
+                        {% elif submission.desired_service == "OT" %}
+                            <p>Occupational Therapy</p>
+                        {% elif submission.desired_service == "PT" %}
+                            <p>Physical Therapy</p>
+                        {% else %}
+                            <p>Other</p>
+                        {% endif %}
+                    </div>
+                    <div class="col-6">
+                        <h3>
+                            <strong>Payor:</strong>
+                        </h3>
+                        <p>{{ submission.insurance_carrier }}</p>
+                    </div>
+                </div>
+                <hr class="uk-divider-icon" />
+                <div class="row">
+                    <div class="col-8">
+                        <h3>
+                            <strong>Service Address:</strong>
+                        </h3>
+                        <p>{{ submission.home_address1 }}</p>
+                    </div>
+                    <div class="col-4">
+                        <h3>
+                            <strong>Apt/Unit #:</strong>
+                        </h3>
+                        <p>{{ submission.home_address2 }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-5">
+                        <h3>
+                            <strong>Service City:</strong>
+                        </h3>
+                        <p>{{ submission.city }}</p>
+                    </div>
+                    <div class="col-3">
+                        <h3>
+                            <strong>Service State:</strong>
+                        </h3>
+                        <p>{{ submission.state }}</p>
+                    </div>
+                    <div class="col-4">
+                        <h3>
+                            <strong>Service Zipcode:</strong>
+                        </h3>
+                        <p>{{ submission.zipcode }}</p>
+                    </div>
+                </div>
+                <hr class="my-4" />
+                <div class="row">
+                    <div class="col-6">
+                        <h3>
+                            <strong>Reviewed By Staff:</strong>
+                        </h3>
+                        <p>{{ submission.reviewed }}</p>
+                    </div>
+                    {% if submission.reviewed is True %}
+                        <div class="col-6">
+                            <h3>
+                                <strong>Staff Member Who Reviewed Request:</strong>
+                            </h3>
+                            <p>{{ submission.reviewed_by.username }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="w-full text-center">
+                    {% if submission.reviewed is False %}
+                        <button id="mark-reviewed-btn"
+                                onclick="markSubmissionAsReviewed({{ submission.id }})"
+                                class="btn btn-success">Mark As Reviewed</button>
+                    {% endif %}
+                    <a class="btn btn-secondary" href="{% url 'inquiries' %}">Back to Submissions List</a>
+                </div ?>
+            </div>
         </div>
-        <div class="w-full text-center">
-          {% if submission.reviewed is False %}
-            <button id="mark-reviewed-btn" onclick="markSubmissionAsReviewed({{ submission.id }})" class="btn btn-success">Mark As Reviewed</button>
-          {% endif %}
-          <a  class="btn btn-secondary" href="{% url 'inquiries' %}">Back to Submissions List</a>
-        </div?>
-      </div>
     </div>
-  </div>
-  </div>
-
-
-
-{% endblock content %}3
-
+</div>
+{% endblock content %}
+3
 <!-- Specific JS goes HERE -->
 {% block javascripts %}
 {% endblock javascripts %}

@@ -53,6 +53,7 @@ class EmployeeRoster(ListView):
     - template_name: The HTML template used for rendering the employee listing.
     - context_object_name: The name used to refer to the list of employees in the template.
     - paginate_by: The number of employees to display per page.
+
     """
 
     model = Employee
@@ -73,6 +74,7 @@ class EmployeeDetail(DetailView):
     - model: The model that this view will interact with (Employee).
     - template_name: The name of the template used to render the view ("employee-detail.html").
     - context_object_name: The name of the variable containing the object in the template ("employee").
+
     """
 
     model = Employee
@@ -104,6 +106,7 @@ def reject(request: HttpRequest) -> HttpResponse:
 
     Returns:
         HttpResponse - Returns status  code 204 if successful or a 418 and logs error message on failure
+
     """
     try:
         pk = request.POST.get("pk")
@@ -138,6 +141,7 @@ class Hire:
     Raises:
         ValueError: If the 'pk' value is invalid or not provided in the request.
         DoesNotExist: If the employment application with the provided 'pk' does not exist.
+
     """
 
     @staticmethod
@@ -218,10 +222,11 @@ def promote(request: HttpRequest) -> HttpResponse:
     This function is used to promote an applicant based on the provided 'pk' value in the request.
 
     Args:
-    - request (HttpRequest): The HTTP request object containing the 'pk' value.
+        request (HttpRequest): The HTTP request object containing the 'pk' value.
 
     Returns:
-    - HttpResponse: Returns an HTTP response with a status code indicating the success or failure of the hiring process.
+        HttpResponse: Returns an HTTP response with a status code indicating the success or failure of the hiring process.
+
     """
     # Check if the requesting user is logged in and an admin
     if not request.user.is_authenticated or not request.user.is_superuser:
@@ -275,13 +280,14 @@ def promote(request: HttpRequest) -> HttpResponse:
 @require_POST
 def demote(request: HttpRequest) -> HttpResponse:
     """
-    This function is used to promote an applicant based on the provided 'pk' value in the request.
+    This function is used to demote an employee based on the provided 'pk' value in the request.
 
     Args:
-    - request (HttpRequest): The HTTP request object containing the 'pk' value.
+        request (HttpRequest): The HTTP request object containing the 'pk' value.
 
     Returns:
-    - HttpResponse: Returns an HTTP response with a status code indicating the success or failure of the hiring process.
+        HttpResponse: Returns an HTTP response with a status code indicating the success or failure of the demotion process.
+
     """
     # Check if the requesting user is logged in and an admin
     if not request.user.is_authenticated or not request.user.is_superuser:

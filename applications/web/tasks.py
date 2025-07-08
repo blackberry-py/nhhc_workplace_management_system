@@ -1,4 +1,4 @@
-from typing import Any, Dict, Union
+from typing import Any
 
 from celery import shared_task
 from loguru import logger
@@ -67,15 +67,18 @@ def catch_general_exception(e, status):
 
 
 @shared_task(bind=True)
-def process_new_application(self, form: Union[EmploymentApplicationForm, Dict[str, Any]], **kwargs) -> Dict[str, bool]:
+def process_new_application(self, form: EmploymentApplicationForm | dict[str, Any], **kwargs) -> dict[str, bool]:
     """
     Async Celery task to Process new employment interest by sending internal and external notifications.
 
     Args:
+        self: The Celery task instance.
         form (Union[EmploymentApplicationForm,Dict[str,Any]]): The form submitted by the client.
+        **kwargs: Additional keyword arguments passed to the task.
 
     Returns:
         Dict[str,int]: A dictionary containing the results of the notification t1sks. The values represent the number of notifications successful sent.
+
     """
     # try:
     #     logger.info(f"Processing New Application - Sending EMAILS: Celery Task id {self.request.id}, args: {self.request.args!r} kwargs: {self.request.kwargs!r}")
@@ -86,14 +89,17 @@ def process_new_application(self, form: Union[EmploymentApplicationForm, Dict[st
 
 
 @shared_task(bind=True)
-def process_new_client_interest(self, form: Union[ClientInterestSubmission, Dict[str, Any]], **kwargs) -> Dict[str, bool]:
+def process_new_client_interest(self, form: ClientInterestSubmission | dict[str, Any], **kwargs) -> dict[str, bool]:
     """
     Async Celery task to Process new client interest by sending internal and external notifications.
 
     Args:
+        self: The Celery task instance.
         form (Union[ClientInterestSubmission,Dict[str,Any]]): The form submitted by the client.
+        **kwargs: Additional keyword arguments passed to the task.
 
     Returns:
         Dict[str,int]: A dictionary containing the results of the notification tasks. The values represent the number of notifications successful sent.
+
     """
     return process(form, "clientRequest")

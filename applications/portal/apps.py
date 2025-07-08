@@ -7,4 +7,3 @@ class PortalConfig(AppConfig):
 
     def ready(self):
         super().ready()
-        import common.signals  # no-qa

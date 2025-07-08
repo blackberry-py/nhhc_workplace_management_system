@@ -55,6 +55,7 @@ class CreateContractFormView(CreateView):
     Attributes:
     - template_name: a string representing the template file to render the form
     - form_class: the form class to use for creating the contract form
+
     """
 
     template_name = "new_contract.html"
@@ -78,6 +79,7 @@ class ComplianceProfileDetailView(DetailView):
 
         Returns:
         Compliance object: The Compliance object for the current user.
+
         """
         return Compliance.objects.get(employee=self.request.user)
 
@@ -91,6 +93,7 @@ class ComplianceProfileFormView(UpdateView, FileUploadMixin):
     - model: The model to be used for updating compliance profiles.
     - template_name: The template to be rendered for the compliance form.
     - context_object_name: The context object name to be used in the template.
+
     """
 
     form_class = ComplianceForm
@@ -117,6 +120,7 @@ def signed_attestations(request: HttpRequest) -> HttpResponse:
 
     Raises:
         HttpResponse(status_code: 422): If an invalid document type is encountered during processing.
+
     """
     logger.info("Signed Document Request Recieved From AWS")
     try:
@@ -180,6 +184,7 @@ class DocusealComplianceDocsSigning_IDOA(TemplateView):
 
     Methods:
     - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+
     """
 
     template_name = "docuseal.html"
@@ -192,7 +197,7 @@ class DocusealComplianceDocsSigning_IDOA(TemplateView):
         return context
 
     def dispatch(self, *args, **kwargs):
-        response = super(DocusealComplianceDocsSigning_IDOA, self).dispatch(*args, **kwargs)
+        response = super().dispatch(*args, **kwargs)
         response["Access-Control-Allow-Origin"] = "*"
         return response
 
@@ -206,6 +211,7 @@ class DocusealComplianceDocsSigning_HCA(TemplateView):
 
     Methods:
     - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+
     """
 
     template_name = "docuseal.html"
@@ -218,7 +224,7 @@ class DocusealComplianceDocsSigning_HCA(TemplateView):
         return context
 
     def dispatch(self, *args, **kwargs):
-        response = super(DocusealComplianceDocsSigning_HCA, self).dispatch(*args, **kwargs)
+        response = super().dispatch(*args, **kwargs)
         response["Access-Control-Allow-Origin"] = "*"
         return response
 
@@ -232,6 +238,7 @@ class DocusealComplianceDocsSigning_DoNotDrive(TemplateView):
 
     Methods:
     - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+
     """
 
     template_name = "docuseal.html"
@@ -244,7 +251,7 @@ class DocusealComplianceDocsSigning_DoNotDrive(TemplateView):
         return context
 
     def dispatch(self, *args, **kwargs):
-        response = super(DocusealComplianceDocsSigning_DoNotDrive, self).dispatch(*args, **kwargs)
+        response = super().dispatch(*args, **kwargs)
         response["Access-Control-Allow-Origin"] = "*"
         return response
 
@@ -258,6 +265,7 @@ class DocusealComplianceDocsSigning_JobDesc(TemplateView):
 
     Methods:
     - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+
     """
 
     template_name = "docuseal.html"
@@ -270,7 +278,7 @@ class DocusealComplianceDocsSigning_JobDesc(TemplateView):
         return context
 
     def dispatch(self, *args, **kwargs):
-        response = super(DocusealComplianceDocsSigning_JobDesc, self).dispatch(*args, **kwargs)
+        response = super().dispatch(*args, **kwargs)
         response["Access-Control-Allow-Origin"] = "*"
         return response
 
@@ -284,6 +292,7 @@ class DocusealComplianceDocsSigning_i9(TemplateView):
 
     Methods:
     - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+
     """
 
     template_name = "docuseal.html"
@@ -296,7 +305,7 @@ class DocusealComplianceDocsSigning_i9(TemplateView):
         return context
 
     def dispatch(self, *args, **kwargs):
-        response = super(DocusealComplianceDocsSigning_i9, self).dispatch(*args, **kwargs)
+        response = super().dispatch(*args, **kwargs)
         response["Access-Control-Allow-Origin"] = "*"
         return response
 
@@ -310,6 +319,7 @@ class DocusealComplianceDocsSigning_irs_w4(TemplateView):
 
     Methods:
     - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+
     """
 
     template_name = "docuseal.html"
@@ -322,7 +332,7 @@ class DocusealComplianceDocsSigning_irs_w4(TemplateView):
         return context
 
     def dispatch(self, *args, **kwargs):
-        response = super(DocusealComplianceDocsSigning_irs_w4, self).dispatch(*args, **kwargs)
+        response = super().dispatch(*args, **kwargs)
         response["Access-Control-Allow-Origin"] = "*"
         return response
 
@@ -336,6 +346,7 @@ class DocusealComplianceDocsSigning_il_w4(TemplateView):
 
     Methods:
     - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+
     """
 
     template_name = "docuseal.html"
@@ -348,7 +359,7 @@ class DocusealComplianceDocsSigning_il_w4(TemplateView):
         return context
 
     def dispatch(self, *args, **kwargs):
-        response = super(DocusealComplianceDocsSigning_il_w4, self).dispatch(*args, **kwargs)
+        response = super().dispatch(*args, **kwargs)
         response["Access-Control-Allow-Origin"] = "*"
         return response
 
@@ -362,6 +373,7 @@ class DocusealComplianceDocsSigning_idph_bg_auth(TemplateView):
 
     Methods:
     - get_context_data(self, **kwargs: Any) -> dict[str, Any]: Retrieves the context data for the view.
+
     """
 
     template_name = "docuseal.html"
@@ -374,7 +386,7 @@ class DocusealComplianceDocsSigning_idph_bg_auth(TemplateView):
         return context
 
     def dispatch(self, *args, **kwargs):
-        response = super(DocusealComplianceDocsSigning_idph_bg_auth, self).dispatch(*args, **kwargs)
+        response = super().dispatch(*args, **kwargs)
         response["Access-Control-Allow-Origin"] = "*"
         return response
 

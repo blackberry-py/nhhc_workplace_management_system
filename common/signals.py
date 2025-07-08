@@ -11,7 +11,7 @@ Signal Handlers:
 """
 
 import contextlib
-from typing import Callable
+from collections.abc import Callable
 from uuid import uuid4
 
 from django.db.backends.signals import connection_created
@@ -39,6 +39,7 @@ def create_ancillary_profiles_signal(sender: Callable, instance, created, **kwar
 
     Raises:
         None
+
     """
     if created:
         UserProfile.objects.create(user=instance)
@@ -55,8 +56,10 @@ def password_change_signal(sender, instance, **kwargs) -> None:
         sender: The model class that sent the signal.
         instance: The instance of the model that triggered the signal.
         kwargs: Additional keyword arguments.
+
     Returns:
         None
+
     """
     with contextlib.suppress(Employee.DoesNotExist):
         user = Employee.objects.get(username=instance.username)
@@ -81,6 +84,7 @@ def employee_terminated_signal(sender, instance, **kwargs) -> None:
     Notes:
     - If the terminated employee is found in the database and is not active with a termination date,
       the function logs the archival process.
+
     """
     with contextlib.suppress(Employee.DoesNotExist):
         employee = Employee.objects.get(username=instance.username)
@@ -90,7 +94,8 @@ def employee_terminated_signal(sender, instance, **kwargs) -> None:
 
 
 def log_database_queries(sender, connection, **kwargs):
-    """Log database queries.
+    """
+    Log database queries.
 
     This function logs the creation of database connections and the execution of SQL queries.
     It attaches a wrapper function to the connection's `execute_wrapper` method to log query details.
@@ -99,6 +104,7 @@ def log_database_queries(sender, connection, **kwargs):
         sender: The sender of the signal.
         connection: The database connection object.
         **kwargs: Additional keyword arguments.
+
     """
     logger.log("DATABASE_QUERY", f"Database connection created: {connection.settings_dict}")
 

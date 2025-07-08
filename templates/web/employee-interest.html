@@ -4,11 +4,10 @@
 {% load formsetify %}
 {% load render_form from formsetify %}
 {% block title %}
-    <title>Nett Hands Home Care - Employment Interest Application </title>
+    <title>Nett Hands Home Care - Employment Interest Application</title>
 {% endblock title %}
 {% block custom_js %}
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default" defer></script>
-
     <style>
         .frontend-form {
             width: 33.33%;
@@ -17,12 +16,11 @@
             color: antiquewhite;
         }
     </style>
-
 {% endblock custom_js %}
 {% block main %}
-
     <!-- Breadcrumb Begin -->
-    <div class="breadcrumb-option spad set-bg" data-setbg="{% static 'img/breadcrumb-bg.jpg' %}">
+    <div class="breadcrumb-option spad set-bg"
+         data-setbg="{% static 'img/breadcrumb-bg.jpg' %}">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
@@ -33,9 +31,10 @@
                         <div id="form-errors">
                             <ul class="form-errors-list">
                                 <p class="form-error-header">"Please correct the errors below and resubmit...</p>
-
                                 {% for error in form_errors %}
-                                    <li class="form-error"><i class="fa-solid fa-triangle-exclamation"></i>{{ error }}</li>
+                                    <li class="form-error">
+                                        <i class="fa-solid fa-triangle-exclamation"></i>{{ error }}
+                                    </li>
                                 {% endfor %}
                             </ul>
                         </div>
@@ -43,34 +42,33 @@
                         <p>Employment Requirements</p>
                         <ul>
                             <li>IDPH State Fingerprinting</li>
-                            <li>24 Hour Pre-Service Training <em>(Can Be Provided by Nett Hand, if employment offer is extended)</em></li>
+                            <li>
+                                24 Hour Pre-Service Training <em>(Can Be Provided by Nett Hand, if employment offer is extended)</em>
+                            </li>
                             <li>High School Diploma or GED Mandatory</li>
                             <li>18+ Years of Age</li>
                             <li>U.S. Citizenship or Authorization  to Work in USA</li>
                         </ul>
                     {% endif %}
-
                 </div>
             </div>
         </div>
     </div>
     <!-- Breadcrumb End -->
-
-
     <!-- Employment Applicant Start -->
     <section id="interest-form" class="contact spad mx-auto">
-        <form id="employment-interest-form"   enctype="multipart/form-data" class="frontend-form" method="post" action="{{ request.path }}" onsubmit="openLoader()">
+        <form id="employment-interest-form"
+              enctype="multipart/form-data"
+              class="frontend-form"
+              method="post"
+              action="{{ request.path }}"
+              onsubmit="openLoader()">
             {% crispy form %}
         </form>
-    <!-- Employment Applicant End -->
-
+        <!-- Employment Applicant End -->
     </section>
-
-
 {% endblock main %}
-
 {% block customscripts %}
-   
     <script defer>
         function openLoader() {
             document.getElementById("btn-submit").style.display = "none";

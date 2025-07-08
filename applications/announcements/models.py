@@ -23,6 +23,7 @@ Meta:
 - ordering: ["-date_posted", "status", "message_type"]
 - verbose_name: "Internal Announcement"
 - verbose_name_plural: "Internal Announcements"
+
 """
 
 from django.conf import settings
@@ -57,6 +58,7 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
     - ordering: ["-date_posted", "status", "message_type"]
     - verbose_name: "Internal Announcement"
     - verbose_name_plural: "Internal Announcements"
+
     """
 
     class STATUS(models.TextChoices):
@@ -67,6 +69,7 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
             ACTIVE: Represents an active status.
             DRAFT: Represents a draft status.
             ARCHIVE: Represents an archived status.
+
         """
 
         ACTIVE = "A", _(message="Active")
@@ -82,6 +85,7 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
             TRAINING: Represents a Medium  - Training Type.
             COMPLIANCE: Represents an Regulatory Type.
             GENERAL: Represents an General Type.
+
         """
 
         SAFETY = "C", _(message="Safety")
@@ -108,13 +112,14 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
         Method to post an announcement instance.
 
         Args:
-        - request: HttpRequest object containing the request data
+            request: HttpRequest object containing the request data
 
         Returns:
-        - None
+            None
 
         This method sets the 'posted_by' attribute to the user id from the request,
         sets the 'status' attribute to 'ACTIVE', saves the object, and logs the success or error message.
+
         """
         try:
             self.posted_by = request.user.employee_id
@@ -131,13 +136,14 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
         Method to create a draft version of an announcement instance.
 
         Args:
-        - request: HttpRequest object containing the request data
+            request: HttpRequest object containing the request data
 
         Returns:
-        - None
+            None
 
         This method sets the 'posted_by' attribute to the user id from the request,
         sets the 'status' attribute to 'DRAFT', saves the object, and logs the success or error message.
+
         """
         try:
             self.posted_by = request.user.employee_id
@@ -170,13 +176,17 @@ class Announcements(models.Model, ExportModelOperationsMixin("announcements")):
         """
         Updates all attributes of Announcement Instance  and saves the changes.
 
-        Args
-        - self: the current instance of the post
+        Args:
+            announcement_title: The title of the announcement
+            message: The content of the announcement
+            message_type: The type of announcement
+            status: The status of the announcement
 
         Returns:
-        - None
+            None
 
         Logs a success message if the re-post is successful, otherwise logs an error message.
+
         """
         try:
             self.message = message

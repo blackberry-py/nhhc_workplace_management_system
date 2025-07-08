@@ -61,6 +61,7 @@ def all_client_inquiries(request: HttpRequest) -> HttpResponse:
 
     Returns:
     - HttpResponse: JSON response containing all client inquiries
+
     """
     inquiries = ClientInterestSubmission.objects.all().values()
     inquiries_json = json.dumps(list(inquiries), cls=DjangoJSONEncoder)
@@ -86,6 +87,7 @@ def all_applicants(request: HttpRequest) -> HttpResponse:
 
     Returns:
     - HttpResponse: JSON response containing all employment applications
+
     """
     inquiries = EmploymentApplicationModel.objects.all().values()
     for inquiry in inquiries:
@@ -100,6 +102,7 @@ def marked_reviewed(request):
 
     Returns:
     - HttpResponse: Success or error response
+
     """
     try:
         body_unicode = request.body.decode("utf-8")

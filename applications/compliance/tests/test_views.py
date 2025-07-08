@@ -19,7 +19,10 @@ class TestEmployeeViews(TestCase):
         request.user = mock_user
         request.POST = {"pk": 1}
 
-        with patch("applications.employee.views.EmploymentApplicationModel.objects.get") as mock_get:
+        with (
+            patch("applications.employee.views.EmploymentApplicationModel.objects.get") as mock_get,
+            patch("applications.employee.views.send_async_onboarding_email.delay") as mock_send_async_onboarding_email,
+        ):
             mock_applicant = MagicMock()
             mock_get.return_value = mock_applicant
             mock_applicant.hire_applicant.return_value = {"email": "test@example.com", "first_name": "John", "plain_text_password": "password", "username": "john_doe", "employee_id": 123}
@@ -31,7 +34,6 @@ class TestEmployeeViews(TestCase):
             mock_applicant.save.assert_called()
             mock_applicant.hire_applicant.assert_called_with(hired_by=request.user)
             mock_applicant.save.assert_called()
-            mock_send_async_onboarding_email = mock_send_async_onboarding_email.delay
             mock_send_async_onboarding_email.assert_called_with({"new_user_email": "test@example.com", "new_user_first_name": "John", "plaintext_temp_password": "password", "username": "john_doe"})
 
     def test_hire_unauthorized(self):

@@ -18,7 +18,7 @@ Note: The module also includes choices for services, mobility, and prior experie
 """
 
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any
 
 from arrow import Arrow, now
 from django.contrib.auth.hashers import make_password
@@ -76,6 +76,7 @@ class ClientInterestSubmission(models.Model, ExportModelOperationsMixin("client_
         ordering (list): The default ordering of records.
         verbose_name (str): The singular name for the model.
         verbose_name_plural (str): The plural name for the model.
+
     """
 
     def __str__(self):
@@ -92,6 +93,7 @@ class ClientInterestSubmission(models.Model, ExportModelOperationsMixin("client_
             - OCCUP_THERAPY: Occupational Therapy
             - PHYS_THERAPY: Physical Therapy
             - OTHER: Other
+
         """
 
         INTERMITTENT = "I", _("Intermittent Home Care")
@@ -123,13 +125,15 @@ class ClientInterestSubmission(models.Model, ExportModelOperationsMixin("client_
     )
 
     def marked_reviewed(self, user_id: Employee) -> None:
-        """Marks the review as reviewed by the specified user.
+        """
+        Marks the review as reviewed by the specified user.
 
         Args:
             user_id (Employee): The ID of the user who reviewed the item.
 
         Returns:
             None
+
         """
         self.reviewed = True
         self.reviewed_by = user_id
@@ -188,6 +192,7 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
         ordering (list): The default ordering of records.
         verbose_name (str): The singular name for the model.
         verbose_name_plural (str): The plural name for the model.
+
     """
 
     def __str__(self):
@@ -202,6 +207,7 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
             PUBLIC: I Use Public Transportation
             RIDE_SHARE: I Use Rideshare (Uber/Lyft) or a Reliable Pickup/Dropoff Provider
             OTHER: Other
+
         """
 
         CAR = "C", _("I Have Consistent Access To A Car")
@@ -215,10 +221,11 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
         """
         Enum Values for values of prior experience.
 
-         Attributes:
+        Attributes:
              SENIOR: Represents 12+ months of experience.
              JUNIOR: Represents 3+ months of experience.
              NEW: Represents no prior experience.
+
         """
 
         SENIOR = "S", _("12+ Months")
@@ -259,7 +266,7 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
     employee_id = models.BigIntegerField(blank=True, null=True)
     resume_cv = models.FileField(upload_to=applicant_resume_uploads.generate_randomized_file_name, null=True, blank=True)
 
-    def hire_applicant(self, hired_by: Employee) -> Dict[str, str]:
+    def hire_applicant(self, hired_by: Employee) -> dict[str, str]:
         """
         Hire a new employee by creating a user account, generating a random password, and saving employee and compliance information in the database.
 
@@ -279,7 +286,7 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
             logger.error(log_message)
             return RuntimeError(e)
 
-    def _convert_applicant_to_employee(self, hired_by: Employee) -> Dict[str, Any]:
+    def _convert_applicant_to_employee(self, hired_by: Employee) -> dict[str, Any]:
         """
         Converts an applicant to an employee by creating a new Employee instance, generating a random password, saving the employee, and updating applicant attributes.
 
@@ -288,6 +295,7 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
 
         Returns:
             dict: A dictionary containing details of the new employee such as user, plain_text_password, username, employee_id, email, first_name, and last_name.
+
         """
         new_employee = Employee(
             is_superuser=False,
@@ -321,13 +329,15 @@ class EmploymentApplicationModel(models.Model, ExportModelOperationsMixin("appli
         }
 
     def reject_applicant(self, rejected_by: Employee) -> None:
-        """Rejects an applicant.
+        """
+        Rejects an applicant.
 
         Args:
             rejected_by (Employee): The employee who rejected the applicant.
 
         Returns:
             None
+
         """
         self.hired = False
         self.reviewed = True

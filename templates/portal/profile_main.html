@@ -2,39 +2,46 @@
 {% load static %}
 {% load crispy_forms_tags %}
 {% load widget_tweaks %}
-
-{% block title %} Profile - General {% endblock title %}
-{% block profile_section %} Employee Profile {% endblock profile_section %}
+{% block title %}
+    Profile - General
+{% endblock title %}
+{% block profile_section %}
+    Employee Profile
+{% endblock profile_section %}
 {% block tab %}
-  <li class="nav-item">
-    <a id="profile-tab" class="nav-link active" aria-current="page" href="{% url 'profile' %}">Profile</a>
-  </li>
-  <li class="nav-item">
-    <a id="compliance-tab" class="nav-link" href="{% url 'compliance-profile' %}">Compliance</a>
-  </li>
+    <li class="nav-item">
+        <a id="profile-tab"
+           class="nav-link active"
+           aria-current="page"
+           href="{% url 'profile' %}">Profile</a>
+    </li>
+    <li class="nav-item">
+        <a id="compliance-tab"
+           class="nav-link"
+           href="{% url 'compliance-profile' %}">Compliance</a>
+    </li>
 {% endblock tab %}
 {% block profile_content %}
-  {% if form.is_multipart %}
-    <form enctype="multipart/form-data" class="show-loading-after-submit" method="POST" action="{% url 'profile' %}">
-      {% csrf_token %}
-
-      {% crispy form %}
-    </form>
-  {% else %}
-    <form  method="POST" class="show-loading-after-submit" action="{% url 'profile' %}">
-
-      {% csrf_token %}
-
-      {% crispy form %}
-    </form>
-  {% endif %}
-
-  {% include "include/_docsign-modal.html" %}
-
+    {% if form.is_multipart %}
+        <form enctype="multipart/form-data"
+              class="show-loading-after-submit"
+              method="POST"
+              action="{% url 'profile' %}">
+            {% csrf_token %}
+            {% crispy form %}
+        </form>
+    {% else %}
+        <form method="POST"
+              class="show-loading-after-submit"
+              action="{% url 'profile' %}">
+            {% csrf_token %}
+            {% crispy form %}
+        </form>
+    {% endif %}
+    {% include "include/_docsign-modal.html" %}
 {% endblock profile_content %}
-
 {% block javascript %}
-  <script defer>
+    <script defer>
     (function ($) {
 
       function fix_phone(e){
@@ -54,5 +61,5 @@
         });
     }(jQuery));;
 
-  </script>
+    </script>
 {% endblock javascript %}

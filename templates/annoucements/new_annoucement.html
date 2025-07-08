@@ -1,60 +1,53 @@
 {% extends "layouts/base.html" %}
 {% load static %}
-{% block title %} Profile {% endblock title %}
+{% block title %}
+    Profile
+{% endblock title %}
 {% load crispy_forms_tags %}
 {% load widget_tweaks %}
-
 {% block stylesheets %}
-
 {% endblock stylesheets %}
-
 {% block content %}
-  <div class="header pb-6 d-flex align-items-center"
-       style="min-height: 500px; background-image: url({% static 'img/profile-banner.png' %}); background-size: cover; background-position: center top;">
-  <!-- Mask -->
-    <span class="mask bg-gradient-default opacity-8"></span>
-  <!-- Header container -->
-    <div class="container-fluid d-flex align-items-center">
-      <div class="row">
-
-      </div>
-    </div>
-  </div>
-<!-- Page content -->
-  <div class="container-fluid mt--6">
-    <div class="row">
-      <div class="card">
-        <div class="card-header">
-          <div class="row align-items-center">
-            <div class="col-8">
-              <h3 class="mb-0">Create New Announcement </h3>
-              <div class="card-body">
-                {% if messages %}
-                  <h3 class="red"> Please Correct The Following Errors:</h3>
-                  <ul class="messages">
-                    {% for message in messages %}
-                      <li class="red">{{ message }}</li>
-                    {% endfor %}
-                  </ul>
-                  <hr class="my-4" />
-
-                {% endif %}
-                {% csrf_token %}
-                {% crispy form %}
-
-                <hr class="my-4" />
-            <!-- Description -->
-              </div>
-            </div>
-          </div>
+    <div class="header pb-6 d-flex align-items-center"
+         style="min-height: 500px;
+                background-image: url({% static 'img/profile-banner.png' %});
+                background-size: cover;
+                background-position: center top">
+        <!-- Mask -->
+        <span class="mask bg-gradient-default opacity-8"></span>
+        <!-- Header container -->
+        <div class="container-fluid d-flex align-items-center">
+            <div class="row"></div>
         </div>
-      </div>
     </div>
-  </div>
-
+    <!-- Page content -->
+    <div class="container-fluid mt--6">
+        <div class="row">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <h3 class="mb-0">Create New Announcement</h3>
+                            <div class="card-body">
+                                {% if messages %}
+                                    <h3 class="red">Please Correct The Following Errors:</h3>
+                                    <ul class="messages">
+                                        {% for message in messages %}<li class="red">{{ message }}</li>{% endfor %}
+                                    </ul>
+                                    <hr class="my-4" />
+                                {% endif %}
+                                {% csrf_token %}
+                                {% crispy form %}
+                                <hr class="my-4" />
+                                <!-- Description -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock content %}
-
 <!-- Specific JS goes HERE -->
 {% block javascripts %}
-
 {% endblock javascripts %}

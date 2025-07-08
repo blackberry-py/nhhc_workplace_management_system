@@ -3,6 +3,7 @@ URL configuration for core project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.1/topics/http/urls/
+
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -13,10 +14,11 @@ Class-based views
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+
 """
 
 import os
-from typing import Callable
+from collections.abc import Callable
 
 import allauth.urls
 import defender.urls
@@ -67,6 +69,7 @@ urlpatterns = [
     path("", include(allauth.urls)),
     path("", include(applications.employee.urls, namespace="employee")),
     path("", include(applications.announcements.urls, namespace="announcements")),
+    path("", include(applications.compliance.urls, namespace="compliance")),
 ]
 
 if settings.DEBUG:

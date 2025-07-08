@@ -1,4 +1,5 @@
 from django import template
+from loguru import logger
 
 from applications.announcements.models import Announcements
 

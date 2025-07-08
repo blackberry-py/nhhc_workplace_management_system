@@ -57,11 +57,9 @@ class SuccessfulSubmission(CachedResponseMixin, PublicViewMixin, CachedTemplateV
     cache_models = [None]
 
 
-from functools import cached_property
-
-
 class ClientInterestFormView(CachedResponseMixin, PublicViewMixin, FormView):
-    """Manages client interest form submissions through a web interface.
+    """
+    Manages client interest form submissions through a web interface.
 
     This view handles the complete lifecycle of a client interest form, from initial rendering to processing valid submissions. It provides a comprehensive workflow for capturing and validating client service requests.
 
@@ -78,6 +76,7 @@ class ClientInterestFormView(CachedResponseMixin, PublicViewMixin, FormView):
         form_valid: Processes and saves a valid form submission.
         get: Renders the initial client interest form.
         post: Handles form submission, validation, and processing.
+
     """
 
     form_class = ClientInterestForm
@@ -118,7 +117,8 @@ class ClientInterestFormView(CachedResponseMixin, PublicViewMixin, FormView):
 
 
 class EmploymentApplicationFormView(CachedResponseMixin, PublicViewMixin, FormView):
-    """Handles employment application form submissions through a web interface.
+    """
+    Handles employment application form submissions through a web interface.
 
     This view manages the entire lifecycle of an employment application form, from rendering the initial form to processing valid submissions. It provides a comprehensive workflow for capturing and validating employment interest applications.
 
@@ -136,6 +136,7 @@ class EmploymentApplicationFormView(CachedResponseMixin, PublicViewMixin, FormVi
         get_form: Dynamically retrieves or creates a form instance.
         get: Renders the initial employment application form.
         post: Handles form submission, validation, and processing.
+
     """
 
     model = EmploymentApplicationModel
@@ -190,11 +191,12 @@ def favicon(request: HttpRequest) -> HttpResponse:
     """
     This function returns the favicon file as a response.
 
-    Parameters:
-    - request: HttpRequest object
+    Args:
+        request (HttpRequest): The HTTP request object.
 
     Returns:
-    - HttpResponse object
+        HttpResponse: The HTTP response containing the favicon file.
+
     """
     favicon_file = static("img/favicon.ico")
     return FileResponse(filename=favicon_file)

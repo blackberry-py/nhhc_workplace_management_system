@@ -18,7 +18,7 @@ from captcha.fields import ReCaptchaField
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Column, Field, Layout, Row, Submit
 from django import forms
-from django.forms import ModelForm, fields, forms
+from django.forms import ModelForm, fields
 from django.utils.translation import gettext_lazy as _
 from formset.fields import Activator
 from formset.renderers import ButtonVariant

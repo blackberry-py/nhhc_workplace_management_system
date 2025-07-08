@@ -29,6 +29,7 @@ class EmployeeAdmin(admin.ModelAdmin):
     - list_display (list): A list of fields to display in the admin interface.
     - actions (list): A list of actions that can be performed on selected employees.
     - date_hierarchy (str): The field used for date-based drilldown in the admin interface.
+
     """
 
     search_fields = ["username", "first_name", "last_name", "social_security", "phone"]

@@ -37,8 +37,8 @@ class PrivateMediaStorage(S3Boto3Storage):
     default_acl = 'private'
     file_overwrite = False
 custom_domain = False
-"""
 
+"""
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured

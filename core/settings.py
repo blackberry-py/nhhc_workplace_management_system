@@ -10,7 +10,8 @@ import re
 import sys
 import warnings
 from pathlib import Path
-from typing import Any, Dict, List, Pattern, Set, TextIO, Tuple, Union
+from re import Pattern
+from typing import Any, TextIO
 
 import arrow
 import dj_database_url
@@ -36,8 +37,8 @@ class Base(Configuration):
     SECRET_KEY: str = os.environ["SECRET_KEY"]
     MAINTENANCE_MODE: bool = False
     TESTING: bool = "test" in sys.argv
-    SECURE_PROXY_SSL_HEADER: Tuple[str, str] = ("HTTP_X_PROXIED_TRAFFIC", "https")
-    INTERNAL_IPS: List[str] = ["127.0.0.1"]
+    SECURE_PROXY_SSL_HEADER: tuple[str, str] = ("HTTP_X_PROXIED_TRAFFIC", "https")
+    INTERNAL_IPS: list[str] = ["127.0.0.1"]
     ROOT_URLCONF: str = "core.urls"
     APPEND_SLASH = True
 
@@ -45,10 +46,10 @@ class Base(Configuration):
 
     # SECTION - Basic Application Definition
     DATETIME_FORMAT: str = "m/d/yyyy h:mm A"
-    ADMINS: List[Tuple[str, str]] = [("Terry Brooks", "Terry@BrooksJr.com")]
-    MANAGERS: List[Tuple[str, str]] = ADMINS
+    ADMINS: list[tuple[str, str]] = [("Terry Brooks", "Terry@BrooksJr.com")]
+    MANAGERS: list[tuple[str, str]] = ADMINS
     WSGI_APPLICATION: str = "core.wsgi.application"
-    IGNORABLE_404_URLS: List[Pattern] = [
+    IGNORABLE_404_URLS: list[Pattern] = [
         re.compile(r"^/apple-touch-icon.*\.png$"),
         re.compile(r"^/favicon\.ico$"),
         re.compile(r"^/robots\.txt$"),
@@ -57,18 +58,18 @@ class Base(Configuration):
     ROBOTS_USE_HOST: bool = False
     FIRST_DAY_OF_WEEK: int = 1
 
-    HEALTH_CHECK: Dict[str, int] = {"DISK_USAGE_MAX": 90, "MEMORY_MIN": 100, "TIMEOUT": 60}  # percent  # in MB
+    HEALTH_CHECK: dict[str, int] = {"DISK_USAGE_MAX": 90, "MEMORY_MIN": 100, "TIMEOUT": 60}  # percent  # in MB
     # SECTION - Base CORS and CSRF Settings
     CSRF_COOKIE_NAME: str = "carenett-csrf"
     CSRF_FAILURE_VIEW: str = "common.errors.permission_denied_handler"
-    SILENCED_SYSTEM_CHECKS: List[str] = ["auth.W004", "captcha.recaptcha_test_key_error"]
+    SILENCED_SYSTEM_CHECKS: list[str] = ["auth.W004", "captcha.recaptcha_test_key_error"]
     ROBOTS_SITEMAP_VIEW_NAME: str = "cached-sitemap"
     # SECTION - Forms
     TINYMCE_JS_URL: str = f'https://cdn.tiny.cloud/1/{os.environ["TINYMCE_API_KEY"]}/tinymce/7/tinymce.min.js'
     TINYMCE_COMPRESSOR: bool = True
     CRISPY_TEMPLATE_PACK: str = "bootstrap5"
     CRISPY_ALLOWED_TEMPLATE_PACKS = ("bootstrap", "uni_form", "bootstrap3", "bootstrap4", "bootstrap5")
-    TINYMCE_DEFAULT_CONFIG: Dict[str, Union[str, int]] = {
+    TINYMCE_DEFAULT_CONFIG: dict[str, str | int] = {
         "menubar": "file edit view insert format tools table help",
         "plugins": "advlist autolink lists link image charmap print preview anchor searchreplace visualblocks code " "fullscreen insertdatetime media table paste code help wordcount spellchecker",
         "toolbar": "undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft "
@@ -93,7 +94,7 @@ class Base(Configuration):
     REDIS_URL: str = os.environ["BASE_REDIS_CACHE_URI_TOKEN"]
 
     # Centralized Redis connection options
-    REDIS_CONNECTION_OPTIONS: Dict[str, Any] = {
+    REDIS_CONNECTION_OPTIONS: dict[str, Any] = {
         # "PARSER_CLASS": "redis.connection._HiredisParser",
         "SOCKET_CONNECT_TIMEOUT": 30,  # seconds
         "SOCKET_TIMEOUT": 30,  # seconds
@@ -119,11 +120,11 @@ class Base(Configuration):
     DEFENDER_REDIS_URL: str = os.environ["DEFENDER_REDIS_CACHE_TOKEN"]
     DEFENDER_BEHIND_REVERSE_PROXY: bool = True
     DEFENDER_LOCK_OUT_BY_IP_AND_USERNAME = True
-    DEFENDER_REVERSE_PROXY_HEADER: Tuple[str, str] = SECURE_PROXY_SSL_HEADER
+    DEFENDER_REVERSE_PROXY_HEADER: tuple[str, str] = SECURE_PROXY_SSL_HEADER
     # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
     # ADMINRESTRICT_ENABLE_CACHE = True TODO: Check Impact and Remove
     # ADMINRESTRICT_DENIED_MSG = "Unable To Access Admin From This IP Address" TODO: Check Impact and Remove
-    AUTH_PASSWORD_VALIDATORS: List[Dict[str, str]] = [
+    AUTH_PASSWORD_VALIDATORS: list[dict[str, str]] = [
         {
             "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
         },
@@ -137,19 +138,31 @@ class Base(Configuration):
             "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
         },
     ]
-    AUTHENTICATION_BACKENDS: List[str] = ["django.contrib.auth.backends.ModelBackend", "allauth.account.auth_backends.AuthenticationBackend", "guardian.backends.ObjectPermissionBackend"]
+    AUTHENTICATION_BACKENDS: list[str] = ["django.contrib.auth.backends.ModelBackend", "allauth.account.auth_backends.AuthenticationBackend", "guardian.backends.ObjectPermissionBackend"]
     ACCOUNT_AUTHENTICATION_METHOD: str = "username_email"
     LOGIN_REDIRECT_URL: str = "/dashboard"
-    LOGIN_URL: str = "/login"
+    LOGIN_URL: str = "/accounts/login/"
     LOGOUT_REDIRECT_URL: str = LOGIN_URL
-    REQUIRE_LOGIN_PUBLIC_URLS = (LOGIN_URL, LOGOUT_REDIRECT_URL, r"^/api/.*", r"^/metrics", r"^/control-center", r"^/status/*", r"/confirm-email", r"/$", r"/^about", r"^favicon.ico\/?/$")
+    REQUIRE_LOGIN_PUBLIC_URLS = (
+        LOGIN_URL,
+        LOGOUT_REDIRECT_URL,
+        r"^/api/.*",
+        r"^/metrics",
+        r"^/control-center",
+        r"^/status/*",
+        r"^/confirm-email",
+        r"^/$",
+        r"^/about",
+        r"^/favicon.ico\/?/$",
+        r"^/accounts/.*",
+    )
     REQUIRE_LOGIN_PUBLIC_NAMED_URLS = (
         "account_reset_password",
         "account_email",
         "account_set_password",
         "account_change_password",
     )
-    PASSWORD_HASHERS: List[str] = [
+    PASSWORD_HASHERS: list[str] = [
         "django.contrib.auth.hashers.Argon2PasswordHasher",
         "django.contrib.auth.hashers.ScryptPasswordHasher",
         "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
@@ -197,8 +210,8 @@ class Base(Configuration):
 
     # !SECTION
     # SECTION - File Management
-    ALLOWED_UPLOAD_MIME_TYPES: List[str] = list(os.environ["ALLOWED_MIME_TYPES"].split(","))
-    STORAGES: Dict[str, Union[str, Dict[str, str]]] = {
+    ALLOWED_UPLOAD_MIME_TYPES: list[str] = list(os.environ["ALLOWED_MIME_TYPES"].split(","))
+    STORAGES: dict[str, str | dict[str, str]] = {
         "default": {"BACKEND": "common.backends.storage_backends.PrivateMediaStorage"},
         "staticfiles": {
             "BACKEND": "common.backends.storage_backends.StaticStorage",
@@ -207,7 +220,7 @@ class Base(Configuration):
     # SECTION - Templates
     HTML_MINIFY: bool = True
     COMPRESS_CACHE_BACKEND: str = "compressed_static"
-    TEMPLATE_DIR: List[str] = [
+    TEMPLATE_DIR: list[str] = [
         os.path.join(BASE_DIR, "templates"),
         os.path.join(BASE_DIR, "templates", "web"),
         os.path.join(BASE_DIR, "templates", "employee"),
@@ -254,7 +267,7 @@ class Base(Configuration):
     logger.add(sys.stderr, level="ERROR", format=LOG_FORMAT)
     logger.add(DEFAULT_HANDLER, colorize=True, format=LOG_FORMAT, diagnose=False, catch=False, backtrace=False, level="INFO")
     logger.add(MASTER_LOG_FILE, colorize=True, format=LOG_FORMAT, diagnose=False, catch=True, backtrace=False, level="INFO")
-    REQUEST_TRAFFIC_MODULES: List[str] = [
+    REQUEST_TRAFFIC_MODULES: list[str] = [
         "request.traffic.UniqueVisitor",
         "request.traffic.UniqueVisit",
         "request.traffic.Hit",
@@ -266,7 +279,7 @@ class Base(Configuration):
 
     # SECTION - Performance Monitoring
 
-    PROMETHEUS_LATENCY_BUCKETS: Set[float] = (
+    PROMETHEUS_LATENCY_BUCKETS: set[float] = (
         0.1,
         0.2,
         0.5,
@@ -288,7 +301,7 @@ class Base(Configuration):
     )
     # !SECTION
     # SECTION  - REST API CONFIGURATIONS
-    REST_FRAMEWORK: Dict[str, Any] = {
+    REST_FRAMEWORK: dict[str, Any] = {
         "DEFAULT_AUTHENTICATION_CLASSES": [
             "rest_framework.authentication.BasicAuthentication",
             "rest_framework.authentication.SessionAuthentication",
@@ -302,7 +315,7 @@ class Base(Configuration):
     CELERY_TASK_TIME_LIMIT: int = int(os.environ["CELERY_TASK_TIME_LIMIT"]) * 60
     CELERY_RESULT_BACKEND: str = "django-db"
     CELERY_CACHE_BACKEND: str = "celery"
-    CELERY_ACCEPT_CONTENT: List[str] = ["application/json"]
+    CELERY_ACCEPT_CONTENT: list[str] = ["application/json"]
     CELERY_TASK_SERIALIZER: str = "json"
     CELERY_RESULT_SERIALIZER: str = "json"
     CELERY_RESULT_EXTENDED: bool = True
@@ -312,7 +325,7 @@ class Base(Configuration):
     CELERY_BROKER_CONNECTION_TIMEOUT: int = 30
     CELERY_BROKER_HEARTBEAT: int = 10
     CELERY_BROKER_POOL_LIMIT: int = 10
-    CELERY_BROKER_TRANSPORT_OPTIONS: Dict[str, int] = {"visibility_timeout": 43200}  # 12 hours in seconds
+    CELERY_BROKER_TRANSPORT_OPTIONS: dict[str, int] = {"visibility_timeout": 43200}  # 12 hours in seconds
 
     # Task Settings
     CELERY_TASK_ACKS_LATE: bool = True
@@ -331,12 +344,21 @@ class Production(Base):
     SECURE_SSL_REDIRECT: int = True
     SECURE_HSTS_SECONDS: int = 31536000  # 1 year
     SECURE_HSTS_INCLUDE_SUBDOMAINS: bool = True
-    SECURE_REDIRECT_EXEMPT: List[Pattern] = [r"^/metrics", r"^/status/*"]
+    SECURE_REDIRECT_EXEMPT: list[str] = [r"^/metrics", r"^/status/*"]
     SECURE_HSTS_PRELOAD: bool = True
     SECURE_BROWSER_XSS_FILTER: bool = True
     X_FRAME_OPTIONS: str = "DENY"
     SESSION_EXPIRE_AT_BROWSER_CLOSE: bool = True
     SESSION_COOKIE_AGE: int = 14400
+    SESSION_COOKIE_SECURE: bool = True
+    CSRF_COOKIE_SECURE: bool = True
+    CSRF_TRUSTED_ORIGINS = [
+        "https://djangotricks.local:8000",
+        "http://djangotricks.local:8000",
+        "http://localhost:8000",
+        "https://localhost:8000",
+        "https://127.0.0.1:8000",
+    ]
     # !SECTION
     # SECTION - Basic Application Definition
     KOLO_DISABLE: bool = not DEBUG
@@ -345,9 +367,9 @@ class Production(Base):
     SITE_ID: int = int(os.environ["SITE_ID"])
     # SECTION - Email Communication
     EMAIL_SUBJECT_PREFIX: str = "NHHC Django Server -"
-    INTERNAL_SUBMISSION_NOTIFICATION_EMAILS: List[str] = list(os.environ["INTERNAL_NOTIFICATION_EMAILS"])
+    INTERNAL_SUBMISSION_NOTIFICATION_EMAILS: list[str] = list(os.environ["INTERNAL_NOTIFICATION_EMAILS"])
 
-    INSTALLED_APPS: List[str] = [
+    INSTALLED_APPS: list[str] = [
         "whitenoise.runserver_nostatic",
         "allauth",
         "allauth.account",
@@ -405,7 +427,7 @@ class Production(Base):
         "django_extensions",
     ]
 
-    MIDDLEWARE: List[str] = [
+    MIDDLEWARE: list[str] = [
         "django_prometheus.middleware.PrometheusBeforeMiddleware",  # 1
         "django.middleware.security.SecurityMiddleware",  # W2
         "whitenoise.middleware.WhiteNoiseMiddleware",  # 3
@@ -489,7 +511,7 @@ class Production(Base):
     # !SECTION
     PROMETHEUS_METRIC_NAMESPACE: str = "care_nett"
     # SECTION - ADMIN Backend
-    JAZZMIN_SETTINGS: Dict[str, Any] = {
+    JAZZMIN_SETTINGS: dict[str, Any] = {
         "site_title": "CareNett Control Center",
         "site_header": "Control Center",
         "site_brand": "Control Center",
@@ -565,7 +587,7 @@ class Production(Base):
 class Development(Base):
     # SECTION - Development Protocols, General Security ACL COnfigs
     DEBUG: bool = True
-    ALLOWED_HOSTS: List[str] = ["*"]
+    ALLOWED_HOSTS: list[str] = ["*"]
     SECURE_SSL_REDIRECT: bool = False
     # !SECTION
     # SECTION - Basic Application Definition
@@ -575,8 +597,8 @@ class Development(Base):
     SITE_ID: int = 1
     # SECTION - Email Communication
     EMAIL_SUBJECT_PREFIX: str = "NHHC Django Development Server -"
-    INTERNAL_SUBMISSION_NOTIFICATION_EMAILS: List[str] = ["test@netthandshome.care", "terry@brooksjr.com"]
-    INSTALLED_APPS: List[str] = [
+    INTERNAL_SUBMISSION_NOTIFICATION_EMAILS: list[str] = ["test@netthandshome.care", "terry@brooksjr.com"]
+    INSTALLED_APPS: list[str] = [
         "whitenoise.runserver_nostatic",
         "allauth",
         "allauth.account",
@@ -636,7 +658,7 @@ class Development(Base):
         "django_extensions",
     ]
 
-    MIDDLEWARE: List[str] = [
+    MIDDLEWARE: list[str] = [
         "kolo.middleware.KoloMiddleware",
         "django_prometheus.middleware.PrometheusBeforeMiddleware",  # 1
         "django.middleware.security.SecurityMiddleware",  # 2
@@ -650,7 +672,7 @@ class Development(Base):
         "django.contrib.auth.middleware.AuthenticationMiddleware",  # 9
         "allauth.account.middleware.AccountMiddleware",  # 9.1
         "defender.middleware.FailedLoginMiddleware",  # 10
-        "django_require_login.middleware.LoginRequiredMiddleware",  # 11
+        # "django_require_login.middleware.LoginRequiredMiddleware",  # 11 - TEMPORARILY DISABLED
         "django.contrib.messages.middleware.MessageMiddleware",  # 12
         "django.middleware.clickjacking.XFrameOptionsMiddleware",  # 13
         "request.middleware.RequestMiddleware",  # 15
@@ -725,7 +747,7 @@ class Development(Base):
     )
     REQUEST_LOG_USER: bool = True
     PROMETHEUS_METRIC_NAMESPACE: str = "development_care_nett"
-    DEBUG_TOOLBAR_PANELS: List[str] = [
+    DEBUG_TOOLBAR_PANELS: list[str] = [
         "debug_toolbar.panels.history.HistoryPanel",
         "debug_toolbar.panels.versions.VersionsPanel",
         "debug_toolbar.panels.timer.TimerPanel",
@@ -821,7 +843,7 @@ class Development(Base):
 class Testing(Base):
     # SECTION - Testing Protocols, General Security ACL COnfigs
     DEBUG: bool = False
-    ALLOWED_HOSTS: List[str] = ["*"]
+    ALLOWED_HOSTS: list[str] = ["*"]
     SECURE_SSL_REDIRECT: bool = False
     # !SECTION
     # SECTION - Basic Application Definition
@@ -829,7 +851,7 @@ class Testing(Base):
     RECAPTCHA_PUBLIC_KEY: str = "6LeIxAcTAMARAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
     RECAPTCHA_PRIVATE_KEY: str = "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
     # SECTION - Email Communication
-    INSTALLED_APPS: List[str] = [
+    INSTALLED_APPS: list[str] = [
         "whitenoise.runserver_nostatic",
         "allauth",
         "allauth.account",

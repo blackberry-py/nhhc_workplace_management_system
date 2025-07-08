@@ -23,6 +23,7 @@ class Contract(TimeStampedModel, models.Model, ExportModelOperationsMixin("contr
     - contract_year_start: DateField for the start year of the contract, optional
     - contract_year_end: DateField for the end year of the contract, optional
     - active: BooleanField, default is True
+
     """
 
     objects = CachedQuerySet.as_manager()
@@ -94,7 +95,9 @@ class Compliance(TimeStampedModel, models.Model, ExportModelOperationsMixin("com
         - ordering: Specifies the default ordering of records based on the employee field.
         - verbose_name: Specifies the human-readable name for the model in singular and plural forms.
 
-    Note: This model utilizes the ExportModelOperationsMixin from django_prometheus for exporting model operations to Prometheus."""
+    Note: This model utilizes the ExportModelOperationsMixin from django_prometheus for exporting model operations to Prometheus.
+
+    """
 
     class JOB_TITLE(models.TextChoices):
         AIDE = "AIDE", _("Homecare Aide")
@@ -157,7 +160,6 @@ class Compliance(TimeStampedModel, models.Model, ExportModelOperationsMixin("com
         return f"Compliance Profile of {self.employee.last_name}, {self.employee.first_name} ({self.employee.employee_id})"
 
     def is_eligible_to_work(self) -> bool:
-        employee_profile = Employee.objects.get(pk=self.employee.employee_id)
         # TODO: Implement Minimally Needed Documentation Check Logic to Determined Ready to Start
         raise NotImplementedError("Logic to Determine This Forth Coming")
 
