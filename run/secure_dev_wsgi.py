@@ -15,6 +15,7 @@ def run_server():
 
     # Set certificate paths
     ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    ssl_context.minimum_version = ssl.TLSVersion.TLSv1_2
     ssl_context.load_cert_chain(certfile="certs/djangotricks.local.pem", keyfile="certs/djangotricks.local-key.pem")
 
     # Run server with TLS
