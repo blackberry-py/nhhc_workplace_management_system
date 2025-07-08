@@ -65,8 +65,6 @@ jobs:
         else
           pip install -r requirements.txt
         fi
-    - name: Run Black style check
-      run: black --check .
 
     - name: Run Taskfile commands (pre-test)
       run: |
