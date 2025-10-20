@@ -178,23 +178,10 @@ install_python_and_dependencies() {
         error_exit "Unsupported package manager: $PACKAGE_MANAGER"
     fi
 
-    # Add Doppler repository
-    TEMP_DOPPLER_KEY="/tmp/doppler.gpg"
-    TEMP_DOPPLER_LIST="/etc/apt/sources.list.d/doppler-cli.list"
-
-    curl -sLf --retry 3 --tlsv1.2 --proto "=https" 'https://packages.doppler.com/public/cli/gpg.DE2A7741A397C129.key' \
-        | sudo gpg --dearmor -o "$TEMP_DOPPLER_KEY" || error_exit "Failed to download Doppler GPG key."
-
-    if [[ "$PACKAGE_MANAGER" == "apt-get" ]]; then
-        sudo mv "$TEMP_DOPPLER_KEY" /usr/share/keyrings/doppler-archive-keyring.gpg || error_exit "Failed to move Doppler GPG key."
-        echo "deb [signed-by=/usr/share/keyrings/doppler-archive-keyring.gpg] https://packages.doppler.com/public/cli/deb/debian any-version main" \
-            | sudo tee "$TEMP_DOPPLER_LIST" >/dev/null || error_exit "Failed to add Doppler repository."
-        sudo apt update -y || error_exit "apt-get update failed after adding Doppler repository."
-        sudo apt install -y --no-install-recommends doppler=3.68.0 build-essential || error_exit "Failed to install Doppler and build-essential."
+ 
     elif [[ "$PACKAGE_MANAGER" == "yum" ]]; then
         # Yum repository setup if applicable
-        error_exit "Doppler repository setup for yum is not implemented."
-    fi
+     fi
 
     sudo apt-get clean || true
     sudo rm -rf /var/lib/apt/lists/* || true

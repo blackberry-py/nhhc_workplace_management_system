@@ -400,3 +400,6 @@ AIVEN_POSTGRES_CERT.pem
 *.crt
 *.csr   
 *.cert
+
+#Ignore vscode AI rules
+.github/instructions/codacy.instructions.md
