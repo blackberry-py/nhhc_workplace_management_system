@@ -237,69 +237,108 @@ install_docker() {
 }
 
 configure_apache() {
-    log_info "Configuring Apache..."
+    log_info "Configuring Apache (additive, non-destructive)..."
 
     if [[ "$DRY_RUN" = true ]]; then
         log_info "Dry run: Skipping Apache configuration."
         return
     fi
 
-    sudo a2enmod proxy proxy_http proxy_balancer lbmethod_byrequests &>/dev/null || error_exit "Failed to enable Apache modules."
+    # Enable required modules (safe to re-run)
+    sudo a2enmod proxy proxy_http proxy_balancer lbmethod_byrequests headers ssl &>/dev/null \
+        || error_exit "Failed to enable Apache modules."
 
-    sudo ufw allow 'Apache Full' &>/dev/null || error_exit "Failed to allow Apache Full through UFW."
-    sudo ufw delete allow 'Apache' &>/dev/null || true
-    sudo ufw allow 'OpenSSH' &>/dev/null || error_exit "Failed to allow OpenSSH through UFW."
-    sudo ufw --force enable &>/dev/null || error_exit "Failed to enable UFW."
-
-    # HTTP configuration
-    cat <<EOF | sudo tee /etc/apache2/sites-available/000-default.conf >/dev/null
-<VirtualHost *:80>
-    ProxyPreserveHost On
-    ServerName $DOMAIN
-    ServerAlias "www."$DOMAIN
-
-    ProxyPass / "http://127.0.0.1:"$PORT"/"
-    ProxyPassReverse / "http://127.0.0.1:"$PORT"/"
-</VirtualHost>
-EOF
-
-    # HTTPS configuration
-    SSL_CERT_DIR="/etc/letsencrypt/live/netthandshome.care"
-    if [[ -f "$SSL_CERT_DIR/fullchain.pem" ]]; then
-        cat <<EOF | sudo tee /etc/apache2/sites-available/default-ssl.conf >/dev/null
-<IfModule mod_ssl.c>
-    <VirtualHost *:443>
-        ServerName $DOMAIN
-        ServerAlias "www."$DOMAIN
-
-        SSLEngine on
-        SSLCertificateFile $SSL_CERT_DIR/fullchain.pem
-        SSLCertificateKeyFile $SSL_CERT_DIR/privkey.pem
-        SSLCertificateChainFile $SSL_CERT_DIR/chain.pem
-
-        ProxyPreserveHost On
-        ProxyPass / "http://127.0.0.1:"$PORT"/"
-        ProxyPassReverse / "http://127.0.0.1:"$PORT"/"
-    </VirtualHost>
-</IfModule>
-EOF
+    # Firewall rules (safe-ish). Don't delete rules blindly.
+    if command -v ufw &>/dev/null; then
+        sudo ufw allow 'Apache Full' &>/dev/null || error_exit "Failed to allow Apache Full through UFW."
+        sudo ufw allow 'OpenSSH' &>/dev/null || error_exit "Failed to allow OpenSSH through UFW."
+        sudo ufw --force enable &>/dev/null || error_exit "Failed to enable UFW."
     else
-        log_warn "Skipping HTTPS configuration: SSL certificates not found at $SSL_CERT_DIR."
+        log_warn "UFW not found; skipping firewall configuration."
     fi
 
-    sudo a2ensite default-ssl &>/dev/null || error_exit "Failed to enable default-ssl site."
- 
+    # Paths for additive vhost configs
+    local HTTP_SITE_FILE="/etc/apache2/sites-available/${DOMAIN}.conf"
+    local HTTPS_SITE_FILE="/etc/apache2/sites-available/${DOMAIN}-ssl.conf"
+
+    # --- HTTP vhost (additive) ---
+    if [[ -f "$HTTP_SITE_FILE" ]]; then
+        log_warn "HTTP site config already exists: $HTTP_SITE_FILE (leaving as-is)."
+    else
+        cat <<EOF | sudo tee "$HTTP_SITE_FILE" >/dev/null
+<VirtualHost *:80>
+    ServerName ${DOMAIN}
+    ServerAlias www.${DOMAIN}
+
+    ProxyPreserveHost On
+    ProxyRequests Off
+
+    # Forward client info to upstream
+    RequestHeader set X-Forwarded-Proto "http"
+    RequestHeader set X-Forwarded-Port "80"
+
+    ProxyPass / http://127.0.0.1:${PORT}/
+    ProxyPassReverse / http://127.0.0.1:${PORT}/
+
+    ErrorLog \${APACHE_LOG_DIR}/${DOMAIN}_error.log
+    CustomLog \${APACHE_LOG_DIR}/${DOMAIN}_access.log combined
+</VirtualHost>
+EOF
+        log_info "Created HTTP vhost: $HTTP_SITE_FILE"
+    fi
+
+    sudo a2ensite "$(basename "$HTTP_SITE_FILE")" &>/dev/null || error_exit "Failed to enable HTTP site ${DOMAIN}."
+
+    # --- HTTPS vhost (additive, only if certs exist) ---
+    local SSL_CERT_DIR="/etc/letsencrypt/live/${DOMAIN}"
+    if [[ -f "${SSL_CERT_DIR}/fullchain.pem" && -f "${SSL_CERT_DIR}/privkey.pem" ]]; then
+        if [[ -f "$HTTPS_SITE_FILE" ]]; then
+            log_warn "HTTPS site config already exists: $HTTPS_SITE_FILE (leaving as-is)."
+        else
+            cat <<EOF | sudo tee "$HTTPS_SITE_FILE" >/dev/null
+<IfModule mod_ssl.c>
+<VirtualHost *:443>
+    ServerName ${DOMAIN}
+    ServerAlias www.${DOMAIN}
+
+    SSLEngine on
+    SSLCertificateFile ${SSL_CERT_DIR}/fullchain.pem
+    SSLCertificateKeyFile ${SSL_CERT_DIR}/privkey.pem
+
+    ProxyPreserveHost On
+    ProxyRequests Off
+
+    # Forward client info to upstream
+    RequestHeader set X-Forwarded-Proto "https"
+    RequestHeader set X-Forwarded-Port "443"
+
+    ProxyPass / http://127.0.0.1:${PORT}/
+    ProxyPassReverse / http://127.0.0.1:${PORT}/
+
+    ErrorLog \${APACHE_LOG_DIR}/${DOMAIN}_ssl_error.log
+    CustomLog \${APACHE_LOG_DIR}/${DOMAIN}_ssl_access.log combined
+</VirtualHost>
+</IfModule>
+EOF
+            log_info "Created HTTPS vhost: $HTTPS_SITE_FILE"
+        fi
+
+        sudo a2ensite "$(basename "$HTTPS_SITE_FILE")" &>/dev/null || error_exit "Failed to enable HTTPS site ${DOMAIN}."
+    else
+        log_warn "Skipping HTTPS config: certs not found for ${DOMAIN} at ${SSL_CERT_DIR}."
+        log_warn "If you plan to use certbot later, re-run Apache config after cert issuance."
+    fi
+
     # Validate Apache configuration
     if ! sudo apachectl configtest &>/dev/null; then
         error_exit "Apache configuration test failed."
     fi
 
     # Reload and enable Apache
+    sudo systemctl enable apache2 &>/dev/null || error_exit "Failed to enable Apache on boot."
     sudo systemctl reload apache2 &>/dev/null || error_exit "Failed to reload Apache."
-    sudo systemctl enable apache2 &>/dev/null || error_exit "Failed to enable Apache to start on boot."
-    sudo systemctl start apache2 &>/dev/null || error_exit "Failed to start Apache."
 
-    log_info "Apache2 configured successfully for $DOMAIN"
+    log_info "Apache configured additively for ${DOMAIN} -> http://127.0.0.1:${PORT}"
 }
 
 install_prometheus_node_exporter() {
