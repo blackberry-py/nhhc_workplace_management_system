@@ -435,7 +435,7 @@ setup() {
     # Assign options to their respective variables
     for option in "${options[@]}"; do
         case "$option" in
-        	--bypass--python)
+        	--bypass-python)
         	    BYPASS_PYTHON=true
         	    ;;
             --bypass-docker)
